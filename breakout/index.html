@@ -1,3 +1,22 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#070b12"><title>Breakout</title><link rel="stylesheet" href="style.css"></head>
-<body><main class="page"><header><a href="/">← PLAY</a><h1>BREAKOUT</h1><button id="pause">PAUSE</button></header><section class="layout"><div class="frame"><canvas id="game" width="480" height="640"></canvas><div id="overlay" class="overlay"><b id="title">BREAKOUT</b><span id="hint">PRESS START TO PLAY</span><button id="start">START</button></div></div><aside><div class="stat"><span>SCORE</span><b id="score">000000</b></div><div class="stat"><span>HIGH SCORE</span><b id="high">000000</b></div><div class="stat"><span>LEVEL</span><b id="level">01</b></div><div class="stat"><span>LIVES</span><b id="lives">♥♥♥</b></div><button class="new" id="new">NEW GAME</button><p>← → MOVE<br>SPACE LAUNCH<br>P PAUSE</p></aside></section><footer>CLASSIC BRICK BREAKER</footer></main><script src="game.js"></script></body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#070b12">
+  <title>Breakout</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page">
+    <header><a href="/">← PLAY</a><h1>BREAKOUT</h1><button id="pause" type="button">PAUSE</button></header>
+    <section class="layout">
+      <div class="frame"><canvas id="game" width="480" height="640"></canvas><div id="overlay" class="overlay"><b id="title">BREAKOUT</b><span id="hint">PRESS START TO PLAY</span><button id="start" type="button">START</button></div></div>
+      <aside><div class="stat"><span>SCORE</span><b id="score">000000</b></div><div class="stat"><span>HIGH SCORE</span><b id="high">000000</b></div><div class="stat"><span>LEVEL</span><b id="level">01</b></div><div class="stat"><span>LIVES</span><b id="lives">♥♥♥</b></div><button class="new" id="new" type="button">NEW GAME</button><p>← → MOVE<br>SPACE LAUNCH<br>P PAUSE</p></aside>
+    </section>
+    <div class="mobile-actions"><button id="mobileLaunch" type="button">TAP TO LAUNCH</button></div>
+    <footer>CLASSIC BRICK BREAKER · DRAG TO MOVE</footer>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>
