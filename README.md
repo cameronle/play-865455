@@ -4,7 +4,7 @@
 
 ## Games
 
-- [2048](./2048/) — 基于 [gabrielecirulli/2048](https://github.com/gabrielecirulli/2048)，MIT License；本地副本移除了页面底部说明文字。
+- [Classic 2048](./2048/) — 本仓库自维护的纯 HTML5/CSS/JavaScript 2048，支持键盘、触摸、计分和本地最高分。
 - [Sky Patrol](./shooter/) — 自维护的 HTML5 Canvas 街机风打飞机，自动发射、关卡、生命、道具、音效与移动端触控。
 - [Classic Tetris](./tetris/) — 自维护的纯 HTML5 Canvas 俄罗斯方块，支持键盘、触摸、计分、等级、下一个方块和本地最高分。
 - [Classic Snake](./snake/) — 自维护的纯 HTML5 Canvas 贪食蛇，支持键盘、触摸、加速和穿墙玩法。
@@ -40,13 +40,13 @@ python3 -m http.server 8080
 
 ## License
 
-`2048/` 保留上游项目的 MIT License 文件。`shooter/` 为本仓库自维护代码，采用 MIT License。
+本仓库中的自维护小游戏代码采用 MIT License。
 
 本仓库不包含任何 API token、账号凭证或运行时密钥。
 
 ## Credits
 
-- 2048: Gabriele Cirulli and contributors
+- Classic 2048: maintained in this repository
 - Sky Patrol: maintained in this repository
 - Classic Tetris: maintained in this repository
 - Classic Snake: maintained in this repository
@@ -55,13 +55,13 @@ python3 -m http.server 8080
 - Alien Formation: maintained in this repository
 - Neon Maze: maintained in this repository
 
-> “2048” 的名称、代码和相关版权归原作者及贡献者所有；本仓库只是部署用副本。
+> 本仓库中的小游戏为自维护实现；名称仅用于描述经典玩法。
 
 ## Changelog
 
 ### 2026-08-09
 
-- Added 2048.
+- Replaced the former 2048 copy with a self-maintained implementation.
 - Added Sky Patrol.
 - Sky Patrol uses automatic firing; manual fire remains available as an extra control.
 - Added Classic Tetris with keyboard and touch controls.

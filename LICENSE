@@ -20,5 +20,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-The files under `2048/` retain their upstream license and copyright notices;
-see `2048/LICENSE.txt`.
+All game code currently stored in this repository is maintained under this
+license. Third-party assets, if added in the future, will retain their own
+license notices.
