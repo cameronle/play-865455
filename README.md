@@ -12,7 +12,7 @@
 - [Minesweeper](./minesweeper/) — 自维护的经典扫雷，支持点击、右键/长按插旗、计时和本地最佳时间。
 - [Alien Formation](./space-invaders/) — 自维护的经典固定阵型射击，支持移动、射击、波次和本地最高分。
 - [Neon Maze](./maze/) — 原创迷宫吃点小游戏，支持敌人追踪、关卡、生命和本地最高分。
-- [Gomoku](./gomoku/) — 自维护的 15×15 五子棋，支持三档人机难度、悔棋、手机点击落子和本地胜负记录。
+- [五子棋](./gomoku/) — 重新实现的 15×15 人机五子棋，支持三档难度、悔棋、手机触控、落子标记和本地胜负记录。
 
 ## Local development
 
@@ -71,3 +71,4 @@ python3 -m http.server 8080
 - Added Classic Snake with wrap-around walls.
 - Added Breakout, Minesweeper, Alien Formation, and Neon Maze.
 - Added Gomoku with human-vs-computer play.
+- Rebuilt Gomoku from scratch with a tested rules engine, new board UI, reliable mouse/touch input, undo, three AI levels, and local records.
