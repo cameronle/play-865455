@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#070b12">
+  <title>PLAY — Arcade</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+    :root{color-scheme:dark;--bg:#070b12;--ink:#e8f0f7;--muted:#748394;--line:#243241;--cyan:#64e6e0;--orange:#ffb45c}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font-family:'Space Mono',ui-monospace,monospace}main{width:min(920px,100%);margin:auto;padding:32px 22px}.top{display:flex;align-items:end;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:20px;margin-bottom:34px}.kicker{color:var(--cyan);font-size:10px;letter-spacing:.2em}.title{font-size:clamp(38px,8vw,72px);line-height:.8;letter-spacing:.12em;margin:13px 0 0}.title em{color:var(--orange);font-style:normal}.sub{color:var(--muted);font-size:11px;margin:0;letter-spacing:.06em}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}.card{display:block;color:var(--ink);text-decoration:none;border:1px solid var(--line);background:#0b111a;padding:20px;min-height:165px;transition:.15s ease;position:relative;overflow:hidden}.card:after{content:'↗';position:absolute;right:18px;bottom:15px;color:var(--muted);font-size:20px}.card:hover{border-color:var(--cyan);transform:translateY(-2px);box-shadow:0 10px 30px #0008}.num{color:var(--orange);font-size:12px;letter-spacing:.1em}.card h2{font-size:22px;letter-spacing:.1em;margin:30px 0 10px}.card p{color:var(--muted);font-size:10px;line-height:1.7;margin:0;max-width:240px}footer{color:#465565;font-size:9px;letter-spacing:.08em;margin-top:42px}@media(max-width:500px){main{padding:22px 14px}.top{display:block}.sub{margin-top:22px}.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <main>
+    <header class="top"><div><div class="kicker">SMALL GAMES / NO ACCOUNTS</div><h1 class="title">PLAY <em>!</em></h1></div><p class="sub">A tiny arcade on the edge.</p></header>
+    <section class="grid" aria-label="Games">
+      <a class="card" href="/2048/"><span class="num">01 / PUZZLE</span><h2>2048</h2><p>Join the numbers. Chase the tile.</p></a>
+      <a class="card" href="/shooter/"><span class="num">02 / ARCADE</span><h2>SKY PATROL</h2><p>Move, fire, survive. A small original shooter.</p></a>
+    </section>
+    <footer>MORE GAMES COMING SOON · BUILT FOR THE WEB</footer>
+  </main>
+</body>
+</html>

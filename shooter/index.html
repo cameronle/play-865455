@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#070b12">
+  <title>Sky Patrol</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="back" href="/">PLAY</a>
+      <div class="brand"><span class="mark">✦</span> SKY PATROL</div>
+      <button class="sound" id="soundButton" aria-label="Toggle sound">SOUND</button>
+    </header>
+
+    <section class="game-wrap" aria-label="Sky Patrol game">
+      <div class="hud">
+        <div><span>SCORE</span><b id="score">000000</b></div>
+        <div><span>LEVEL</span><b id="level">01</b></div>
+        <div><span>LIVES</span><b id="lives">♥♥♥</b></div>
+      </div>
+      <div class="screen-frame">
+        <canvas id="game" width="480" height="720"></canvas>
+        <div class="scanlines"></div>
+        <div class="overlay" id="overlay">
+          <div class="intro">
+            <p class="eyebrow">A SMALL ARCADE GAME</p>
+            <h1>SKY<br><em>PATROL</em></h1>
+            <p class="hint">MOVE <kbd>←</kbd> <kbd>→</kbd> &nbsp; AUTO-FIRE ENABLED</p>
+            <button class="start" id="startButton">START GAME</button>
+            <p class="best">BEST <strong id="best">000000</strong></p>
+          </div>
+        </div>
+      </div>
+      <div class="mobile-controls" aria-label="Touch controls">
+        <button id="leftButton">←</button>
+        <button id="fireButton" aria-label="Fire manually">●</button>
+        <button id="rightButton">→</button>
+      </div>
+    </section>
+
+    <footer><span>ARROWS / A D TO MOVE</span><span>AUTO-FIRE · P PAUSE · M MUTE</span></footer>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>
