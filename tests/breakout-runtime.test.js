@@ -41,6 +41,11 @@ test('a tap on the playfield starts and launches the game', () => {
   assert.notEqual(ballYs.at(-1), ballYs[0]);
 });
 
+test('top collision clamps the ball inside the board and sends it downward', () => {
+  const source=fs.readFileSync('breakout/game.js','utf8');
+  assert.match(source,/if\(ball\.y-ball\.r<=0&&ball\.vy<0\)\{ball\.y=ball\.r;ball\.vy=Math\.abs\(ball\.vy\)\}/);
+});
+
 test('mobile layout gives the playfield full width and a visible launch button', () => {
   const css=fs.readFileSync('breakout/style.css','utf8');
   assert.match(css,/@media\(max-width:600px\)[\s\S]*\.layout\{display:flex;flex-direction:column/);
