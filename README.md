@@ -23,6 +23,7 @@
 - [Connect Four](./connect-four/) — Self-maintained human-vs-computer strategy game with three AI levels, first-player selection, undo, touch controls, and local records.
 - [Sky Hopper](./sky-hopper/) — Self-maintained vertical platform jumper with automatic bouncing, scrolling terrain, five platform types, keyboard/touch controls, and local high score.
 - [Helicopter Cave](./helicopter-cave/) — Self-maintained single-action cave flyer with procedural navigable terrain, obstacles, progressive speed, keyboard/touch controls, and local distance record.
+- [Endless Runner](./endless-runner/) — Self-maintained side-scrolling runner with variable jumps, fast fall, speed-aware fair patterns, gaps, obstacles, coins, touch controls, and local record.
 
 ## Local development
 
@@ -58,6 +59,7 @@ python3 -m http.server 8080
 /connect-four/
 /sky-hopper/
 /helicopter-cave/
+/endless-runner/
 ```
 
 ## License
@@ -87,6 +89,7 @@ python3 -m http.server 8080
 - Connect Four: maintained in this repository
 - Sky Hopper: maintained in this repository
 - Helicopter Cave: maintained in this repository
+- Endless Runner: maintained in this repository
 
 > 本仓库中的小游戏为自维护实现；名称仅用于描述经典玩法。
 
@@ -106,4 +109,5 @@ python3 -m http.server 8080
 - Added Lunar Lander and Connect Four with full keyboard and mobile controls.
 - Added Sky Hopper with automatic bouncing, scrolling platforms, and complete mobile controls.
 - Added Helicopter Cave with single-action flight, procedural cave generation, and progressive speed.
+- Added Endless Runner with variable jumps, fast fall, fair speed-aware obstacle generation, and mobile controls.
 - Deleted the Gomoku directory and rebuilt it from an empty directory with a new rules engine, UI, input handling, and test suite.
