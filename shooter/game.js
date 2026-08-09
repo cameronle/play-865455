@@ -7,7 +7,7 @@
   const scoreEl = $('score'), levelEl = $('level'), livesEl = $('lives'), bestEl = $('best');
   const overlay = $('overlay'), startButton = $('startButton'), soundButton = $('soundButton');
   const keys = new Set();
-  const pointer = {left:false,right:false,fire:false};
+  const pointer = {left:false,right:false};
   const colors = {cyan:'#64e6e0', orange:'#ffb45c', red:'#ff6b7a', white:'#e8f0f7', muted:'#748394'};
   let state='title', score=0, level=1, lives=3, best=Number(localStorage.getItem('sky-patrol-best') || 0), muted=false;
   let player, bullets=[], enemyBullets=[], enemies=[], particles=[], stars=[], powerups=[];
@@ -52,9 +52,9 @@
     stars.forEach(s=>{s.y+=s.v*dt*(1+level*.04);if(s.y>H+4){s.y=-4;s.x=rand(12,W-12)}});
     if(player.invuln>0)player.invuln-=dt;
     let dir=(keys.has('ArrowLeft')||keys.has('a')||pointer.left?-1:0)+(keys.has('ArrowRight')||keys.has('d')||pointer.right?1:0); player.x=clamp(player.x+dir*player.speed*dt,24,W-24);
-    // The ship fires automatically; keyboard/touch fire remains as an extra manual trigger.
+    // The ship fires automatically.
     fire();
-    if(keys.has(' ')||keys.has('Spacebar')||pointer.fire)fire();
+
     fireTimer=Math.max(0,fireTimer-dt); spawnTimer-=dt; enemyFireTimer-=dt; levelTimer+=dt; if(spawnTimer<=0){spawnEnemy();spawnTimer=Math.max(.28,1.05-level*.045)} if(enemyFireTimer<=0){enemyFire();enemyFireTimer=Math.max(.55,1.7-level*.08)}
     if(levelTimer>24){level++;levelTimer=0;setHud();beep(880,.12,'triangle')}
     bullets.forEach(b=>b.y+=b.vy*dt);bullets=bullets.filter(b=>b.y>-20);
@@ -83,8 +83,9 @@
 
   function bindHold(id,prop){const el=$(id);const on=e=>{e.preventDefault();pointer[prop]=true};const off=e=>{e.preventDefault();pointer[prop]=false};['pointerdown','touchstart'].forEach(ev=>el.addEventListener(ev,on,{passive:false}));['pointerup','pointercancel','pointerleave','touchend'].forEach(ev=>el.addEventListener(ev,off,{passive:false}))}
   startButton.addEventListener('click',()=>{if(state==='paused'){pause()}else start()});soundButton.addEventListener('click',()=>{muted=!muted;soundButton.classList.toggle('on',!muted);soundButton.textContent=muted?'MUTED':'SOUND';if(!muted)beep(660,.06)});
-  bindHold('leftButton','left');bindHold('rightButton','right');bindHold('fireButton','fire');
+  $('mobilePauseButton').addEventListener('click',pause);
+  bindHold('leftButton','left');bindHold('rightButton','right');
   window.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight',' ','a','d','p','m'].includes(e.key))e.preventDefault();if(e.key==='p')pause();if(e.key==='m')soundButton.click();keys.add(e.key)});window.addEventListener('keyup',e=>keys.delete(e.key));
-  canvas.addEventListener('pointermove',e=>{if(e.buttons){const r=canvas.getBoundingClientRect();player&&(player.x=clamp((e.clientX-r.left)/r.width*W,24,W-24));pointer.fire=true}});canvas.addEventListener('pointerup',()=>pointer.fire=false);
+  canvas.addEventListener('pointermove',e=>{if(e.buttons){const r=canvas.getBoundingClientRect();player&&(player.x=clamp((e.clientX-r.left)/r.width*W,24,W-24))}});
   reset();requestAnimationFrame(loop);
 })();

@@ -50,22 +50,23 @@
     nextCtx.clearRect(0,0,nextCanvas.width,nextCanvas.height);if(nextType){const m=SHAPES[nextType],size=22,ox=(nextCanvas.width-m[0].length*size)/2,oy=(nextCanvas.height-m.length*size)/2; m.forEach((row,y)=>row.forEach((v,x)=>{if(v){nextCtx.save();nextCtx.translate(ox,oy);drawCell(nextCtx,x,y,COLORS[nextType],size);nextCtx.restore()}}))}
   }
   function updateHud(){scoreEl.textContent=String(score).padStart(6,'0');highScoreEl.textContent=String(highScore).padStart(6,'0');levelEl.textContent=String(level).padStart(2,'0');linesEl.textContent=String(lines).padStart(3,'0')}
+  function addScore(points){score+=points;if(score>highScore)highScore=score;updateHud()}
   function showMessage(title,hint,button='START'){messageTitle.textContent=title;messageHint.textContent=hint;document.getElementById('startButton').textContent=button;message.classList.remove('hidden')}
   function hideMessage(){message.classList.add('hidden')}
   function start(){grid=emptyGrid();score=0;level=1;lines=0;nextType=randomType();piece=newPiece();state='playing';dropTimer=0;softDropping=false;hideMessage();updateHud();draw()}
   function pause(){if(state==='playing'){state='paused';showMessage('PAUSED','PRESS P OR RESUME','RESUME')}else if(state==='paused'){state='playing';hideMessage()}}
   function gameOver(){state='over';if(score>highScore){highScore=score;localStorage.setItem('classic-tetris-high-score',String(highScore))}updateHud();showMessage('GAME OVER','FINAL SCORE '+String(score).padStart(6,'0'),'PLAY AGAIN')}
   function lock(){piece.matrix.forEach((row,y)=>row.forEach((v,x)=>{if(v&&piece.y+y>=0)grid[piece.y+y][piece.x+x]=piece.type}));clearLines();piece=newPiece(nextType);nextType=randomType();if(collides(piece))gameOver()}
-  function clearLines(){let count=0;grid=grid.filter(row=>{if(row.every(Boolean)){count++;return false}return true});while(grid.length<ROWS)grid.unshift(Array(COLS).fill(null));if(count){const points=[0,100,300,500,800][count];score+=points*level;lines+=count;level=Math.floor(lines/10)+1; if(score>highScore)highScore=score;updateHud()}}
+  function clearLines(){let count=0;grid=grid.filter(row=>{if(row.every(Boolean)){count++;return false}return true});while(grid.length<ROWS)grid.unshift(Array(COLS).fill(null));if(count){const points=[0,100,300,500,800][count];lines+=count;level=Math.floor(lines/10)+1;addScore(points*level)}}
   function stepDown(){if(!collides(piece,0,1)){piece.y++;return true}lock();return false}
   function move(dx){if(state==='playing'&&!collides(piece,dx,0)){piece.x+=dx;draw()}}
   function turn(){if(state!=='playing')return;const rotated=rotate(piece.matrix);for(const kick of [0,-1,1,-2,2])if(!collides(piece,kick,0,rotated)){piece.matrix=rotated;piece.x+=kick;draw();return}}
-  function hardDrop(){if(state!=='playing')return;let distance=0;while(!collides(piece,0,1)){piece.y++;distance++}score+=distance*2;lock();updateHud();draw()}
-  function tick(time){const dt=Math.min(100,lastTime?time-lastTime:0);lastTime=time;if(state==='playing'){dropTimer+=dt;const interval=Math.max(80,800-(level-1)*65);if(dropTimer>=interval){dropTimer=0;stepDown()}if(softDropping){stepDown();dropTimer=0}draw()}requestAnimationFrame(tick)}
+  function hardDrop(){if(state!=='playing')return;let distance=0;while(!collides(piece,0,1)){piece.y++;distance++}addScore(distance*2);lock();draw()}
+  function tick(time){const dt=Math.min(100,lastTime?time-lastTime:0);lastTime=time;if(state==='playing'){dropTimer+=dt;const interval=Math.max(80,800-(level-1)*65);if(dropTimer>=interval){dropTimer=0;stepDown()}if(softDropping&&stepDown())addScore(1);if(softDropping)dropTimer=0;draw()}requestAnimationFrame(tick)}
   function action(name){
     if(state!=='playing'||!piece)return;
     if(name==='left')move(-1);if(name==='right')move(1);if(name==='rotate')turn();
-    if(name==='down'){softDropping=true;if(stepDown())score+=1;updateHud();draw()}
+    if(name==='down'){softDropping=true;if(stepDown())addScore(1);draw()}
     if(name==='drop')hardDrop();
   }
 

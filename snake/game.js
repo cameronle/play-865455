@@ -28,6 +28,7 @@
   function start(){reset();state='playing';hideMessage()}
   function pause(){if(state==='playing'){state='paused';showMessage('PAUSED','PRESS P OR RESUME','RESUME')}else if(state==='paused'){state='playing';hideMessage()}}
   function gameOver(){state='over';if(score>highScore){highScore=score;localStorage.setItem('classic-snake-high-score',String(highScore))}updateHud();showMessage('GAME OVER','SCORE '+String(score).padStart(6,'0'),'PLAY AGAIN')}
+  function gameWon(){state='won';if(score>highScore){highScore=score;localStorage.setItem('classic-snake-high-score',String(highScore))}updateHud();showMessage('YOU WIN','BOARD COMPLETE · SCORE '+String(score).padStart(6,'0'),'PLAY AGAIN')}
   function setDirection(x,y){
     if(state!=='playing')return;
     if(x===-direction.x&&y===-direction.y)return;
@@ -42,7 +43,7 @@
     const body=eating?snake:snake.slice(0,-1);
     if(body.some(part=>part.x===next.x&&part.y===next.y)){gameOver();return}
     snake.unshift(next);
-    if(eating){score+=10;if(score>highScore)highScore=score;stepMs=Math.max(65,145-Math.floor(score/50)*5);food=randomFood();updateHud()}else snake.pop();
+    if(eating){score+=10;if(score>highScore)highScore=score;stepMs=Math.max(65,145-Math.floor(score/50)*5);food=randomFood();updateHud();if(!food)gameWon()}else snake.pop();
   }
   function drawCell(x,y,color,inset=2){ctx.fillStyle=color;ctx.fillRect(x*CELL+inset,y*CELL+inset,CELL-inset*2,CELL-inset*2)}
   function draw(){
