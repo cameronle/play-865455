@@ -9,12 +9,12 @@ function setup(){score=0;level=1;lives=3;player={x:W/2,y:H-46,w:30,h:18};shots=[
 function start(){saveHigh();setup();state='play';$('overlay').classList.add('hide')}
 function pause(){if(state==='play'){state='pause';msg('PAUSED','PRESS P OR RESUME','RESUME')}else if(state==='pause'){state='play';$('overlay').classList.add('hide')}}
 function fire(){if(fireTimer>0||state!=='play')return;fireTimer=.28;shots.push({x:player.x,y:player.y-12,v:-430})}
-function startAndFire(){if(state==='pause')pause();if(state!=='play')start();fire()}
 function lose(){if(invulnerable>0)return;lives--;hud();if(lives<=0){state='over';if(score>high){high=score;localStorage.setItem('invaders-high',String(high))}hud();msg('GAME OVER','FINAL SCORE '+String(score).padStart(6,'0'),'PLAY AGAIN')}else{player.x=W/2;shots=[];enemyShots=[];invulnerable=1.5}}
 function update(dt){
   invulnerable=Math.max(0,invulnerable-dt);
   const direction=(keys.has('ArrowRight')||keys.has('d')?1:0)-(keys.has('ArrowLeft')||keys.has('a')?1:0);
   player.x=Math.max(24,Math.min(W-24,player.x+direction*280*dt));fireTimer=Math.max(0,fireTimer-dt);enemyTimer-=dt;
+  fire();
   if(enemyTimer<=0){enemyTimer=Math.max(.3,1.4-level*.08);const alive=aliens.filter(alien=>alien.alive);if(alive.length){const alien=alive[Math.floor(Math.random()*alive.length)];enemyShots.push({x:alien.x,y:alien.y+12,v:150+level*12})}}
   let dx=0;moveTimer+=dt;if(moveTimer>.4){moveTimer=0;dx=8*(Math.floor(Date.now()/400)%2?1:-1)}
   let reachedLine=false;aliens.forEach(alien=>{if(alien.alive){alien.x+=dx;alien.y+=level*.7*dt;if(alien.y>H-105)reachedLine=true}});if(reachedLine){lose();makeWave();return}
@@ -24,10 +24,9 @@ function update(dt){
   if(!aliens.some(alien=>alien.alive)){level++;makeWave();enemyShots=[];hud()}
 }
 function draw(){x.fillStyle='#080d15';x.fillRect(0,0,W,H);for(let i=0;i<70;i++){x.fillStyle=i%5?'#e8f0f733':'#64e6e088';x.fillRect((i*83)%W,(i*47)%H,2,2)}x.strokeStyle='#64e6e622';x.beginPath();x.moveTo(0,H-27);x.lineTo(W,H-27);x.stroke();aliens.forEach(alien=>{if(alien.alive){x.fillStyle=alien.row%2?'#ffb45c':'#64e6e0';x.fillRect(alien.x-12,alien.y-7,24,14);x.fillStyle='#080d15';x.fillRect(alien.x-7,alien.y-2,4,4);x.fillRect(alien.x+3,alien.y-2,4,4)}});if(!(invulnerable>0&&Math.floor(invulnerable*10)%2===0)){x.fillStyle='#64e6e0';x.beginPath();x.moveTo(player.x,player.y-14);x.lineTo(player.x+18,player.y+8);x.lineTo(player.x-18,player.y+8);x.closePath();x.fill()}x.fillStyle='#ffb45c';shots.forEach(shot=>x.fillRect(shot.x-2,shot.y,4,12));x.fillStyle='#ff6b7a';enemyShots.forEach(shot=>x.fillRect(shot.x-2,shot.y,4,12))}
-function movePlayerButton(dir){const button=$(dir==='left'?'leftButton':'rightButton'),key=dir==='left'?'ArrowLeft':'ArrowRight',on=event=>{event.preventDefault();keys.add(key)},off=event=>{event.preventDefault();keys.delete(key)};button.addEventListener('pointerdown',on);['pointerup','pointercancel','pointerleave'].forEach(type=>button.addEventListener(type,off))}
-function bindFire(){const button=$('fireButton');button.addEventListener('pointerdown',event=>{event.preventDefault();startAndFire()})}
+function movePlayerButton(dir){const button=$(dir==='left'?'leftButton':'rightButton'),key=dir==='left'?'ArrowLeft':'ArrowRight',on=event=>{event.preventDefault();if(state!=='play')start();keys.add(key)},off=event=>{event.preventDefault();keys.delete(key)};button.addEventListener('pointerdown',on);['pointerup','pointercancel','pointerleave'].forEach(type=>button.addEventListener(type,off))}
 function loop(time){const dt=Math.min(.033,(time-last)/1000||0);last=time;if(state==='play')update(dt);draw();requestAnimationFrame(loop)}
-$('start').onclick=startAndFire;$('new').onclick=startAndFire;$('pause').onclick=pause;movePlayerButton('left');movePlayerButton('right');bindFire();
-window.onkeydown=event=>{if(['ArrowLeft','ArrowRight',' ','Spacebar','a','d','p','P'].includes(event.key))event.preventDefault();keys.add(event.key);if(event.key===' '||event.key==='Spacebar')startAndFire();if(event.key==='p'||event.key==='P')pause()};window.onkeyup=event=>keys.delete(event.key);
-c.addEventListener('pointerdown',event=>{event.preventDefault();if(state!=='play')start();const rect=c.getBoundingClientRect();player.x=Math.max(24,Math.min(W-24,(event.clientX-rect.left)/rect.width*W));fire()});c.addEventListener('pointermove',event=>{if(event.buttons){event.preventDefault();const rect=c.getBoundingClientRect();player.x=Math.max(24,Math.min(W-24,(event.clientX-rect.left)/rect.width*W))}});
-setup();msg('ALIEN FORMATION','TAP START OR FIRE TO PLAY','START & FIRE');requestAnimationFrame(loop)})();
+$('start').onclick=start;$('new').onclick=start;$('pause').onclick=pause;movePlayerButton('left');movePlayerButton('right');
+window.onkeydown=event=>{if(['ArrowLeft','ArrowRight','a','d','p','P'].includes(event.key))event.preventDefault();keys.add(event.key);if((event.key==='ArrowLeft'||event.key==='ArrowRight'||event.key==='a'||event.key==='d')&&state!=='play')start();if(event.key==='p'||event.key==='P')pause()};window.onkeyup=event=>keys.delete(event.key);
+c.addEventListener('pointerdown',event=>{event.preventDefault();if(state!=='play')start();const rect=c.getBoundingClientRect();player.x=Math.max(24,Math.min(W-24,(event.clientX-rect.left)/rect.width*W))});c.addEventListener('pointermove',event=>{if(event.buttons){event.preventDefault();const rect=c.getBoundingClientRect();player.x=Math.max(24,Math.min(W-24,(event.clientX-rect.left)/rect.width*W))}});
+setup();msg('ALIEN FORMATION','MOVE TO AIM · AUTO-FIRE ENABLED','START');requestAnimationFrame(loop)})();

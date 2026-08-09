@@ -2,10 +2,11 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 
-test('mobile fire can start the game and fire from the title screen', () => {
+test('mobile movement controls are wired to the player', () => {
   const source=fs.readFileSync('space-invaders/game.js','utf8');
-  assert.match(source,/function startAndFire\(\)/);
-  assert.match(source,/bindFire[\s\S]*startAndFire/);
+  assert.match(source,/key=dir==='left'\?'ArrowLeft':'ArrowRight'/);
+  assert.match(source,/movePlayerButton\('left'\)/);
+  assert.match(source,/movePlayerButton\('right'\)/);
 });
 
 test('mobile layout gives the playfield full width and stacks the HUD', () => {
