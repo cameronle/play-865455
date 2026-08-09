@@ -18,6 +18,7 @@
 - [Asteroids](./asteroids/) — Self-maintained inertial space arcade game with splitting rocks, lives, levels, keyboard, and complete touch controls.
 - [Crosswalk](./crosswalk/) — Self-maintained traffic-dodging arcade game with levels, lives, keyboard, swipe, and touch controls.
 - [Simon](./simon/) — Self-maintained sequence-memory game with four touch pads, sound, strict mode, and local best score.
+- [Sudoku](./sudoku/) — Self-maintained Sudoku with unique puzzles, three difficulties, notes, undo, hints, mistakes, timer, and local best times.
 
 ## Local development
 
@@ -48,6 +49,7 @@ python3 -m http.server 8080
 /asteroids/
 /crosswalk/
 /simon/
+/sudoku/
 ```
 
 ## License
@@ -72,6 +74,7 @@ python3 -m http.server 8080
 - Asteroids: maintained in this repository
 - Crosswalk: maintained in this repository
 - Simon: maintained in this repository
+- Sudoku: maintained in this repository
 
 > 本仓库中的小游戏为自维护实现；名称仅用于描述经典玩法。
 
@@ -87,4 +90,5 @@ python3 -m http.server 8080
 - Added Breakout, Minesweeper, Alien Formation, and Neon Maze.
 - Added Gomoku with human-vs-computer play.
 - Added Pong, Sokoban, Asteroids, Crosswalk, and Simon as original self-maintained browser games.
+- Added Sudoku with unique puzzle generation, notes, hints, timer, and mobile controls.
 - Deleted the Gomoku directory and rebuilt it from an empty directory with a new rules engine, UI, input handling, and test suite.
