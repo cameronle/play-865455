@@ -12,7 +12,7 @@
 - [Minesweeper](./minesweeper/) — 自维护的经典扫雷，支持点击、右键/长按插旗、计时和本地最佳时间。
 - [Alien Formation](./space-invaders/) — 自维护的经典固定阵型射击，支持移动、射击、波次和本地最高分。
 - [Neon Maze](./maze/) — 原创迷宫吃点小游戏，支持敌人追踪、关卡、生命和本地最高分。
-- [五子棋](./gomoku/) — 从空目录重新编写的 15×15 人机五子棋，支持三档难度、悔棋、鼠标/手机触控、末手标记和本地战绩。
+- [Gomoku](./gomoku/) — Self-maintained 15×15 human-vs-computer Gomoku with three difficulty levels, undo, mouse/touch controls, last-move marking, and local records.
 
 ## Local development
 

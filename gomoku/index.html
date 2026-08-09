@@ -1,37 +1,37 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
   <meta name="theme-color" content="#efe3c8">
-  <title>五子棋</title>
+  <title>Gomoku</title>
   <link rel="stylesheet" href="app.css">
 </head>
 <body>
   <main class="page">
-    <nav><a href="/">← 游戏厅</a><button id="restart" type="button">重新开局</button></nav>
-    <header><div><span>GOMOKU · 15 × 15</span><h1>五子棋</h1></div><p>你执黑棋先手。<br>率先连成五子获胜。</p></header>
+    <nav><a href="/">← PLAY</a><button id="restart" type="button">NEW GAME</button></nav>
+    <header><div><span>GOMOKU · 15 × 15</span><h1>GOMOKU</h1></div><p>You play Black and move first.<br>Connect five stones to win.</p></header>
 
     <section class="game">
       <div class="left">
-        <div class="status"><i id="turnStone" class="black"></i><div><small>对局状态</small><strong id="statusText">点击开始</strong></div></div>
+        <div class="status"><i id="turnStone" class="black"></i><div><small>GAME STATUS</small><strong id="statusText">PRESS START</strong></div></div>
         <div class="board-box">
-          <canvas id="board" width="750" height="750" aria-label="十五乘十五五子棋棋盘"></canvas>
+          <canvas id="board" width="750" height="750" aria-label="15 by 15 Gomoku board"></canvas>
           <div id="curtain" class="curtain">
-            <span class="mark">五</span>
-            <h2 id="curtainTitle">黑棋先行</h2>
-            <p id="curtainText">点击交叉点落子，电脑将执白棋应战。</p>
-            <button id="start" type="button">开始</button>
+            <span class="mark">5</span>
+            <h2 id="curtainTitle">BLACK MOVES FIRST</h2>
+            <p id="curtainText">Tap an intersection to place a stone. The computer plays White.</p>
+            <button id="start" type="button">START</button>
           </div>
         </div>
-        <div class="actions"><button id="undo" type="button" disabled>悔棋</button><span>支持鼠标与手机触控</span></div>
+        <div class="actions"><button id="undo" type="button" disabled>UNDO</button><span>MOUSE &amp; TOUCH CONTROLS</span></div>
       </div>
 
       <aside>
-        <div class="players"><div><i class="black"></i><b>你</b><small>黑棋</small></div><em>对</em><div><i class="white"></i><b>电脑</b><small>白棋</small></div></div>
-        <label>难度<select id="level"><option value="easy">轻松</option><option value="normal" selected>标准</option><option value="hard">困难</option></select></label>
-        <div class="score"><span><b id="winCount">0</b>胜</span><span><b id="lossCount">0</b>负</span><span><b id="drawCount">0</b>和</span></div>
-        <div class="rules"><b>规则</b><p>黑棋先手。横、竖、斜任一方向连续五子即胜。最后落下的棋子会显示红点。</p></div>
+        <div class="players"><div><i class="black"></i><b>YOU</b><small>BLACK</small></div><em>VS</em><div><i class="white"></i><b>CPU</b><small>WHITE</small></div></div>
+        <label>DIFFICULTY<select id="level"><option value="easy">EASY</option><option value="normal" selected>NORMAL</option><option value="hard">HARD</option></select></label>
+        <div class="score"><span><b id="winCount">0</b>WINS</span><span><b id="lossCount">0</b>LOSSES</span><span><b id="drawCount">0</b>DRAWS</span></div>
+        <div class="rules"><b>RULES</b><p>Black moves first. Connect five stones horizontally, vertically, or diagonally. A red dot marks the latest move.</p></div>
       </aside>
     </section>
   </main>

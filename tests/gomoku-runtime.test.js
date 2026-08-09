@@ -29,12 +29,12 @@ test('fresh page starts, accepts a center tap, and completes the cpu reply', () 
   vm.runInContext(fs.readFileSync('gomoku/app.js','utf8'), sandbox);
 
   nodes.start.listeners.click();
-  assert.equal(nodes.statusText.textContent, '轮到你落子');
+  assert.equal(nodes.statusText.textContent, 'YOUR TURN');
   assert.equal(nodes.curtain.classList.contains('hidden'), true);
   nodes.board.listeners.pointerdown({ clientX:375, clientY:375, preventDefault(){} });
-  assert.equal(nodes.statusText.textContent, '电脑思考中…');
+  assert.equal(nodes.statusText.textContent, 'CPU THINKING…');
   assert.equal(typeof sandbox.pending, 'function');
   sandbox.pending();
-  assert.equal(nodes.statusText.textContent, '轮到你落子');
+  assert.equal(nodes.statusText.textContent, 'YOUR TURN');
   assert.equal(nodes.undo.disabled, false);
 });

@@ -26,13 +26,13 @@
   }
   function begin() {
     clearTimeout(timer); board = newBoard(); phase = 'play'; waiting = false; snapshots = []; last = null;
-    $('curtain').classList.add('hidden'); $('undo').disabled = true; status('轮到你落子', 1); render();
+    $('curtain').classList.add('hidden'); $('undo').disabled = true; status('YOUR TURN', 1); render();
   }
   function end(result) {
     phase = 'over'; waiting = false; $('undo').disabled = true;
-    if (result === 'human') { stats.win++; status('你赢了', 1); overlay('黑棋胜', '你率先连成了五子。', '再来一局'); }
-    else if (result === 'cpu') { stats.loss++; status('电脑获胜', 2); overlay('白棋胜', '电脑率先连成了五子。', '重新挑战'); }
-    else { stats.draw++; status('和棋', 1); overlay('和棋', '棋盘已满，双方未分胜负。', '再来一局'); }
+    if (result === 'human') { stats.win++; status('YOU WIN', 1); overlay('BLACK WINS', 'You connected five stones first.', 'PLAY AGAIN'); }
+    else if (result === 'cpu') { stats.loss++; status('CPU WINS', 2); overlay('WHITE WINS', 'The computer connected five stones first.', 'TRY AGAIN'); }
+    else { stats.draw++; status('DRAW', 1); overlay('DRAW', 'The board is full. No winner this time.', 'PLAY AGAIN'); }
     paintStats();
   }
   function human(row, col) {
@@ -41,7 +41,7 @@
     if (!play(board, row, col, 1)) return;
     last = { row, col, stone: 1 }; render();
     const result = outcome(board, row, col, 1); if (result) return end(result);
-    waiting = true; $('undo').disabled = true; status('电脑思考中…', 2);
+    waiting = true; $('undo').disabled = true; status('CPU THINKING…', 2);
     timer = setTimeout(cpu, 280);
   }
   function cpu() {
@@ -50,11 +50,11 @@
     if (!move) return end('draw');
     play(board, move.row, move.col, 2); last = { ...move, stone: 2 }; waiting = false; render();
     const result = outcome(board, move.row, move.col, 2); if (result) return end(result);
-    status('轮到你落子', 1); $('undo').disabled = snapshots.length === 0;
+    status('YOUR TURN', 1); $('undo').disabled = snapshots.length === 0;
   }
   function undo() {
     if (phase !== 'play' || waiting || !snapshots.length) return;
-    board = snapshots.pop(); last = null; $('undo').disabled = snapshots.length === 0; status('轮到你落子', 1); render();
+    board = snapshots.pop(); last = null; $('undo').disabled = snapshots.length === 0; status('YOUR TURN', 1); render();
   }
   function locate(event) {
     const box = canvas.getBoundingClientRect();
