@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#02060b"><title>Lunar Lander</title><link rel="stylesheet" href="style.css?v=lunar-lander-1"></head>
+<body><main class="page"><header><a href="/">← PLAY</a><h1>LUNAR LANDER</h1><button id="pauseButton" type="button">PAUSE</button></header>
+<section class="hud"><div>SCORE<b id="score">00000</b></div><div>BEST<b id="best">00000</b></div><div>LEVEL<b id="level">1</b></div><div>FUEL<b id="fuel">100</b></div></section>
+<div class="screen"><canvas id="game" width="800" height="600" aria-label="Lunar Lander game"></canvas><div id="overlay" class="overlay"><b id="message">LUNAR LANDER</b><span id="detail">LAND SOFTLY ON THE LIT PLATFORM</span><button id="startButton" type="button">START MISSION</button></div></div>
+<section class="telemetry"><span>V-SPEED <b id="vertical">0.0</b></span><span>H-SPEED <b id="horizontal">0.0</b></span><span>ANGLE <b id="angle">0°</b></span></section>
+<section class="controls" aria-label="Flight controls"><button id="leftButton" type="button" aria-label="Rotate left">↶<span>LEFT</span></button><button id="thrustButton" type="button" aria-label="Thrust">▲<span>THRUST</span></button><button id="rightButton" type="button" aria-label="Rotate right">↷<span>RIGHT</span></button></section>
+<footer>ARROWS / A D ROTATE · SPACE / W THRUST · P PAUSE · R RESTART</footer></main><script src="game.js?v=lunar-lander-1"></script></body></html>
