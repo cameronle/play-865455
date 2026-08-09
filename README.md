@@ -21,6 +21,7 @@
 - [Sudoku](./sudoku/) — Self-maintained Sudoku with unique puzzles, three difficulties, notes, undo, hints, mistakes, timer, and local best times.
 - [Lunar Lander](./lunar-lander/) — Self-maintained physics landing game with random terrain, limited fuel, progressive gravity, complete touch controls, and local records.
 - [Connect Four](./connect-four/) — Self-maintained human-vs-computer strategy game with three AI levels, first-player selection, undo, touch controls, and local records.
+- [Sky Hopper](./sky-hopper/) — Self-maintained vertical platform jumper with automatic bouncing, scrolling terrain, five platform types, keyboard/touch controls, and local high score.
 
 ## Local development
 
@@ -54,6 +55,7 @@ python3 -m http.server 8080
 /sudoku/
 /lunar-lander/
 /connect-four/
+/sky-hopper/
 ```
 
 ## License
@@ -81,6 +83,7 @@ python3 -m http.server 8080
 - Sudoku: maintained in this repository
 - Lunar Lander: maintained in this repository
 - Connect Four: maintained in this repository
+- Sky Hopper: maintained in this repository
 
 > 本仓库中的小游戏为自维护实现；名称仅用于描述经典玩法。
 
@@ -98,4 +101,5 @@ python3 -m http.server 8080
 - Added Pong, Sokoban, Asteroids, Crosswalk, and Simon as original self-maintained browser games.
 - Added Sudoku with unique puzzle generation, notes, hints, timer, and mobile controls.
 - Added Lunar Lander and Connect Four with full keyboard and mobile controls.
+- Added Sky Hopper with automatic bouncing, scrolling platforms, and complete mobile controls.
 - Deleted the Gomoku directory and rebuilt it from an empty directory with a new rules engine, UI, input handling, and test suite.
