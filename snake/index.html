@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#faf8ef">
+  <title>Classic Snake</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <a href="/" class="back">← PLAY</a>
+      <h1>SNAKE</h1>
+      <button id="pauseButton" class="quiet" type="button">PAUSE</button>
+    </header>
+
+    <section class="game-layout" aria-label="Classic Snake">
+      <div class="board-wrap">
+        <canvas id="board" width="400" height="400" aria-label="Snake board"></canvas>
+        <div id="message" class="message">
+          <strong id="messageTitle">SNAKE</strong>
+          <span id="messageHint">PRESS START TO PLAY</span>
+          <button id="startButton" type="button">START</button>
+        </div>
+      </div>
+
+      <aside class="sidebar">
+        <div class="stat"><span>SCORE</span><strong id="score">000000</strong></div>
+        <div class="stat"><span>HIGH SCORE</span><strong id="highScore">000000</strong></div>
+        <div class="stat"><span>SPEED</span><strong id="speed">01</strong></div>
+        <div class="stat"><span>WALLS</span><strong>WRAP</strong></div>
+        <button id="newGameButton" class="secondary" type="button">NEW GAME</button>
+        <p class="keys"><b>← → ↑ ↓</b> MOVE<br><b>W A S D</b> MOVE<br><b>P</b> PAUSE<br><b>WALLS</b> WRAP AROUND</p>
+      </aside>
+    </section>
+
+    <div class="touch-controls" aria-label="Touch controls">
+      <span></span><button data-action="up" aria-label="Move up">↑</button><span></span>
+      <button data-action="left" aria-label="Move left">←</button><button data-action="down" aria-label="Move down">↓</button><button data-action="right" aria-label="Move right">→</button>
+    </div>
+    <footer>CLASSIC RULES · WALLS WRAP · LOCAL HIGH SCORE</footer>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>
+
