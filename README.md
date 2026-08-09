@@ -22,6 +22,7 @@
 - [Lunar Lander](./lunar-lander/) — Self-maintained physics landing game with random terrain, limited fuel, progressive gravity, complete touch controls, and local records.
 - [Connect Four](./connect-four/) — Self-maintained human-vs-computer strategy game with three AI levels, first-player selection, undo, touch controls, and local records.
 - [Sky Hopper](./sky-hopper/) — Self-maintained vertical platform jumper with automatic bouncing, scrolling terrain, five platform types, keyboard/touch controls, and local high score.
+- [Helicopter Cave](./helicopter-cave/) — Self-maintained single-action cave flyer with procedural navigable terrain, obstacles, progressive speed, keyboard/touch controls, and local distance record.
 
 ## Local development
 
@@ -56,6 +57,7 @@ python3 -m http.server 8080
 /lunar-lander/
 /connect-four/
 /sky-hopper/
+/helicopter-cave/
 ```
 
 ## License
@@ -84,6 +86,7 @@ python3 -m http.server 8080
 - Lunar Lander: maintained in this repository
 - Connect Four: maintained in this repository
 - Sky Hopper: maintained in this repository
+- Helicopter Cave: maintained in this repository
 
 > 本仓库中的小游戏为自维护实现；名称仅用于描述经典玩法。
 
@@ -102,4 +105,5 @@ python3 -m http.server 8080
 - Added Sudoku with unique puzzle generation, notes, hints, timer, and mobile controls.
 - Added Lunar Lander and Connect Four with full keyboard and mobile controls.
 - Added Sky Hopper with automatic bouncing, scrolling platforms, and complete mobile controls.
+- Added Helicopter Cave with single-action flight, procedural cave generation, and progressive speed.
 - Deleted the Gomoku directory and rebuilt it from an empty directory with a new rules engine, UI, input handling, and test suite.
