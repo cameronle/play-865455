@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#faf8ef">
+  <title>Classic Tetris</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <a href="/" class="back">← PLAY</a>
+      <h1>TETRIS</h1>
+      <button id="pauseButton" class="quiet" type="button">PAUSE</button>
+    </header>
+
+    <section class="game-layout" aria-label="Classic Tetris">
+      <div class="board-wrap">
+        <canvas id="board" width="300" height="600" aria-label="Tetris board"></canvas>
+        <div id="message" class="message">
+          <strong id="messageTitle">TETRIS</strong>
+          <span id="messageHint">PRESS START TO PLAY</span>
+          <button id="startButton" type="button">START</button>
+        </div>
+      </div>
+
+      <aside class="sidebar">
+        <div class="stat"><span>SCORE</span><strong id="score">000000</strong></div>
+        <div class="stat"><span>HIGH SCORE</span><strong id="highScore">000000</strong></div>
+        <div class="stat"><span>LEVEL</span><strong id="level">01</strong></div>
+        <div class="stat"><span>LINES</span><strong id="lines">000</strong></div>
+        <div class="next-box"><span>NEXT</span><canvas id="next" width="120" height="90" aria-label="Next piece"></canvas></div>
+        <button id="newGameButton" class="secondary" type="button">NEW GAME</button>
+        <p class="keys"><b>← →</b> MOVE<br><b>↑</b> ROTATE<br><b>↓</b> SOFT DROP<br><b>SPACE</b> HARD DROP<br><b>P</b> PAUSE</p>
+      </aside>
+    </section>
+
+    <div class="touch-controls" aria-label="Touch controls">
+      <button data-action="left" aria-label="Move left">←</button>
+      <button data-action="rotate" aria-label="Rotate">↻</button>
+      <button data-action="right" aria-label="Move right">→</button>
+      <button data-action="down" aria-label="Soft drop">↓</button>
+      <button data-action="drop" aria-label="Hard drop">⇣</button>
+    </div>
+    <footer>CLASSIC RULES · NO ACCOUNT · LOCAL HIGH SCORE</footer>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>
