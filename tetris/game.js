@@ -44,7 +44,7 @@
     for(let y=0;y<ROWS;y++) for(let x=0;x<COLS;x++) if(grid[y][x]) drawCell(ctx,x,y,COLORS[grid[y][x]],CELL);
     if(piece){
       const ghost={...piece,y:piece.y};while(!collides(ghost,0,1))ghost.y++;
-      piece.matrix.forEach((row,y)=>row.forEach((v,x)=>{if(v){ctx.globalAlpha=.18;drawCell(ctx,piece.x+x,ghost.y+y,COLORS[piece.type],CELL);ctx.globalAlpha=1}}));
+      piece.matrix.forEach((row,y)=>row.forEach((v,x)=>{if(v){ctx.globalAlpha=.06;drawCell(ctx,piece.x+x,ghost.y+y,COLORS[piece.type],CELL);ctx.globalAlpha=1}}));
       piece.matrix.forEach((row,y)=>row.forEach((v,x)=>{if(v)drawCell(ctx,piece.x+x,piece.y+y,COLORS[piece.type],CELL)}));
     }
     nextCtx.clearRect(0,0,nextCanvas.width,nextCanvas.height);if(nextType){const m=SHAPES[nextType],size=22,ox=(nextCanvas.width-m[0].length*size)/2,oy=(nextCanvas.height-m.length*size)/2; m.forEach((row,y)=>row.forEach((v,x)=>{if(v){nextCtx.save();nextCtx.translate(ox,oy);drawCell(nextCtx,x,y,COLORS[nextType],size);nextCtx.restore()}}))}
