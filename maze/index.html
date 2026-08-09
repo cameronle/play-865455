@@ -1,3 +1,39 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#070b12"><title>Neon Maze</title><link rel="stylesheet" href="style.css"></head>
-<body><main class="page"><header><a href="/">← PLAY</a><h1>NEON MAZE</h1><button id="pause">PAUSE</button></header><section class="layout"><div class="frame"><canvas id="game" width="480" height="480"></canvas><div id="overlay" class="overlay"><b id="title">NEON MAZE</b><span id="hint">PRESS START TO PLAY</span><button id="start">START</button></div></div><aside><div class="stat"><span>SCORE</span><b id="score">000000</b></div><div class="stat"><span>HIGH SCORE</span><b id="high">000000</b></div><div class="stat"><span>LEVEL</span><b id="level">01</b></div><div class="stat"><span>LIVES</span><b id="lives">♥♥♥</b></div><button id="new" class="new">NEW GAME</button><p>← → ↑ ↓ MOVE<br>P PAUSE<br>EAT ALL DOTS</p></aside></section><div class="mobile-controls" aria-label="Touch controls"><span></span><button data-dir="up" type="button">↑</button><span></span><button data-dir="left" type="button">←</button><button data-dir="down" type="button">↓</button><button data-dir="right" type="button">→</button></div><footer>FIND THE LIGHT · AVOID THE HUNTERS</footer></main><script src="game.js"></script></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#070b12">
+  <title>Neon Maze</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page">
+    <header><a href="/">← PLAY</a><h1>NEON MAZE</h1><button id="pause" type="button">PAUSE</button></header>
+    <section class="layout">
+      <div class="frame">
+        <canvas id="game" width="480" height="480" aria-label="Neon Maze game board"></canvas>
+        <div id="overlay" class="overlay"><b id="title">NEON MAZE</b><span id="hint">PRESS START TO PLAY</span><button id="start" type="button">START</button></div>
+      </div>
+      <aside>
+        <div class="stats">
+          <div class="stat"><span>SCORE</span><b id="score">000000</b></div>
+          <div class="stat"><span>HIGH SCORE</span><b id="high">000000</b></div>
+          <div class="stat"><span>LEVEL</span><b id="level">01</b></div>
+          <div class="stat"><span>LIVES</span><b id="lives">♥♥♥</b></div>
+        </div>
+        <button id="new" class="new" type="button">NEW GAME</button>
+        <p class="desktop-help">← → ↑ ↓ MOVE<br>P PAUSE<br>EAT ALL DOTS</p>
+      </aside>
+    </section>
+    <p class="touch-help">SWIPE OR TAP TO MOVE</p>
+    <div class="mobile-controls" aria-label="Touch controls">
+      <span></span><button data-dir="up" type="button" aria-label="Move up">↑</button><span></span>
+      <button data-dir="left" type="button" aria-label="Move left">←</button><button data-dir="down" type="button" aria-label="Move down">↓</button><button data-dir="right" type="button" aria-label="Move right">→</button>
+    </div>
+    <footer>FIND THE LIGHT · AVOID THE HUNTERS</footer>
+  </main>
+  <script src="logic.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

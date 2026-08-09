@@ -11,7 +11,7 @@
 - [Breakout](./breakout/) — 自维护的纯 HTML5 Canvas 打砖块，支持反弹、关卡、生命和本地最高分。
 - [Minesweeper](./minesweeper/) — 自维护的经典扫雷，支持点击、右键/长按插旗、计时和本地最佳时间。
 - [Alien Formation](./space-invaders/) — 自维护的经典固定阵型射击，支持移动、射击、波次和本地最高分。
-- [Neon Maze](./maze/) — 原创迷宫吃点小游戏，支持敌人追踪、关卡、生命和本地最高分。
+- [Neon Maze](./maze/) — 原创迷宫吃点小游戏，支持寻路敌人、关卡、生命、本地最高分、手机滑动和触屏方向键。
 - [Gomoku](./gomoku/) — Self-maintained 15×15 human-vs-computer Gomoku with three difficulty levels, undo, mouse/touch controls, last-move marking, and local records.
 
 ## Local development
