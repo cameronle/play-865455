@@ -6,11 +6,11 @@
 
 - [Classic 2048](./2048/) — 本仓库自维护的纯 HTML5/CSS/JavaScript 2048，支持键盘、触摸、计分和本地最高分。
 - [Sky Patrol](./shooter/) — 自维护的 HTML5 Canvas 街机风打飞机，自动发射、关卡、生命、道具、音效与移动端触控。
-- [Classic Tetris](./tetris/) — 自维护的纯 HTML5 Canvas 俄罗斯方块，支持键盘、触摸、计分、等级、下一个方块和本地最高分。
+- [Classic Tetris](./tetris/) — 自维护的纯 HTML5 Canvas 俄罗斯方块，支持键盘、完整触控、计分、等级、下一个方块和本地最高分。
 - [Classic Snake](./snake/) — 自维护的纯 HTML5 Canvas 贪食蛇，支持键盘、触摸、加速和穿墙玩法。
 - [Breakout](./breakout/) — 自维护的纯 HTML5 Canvas 打砖块，支持反弹、关卡、生命、本地最高分、手机拖动和一键开始/发球。
-- [Minesweeper](./minesweeper/) — 自维护的经典扫雷，支持点击、右键/长按插旗、计时和本地最佳时间。
-- [Alien Formation](./space-invaders/) — 自维护的经典固定阵型射击，支持移动、射击、波次和本地最高分。
+- [Minesweeper](./minesweeper/) — 自维护的经典扫雷，支持首次落子保护、点击、右键/长按插旗、计时和本地最佳时间。
+- [Alien Formation](./space-invaders/) — 自维护的经典固定阵型射击，支持移动、射击、波次、受击保护、手机触控和本地最高分。
 - [Neon Maze](./maze/) — 原创迷宫吃点小游戏，支持寻路敌人、关卡、生命、本地最高分、手机滑动和触屏方向键。
 - [Gomoku](./gomoku/) — Self-maintained 15×15 human-vs-computer Gomoku with three difficulty levels, undo, mouse/touch controls, last-move marking, and local records.
 

@@ -62,10 +62,24 @@
   function turn(){if(state!=='playing')return;const rotated=rotate(piece.matrix);for(const kick of [0,-1,1,-2,2])if(!collides(piece,kick,0,rotated)){piece.matrix=rotated;piece.x+=kick;draw();return}}
   function hardDrop(){if(state!=='playing')return;let distance=0;while(!collides(piece,0,1)){piece.y++;distance++}score+=distance*2;lock();updateHud();draw()}
   function tick(time){const dt=Math.min(100,lastTime?time-lastTime:0);lastTime=time;if(state==='playing'){dropTimer+=dt;const interval=Math.max(80,800-(level-1)*65);if(dropTimer>=interval){dropTimer=0;stepDown()}if(softDropping){stepDown();dropTimer=0}draw()}requestAnimationFrame(tick)}
-  function action(name){if(name==='left')move(-1);if(name==='right')move(1);if(name==='rotate')turn();if(name==='down'){softDropping=true;stepDown();score+=1;updateHud();draw()}if(name==='drop')hardDrop()}
+  function action(name){
+    if(state!=='playing'||!piece)return;
+    if(name==='left')move(-1);if(name==='right')move(1);if(name==='rotate')turn();
+    if(name==='down'){softDropping=true;if(stepDown())score+=1;updateHud();draw()}
+    if(name==='drop')hardDrop();
+  }
 
   $('startButton').addEventListener('click',()=>{if(state==='paused')pause();else start()});$('newGameButton').addEventListener('click',start);$('pauseButton').addEventListener('click',pause);
   window.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' ','p','P'].includes(e.key))e.preventDefault();if(e.key==='ArrowLeft'||e.key==='a')action('left');if(e.key==='ArrowRight'||e.key==='d')action('right');if(e.key==='ArrowUp'||e.key==='w')action('rotate');if(e.key==='ArrowDown'||e.key==='s'){softDropping=true;action('down')}if(e.key===' ')action('drop');if(e.key==='p'||e.key==='P')pause()});window.addEventListener('keyup',e=>{if(e.key==='ArrowDown'||e.key==='s')softDropping=false});
-  document.querySelectorAll('[data-action]').forEach(button=>{const name=button.dataset.action;button.addEventListener('pointerdown',e=>{e.preventDefault();action(name)})});
+  document.querySelectorAll('[data-action]').forEach(button=>{
+    const name=button.dataset.action;
+    button.addEventListener('pointerdown',e=>{e.preventDefault();action(name)});
+    if(name==='down'){
+      const stop=e=>{e.preventDefault();softDropping=false};
+      button.addEventListener('pointerup',stop);
+      button.addEventListener('pointercancel',stop);
+      button.addEventListener('pointerleave',stop);
+    }
+  });
   grid=emptyGrid();piece=null;nextType=randomType();updateHud();draw();requestAnimationFrame(tick);
 })();
