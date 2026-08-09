@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#070b12">
+  <title>Vector Drift</title>
+  <link rel="stylesheet" href="style.css?v=asteroids-1">
+</head>
+<body>
+  <main class="page">
+    <header><a href="/">← PLAY</a><h1>VECTOR DRIFT</h1><button id="pauseButton" type="button">PAUSE</button></header>
+    <section class="hud" aria-label="Game status">
+      <div><span>SCORE</span><b id="score">000000</b></div><div><span>HIGH</span><b id="high">000000</b></div><div><span>LEVEL</span><b id="level">01</b></div><div><span>LIVES</span><b id="lives">◆ ◆ ◆</b></div>
+    </section>
+    <div class="frame">
+      <canvas id="game" width="720" height="720" aria-label="Vector Drift asteroid game"></canvas>
+      <div id="overlay" class="overlay"><b id="overlayTitle">VECTOR DRIFT</b><span id="overlayText">CLEAR THE DEBRIS FIELD</span><button id="startButton" type="button">START MISSION</button></div>
+    </div>
+    <section class="controls" aria-label="Touch controls">
+      <button id="leftButton" type="button" aria-label="Rotate left">↶<small>LEFT</small></button>
+      <button id="thrustButton" type="button" aria-label="Thrust">▲<small>THRUST</small></button>
+      <button id="fireButton" class="fire" type="button" aria-label="Fire">●<small>FIRE</small></button>
+      <button id="rightButton" type="button" aria-label="Rotate right">↷<small>RIGHT</small></button>
+    </section>
+    <footer>ARROWS / A D ROTATE · W THRUST · SPACE FIRE · P PAUSE</footer>
+  </main>
+  <script src="game.js?v=asteroids-1"></script>
+</body>
+</html>

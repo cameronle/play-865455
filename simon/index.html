@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#080a12">
+  <title>Signal Echo — Memory Game</title>
+  <link rel="stylesheet" href="style.css?v=1">
+</head>
+<body>
+  <main class="game-shell" aria-labelledby="gameTitle">
+    <header class="masthead">
+      <p class="eyebrow">MEMORY TERMINAL // 04</p>
+      <h1 id="gameTitle">SIGNAL <span>ECHO</span></h1>
+      <p class="subtitle">Watch the transmission. Repeat it without error.</p>
+    </header>
+
+    <section class="console" aria-label="Game controls and status">
+      <div class="readout">
+        <div class="stat"><span class="label">SCORE</span><strong id="score">00</strong></div>
+        <div class="status-panel" aria-live="polite" aria-atomic="true">
+          <span class="status-light" id="statusLight"></span>
+          <strong id="status">STANDBY</strong>
+        </div>
+        <div class="stat"><span class="label">BEST</span><strong id="best">00</strong></div>
+      </div>
+
+      <div class="board" id="board" aria-label="Four-color memory board">
+        <button class="pad pad-green" data-pad="0" aria-label="Green pad, keyboard 1 or Q"><span>1</span></button>
+        <button class="pad pad-red" data-pad="1" aria-label="Red pad, keyboard 2 or W"><span>2</span></button>
+        <button class="pad pad-yellow" data-pad="2" aria-label="Yellow pad, keyboard 3 or A"><span>3</span></button>
+        <button class="pad pad-blue" data-pad="3" aria-label="Blue pad, keyboard 4 or S"><span>4</span></button>
+        <div class="core" aria-hidden="true"><span>ECHO</span></div>
+      </div>
+
+      <div class="controls">
+        <button class="control-button start" id="startButton" type="button">START SIGNAL</button>
+        <label class="strict-toggle">
+          <input id="strictMode" type="checkbox">
+          <span class="switch" aria-hidden="true"></span>
+          <span>STRICT MODE</span>
+        </label>
+      </div>
+    </section>
+
+    <footer>
+      <p><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> or <kbd>Q</kbd><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd> to play · <kbd>Space</kbd> to start</p>
+    </footer>
+  </main>
+  <script src="game.js?v=1"></script>
+</body>
+</html>

@@ -13,6 +13,11 @@
 - [Alien Formation](./space-invaders/) — 自维护的经典固定阵型射击，支持移动、射击、波次、受击保护、手机触控和本地最高分。
 - [Neon Maze](./maze/) — 原创迷宫吃点小游戏，支持寻路敌人、关卡、生命、本地最高分、手机滑动和触屏方向键。
 - [Gomoku](./gomoku/) — Self-maintained 15×15 human-vs-computer Gomoku with three difficulty levels, undo, mouse/touch controls, last-move marking, and local records.
+- [Pong](./pong/) — Self-maintained paddle game with AI, pointer/drag controls, score targets, and local records.
+- [Sokoban](./sokoban/) — Self-maintained box-pushing puzzle with original levels, undo, restart, keyboard, swipe, and touch controls.
+- [Asteroids](./asteroids/) — Self-maintained inertial space arcade game with splitting rocks, lives, levels, keyboard, and complete touch controls.
+- [Crosswalk](./crosswalk/) — Self-maintained traffic-dodging arcade game with levels, lives, keyboard, swipe, and touch controls.
+- [Simon](./simon/) — Self-maintained sequence-memory game with four touch pads, sound, strict mode, and local best score.
 
 ## Local development
 
@@ -38,6 +43,11 @@ python3 -m http.server 8080
 /space-invaders/
 /maze/
 /gomoku/
+/pong/
+/sokoban/
+/asteroids/
+/crosswalk/
+/simon/
 ```
 
 ## License
@@ -57,6 +67,11 @@ python3 -m http.server 8080
 - Alien Formation: maintained in this repository
 - Neon Maze: maintained in this repository
 - Gomoku: maintained in this repository
+- Pong: maintained in this repository
+- Sokoban: maintained in this repository
+- Asteroids: maintained in this repository
+- Crosswalk: maintained in this repository
+- Simon: maintained in this repository
 
 > 本仓库中的小游戏为自维护实现；名称仅用于描述经典玩法。
 
@@ -66,9 +81,10 @@ python3 -m http.server 8080
 
 - Replaced the former 2048 copy with a self-maintained implementation.
 - Added Sky Patrol.
-- Sky Patrol uses automatic firing; manual fire remains available as an extra control.
+- Sky Patrol uses automatic firing and includes mobile movement and pause controls.
 - Added Classic Tetris with keyboard and touch controls.
 - Added Classic Snake with wrap-around walls.
 - Added Breakout, Minesweeper, Alien Formation, and Neon Maze.
 - Added Gomoku with human-vs-computer play.
+- Added Pong, Sokoban, Asteroids, Crosswalk, and Simon as original self-maintained browser games.
 - Deleted the Gomoku directory and rebuilt it from an empty directory with a new rules engine, UI, input handling, and test suite.
