@@ -20,12 +20,12 @@
     <section class="game-shell">
       <div class="turn"><span id="turnDot"></span><b id="status">YOUR TURN</b><button id="undoButton" type="button">UNDO</button></div>
       <div class="column-controls" aria-label="Choose a column"><button type="button" data-column="0" aria-label="Drop in column 1">↓</button><button type="button" data-column="1" aria-label="Drop in column 2">↓</button><button type="button" data-column="2" aria-label="Drop in column 3">↓</button><button type="button" data-column="3" aria-label="Drop in column 4">↓</button><button type="button" data-column="4" aria-label="Drop in column 5">↓</button><button type="button" data-column="5" aria-label="Drop in column 6">↓</button><button type="button" data-column="6" aria-label="Drop in column 7">↓</button></div>
-      <div id="board" class="board" role="grid" aria-label="Connect Four board"></div>
+      <div class="board-wrap"><div id="board" class="board" role="grid" aria-label="Connect Four board"></div><div id="resultOverlay" class="result-overlay"><b id="resultTitle">YOU WIN</b><span id="resultText">FOUR DISCS CONNECTED</span><button id="resultButton" type="button">PLAY AGAIN</button></div></div>
     </section>
     <section class="legend"><span><i class="human"></i>YOU</span><span><i class="computer"></i>COMPUTER</span><span>CONNECT FOUR TO WIN</span></section>
     <footer>TAP A COLUMN · KEYS 1–7 · U UNDO · N NEW</footer>
   </main>
-  <script src="rules.js?v=style-2"></script><script src="game.js?v=style-2"></script>
+  <script src="rules.js?v=result-1"></script><script src="game.js?v=result-1"></script>
   <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
 </body>
 </html>
