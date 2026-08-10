@@ -14,7 +14,8 @@ test('2048 acknowledges reaching 2048 exactly once and allows continuing', () =>
 test('Tetris drop scoring updates current high score and held drop awards successful rows', () => {
   const source = read('tetris/game.js');
   assert.match(source, /function addScore\(points\)/);
-  assert.match(source, /if\(softDropping&&stepDown\(\)\)addScore\(1\)/);
+  assert.match(source, /if\(softDropRequested&&stepDown\(\)\)addScore\(1\)/);
+  assert.match(source, /softDropRequested=false/);
   assert.match(source, /addScore\(distance\*2\)/);
 });
 
