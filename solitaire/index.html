@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#070b12">
+  <script src="/theme.js?v=solitaire-1"></script>
+  <title>Solitaire</title>
+  <link rel="stylesheet" href="style.css?v=solitaire-1">
+  <link rel="stylesheet" href="/theme.css?v=solitaire-1">
+</head>
+<body>
+  <main class="page">
+    <header class="topbar"><a href="/">← PLAY</a><h1>SOLITAIRE</h1><button id="newButton" type="button">NEW</button></header>
+    <section class="stats"><div><span>MOVES</span><b id="moves">000</b></div><div><span>TIME</span><b id="time">00:00</b></div><div><span>WINS</span><b id="wins">0</b></div><div><span>BEST</span><b id="best">---</b></div></section>
+    <section class="game-shell" aria-label="Klondike Solitaire">
+      <div class="top-row">
+        <button id="stock" class="slot stock" type="button" aria-label="Draw from stock"></button>
+        <button id="waste" class="slot" type="button" aria-label="Waste pile"></button>
+        <div class="spacer"></div>
+        <button id="foundation0" class="slot foundation" data-foundation="0" type="button" aria-label="Clubs foundation">♣</button>
+        <button id="foundation1" class="slot foundation red" data-foundation="1" type="button" aria-label="Diamonds foundation">♦</button>
+        <button id="foundation2" class="slot foundation red" data-foundation="2" type="button" aria-label="Hearts foundation">♥</button>
+        <button id="foundation3" class="slot foundation" data-foundation="3" type="button" aria-label="Spades foundation">♠</button>
+      </div>
+      <div class="tableau" id="tableau">
+        <div id="tableau0" class="pile" data-pile="0"></div><div id="tableau1" class="pile" data-pile="1"></div><div id="tableau2" class="pile" data-pile="2"></div><div id="tableau3" class="pile" data-pile="3"></div><div id="tableau4" class="pile" data-pile="4"></div><div id="tableau5" class="pile" data-pile="5"></div><div id="tableau6" class="pile" data-pile="6"></div>
+      </div>
+      <div id="resultOverlay" class="result-overlay"><b>YOU WIN</b><span>ALL FOUR SUITS COMPLETED</span><button id="resultButton" type="button">PLAY AGAIN</button></div>
+    </section>
+    <div class="actions"><button id="undoButton" type="button">UNDO</button><button id="hintButton" type="button">HINT</button></div>
+    <footer>TAP A CARD, THEN ITS DESTINATION · DOUBLE TAP TO SEND HOME · STOCK RECYCLES</footer>
+  </main>
+  <script src="rules.js?v=solitaire-1"></script><script src="game.js?v=solitaire-1"></script>
+  <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
+</body>
+</html>
