@@ -35,3 +35,17 @@ test('Sokoban uses flat neutral tiles and collection theme support',()=>{
   assert.doesNotMatch(js,/roundedRect\(/);
   assert.doesNotMatch(js,/ctx\.arc\(px,py-s\*\.08/);
 });
+
+test('Connect Four uses the same flat collection shell and shared theme control',()=>{
+  const html=read('connect-four/index.html');
+  const css=read('connect-four/style.css');
+  const js=read('connect-four/game.js');
+  assert.match(html,/<header class="topbar">/);
+  assert.match(html,/src="\/theme\.js\?v=[^"]+"/);
+  assert.match(html,/class="theme-toggle"/);
+  assert.match(css,/\.game-shell\{[^}]*border:1px solid var\(--line\)/);
+  assert.match(css,/\[data-theme="light"\]/);
+  assert.doesNotMatch(css,/radial-gradient|box-shadow:0 0 12px/);
+  assert.match(css,/\.board\{[^}]*background:var\(--board\)/);
+  assert.doesNotMatch(js,/style\.boxShadow/);
+});

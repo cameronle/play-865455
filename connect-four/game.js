@@ -36,7 +36,6 @@
   function setStatus(message, player = turn) {
     statusEl.textContent = message;
     turnDot.style.background = player === 2 ? 'var(--orange)' : 'var(--cyan)';
-    turnDot.style.boxShadow = `0 0 12px ${player === 2 ? 'var(--orange)' : 'var(--cyan)'}`;
   }
 
   function finish(result) {
