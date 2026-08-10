@@ -46,11 +46,12 @@
     if(eating){score+=10;if(score>highScore)highScore=score;stepMs=Math.max(65,145-Math.floor(score/50)*5);food=randomFood();updateHud();if(!food)gameWon()}else snake.pop();
   }
   function drawCell(x,y,color,inset=2){ctx.fillStyle=color;ctx.fillRect(x*CELL+inset,y*CELL+inset,CELL-inset*2,CELL-inset*2)}
+  function themeColor(name,fallback){if(typeof getComputedStyle!=='function')return fallback;const value=getComputedStyle(document.documentElement).getPropertyValue(name).trim();return value||fallback}
   function draw(){
-    ctx.fillStyle='#ded8cc';ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.strokeStyle='rgba(62,57,52,.06)';ctx.lineWidth=1;for(let i=1;i<COLS;i++){ctx.beginPath();ctx.moveTo(i*CELL+.5,0);ctx.lineTo(i*CELL+.5,canvas.height);ctx.stroke()}for(let i=1;i<ROWS;i++){ctx.beginPath();ctx.moveTo(0,i*CELL+.5);ctx.lineTo(canvas.width,i*CELL+.5);ctx.stroke()}
+    ctx.fillStyle=themeColor('--canvas-bg','#ded8cc');ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.strokeStyle=themeColor('--canvas-grid','rgba(62,57,52,.06)');ctx.lineWidth=1;for(let i=1;i<COLS;i++){ctx.beginPath();ctx.moveTo(i*CELL+.5,0);ctx.lineTo(i*CELL+.5,canvas.height);ctx.stroke()}for(let i=1;i<ROWS;i++){ctx.beginPath();ctx.moveTo(0,i*CELL+.5);ctx.lineTo(canvas.width,i*CELL+.5);ctx.stroke()}
     if(food){drawCell(food.x,food.y,'#d86c66',3);ctx.fillStyle='rgba(255,255,255,.35)';ctx.fillRect(food.x*CELL+6,food.y*CELL+5,4,4)}
-    snake.forEach((part,index)=>{drawCell(part.x,part.y,index===0?'#558d62':'#70a879',index===0?2:3);if(index===0){ctx.fillStyle='#faf8ef';const eyeX=part.x*CELL+(direction.x>=0?13:4),eyeY=part.y*CELL+(direction.y>=0?13:4);ctx.fillRect(eyeX,eyeY,3,3)}});
+    snake.forEach((part,index)=>{drawCell(part.x,part.y,index===0?'#558d62':'#70a879',index===0?2:3);if(index===0){ctx.fillStyle=themeColor('--snake-eye','#faf8ef');const eyeX=part.x*CELL+(direction.x>=0?13:4),eyeY=part.y*CELL+(direction.y>=0?13:4);ctx.fillRect(eyeX,eyeY,3,3)}});
   }
   function action(name){if(name==='up')setDirection(0,-1);if(name==='down')setDirection(0,1);if(name==='left')setDirection(-1,0);if(name==='right')setDirection(1,0)}
   function loop(time){const dt=Math.min(100,time-last||0);last=time;if(state==='playing'){timer+=dt;if(timer>=stepMs){timer=0;tick();draw()}}requestAnimationFrame(loop)}
@@ -58,5 +59,6 @@
   $('startButton').addEventListener('click',()=>{if(state==='paused')pause();else start()});$('newGameButton').addEventListener('click',start);$('pauseButton').addEventListener('click',pause);
   window.addEventListener('keydown',e=>{if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','w','a','s','d','W','A','S','D','p','P'].includes(e.key))e.preventDefault();if(e.key==='ArrowUp'||e.key==='w'||e.key==='W')action('up');if(e.key==='ArrowDown'||e.key==='s'||e.key==='S')action('down');if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A')action('left');if(e.key==='ArrowRight'||e.key==='d'||e.key==='D')action('right');if(e.key==='p'||e.key==='P')pause()});
   document.querySelectorAll('[data-action]').forEach(button=>button.addEventListener('pointerdown',e=>{e.preventDefault();action(button.dataset.action)}));
+  if(document.addEventListener)document.addEventListener('themechange',draw);
   reset();showMessage('SNAKE','PRESS START TO PLAY','START');requestAnimationFrame(loop);
 })();

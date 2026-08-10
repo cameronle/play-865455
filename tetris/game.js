@@ -15,6 +15,7 @@
   const $ = id => document.getElementById(id);
   const scoreEl=$('score'), highScoreEl=$('highScore'), levelEl=$('level'), linesEl=$('lines');
   const message=$('message'), messageTitle=$('messageTitle'), messageHint=$('messageHint');
+  function cssValue(name,fallback){if(typeof getComputedStyle!=='function')return fallback;return getComputedStyle(document.documentElement).getPropertyValue(name).trim()||fallback}
   let grid, piece, nextType, score=0, highScore=Number(localStorage.getItem('classic-tetris-high-score')||0), level=1, lines=0;
   let state='title', dropTimer=0, lastTime=0, softDropping=false;
   highScoreEl.textContent=String(highScore).padStart(6,'0');
@@ -37,10 +38,10 @@
   function drawCell(context,x,y,color,size){
     const pad=Math.max(1,size*.08); context.fillStyle=color;context.fillRect(x*size+pad,y*size+pad,size-pad*2,size-pad*2);
     context.fillStyle='rgba(255,255,255,.22)';context.fillRect(x*size+pad,y*size+pad,size-pad*2,Math.max(2,size*.1));
-    context.strokeStyle='rgba(62,57,52,.14)';context.strokeRect(x*size+pad+.5,y*size+pad+.5,size-pad*2-1,size-pad*2-1);
+    context.strokeStyle=cssValue('--canvas-grid','rgba(62,57,52,.14)');context.strokeRect(x*size+pad+.5,y*size+pad+.5,size-pad*2-1,size-pad*2-1);
   }
   function draw(){
-    ctx.fillStyle='#d8d1c5';ctx.fillRect(0,0,boardCanvas.width,boardCanvas.height);
+    ctx.fillStyle=cssValue('--canvas-bg','#d8d1c5');ctx.fillRect(0,0,boardCanvas.width,boardCanvas.height);
     for(let y=0;y<ROWS;y++) for(let x=0;x<COLS;x++) if(grid[y][x]) drawCell(ctx,x,y,COLORS[grid[y][x]],CELL);
     if(piece){
       const ghost={...piece,y:piece.y};while(!collides(ghost,0,1))ghost.y++;
@@ -82,5 +83,6 @@
       button.addEventListener('pointerleave',stop);
     }
   });
+  if(document.addEventListener)document.addEventListener('themechange',draw);
   grid=emptyGrid();piece=null;nextType=randomType();updateHud();draw();requestAnimationFrame(tick);
 })();
