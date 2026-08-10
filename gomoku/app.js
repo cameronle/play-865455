@@ -65,18 +65,14 @@
     return { row, col };
   }
   function drawBoard() {
-    const wood = ctx.createLinearGradient(0, 0, CANVAS, CANVAS); wood.addColorStop(0, '#e1b76f'); wood.addColorStop(1, '#c9924b');
-    ctx.fillStyle = wood; ctx.fillRect(0, 0, CANVAS, CANVAS); ctx.strokeStyle = '#67431f'; ctx.lineWidth = 1.5;
+    ctx.fillStyle = '#d2a35f'; ctx.fillRect(0, 0, CANVAS, CANVAS); ctx.strokeStyle = '#67431f'; ctx.lineWidth = 1.5;
     for (let i = 0; i < SIZE; i++) { const p = EDGE + i * STEP; ctx.beginPath(); ctx.moveTo(EDGE, p); ctx.lineTo(CANVAS - EDGE, p); ctx.stroke(); ctx.beginPath(); ctx.moveTo(p, EDGE); ctx.lineTo(p, CANVAS - EDGE); ctx.stroke(); }
     for (const row of [3, 7, 11]) for (const col of [3, 7, 11]) { ctx.beginPath(); ctx.arc(EDGE + col * STEP, EDGE + row * STEP, 4.7, 0, Math.PI * 2); ctx.fillStyle = '#5a3718'; ctx.fill(); }
   }
   function drawStone(row, col, stone) {
     const x = EDGE + col * STEP, y = EDGE + row * STEP, radius = STEP * .43;
-    ctx.save(); ctx.shadowColor = '#321c0f66'; ctx.shadowBlur = 5; ctx.shadowOffsetY = 3;
-    const fill = ctx.createRadialGradient(x - radius * .35, y - radius * .38, 2, x, y, radius);
-    if (stone === 1) { fill.addColorStop(0, '#777'); fill.addColorStop(.35, '#292724'); fill.addColorStop(1, '#030303'); }
-    else { fill.addColorStop(0, '#fff'); fill.addColorStop(.6, '#eee7da'); fill.addColorStop(1, '#9c8d77'); }
-    ctx.fillStyle = fill; ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+    ctx.fillStyle = stone === 1 ? '#17191c' : '#f2eee6'; ctx.strokeStyle = stone === 1 ? '#050607' : '#9c9488'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
   }
   function render() {
     drawBoard();

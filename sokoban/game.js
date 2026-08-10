@@ -36,19 +36,23 @@
     const size = Math.floor(Math.min(canvas.width / state.width, canvas.height / state.height));
     return {size, ox: Math.floor((canvas.width-state.width*size)/2), oy: Math.floor((canvas.height-state.height*size)/2)};
   }
-  function roundedRect(x,y,w,h,r) { ctx.beginPath(); ctx.roundRect(x,y,w,h,r); }
+  function palette() {
+    if(typeof getComputedStyle!=='function') return {board:'#0d151f',floor:'#121c27',wall:'#293746',wallMark:'#384a5b',goal:'#ff668f',box:'#ffb45c',boxGoal:'#64e6e0',player:'#e8f0f7',playerMark:'#070b12'};
+    const css=getComputedStyle(document.documentElement), get=(name,fallback)=>css.getPropertyValue(name).trim()||fallback;
+    return {board:get('--board','#0d151f'),floor:get('--floor','#121c27'),wall:get('--wall','#293746'),wallMark:get('--wall-mark','#384a5b'),goal:get('--goal','#ff668f'),box:get('--gold','#ffb45c'),boxGoal:get('--cyan','#64e6e0'),player:get('--player','#e8f0f7'),playerMark:get('--bg','#070b12')};
+  }
   function draw() {
-    ctx.fillStyle='#0b111a'; ctx.fillRect(0,0,canvas.width,canvas.height);
+    const colors=palette(); ctx.fillStyle=colors.board; ctx.fillRect(0,0,canvas.width,canvas.height);
     const g=tileGeometry(), s=g.size;
     for(let y=0;y<state.height;y++) for(let x=0;x<state.width;x++) {
       const k=`${x},${y}`, px=g.ox+x*s, py=g.oy+y*s;
-      if(state.walls[k]) { ctx.fillStyle='#243241'; ctx.fillRect(px+1,py+1,s-2,s-2); ctx.fillStyle='#314457'; ctx.fillRect(px+4,py+4,s-8,4); }
-      else if(state.goals[k] || state.boxes[k] || (state.player.x===x&&state.player.y===y)) { ctx.fillStyle='#101923'; ctx.fillRect(px+1,py+1,s-2,s-2); }
-      if(state.goals[k]) { ctx.strokeStyle='#ff668f'; ctx.lineWidth=Math.max(2,s*.06); ctx.beginPath();ctx.arc(px+s/2,py+s/2,s*.16,0,Math.PI*2);ctx.stroke(); ctx.beginPath();ctx.moveTo(px+s*.4,py+s/2);ctx.lineTo(px+s*.6,py+s/2);ctx.stroke(); }
-      if(state.boxes[k]) { const onGoal=state.goals[k]; ctx.fillStyle=onGoal?'#64e6e0':'#ffb45c'; roundedRect(px+s*.16,py+s*.16,s*.68,s*.68,s*.07);ctx.fill();ctx.strokeStyle=onGoal?'#2a8d8a':'#aa6e2d';ctx.lineWidth=Math.max(2,s*.05);ctx.stroke();ctx.beginPath();ctx.moveTo(px+s*.3,py+s*.3);ctx.lineTo(px+s*.7,py+s*.7);ctx.moveTo(px+s*.7,py+s*.3);ctx.lineTo(px+s*.3,py+s*.7);ctx.stroke(); }
+      if(state.walls[k]) { ctx.fillStyle=colors.wall; ctx.fillRect(px+1,py+1,s-2,s-2); ctx.fillStyle=colors.wallMark; ctx.fillRect(px+s*.18,py+s*.18,s*.64,Math.max(2,s*.05)); }
+      else if(state.goals[k] || state.boxes[k] || (state.player.x===x&&state.player.y===y)) { ctx.fillStyle=colors.floor; ctx.fillRect(px+1,py+1,s-2,s-2); }
+      if(state.goals[k]) { ctx.strokeStyle=colors.goal; ctx.lineWidth=Math.max(2,s*.06);ctx.strokeRect(px+s*.36,py+s*.36,s*.28,s*.28); }
+      if(state.boxes[k]) { const onGoal=state.goals[k];ctx.fillStyle=onGoal?colors.boxGoal:colors.box;ctx.fillRect(px+s*.18,py+s*.18,s*.64,s*.64);ctx.strokeStyle=colors.playerMark;ctx.lineWidth=Math.max(1,s*.035);ctx.strokeRect(px+s*.18,py+s*.18,s*.64,s*.64);ctx.beginPath();ctx.moveTo(px+s*.32,py+s*.5);ctx.lineTo(px+s*.68,py+s*.5);ctx.moveTo(px+s*.5,py+s*.32);ctx.lineTo(px+s*.5,py+s*.68);ctx.stroke(); }
     }
     const px=g.ox+state.player.x*s+s/2, py=g.oy+state.player.y*s+s/2;
-    ctx.fillStyle='#e8f0f7';ctx.beginPath();ctx.arc(px,py-s*.08,s*.2,0,Math.PI*2);ctx.fill();ctx.fillStyle='#64e6e0';ctx.fillRect(px-s*.16,py+s*.12,s*.32,s*.2);ctx.fillStyle='#091018';ctx.fillRect(px-s*.08,py-s*.12,s*.05,s*.05);ctx.fillRect(px+s*.04,py-s*.12,s*.05,s*.05);
+    ctx.fillStyle=colors.player;ctx.fillRect(px-s*.18,py-s*.18,s*.36,s*.36);ctx.fillStyle=colors.playerMark;ctx.fillRect(px-s*.07,py-s*.07,s*.05,s*.05);ctx.fillRect(px+s*.02,py-s*.07,s*.05,s*.05);
   }
   function attempt(dx,dy) {
     if(!active) { active=true; hideOverlay(); }
@@ -74,5 +78,6 @@
   document.getElementById('previousButton').addEventListener('click',()=>loadLevel(levelIndex-1));
   document.getElementById('nextButton').addEventListener('click',()=>loadLevel(levelIndex+1));
   ui.start.addEventListener('click',()=>{if(R.isComplete(state))loadLevel(levelIndex===levels.length-1?0:levelIndex+1);else{active=true;hideOverlay();}});
+  if(document.addEventListener)document.addEventListener('themechange',draw);
   loadLevel(levelIndex,true);
 })();

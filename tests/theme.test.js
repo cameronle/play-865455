@@ -54,7 +54,8 @@ test('all formerly light routes load shared theme assets and expose a toggle',()
     assert.match(html,/src="\/theme\.js\?v=[^"]+"/i,`${route} theme js`);
     assert.match(html,/class="[^"]*theme-toggle[^"]*"/i,`${route} toggle`);
     const css=fs.readFileSync(`${route}/${route==='gomoku'?'app.css':'style.css'}`,'utf8');
-    assert.match(css,/\[data-theme="dark"\]/,`${route} dark palette`);
+    const alternate=route==='gomoku'?/\[data-theme="light"\]/:/\[data-theme="dark"\]/;
+    assert.match(css,alternate,`${route} alternate palette`);
   }
 });
 
