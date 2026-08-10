@@ -46,3 +46,10 @@ test('mobile layout stacks board and HUD instead of squeezing them side by side'
   assert.match(css,/@media\(max-width:560px\)[\s\S]*\.game-layout\{flex-direction:column/);
   assert.match(css,/@media\(max-width:560px\)[\s\S]*\.board-wrap\{[^}]*width:min\(100%,300px,calc\(\(100svh - 190px\)\/2\)\)/);
 });
+
+test('touch controls suppress long-press text selection and callout menus', () => {
+  const css=fs.readFileSync('tetris/style.css','utf8');
+  assert.match(css,/\.touch-controls(?:,|\{)[\s\S]*user-select:none/);
+  assert.match(css,/\.touch-controls button\{[^}]*-webkit-touch-callout:none/);
+  assert.match(css,/\.touch-controls button\{[^}]*touch-action:none/);
+});
