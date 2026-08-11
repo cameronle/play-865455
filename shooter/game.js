@@ -89,6 +89,9 @@
   $('mobilePauseButton').addEventListener('click',pause);
   bindHold('leftButton','left');bindHold('rightButton','right');bindHold('upButton','up');bindHold('downButton','down');
   window.addEventListener('keydown',e=>{const key=e.key.length===1?e.key.toLowerCase():e.key;if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' ','a','d','w','s','p','m'].includes(key))e.preventDefault();if(key==='p')pause();if(key==='m')soundButton.click();keys.add(key)});window.addEventListener('keyup',e=>keys.delete(e.key.length===1?e.key.toLowerCase():e.key));
-  canvas.addEventListener('pointermove',e=>{if(e.buttons){const r=canvas.getBoundingClientRect();if(player){player.x=clamp((e.clientX-r.left)/r.width*W,player.w/2,W-player.w/2);player.y=clamp((e.clientY-r.top)/r.height*H,player.h/2,H-player.h/2)}}});
+  canvas.addEventListener('pointerdown',e=>{if(state!=='playing')return;e.preventDefault();canvas.setPointerCapture?.(e.pointerId);const r=canvas.getBoundingClientRect();if(player){player.x=clamp((e.clientX-r.left)/r.width*W,player.w/2,W-player.w/2);player.y=clamp((e.clientY-r.top)/r.height*H,player.h/2,H-player.h/2)}});
+  canvas.addEventListener('pointermove',e=>{if(e.buttons){e.preventDefault();const r=canvas.getBoundingClientRect();if(player){player.x=clamp((e.clientX-r.left)/r.width*W,player.w/2,W-player.w/2);player.y=clamp((e.clientY-r.top)/r.height*H,player.h/2,H-player.h/2)}}});
+  function preventGameTouch(e){if(state==='playing')e.preventDefault()}
+  document.addEventListener('touchmove',preventGameTouch,{passive:false});
   reset();requestAnimationFrame(loop);
 })();

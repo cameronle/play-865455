@@ -46,3 +46,13 @@ test('Sky Patrol uses a slightly shorter 2:2.7 playfield',()=>{
   assert.match(css,/aspect-ratio:20\/27/);
   assert.match(css,/calc\(\(100svh - 190px\)\*20\/27\)/);
 });
+
+test('Sky Patrol locks touch gestures while the player is controlling the ship',()=>{
+  const source=fs.readFileSync('shooter/game.js','utf8'),css=fs.readFileSync('shooter/style.css','utf8');
+  assert.match(css,/html,body\{[^}]*overscroll-behavior:none/);
+  assert.match(css,/\.screen-frame(?:,|\{)[\s\S]*touch-action:none/);
+  assert.match(source,/function preventGameTouch\(e\)\{if\(state==='playing'\)e\.preventDefault\(\)\}/);
+  assert.match(source,/document\.addEventListener\('touchmove',preventGameTouch,\{passive:false\}\)/);
+  assert.match(source,/canvas\.addEventListener\('pointerdown'/);
+  assert.match(source,/canvas\.setPointerCapture/);
+});
