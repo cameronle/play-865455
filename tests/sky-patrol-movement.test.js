@@ -39,3 +39,10 @@ test('Sky Patrol pointer dragging moves in both axes rather than x only',()=>{
   assert.match(source,/player\.x=clamp/);
   assert.match(source,/player\.y=clamp/);
 });
+
+test('Sky Patrol uses a slightly shorter 2:2.7 playfield',()=>{
+  const html=fs.readFileSync('shooter/index.html','utf8'),css=fs.readFileSync('shooter/style.css','utf8');
+  assert.match(html,/canvas id="game" width="480" height="648"/);
+  assert.match(css,/aspect-ratio:20\/27/);
+  assert.match(css,/calc\(\(100svh - 190px\)\*20\/27\)/);
+});
