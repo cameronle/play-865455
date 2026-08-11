@@ -1,21 +1,13 @@
 (() => {
   'use strict';
   const R = window.SokobanRules;
+  const levels = window.SokobanLevels;
   const canvas = document.getElementById('game'), ctx = canvas.getContext('2d');
   const ui = {
     level: document.getElementById('level'), moves: document.getElementById('moves'), pushes: document.getElementById('pushes'), best: document.getElementById('best'),
     overlay: document.getElementById('overlay'), title: document.getElementById('overlayTitle'), text: document.getElementById('overlayText'), start: document.getElementById('startButton')
   };
-  const levels = [
-    ['  #####','###   #','#.@$  #','### $.#','#.##$ #','# # . ##','#$ *$$.#','#   .  #','########'],
-    [' ####','##  ####','#     .#','#.$#$  #','#  @$$.#','#  #  .#','########'],
-    ['  #####','###   #','# . $ #','# #$###','# .@  #','## $  #',' # .###',' #####'],
-    ['########','#  . . #','# $$#$ #','#  #   #','## # ###','#  @   #','#  . $.#','########'],
-    [' ######','#    .#','# ##$ #','# $   #','##$# ##','# .@. #','#######'],
-    ['########','# .  . #','# $$   #','### # ##','#   #  #','# $  @ #','# .    #','########'],
-    [' #######','##     #','# .### #','# $  $ #','## #   #','# .# $##','#  @ .#','#######'],
-    ['########','#  . . #','# #$#$ #','# $   .#','## # ###','#  $ @ #','# .    #','########']
-  ];
+
   let levelIndex = Math.max(0, Math.min(levels.length - 1, Number(localStorage.getItem('sokobanUnlocked') || 0)));
   let state, history = [], active = false, swipeStart = null;
   function cloneState(s) { return {width:s.width,height:s.height,walls:{...s.walls},goals:{...s.goals},boxes:{...s.boxes},player:{...s.player},moves:s.moves,pushes:s.pushes}; }

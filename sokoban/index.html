@@ -12,13 +12,13 @@
 <body>
   <main class="page">
     <header><a href="/">← PLAY</a><h1>SOKOBAN</h1><button id="resetButton" type="button">RESET</button></header>
-    <section class="stats" aria-live="polite"><div><span>LEVEL</span><b id="level">01 / 08</b></div><div><span>MOVES</span><b id="moves">000</b></div><div><span>PUSHES</span><b id="pushes">000</b></div><div><span>BEST</span><b id="best">---</b></div></section>
+    <section class="stats" aria-live="polite"><div><span>LEVEL</span><b id="level">01 / 20</b></div><div><span>MOVES</span><b id="moves">000</b></div><div><span>PUSHES</span><b id="pushes">000</b></div><div><span>BEST</span><b id="best">---</b></div></section>
     <div class="frame"><canvas id="game" width="560" height="560" aria-label="Sokoban puzzle board"></canvas><div id="overlay" class="overlay"><b id="overlayTitle">SOKOBAN</b><span id="overlayText">PUSH EVERY CRATE ONTO A GOAL</span><button id="startButton" type="button">START</button></div></div>
     <div class="tools"><button id="previousButton" type="button">← LEVEL</button><button id="undoButton" type="button">UNDO</button><button id="nextButton" type="button">LEVEL →</button></div>
     <div class="dpad" aria-label="Directional controls"><i></i><button data-dir="up" type="button">↑</button><i></i><button data-dir="left" type="button">←</button><button data-dir="down" type="button">↓</button><button data-dir="right" type="button">→</button></div>
     <footer>ARROW KEYS / WASD · SWIPE OR TAP · R RESET · Z UNDO</footer>
   </main>
-  <script src="rules.js?v=style-2"></script><script src="game.js?v=style-2"></script>
+  <script src="rules.js?v=levels-20"></script><script src="levels.js?v=levels-20"></script><script src="game.js?v=levels-20"></script>
   <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
 </body>
 </html>
