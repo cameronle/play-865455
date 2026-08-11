@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
   <meta name="theme-color" content="#070b12">
   <title>Sky Patrol</title>
-  <link rel="stylesheet" href="style.css?v=bffa164">
+  <link rel="stylesheet" href="style.css?v=movement-1">
 </head>
 <body>
   <main class="shell">
@@ -28,7 +28,7 @@
           <div class="intro">
             <p class="eyebrow">A SMALL ARCADE GAME</p>
             <h1>SKY<br><em>PATROL</em></h1>
-            <p class="hint">MOVE <kbd>←</kbd> <kbd>→</kbd> &nbsp; AUTO-FIRE ENABLED</p>
+            <p class="hint">MOVE WITH ARROWS / WASD &nbsp; AUTO-FIRE ENABLED</p>
             <button class="start" id="startButton">START GAME</button>
             <p class="best">BEST <strong id="best">000000</strong></p>
           </div>
@@ -36,13 +36,15 @@
       </div>
       <div class="mobile-controls" aria-label="Touch controls">
         <button id="leftButton">←</button>
-        <button id="mobilePauseButton" aria-label="Pause or resume">PAUSE</button>
+        <button id="upButton">↑</button>
         <button id="rightButton">→</button>
+        <button id="downButton">↓</button>
+        <button id="mobilePauseButton" aria-label="Pause or resume">PAUSE</button>
       </div>
     </section>
 
-    <footer><span>ARROWS / A D TO MOVE</span><span>AUTO-FIRE · P PAUSE · M MUTE</span></footer>
+    <footer><span>ARROWS / WASD TO MOVE</span><span>AUTO-FIRE · P PAUSE · M MUTE</span></footer>
   </main>
-  <script src="game.js?v=bffa164"></script>
+  <script src="game.js?v=movement-1"></script>
 </body>
 </html>

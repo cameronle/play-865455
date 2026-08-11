@@ -7,7 +7,7 @@
   const scoreEl = $('score'), levelEl = $('level'), livesEl = $('lives'), bestEl = $('best');
   const overlay = $('overlay'), startButton = $('startButton'), soundButton = $('soundButton');
   const keys = new Set();
-  const pointer = {left:false,right:false};
+  const pointer = {left:false,right:false,up:false,down:false};
   const colors = {cyan:'#64e6e0', orange:'#ffb45c', red:'#ff6b7a', white:'#e8f0f7', muted:'#748394'};
   let state='title', score=0, level=1, lives=3, best=Number(localStorage.getItem('sky-patrol-best') || 0), muted=false;
   let player, bullets=[], enemyBullets=[], enemies=[], particles=[], stars=[], powerups=[];
@@ -31,7 +31,7 @@
 
   function reset(){
     score=0; level=1; lives=3; bullets=[]; enemyBullets=[]; enemies=[]; particles=[]; powerups=[]; spawnTimer=0; fireTimer=0; enemyFireTimer=0; levelTimer=0; shake=0;
-    player={x:W/2,y:H-78,w:28,h:34,speed:285,invuln:0,fireLevel:1};
+    player={x:W/2,y:H-24,w:28,h:44,speed:285,invuln:0,fireLevel:1};
     stars=Array.from({length:70},()=>({x:rand(12,W-12),y:rand(0,H),s:rand(.5,2.1),v:rand(20,90),a:rand(.25,.9)}));
     setHud();
   }
@@ -51,7 +51,10 @@
   function update(dt){
     stars.forEach(s=>{s.y+=s.v*dt*(1+level*.04);if(s.y>H+4){s.y=-4;s.x=rand(12,W-12)}});
     if(player.invuln>0)player.invuln-=dt;
-    let dir=(keys.has('ArrowLeft')||keys.has('a')||pointer.left?-1:0)+(keys.has('ArrowRight')||keys.has('d')||pointer.right?1:0); player.x=clamp(player.x+dir*player.speed*dt,24,W-24);
+    const dirX=(keys.has('ArrowLeft')||keys.has('a')||pointer.left?-1:0)+(keys.has('ArrowRight')||keys.has('d')||pointer.right?1:0);
+    const dirY=(keys.has('ArrowUp')||keys.has('w')||pointer.up?-1:0)+(keys.has('ArrowDown')||keys.has('s')||pointer.down?1:0);
+    player.x=clamp(player.x+dirX*player.speed*dt,player.w/2,W-player.w/2);
+    player.y=clamp(player.y+dirY*player.speed*dt,player.h/2,H-player.h/2);
     // The ship fires automatically.
     fire();
 
@@ -84,8 +87,8 @@
   function bindHold(id,prop){const el=$(id);const on=e=>{e.preventDefault();pointer[prop]=true};const off=e=>{e.preventDefault();pointer[prop]=false};['pointerdown','touchstart'].forEach(ev=>el.addEventListener(ev,on,{passive:false}));['pointerup','pointercancel','pointerleave','touchend'].forEach(ev=>el.addEventListener(ev,off,{passive:false}))}
   startButton.addEventListener('click',()=>{if(state==='paused'){pause()}else start()});soundButton.addEventListener('click',()=>{muted=!muted;soundButton.classList.toggle('on',!muted);soundButton.textContent=muted?'MUTED':'SOUND';if(!muted)beep(660,.06)});
   $('mobilePauseButton').addEventListener('click',pause);
-  bindHold('leftButton','left');bindHold('rightButton','right');
-  window.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight',' ','a','d','p','m'].includes(e.key))e.preventDefault();if(e.key==='p')pause();if(e.key==='m')soundButton.click();keys.add(e.key)});window.addEventListener('keyup',e=>keys.delete(e.key));
-  canvas.addEventListener('pointermove',e=>{if(e.buttons){const r=canvas.getBoundingClientRect();player&&(player.x=clamp((e.clientX-r.left)/r.width*W,24,W-24))}});
+  bindHold('leftButton','left');bindHold('rightButton','right');bindHold('upButton','up');bindHold('downButton','down');
+  window.addEventListener('keydown',e=>{const key=e.key.length===1?e.key.toLowerCase():e.key;if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' ','a','d','w','s','p','m'].includes(key))e.preventDefault();if(key==='p')pause();if(key==='m')soundButton.click();keys.add(key)});window.addEventListener('keyup',e=>keys.delete(e.key.length===1?e.key.toLowerCase():e.key));
+  canvas.addEventListener('pointermove',e=>{if(e.buttons){const r=canvas.getBoundingClientRect();if(player){player.x=clamp((e.clientX-r.left)/r.width*W,player.w/2,W-player.w/2);player.y=clamp((e.clientY-r.top)/r.height*H,player.h/2,H-player.h/2)}}});
   reset();requestAnimationFrame(loop);
 })();
