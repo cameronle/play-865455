@@ -89,3 +89,4 @@ python3 -m http.server 8080
 - 新增 Helicopter Cave，支持单键飞行、程序化洞穴和递增速度。
 - 新增 Endless Runner，支持高低跳、快速落地、公平障碍生成和移动端操作。
 - [Solitaire](./solitaire/) — 自维护的经典 Klondike 接龙，支持点选移动、双击自动收牌、撤销、提示和本地战绩。
+- [Bubble Shooter](./bubble-shooter/) — 自维护的泡泡射手，支持触屏瞄准、墙壁反弹、同色消除、悬空掉落和本地最高分。

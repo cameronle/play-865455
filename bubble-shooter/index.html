@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#070b12">
+  <script src="/theme.js?v=bubble-1"></script>
+  <title>Bubble Shooter</title>
+  <link rel="stylesheet" href="style.css?v=bubble-1">
+  <link rel="stylesheet" href="/theme.css?v=bubble-1">
+</head>
+<body>
+  <main class="page">
+    <header class="topbar"><a href="/">← PLAY</a><h1>BUBBLE SHOOTER</h1><button id="newButton" type="button">NEW</button></header>
+    <section class="stats"><div><span>SCORE</span><b id="score">000000</b></div><div><span>BEST</span><b id="best">000000</b></div><div><span>SHOTS TO ROW</span><b id="misses">05</b></div><div><span>NEXT</span><i id="nextBubble"></i></div></section>
+    <section class="game-shell">
+      <canvas id="game" width="480" height="720" aria-label="Bubble Shooter board"></canvas>
+      <div id="resultOverlay" class="result-overlay"><b id="resultTitle">FIELD CLEAR</b><span id="resultText">NO BUBBLES REMAIN</span><button id="resultButton" type="button">PLAY AGAIN</button></div>
+    </section>
+    <footer>DRAG TO AIM · RELEASE TO SHOOT · BANK SHOTS OFF THE WALLS</footer>
+  </main>
+  <script src="rules.js?v=bubble-1"></script><script src="game.js?v=bubble-1"></script>
+  <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
+</body>
+</html>
