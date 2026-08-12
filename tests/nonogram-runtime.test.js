@@ -17,7 +17,7 @@ test('Nonogram runtime builds a playable 10x10 board and can reveal a hint',()=>
  assert.equal(elements.get('board').children.length,100);
  assert.equal(elements.get('rowClues').children.length,10);
  assert.equal(elements.get('colClues').children.length,10);
- assert.equal(elements.get('puzzleSelect').children.length,3);
+ assert.equal(elements.get('puzzleSelect').children.length,12);
  elements.get('hintButton').dispatch('click');
  assert.equal(elements.get('undoButton').disabled,false);
  assert.ok(elements.get('board').children.some(cell=>cell.classList.contains('filled')||cell.classList.contains('marked')));
