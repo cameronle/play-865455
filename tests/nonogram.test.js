@@ -113,3 +113,19 @@ test('Nonogram completion uses a staggered cell reveal before showing the pictur
   assert.match(js,/cell\.style\.setProperty\('--reveal-delay'/);
   assert.match(js,/puzzle\.name/);
 });
+
+test('Nonogram mobile layout keeps controls visible with compact stats and clear pack progress',()=>{
+  const html=read('nonogram/index.html'),css=read('nonogram/style.css'),js=read('nonogram/game.js');
+  for(const className of ['tool-size','tool-puzzle','stat-time','stat-mistakes','stat-best']) assert.match(html,new RegExp(`class="[^"]*${className}`));
+  assert.match(html,/PACK · 0 \/ 15/);
+  assert.match(js,/PACK · \$\{progress\.done\} \/ \$\{progress\.total\}/);
+  assert.match(js,/function updateClueGeometry/);
+  assert.match(js,/--row-clue/);
+  assert.match(js,/--col-clue/);
+  assert.match(css,/grid-template-columns:var\(--row-clue\)/);
+  assert.match(css,/grid-template-rows:var\(--col-clue\)/);
+  assert.match(css,/@media\(max-width:680px\)[\s\S]*\.topbar\{height:42px/);
+  assert.match(css,/@media\(max-width:680px\)[\s\S]*\.toolbar>\*\{min-height:38px/);
+  assert.match(css,/@media\(max-width:680px\)[\s\S]*\.actions\{margin:0;grid-template-columns:repeat\(3,1fr\)\}/);
+  assert.match(css,/@media\(max-width:680px\)[\s\S]*footer\{display:none\}/);
+});

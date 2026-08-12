@@ -4,18 +4,18 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
   <meta name="theme-color" content="#070b12">
-  <script src="/theme.js?v=nonogram-reveal-1"></script>
+  <script src="/theme.js?v=nonogram-mobile-p0"></script>
   <title>Nonogram</title>
-  <link rel="stylesheet" href="style.css?v=nonogram-reveal-1">
-  <link rel="stylesheet" href="/theme.css?v=nonogram-reveal-1">
+  <link rel="stylesheet" href="style.css?v=nonogram-mobile-p0">
+  <link rel="stylesheet" href="/theme.css?v=nonogram-mobile-p0">
 </head>
 <body>
   <main class="page">
     <header class="topbar"><a href="/">← PLAY</a><h1>NONOGRAM</h1><div class="header-actions"><button id="levelButton" type="button">LEVELS</button><button id="newButton" type="button">NEW</button></div></header>
     <section class="toolbar">
-      <label>SIZE <select id="sizeSelect"><option value="5">5 × 5</option><option value="10" selected>10 × 10</option><option value="15">15 × 15</option></select></label>
-      <label>PUZZLE <select id="puzzleSelect"></select></label>
-      <div>TIME <b id="timer">00:00</b></div><div>MISTAKES <b id="mistakes">0 / 3</b></div><div>BEST <b id="best">--:--</b></div>
+      <label class="tool-size">SIZE <select id="sizeSelect"><option value="5">5 × 5</option><option value="10" selected>10 × 10</option><option value="15">15 × 15</option></select></label>
+      <label class="tool-puzzle">PUZZLE <select id="puzzleSelect"></select></label>
+      <div class="stat stat-time">TIME <b id="timer">00:00</b></div><div class="stat stat-mistakes">MISTAKES <b id="mistakes">0 / 3</b></div><div class="stat stat-best">BEST <b id="best">--:--</b></div>
     </section>
     <section class="game-layout">
       <div class="puzzle-frame" id="puzzleFrame">
@@ -27,7 +27,7 @@
         <div id="resultOverlay" class="result-overlay"><b id="resultTitle">PICTURE COMPLETE</b><span id="resultText">EVERY LINE IS SOLVED</span><button id="resultButton" type="button">NEXT PUZZLE</button></div>
       </div>
       <aside>
-        <button id="progressSummary" class="progress-summary" type="button">10×10 · 0 / 15 COMPLETE</button>
+        <button id="progressSummary" class="progress-summary" type="button">10×10 PACK · 0 / 15</button>
         <div class="mode-switch" role="group" aria-label="Cell mode"><button id="modeFill" class="active" type="button"><i></i>FILL</button><button id="modeMark" type="button"><i>×</i>MARK</button></div>
         <div class="actions"><button id="undoButton" type="button">↶<span>UNDO</span></button><button id="hintButton" type="button">?<span>HINT</span></button><button id="resetButton" type="button">↺<span>RESET</span></button></div>
         <p>Fill cells to match every row and column clue. Mark cells that must stay empty.</p>
@@ -36,7 +36,7 @@
     <footer>TAP OR DRAG TO PAINT · RIGHT CLICK TO MARK · F / X SWITCH MODE · ARROWS MOVE</footer>
   </main>
   <section id="levelOverlay" class="level-overlay" aria-hidden="true"><div class="level-dialog"><header><div><span>PUZZLE LIBRARY</span><b id="galleryProgress">0 / 15 COMPLETE</b></div><button id="closeLevels" type="button" aria-label="Close level selection">CLOSE</button></header><div id="levelGrid" class="level-grid"></div></div></section>
-  <script src="rules.js?v=nonogram-reveal-1"></script><script src="game.js?v=nonogram-reveal-1"></script>
+  <script src="rules.js?v=nonogram-mobile-p0"></script><script src="game.js?v=nonogram-mobile-p0"></script>
   <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
 </body>
 </html>
