@@ -101,3 +101,15 @@ test('Nonogram auto-saves unfinished boards and exposes reset and in-progress st
   assert.match(js,/function clearSavedGame/);
   assert.match(js,/IN PROGRESS/);
 });
+
+test('Nonogram completion uses a staggered cell reveal before showing the picture name',()=>{
+  const html=read('nonogram/index.html'),css=read('nonogram/style.css'),js=read('nonogram/game.js');
+  assert.match(html,/id="revealName"/);
+  assert.match(css,/\.cell\.reveal/);
+  assert.match(css,/@keyframes revealCell/);
+  assert.match(css,/\.reveal-name\.show/);
+  assert.match(css,/prefers-reduced-motion/);
+  assert.match(js,/function playCompletionAnimation/);
+  assert.match(js,/cell\.style\.setProperty\('--reveal-delay'/);
+  assert.match(js,/puzzle\.name/);
+});

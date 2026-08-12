@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
   <meta name="theme-color" content="#070b12">
-  <script src="/theme.js?v=nonogram-resume-1"></script>
+  <script src="/theme.js?v=nonogram-reveal-1"></script>
   <title>Nonogram</title>
-  <link rel="stylesheet" href="style.css?v=nonogram-resume-1">
-  <link rel="stylesheet" href="/theme.css?v=nonogram-resume-1">
+  <link rel="stylesheet" href="style.css?v=nonogram-reveal-1">
+  <link rel="stylesheet" href="/theme.css?v=nonogram-reveal-1">
 </head>
 <body>
   <main class="page">
@@ -23,6 +23,7 @@
         <div id="colClues" class="col-clues" aria-label="Column clues"></div>
         <div id="rowClues" class="row-clues" aria-label="Row clues"></div>
         <div id="board" class="board" role="grid" aria-label="Nonogram puzzle"></div>
+        <div id="revealName" class="reveal-name" aria-live="polite"><span>PICTURE REVEALED</span><b></b></div>
         <div id="resultOverlay" class="result-overlay"><b id="resultTitle">PICTURE COMPLETE</b><span id="resultText">EVERY LINE IS SOLVED</span><button id="resultButton" type="button">NEXT PUZZLE</button></div>
       </div>
       <aside>
@@ -35,7 +36,7 @@
     <footer>TAP OR DRAG TO PAINT · RIGHT CLICK TO MARK · F / X SWITCH MODE · ARROWS MOVE</footer>
   </main>
   <section id="levelOverlay" class="level-overlay" aria-hidden="true"><div class="level-dialog"><header><div><span>PUZZLE LIBRARY</span><b id="galleryProgress">0 / 15 COMPLETE</b></div><button id="closeLevels" type="button" aria-label="Close level selection">CLOSE</button></header><div id="levelGrid" class="level-grid"></div></div></section>
-  <script src="rules.js?v=nonogram-resume-1"></script><script src="game.js?v=nonogram-resume-1"></script>
+  <script src="rules.js?v=nonogram-reveal-1"></script><script src="game.js?v=nonogram-reveal-1"></script>
   <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
 </body>
 </html>
