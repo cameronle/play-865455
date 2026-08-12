@@ -4,14 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
   <meta name="theme-color" content="#070b12">
-  <script src="/theme.js?v=nonogram-levels-1"></script>
+  <script src="/theme.js?v=nonogram-progress-1"></script>
   <title>Nonogram</title>
-  <link rel="stylesheet" href="style.css?v=nonogram-levels-1">
-  <link rel="stylesheet" href="/theme.css?v=nonogram-levels-1">
+  <link rel="stylesheet" href="style.css?v=nonogram-progress-1">
+  <link rel="stylesheet" href="/theme.css?v=nonogram-progress-1">
 </head>
 <body>
   <main class="page">
-    <header class="topbar"><a href="/">← PLAY</a><h1>NONOGRAM</h1><button id="newButton" type="button">NEW</button></header>
+    <header class="topbar"><a href="/">← PLAY</a><h1>NONOGRAM</h1><div class="header-actions"><button id="levelButton" type="button">LEVELS</button><button id="newButton" type="button">NEW</button></div></header>
     <section class="toolbar">
       <label>SIZE <select id="sizeSelect"><option value="5">5 × 5</option><option value="10" selected>10 × 10</option><option value="15">15 × 15</option></select></label>
       <label>PUZZLE <select id="puzzleSelect"></select></label>
@@ -26,6 +26,7 @@
         <div id="resultOverlay" class="result-overlay"><b id="resultTitle">PICTURE COMPLETE</b><span id="resultText">EVERY LINE IS SOLVED</span><button id="resultButton" type="button">NEXT PUZZLE</button></div>
       </div>
       <aside>
+        <button id="progressSummary" class="progress-summary" type="button">10×10 · 0 / 12 COMPLETE</button>
         <div class="mode-switch" role="group" aria-label="Cell mode"><button id="modeFill" class="active" type="button"><i></i>FILL</button><button id="modeMark" type="button"><i>×</i>MARK</button></div>
         <div class="actions"><button id="undoButton" type="button">↶<span>UNDO</span></button><button id="hintButton" type="button">?<span>HINT</span></button></div>
         <p>Fill cells to match every row and column clue. Mark cells that must stay empty.</p>
@@ -33,7 +34,8 @@
     </section>
     <footer>TAP OR DRAG TO PAINT · RIGHT CLICK TO MARK · F / X SWITCH MODE · ARROWS MOVE</footer>
   </main>
-  <script src="rules.js?v=nonogram-levels-1"></script><script src="game.js?v=nonogram-levels-1"></script>
+  <section id="levelOverlay" class="level-overlay" aria-hidden="true"><div class="level-dialog"><header><div><span>PUZZLE LIBRARY</span><b id="galleryProgress">0 / 12 COMPLETE</b></div><button id="closeLevels" type="button" aria-label="Close level selection">CLOSE</button></header><div id="levelGrid" class="level-grid"></div></div></section>
+  <script src="rules.js?v=nonogram-progress-1"></script><script src="game.js?v=nonogram-progress-1"></script>
   <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
 </body>
 </html>

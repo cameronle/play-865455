@@ -77,3 +77,15 @@ test('Nonogram page is touch-safe, themed, keyboard accessible, and integrated a
   assert.match(index,/23 \/ PUZZLE[\s\S]*NONOGRAM/);
   assert.match(readme,/\.\/nonogram\//);
 });
+
+test('Nonogram exposes a visual level gallery with saved completion progress', () => {
+  const html=read('nonogram/index.html'),css=read('nonogram/style.css'),js=read('nonogram/game.js');
+  for(const id of ['levelButton','progressSummary','levelOverlay','levelGrid','closeLevels']) assert.match(html,new RegExp(`id="${id}"`));
+  assert.match(css,/\.level-grid/);
+  assert.match(css,/\.level-card\.completed/);
+  assert.match(css,/\.pixel-preview/);
+  assert.match(js,/nonogram-completed/);
+  assert.match(js,/function renderLevelGrid/);
+  assert.match(js,/function openLevels/);
+  assert.match(js,/completed\.add\(bestKey\(\)\)/);
+});
