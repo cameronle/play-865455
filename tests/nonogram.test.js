@@ -42,7 +42,7 @@ test('Nonogram validates built-in puzzles and returns defensive copies', () => {
   const R = rules();
   for (const size of [5,10,15]) {
     const list = R.listPuzzles(size);
-    assert.ok(list.length >= 10, `size ${size} needs at least ten puzzles`);
+    assert.equal(list.length,15,`size ${size} needs exactly fifteen puzzles`);
     assert.equal(new Set(list.map(puzzle=>puzzle.name)).size,list.length,`size ${size} puzzle names must be unique`);
     for (const puzzle of list) {
       assert.equal(puzzle.solution.length, size);

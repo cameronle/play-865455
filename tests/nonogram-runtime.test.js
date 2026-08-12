@@ -18,13 +18,13 @@ test('Nonogram runtime builds a playable 10x10 board and can reveal a hint',()=>
  assert.equal(elements.get('board').children.length,100);
  assert.equal(elements.get('rowClues').children.length,10);
  assert.equal(elements.get('colClues').children.length,10);
- assert.equal(elements.get('puzzleSelect').children.length,12);
- assert.equal(elements.get('levelGrid').children.length,12);
- assert.match(elements.get('progressSummary').textContent,/0 \/ 12/);
+ assert.equal(elements.get('puzzleSelect').children.length,15);
+ assert.equal(elements.get('levelGrid').children.length,15);
+ assert.match(elements.get('progressSummary').textContent,/0 \/ 15/);
  elements.get('hintButton').dispatch('click');
  assert.equal(elements.get('undoButton').disabled,false);
  assert.ok(elements.get('board').children.some(cell=>cell.classList.contains('filled')||cell.classList.contains('marked')));
  for(let i=0;i<100;i++)elements.get('hintButton').dispatch('click');
  assert.match(storage['nonogram-completed'],/10-ROCKET/);
- assert.match(elements.get('progressSummary').textContent,/1 \/ 12/);
+ assert.match(elements.get('progressSummary').textContent,/1 \/ 15/);
 });
