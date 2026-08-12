@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#070b12">
+  <script src="/theme.js?v=nonogram-20260812"></script>
+  <title>Nonogram</title>
+  <link rel="stylesheet" href="style.css?v=nonogram-20260812">
+  <link rel="stylesheet" href="/theme.css?v=nonogram-20260812">
+</head>
+<body>
+  <main class="page">
+    <header class="topbar"><a href="/">← PLAY</a><h1>NONOGRAM</h1><button id="newButton" type="button">NEW</button></header>
+    <section class="toolbar">
+      <label>SIZE <select id="sizeSelect"><option value="5">5 × 5</option><option value="10" selected>10 × 10</option><option value="15">15 × 15</option></select></label>
+      <label>PUZZLE <select id="puzzleSelect"></select></label>
+      <div>TIME <b id="timer">00:00</b></div><div>MISTAKES <b id="mistakes">0 / 3</b></div><div>BEST <b id="best">--:--</b></div>
+    </section>
+    <section class="game-layout">
+      <div class="puzzle-frame" id="puzzleFrame">
+        <div class="corner" aria-hidden="true">PIXEL<br>LOGIC</div>
+        <div id="colClues" class="col-clues" aria-label="Column clues"></div>
+        <div id="rowClues" class="row-clues" aria-label="Row clues"></div>
+        <div id="board" class="board" role="grid" aria-label="Nonogram puzzle"></div>
+        <div id="resultOverlay" class="result-overlay"><b id="resultTitle">PICTURE COMPLETE</b><span id="resultText">EVERY LINE IS SOLVED</span><button id="resultButton" type="button">NEXT PUZZLE</button></div>
+      </div>
+      <aside>
+        <div class="mode-switch" role="group" aria-label="Cell mode"><button id="modeFill" class="active" type="button"><i></i>FILL</button><button id="modeMark" type="button"><i>×</i>MARK</button></div>
+        <div class="actions"><button id="undoButton" type="button">↶<span>UNDO</span></button><button id="hintButton" type="button">?<span>HINT</span></button></div>
+        <p>Fill cells to match every row and column clue. Mark cells that must stay empty.</p>
+      </aside>
+    </section>
+    <footer>TAP OR DRAG TO PAINT · RIGHT CLICK TO MARK · F / X SWITCH MODE · ARROWS MOVE</footer>
+  </main>
+  <script src="rules.js?v=nonogram-20260812"></script><script src="game.js?v=nonogram-20260812"></script>
+  <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
+</body>
+</html>

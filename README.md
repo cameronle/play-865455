@@ -24,6 +24,9 @@
 - [Sky Hopper](./sky-hopper/) — 自维护的纵向平台跳跃游戏，支持自动弹跳、滚动场景、五种平台、键盘与触控操作和本地最高分。
 - [Helicopter Cave](./helicopter-cave/) — 自维护的单键洞穴飞行游戏，支持程序生成的可通行地形、障碍、速度递增、键盘与触控操作和本地最远距离。
 - [Endless Runner](./endless-runner/) — 自维护的横版跑酷游戏，支持高低跳、快速落地、按速度生成的公平障碍、坑洞、金币、触控操作和本地纪录。
+- [Solitaire](./solitaire/) — 自维护的经典 Klondike 接龙，支持点选移动、双击自动收牌、撤销、提示和本地战绩。
+- [Bubble Shooter](./bubble-shooter/) — 自维护的泡泡射手，支持触屏瞄准、墙壁反弹、同色消除、悬空掉落和本地最高分。
+- [Nonogram](./nonogram/) — 自维护的数织像素谜题，包含 5×5、10×10 和 15×15 题目，支持填充、标记、拖动绘制、撤销、提示、计时和本地最佳时间。
 
 ## 本地开发
 
@@ -60,6 +63,9 @@ python3 -m http.server 8080
 /sky-hopper/
 /helicopter-cave/
 /endless-runner/
+/solitaire/
+/bubble-shooter/
+/nonogram/
 ```
 
 ## 许可证
@@ -70,9 +76,13 @@ python3 -m http.server 8080
 
 ## 维护说明
 
-以上 20 款小游戏均由本仓库自行维护；游戏名称仅用于描述对应的经典玩法。
+以上 23 款小游戏均由本仓库自行维护；游戏名称仅用于描述对应的经典玩法。
 
 ## 更新记录
+
+### 2026-08-12
+
+- 新增 Nonogram，包含三种棋盘尺寸、九幅内置像素谜题、拖动绘制、撤销、提示和本地最佳时间。
 
 ### 2026-08-09
 
@@ -88,5 +98,4 @@ python3 -m http.server 8080
 - 新增 Sky Hopper，支持自动弹跳、滚动平台和完整移动端操作。
 - 新增 Helicopter Cave，支持单键飞行、程序化洞穴和递增速度。
 - 新增 Endless Runner，支持高低跳、快速落地、公平障碍生成和移动端操作。
-- [Solitaire](./solitaire/) — 自维护的经典 Klondike 接龙，支持点选移动、双击自动收牌、撤销、提示和本地战绩。
-- [Bubble Shooter](./bubble-shooter/) — 自维护的泡泡射手，支持触屏瞄准、墙壁反弹、同色消除、悬空掉落和本地最高分。
+- 新增 Solitaire 和 Bubble Shooter，补充纸牌和触屏消除玩法。
