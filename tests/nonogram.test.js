@@ -89,3 +89,15 @@ test('Nonogram exposes a visual level gallery with saved completion progress', (
   assert.match(js,/function openLevels/);
   assert.match(js,/completed\.add\(bestKey\(\)\)/);
 });
+
+test('Nonogram auto-saves unfinished boards and exposes reset and in-progress states',()=>{
+  const html=read('nonogram/index.html'),css=read('nonogram/style.css'),js=read('nonogram/game.js');
+  assert.match(html,/id="resetButton"/);
+  assert.match(css,/\.level-card\.in-progress/);
+  assert.match(js,/nonogram-saves/);
+  assert.match(js,/nonogram-last-played/);
+  assert.match(js,/function saveGame/);
+  assert.match(js,/function loadSavedGame/);
+  assert.match(js,/function clearSavedGame/);
+  assert.match(js,/IN PROGRESS/);
+});
