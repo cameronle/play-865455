@@ -10,6 +10,7 @@
 
   let levelIndex = Math.max(0, Math.min(levels.length - 1, Number(localStorage.getItem('sokobanUnlocked') || 0)));
   let state, history = [], active = false, swipeStart = null;
+  let playerDirection = 'down';
   function cloneState(s) { return {width:s.width,height:s.height,walls:{...s.walls},goals:{...s.goals},boxes:{...s.boxes},player:{...s.player},moves:s.moves,pushes:s.pushes}; }
   function bestKey() { return `sokobanBest${levelIndex}`; }
   function loadLevel(index, showIntro = false) {
@@ -33,6 +34,33 @@
     const css=getComputedStyle(document.documentElement), get=(name,fallback)=>css.getPropertyValue(name).trim()||fallback;
     return {board:get('--board','#0d151f'),floor:get('--floor','#121c27'),wall:get('--wall','#293746'),wallMark:get('--wall-mark','#384a5b'),goal:get('--goal','#ff668f'),box:get('--gold','#ffb45c'),boxGoal:get('--cyan','#64e6e0'),player:get('--player','#e8f0f7'),playerMark:get('--bg','#070b12')};
   }
+  function drawGoal(x,y,size,colors,covered=false) {
+    const inset=size*.24, arm=size*.15, line=Math.max(2,size*.055);
+    ctx.strokeStyle=colors.goal;ctx.lineWidth=line;ctx.beginPath();
+    ctx.moveTo(x+inset+arm,y+inset);ctx.lineTo(x+inset,y+inset);ctx.lineTo(x+inset,y+inset+arm);
+    ctx.moveTo(x+size-inset-arm,y+inset);ctx.lineTo(x+size-inset,y+inset);ctx.lineTo(x+size-inset,y+inset+arm);
+    ctx.moveTo(x+inset,y+size-inset-arm);ctx.lineTo(x+inset,y+size-inset);ctx.lineTo(x+inset+arm,y+size-inset);
+    ctx.moveTo(x+size-inset-arm,y+size-inset);ctx.lineTo(x+size-inset,y+size-inset);ctx.lineTo(x+size-inset,y+size-inset-arm);ctx.stroke();
+    if(!covered){ctx.fillStyle=colors.goal;ctx.fillRect(x+size*.47,y+size*.47,size*.06,size*.06);}
+  }
+  function drawCrate(x,y,size,colors,onGoal) {
+    const inset=size*.15, boxSize=size*.7;
+    if(onGoal)drawGoal(x,y,size,colors,true);
+    ctx.fillStyle=onGoal?colors.boxGoal:colors.box;ctx.fillRect(x+inset,y+inset,boxSize,boxSize);
+    ctx.strokeStyle=colors.playerMark;ctx.lineWidth=Math.max(1.5,size*.035);ctx.strokeRect(x+inset,y+inset,boxSize,boxSize);
+    ctx.beginPath();ctx.moveTo(x+size*.3,y+size*.3);ctx.lineTo(x+size*.7,y+size*.7);ctx.moveTo(x+size*.7,y+size*.3);ctx.lineTo(x+size*.3,y+size*.7);ctx.stroke();
+    ctx.fillStyle=colors.player;const rivet=Math.max(2,size*.045);for(const [rx,ry] of [[.23,.23],[.73,.23],[.23,.73],[.73,.73]])ctx.fillRect(x+size*rx,y+size*ry,rivet,rivet);
+    if(onGoal){ctx.strokeStyle=colors.player;ctx.lineWidth=Math.max(2,size*.06);ctx.beginPath();ctx.moveTo(x+size*.37,y+size*.51);ctx.lineTo(x+size*.47,y+size*.61);ctx.lineTo(x+size*.66,y+size*.39);ctx.stroke();}
+  }
+  function drawPlayer(x,y,size,colors) {
+    const bodyX=x+size*.27,bodyY=y+size*.36,bodyW=size*.46,bodyH=size*.39,helmet=size*.12;
+    ctx.fillStyle=colors.playerMark;ctx.fillRect(bodyX,bodyY,bodyW,bodyH);
+    ctx.fillStyle=colors.boxGoal;ctx.fillRect(x+size*.24,y+size*.25,size*.52,helmet);ctx.fillRect(x+size*.31,y+size*.2,size*.38,size*.08); // helmet
+    ctx.fillStyle=colors.player;const eye=Math.max(2,size*.055),eyeY=y+size*.47;
+    let eye1=x+size*.39,eye2=x+size*.56;if(playerDirection==='left'){eye1=x+size*.34;eye2=x+size*.47;}if(playerDirection==='right'){eye1=x+size*.49;eye2=x+size*.62;}
+    if(playerDirection==='up'){ctx.fillRect(x+size*.42,y+size*.4,size*.16,eye);}else{ctx.fillRect(eye1,eyeY,eye,eye);ctx.fillRect(eye2,eyeY,eye,eye);}
+    ctx.fillStyle=colors.boxGoal;ctx.fillRect(x+size*.31,y+size*.73,size*.13,size*.08);ctx.fillRect(x+size*.56,y+size*.73,size*.13,size*.08);
+  }
   function draw() {
     const colors=palette(); ctx.fillStyle=colors.board; ctx.fillRect(0,0,canvas.width,canvas.height);
     const g=tileGeometry(), s=g.size;
@@ -40,16 +68,17 @@
       const k=`${x},${y}`, px=g.ox+x*s, py=g.oy+y*s;
       if(state.walls[k]) { ctx.fillStyle=colors.wall; ctx.fillRect(px+1,py+1,s-2,s-2); ctx.fillStyle=colors.wallMark; ctx.fillRect(px+s*.18,py+s*.18,s*.64,Math.max(2,s*.05)); }
       else if(state.goals[k] || state.boxes[k] || (state.player.x===x&&state.player.y===y)) { ctx.fillStyle=colors.floor; ctx.fillRect(px+1,py+1,s-2,s-2); }
-      if(state.goals[k]) { ctx.strokeStyle=colors.goal; ctx.lineWidth=Math.max(2,s*.06);ctx.strokeRect(px+s*.36,py+s*.36,s*.28,s*.28); }
-      if(state.boxes[k]) { const onGoal=state.goals[k];ctx.fillStyle=onGoal?colors.boxGoal:colors.box;ctx.fillRect(px+s*.18,py+s*.18,s*.64,s*.64);ctx.strokeStyle=colors.playerMark;ctx.lineWidth=Math.max(1,s*.035);ctx.strokeRect(px+s*.18,py+s*.18,s*.64,s*.64);ctx.beginPath();ctx.moveTo(px+s*.32,py+s*.5);ctx.lineTo(px+s*.68,py+s*.5);ctx.moveTo(px+s*.5,py+s*.32);ctx.lineTo(px+s*.5,py+s*.68);ctx.stroke(); }
+      if(state.goals[k]&&!state.boxes[k]) drawGoal(px,py,s,colors);
+      if(state.boxes[k]) { const onGoal=state.goals[k];drawCrate(px,py,s,colors,onGoal); }
     }
-    const px=g.ox+state.player.x*s+s/2, py=g.oy+state.player.y*s+s/2;
-    ctx.fillStyle=colors.player;ctx.fillRect(px-s*.18,py-s*.18,s*.36,s*.36);ctx.fillStyle=colors.playerMark;ctx.fillRect(px-s*.07,py-s*.07,s*.05,s*.05);ctx.fillRect(px+s*.02,py-s*.07,s*.05,s*.05);
+    const px=g.ox+state.player.x*s, py=g.oy+state.player.y*s;
+    drawPlayer(px,py,s,colors);
   }
   function attempt(dx,dy) {
     if(!active) { active=true; hideOverlay(); }
     const before=cloneState(state);
     if(!R.move(state,dx,dy)) return;
+    playerDirection=directionName(dx,dy);
     history.push(before); updateUi(); draw();
     if(R.isComplete(state)) {
       active=false; const old=Number(localStorage.getItem(bestKey()) || Infinity);
@@ -58,6 +87,7 @@
       updateUi(); showOverlay('LEVEL CLEAR',`${state.moves} MOVES · ${state.pushes} PUSHES`,levelIndex===levels.length-1?'PLAY AGAIN':'NEXT LEVEL');
     }
   }
+  function directionName(dx,dy){return dx<0?'left':dx>0?'right':dy<0?'up':'down';}
   function undo() { if(!history.length)return; state=history.pop(); active=true; hideOverlay();updateUi();draw(); }
   const directions={ArrowUp:[0,-1],KeyW:[0,-1],ArrowDown:[0,1],KeyS:[0,1],ArrowLeft:[-1,0],KeyA:[-1,0],ArrowRight:[1,0],KeyD:[1,0]};
   window.addEventListener('keydown',e=>{if(directions[e.code]){e.preventDefault();attempt(...directions[e.code]);}else if(e.code==='KeyR')loadLevel(levelIndex);else if(e.code==='KeyZ')undo();});
