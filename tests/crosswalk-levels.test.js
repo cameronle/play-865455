@@ -52,6 +52,18 @@ test('moving crosswalk positions are bounded and expose a contiguous safe strip'
   assert.equal(rules.isMovingSafe(moving, 9, 1, 0), true);
 });
 
+test('wrapped distance and vehicle collision handle toroidal screen boundaries', () => {
+  assert.equal(rules.wrappedDistance(20, 590, 600), 30);
+  assert.equal(rules.wrappedDistance(590, 20, 600), 30);
+  assert.equal(rules.wrappedDistance(300, 300, 600), 0);
+  assert.equal(rules.wrappedDistance(100, 400, 600), 300);
+  const player = { x: 20, r: 17 };
+  const enteringCar = { x: 590, w: 80 };
+  assert.equal(rules.collides(player, enteringCar, 600), true);
+  const farCar = { x: 400, w: 80 };
+  assert.equal(rules.collides(player, farCar, 600), false);
+});
+
 test('level unlocks advance one level at a time and completion count is stable', () => {
   const completed = Array(20).fill(false);
   assert.equal(rules.isLevelUnlocked(0, completed), true);

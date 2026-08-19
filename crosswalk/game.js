@@ -256,8 +256,7 @@
     for (const lane of lanes) {
       for (const car of lane.cars) {
         car.x += lane.speedPx * R.vehicleMotionFactor(lane, worldTime, car) * dt;
-        if (lane.dir > 0 && car.x > W + car.w / 2) car.x = -car.w / 2;
-        if (lane.dir < 0 && car.x < -car.w / 2) car.x = W + car.w / 2;
+        car.x = ((car.x % W) + W) % W;
       }
     }
 
@@ -383,7 +382,6 @@
       ctx.fillStyle = '#172733';
       ctx.fillRect(-car.w * 0.33, -11, car.w * 0.62, 9);
       ctx.fillRect(-car.w * 0.33, 3, car.w * 0.62, 7);
-      ctx.fillStyle = lane.dir > 0 ? '#ffe9a3' : '#ff7088';
     } else if (car.kind === 'emergency') {
       ctx.fillStyle = '#f0f3f5';
       ctx.fillRect(-car.w / 2, -14, car.w, 28);
@@ -398,11 +396,15 @@
       ctx.fillRect(-car.w / 2, -14, car.w, 28);
       ctx.fillStyle = '#172733';
       ctx.fillRect(-car.w * 0.18, -11, car.w * 0.36, 22);
-      ctx.fillStyle = lane.dir > 0 ? '#ffe9a3' : '#ff7088';
     }
-    const nose = lane.dir > 0 ? car.w / 2 - 4 : -car.w / 2;
-    ctx.fillRect(nose - 2, -9, 4, 5);
-    ctx.fillRect(nose - 2, 4, 4, 5);
+    const headX = lane.dir > 0 ? car.w / 2 - 4 : -car.w / 2;
+    const tailX = lane.dir > 0 ? -car.w / 2 : car.w / 2 - 3;
+    ctx.fillStyle = '#ffe9a3';
+    ctx.fillRect(headX, -9, 4, 5);
+    ctx.fillRect(headX, 4, 4, 5);
+    ctx.fillStyle = '#ff5468';
+    ctx.fillRect(tailX, -8, 3, 4);
+    ctx.fillRect(tailX, 4, 3, 4);
     ctx.restore();
   }
 
@@ -411,8 +413,8 @@
       for (const car of lane.cars) {
         const y = rowY(lane.row) + CELL_H / 2;
         drawVehicle(car, car.x, y, lane);
-        if (car.x < car.w / 2) drawVehicle(car, car.x + W, y, lane);
-        if (car.x > W - car.w / 2) drawVehicle(car, car.x - W, y, lane);
+        if (car.x - car.w / 2 < 0) drawVehicle(car, car.x + W, y, lane);
+        if (car.x + car.w / 2 > W) drawVehicle(car, car.x - W, y, lane);
       }
     }
   }
@@ -569,6 +571,7 @@
 
   window.CrosswalkGame = {
     getSnapshot: () => ({ state, level, levelIndex, lives, score, laneCount: lanes.length }),
+    getLaneCars: () => lanes.flatMap(lane => lane.cars.map(car => ({ ...car }))),
     startLevel,
     move,
   };

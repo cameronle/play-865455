@@ -31,6 +31,8 @@ function makeNode(id, extra = {}) {
 function loadGame() {
   const ids = ['game', 'score', 'level', 'chapter', 'lives', 'overlay', 'overlayTitle', 'overlayText', 'startButton', 'pauseButton', 'levelsButton', 'levelsOverlay', 'levelGrid', 'levelsProgress', 'closeLevels'];
   const nodes = Object.fromEntries(ids.map(id => [id, makeNode(id)]));
+  nodes.game.width = 600;
+  nodes.game.height = 720;
   const directions = ['up', 'left', 'down', 'right'].map(dir => {
     const button = makeNode(dir);
     button.dataset.dir = dir;
@@ -117,4 +119,16 @@ test('Crosswalk pause and visibility handlers do not advance the simulation whil
   assert.equal(after.state, 'paused');
   assert.equal(after.score, before.score);
   runtime.documentListeners.visibilitychange();
+});
+
+test('Crosswalk car positions wrap within [0, 600) bounds continuously during movement', () => {
+  const runtime = loadGame();
+  runtime.nodes.startButton.listeners.click();
+  for (let i = 1; i <= 200; i++) {
+    runtime.tick(i * 30);
+    const cars = runtime.sandbox.CrosswalkGame.getLaneCars();
+    for (const car of cars) {
+      assert.ok(car.x >= 0 && car.x < 600, `car at x=${car.x} is outside [0, 600)`);
+    }
+  }
 });
