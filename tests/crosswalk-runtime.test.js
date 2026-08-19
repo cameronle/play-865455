@@ -132,3 +132,24 @@ test('Crosswalk car positions wrap within [0, 600) bounds continuously during mo
     }
   }
 });
+
+test('Crosswalk auto-advances to the next level after 3s on level clear or advances immediately on click', () => {
+  const runtime = loadGame();
+  runtime.nodes.startButton.listeners.click();
+  runtime.sandbox.CrosswalkGame.finishLevel();
+  const clearSnapshot = runtime.sandbox.CrosswalkGame.getSnapshot();
+  assert.equal(clearSnapshot.state, 'level-clear');
+  assert.match(runtime.nodes.overlayText.textContent, /AUTO NEXT IN 3S/);
+  assert.match(runtime.nodes.startButton.textContent, /NEXT LEVEL \(3S\)/);
+
+  // Advance 3.5 seconds in ticks (each tick dt is capped at 0.04s)
+  let curTime = 0;
+  for (let t = 0; t < 90; t++) {
+    curTime += 50;
+    runtime.tick(curTime);
+  }
+  const nextSnapshot = runtime.sandbox.CrosswalkGame.getSnapshot();
+  assert.equal(nextSnapshot.state, 'playing');
+  assert.equal(nextSnapshot.level, 2);
+  assert.equal(nextSnapshot.levelIndex, 1);
+});

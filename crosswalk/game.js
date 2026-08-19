@@ -52,6 +52,7 @@
   let goalFlash = 0;
   let movingExposure = 0;
   let checkpointIndex = 0;
+  let autoNextTimer = 0;
   let levelsReturnState = null;
   let progress = loadProgress();
 
@@ -125,6 +126,7 @@
   }
 
   function startLevel(index) {
+    autoNextTimer = 0;
     levelIndex = clamp(index, 0, MAX_LEVEL - 1);
     level = levelIndex + 1;
     activeLevel = LEVELS[levelIndex];
@@ -152,6 +154,7 @@
   }
 
   function nextLevel() {
+    autoNextTimer = 0;
     if (levelIndex >= MAX_LEVEL - 1) {
       resetRun(0);
       return;
@@ -184,7 +187,7 @@
   }
 
   function move(direction) {
-    if (state === 'title' || state === 'over' || state === 'won') {
+    if (state === 'title' || state === 'over' || state === 'won' || state === 'level-clear') {
       action();
       return;
     }
@@ -242,7 +245,8 @@
 
     level++;
     setState('level-clear');
-    show('LEVEL CLEAR', `${activeLevel.name} · ${elapsed}S`, 'NEXT LEVEL', 'next');
+    autoNextTimer = 3.0;
+    show('LEVEL CLEAR', `${activeLevel.name} · ${elapsed}S · AUTO NEXT IN 3S`, 'NEXT LEVEL (3S)', 'next');
     updateHud();
   }
 
@@ -490,8 +494,8 @@
   function closeLevels() {
     ui.levelsOverlay.classList.remove('show');
     ui.levelsOverlay.setAttribute('aria-hidden', 'true');
-    if (levelsReturnState === 'playing') {
-      setState('playing');
+    if (levelsReturnState === 'playing' || levelsReturnState === 'level-clear') {
+      setState(levelsReturnState);
       last = performance.now();
     }
     levelsReturnState = null;
@@ -501,6 +505,15 @@
     const dt = Math.min(0.04, (time - last) / 1000 || 0);
     last = time;
     if (state === 'playing') update(dt);
+    else if (state === 'level-clear' && !ui.levelsOverlay.classList.contains('show')) {
+      autoNextTimer = Math.max(0, autoNextTimer - dt);
+      const secs = Math.max(1, Math.ceil(autoNextTimer));
+      ui.text.textContent = `${activeLevel.name} · ${Math.max(1, Math.ceil(levelTime))}S · AUTO NEXT IN ${secs}S`;
+      ui.start.textContent = `NEXT LEVEL (${secs}S)`;
+      if (autoNextTimer <= 0) {
+        nextLevel();
+      }
+    }
     draw();
     requestAnimationFrame(loop);
   }
@@ -573,6 +586,7 @@
     getSnapshot: () => ({ state, level, levelIndex, lives, score, laneCount: lanes.length }),
     getLaneCars: () => lanes.flatMap(lane => lane.cars.map(car => ({ ...car }))),
     startLevel,
+    finishLevel,
     move,
   };
 })();
