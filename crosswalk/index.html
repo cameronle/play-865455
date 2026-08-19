@@ -5,15 +5,31 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
   <meta name="theme-color" content="#070b12">
   <title>Night Crossing</title>
-  <link rel="stylesheet" href="style.css?v=crosswalk-1">
+  <link rel="stylesheet" href="style.css?v=crosswalk-20-1">
 </head>
 <body>
   <main class="page">
-    <header><a href="/">← PLAY</a><h1>NIGHT CROSSING</h1><button id="pauseButton" type="button">PAUSE</button></header>
-    <section class="hud"><div><span>SCORE</span><b id="score">000000</b></div><div><span>LEVEL</span><b id="level">01 / 08</b></div><div><span>LIVES</span><b id="lives">♥ ♥ ♥</b></div></section>
+    <header>
+      <a href="/">← PLAY</a>
+      <h1>NIGHT CROSSING</h1>
+      <div class="header-actions">
+        <button id="levelsButton" type="button">LEVELS</button>
+        <button id="pauseButton" type="button">PAUSE</button>
+      </div>
+    </header>
+    <section class="hud">
+      <div><span>SCORE</span><b id="score">000000</b></div>
+      <div><span>LEVEL</span><b id="level">01 / 20</b></div>
+      <div><span>CHAPTER</span><b id="chapter">01 / 05</b></div>
+      <div><span>LIVES</span><b id="lives">♥ ♥ ♥</b></div>
+    </section>
     <div class="frame">
       <canvas id="game" width="600" height="720" aria-label="Night Crossing traffic game"></canvas>
-      <div id="overlay" class="overlay"><b id="overlayTitle">NIGHT CROSSING</b><span id="overlayText">REACH THE LIGHTED EXIT</span><button id="startButton" type="button">START CROSSING</button></div>
+      <div id="overlay" class="overlay">
+        <b id="overlayTitle">NIGHT CROSSING</b>
+        <span id="overlayText">REACH THE LIGHTED EXIT</span>
+        <button id="startButton" type="button">START CROSSING</button>
+      </div>
     </div>
     <section class="dpad" aria-label="Directional touch controls">
       <button data-dir="up" type="button" aria-label="Move up">▲</button>
@@ -21,8 +37,21 @@
       <button data-dir="down" type="button" aria-label="Move down">▼</button>
       <button data-dir="right" type="button" aria-label="Move right">▶</button>
     </section>
-    <footer>ARROW KEYS / WASD · SWIPE OR TAP TO MOVE · P PAUSE</footer>
+    <footer>ARROW KEYS / WASD · SWIPE OR TAP TO MOVE · P PAUSE · LEVELS TO REPLAY</footer>
   </main>
-  <script src="game.js?v=crosswalk-1"></script>
+
+  <section id="levelsOverlay" class="levels-overlay" aria-hidden="true">
+    <div class="levels-dialog" role="dialog" aria-modal="true" aria-labelledby="levelsTitle">
+      <header class="levels-header">
+        <div><b id="levelsTitle">LEVEL SELECT</b><span id="levelsProgress">0 / 20 COMPLETE</span></div>
+        <button id="closeLevels" type="button">CLOSE</button>
+      </header>
+      <div id="levelGrid" class="level-grid"></div>
+    </div>
+  </section>
+
+  <script src="rules.js?v=crosswalk-20-1"></script>
+  <script src="levels.js?v=crosswalk-20-1"></script>
+  <script src="game.js?v=crosswalk-20-1"></script>
 </body>
 </html>
