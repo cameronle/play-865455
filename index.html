@@ -3,43 +3,235 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#070b12">
+  <meta name="theme-color" content="#faf8ef">
+  <script src="/theme.js?v=home-1"></script>
   <title>PLAY — Arcade</title>
+  <link rel="stylesheet" href="/theme.css?v=home-1">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
-    :root{color-scheme:dark;--bg:#070b12;--ink:#e8f0f7;--muted:#748394;--line:#243241;--cyan:#64e6e0;--orange:#ffb45c}
-    *{box-sizing:border-box}body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font-family:'Space Mono',ui-monospace,monospace}main{width:min(920px,100%);margin:auto;padding:32px 22px}.top{display:flex;align-items:end;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:20px;margin-bottom:34px}.kicker{color:var(--cyan);font-size:10px;letter-spacing:.2em}.title{font-size:clamp(38px,8vw,72px);line-height:.8;letter-spacing:.12em;margin:13px 0 0}.title em{color:var(--orange);font-style:normal}.sub{color:var(--muted);font-size:11px;margin:0;letter-spacing:.06em}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}.card{display:block;color:var(--ink);text-decoration:none;border:1px solid var(--line);background:#0b111a;padding:20px;min-height:165px;transition:.15s ease;position:relative;overflow:hidden}.card:after{content:'↗';position:absolute;right:18px;bottom:15px;color:var(--muted);font-size:20px}.card:hover{border-color:var(--cyan);transform:translateY(-2px);box-shadow:0 10px 30px #0008}.num{color:var(--orange);font-size:12px;letter-spacing:.1em}.card h2{font-size:22px;letter-spacing:.1em;margin:30px 0 10px}.card p{color:var(--muted);font-size:10px;line-height:1.7;margin:0;max-width:240px}footer{color:#465565;font-size:9px;letter-spacing:.08em;margin-top:42px}@media(max-width:500px){main{padding:22px 14px}.top{display:block}.sub{margin-top:22px}.grid{grid-template-columns:1fr}}
+    :root {
+      color-scheme: light dark;
+      --theme-color: #faf8ef;
+      --bg: #faf8ef;
+      --panel: #f1eee7;
+      --panel-hover: #eae4d8;
+      --ink: #3e3934;
+      --muted: #8b8177;
+      --line: #d8d0c5;
+      --accent: #4f9294;
+      --tag-bg: #e5dfd2;
+      --tag-ink: #6e6457;
+    }
+    [data-theme="dark"] {
+      color-scheme: dark;
+      --theme-color: #090d14;
+      --bg: #070b12;
+      --panel: #0b111a;
+      --panel-hover: #111a26;
+      --ink: #e8f0f7;
+      --muted: #748394;
+      --line: #243241;
+      --accent: #64e6e0;
+      --tag-bg: #141e2b;
+      --tag-ink: #8da0b3;
+    }
+    [data-theme="light"] {
+      color-scheme: light;
+      --theme-color: #faf8ef;
+      --bg: #faf8ef;
+      --panel: #f1eee7;
+      --panel-hover: #eae4d8;
+      --ink: #3e3934;
+      --muted: #8b8177;
+      --line: #d8d0c5;
+      --accent: #4f9294;
+      --tag-bg: #e5dfd2;
+      --tag-ink: #6e6457;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+    body {
+      display: flex;
+      justify-content: center;
+    }
+    main {
+      width: min(880px, 100%);
+      padding: 22px 16px max(24px, env(safe-area-inset-bottom));
+    }
+    .topbar {
+      height: 44px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .brand {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+    .title {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      margin: 0;
+      color: var(--ink);
+    }
+    .kicker {
+      color: var(--muted);
+      font-size: 9px;
+      letter-spacing: 0.08em;
+    }
+    .stats {
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      background: var(--panel);
+      padding: 4px 8px;
+      border-radius: 3px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 10px;
+    }
+    .card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: 4px;
+      padding: 13px 14px;
+      min-height: 98px;
+      text-decoration: none;
+      color: var(--ink);
+      transition: border-color 0.12s ease, background-color 0.12s ease;
+    }
+    .card:hover, .card:focus-visible {
+      border-color: var(--accent);
+      background: var(--panel-hover);
+      outline: none;
+    }
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .num {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--tag-ink);
+      background: var(--tag-bg);
+      padding: 2px 6px;
+      border-radius: 2px;
+    }
+    .arrow {
+      font-size: 11px;
+      color: var(--muted);
+      transition: transform 0.12s ease, color 0.12s ease;
+    }
+    .card:hover .arrow {
+      color: var(--accent);
+      transform: translateX(2px);
+    }
+    .card-body {
+      flex: 1;
+    }
+    .card h2 {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      margin: 0 0 5px;
+      color: var(--ink);
+    }
+    .card p {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.45;
+      margin: 0;
+    }
+    footer {
+      border-top: 1px solid var(--line);
+      margin-top: 20px;
+      padding-top: 12px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 9px;
+      letter-spacing: 0.08em;
+    }
+    @media (max-width: 560px) {
+      main {
+        padding: 12px 10px max(18px, env(safe-area-inset-bottom));
+      }
+      .topbar {
+        height: 40px;
+        margin-bottom: 12px;
+      }
+      .title {
+        font-size: 18px;
+      }
+      .grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      .card {
+        padding: 12px 12px;
+        min-height: auto;
+      }
+      footer {
+        margin-top: 16px;
+      }
+    }
   </style>
 </head>
 <body>
   <main>
-    <header class="top"><div><div class="kicker">SMALL GAMES / NO ACCOUNTS</div><h1 class="title">PLAY <em>!</em></h1></div><p class="sub">A tiny arcade on the edge.</p></header>
+    <header class="topbar">
+      <div class="brand">
+        <h1 class="title">PLAY</h1>
+        <span class="kicker">SMALL GAMES / NO ACCOUNTS</span>
+      </div>
+      <div class="stats">23 GAMES</div>
+    </header>
     <section class="grid" aria-label="Games">
-      <a class="card" href="/2048/"><span class="num">01 / PUZZLE</span><h2>2048</h2><p>Join the numbers. Chase the tile.</p></a>
-      <a class="card" href="/shooter/"><span class="num">02 / ARCADE</span><h2>SKY PATROL</h2><p>Move, fire, survive. A small original shooter.</p></a>
-      <a class="card" href="/tetris/"><span class="num">03 / PUZZLE</span><h2>TETRIS</h2><p>Classic falling blocks. Clear lines. Keep going.</p></a>
-      <a class="card" href="/snake/"><span class="num">04 / ARCADE</span><h2>SNAKE</h2><p>Eat, grow, and wrap around the walls.</p></a>
-      <a class="card" href="/breakout/"><span class="num">05 / ARCADE</span><h2>BREAKOUT</h2><p>Break the wall. Keep the ball alive.</p></a>
-      <a class="card" href="/minesweeper/"><span class="num">06 / PUZZLE</span><h2>MINESWEEPER</h2><p>Read the numbers. Avoid the mines.</p></a>
-      <a class="card" href="/space-invaders/"><span class="num">07 / ARCADE</span><h2>ALIEN FORMATION</h2><p>Defend the line against descending aliens.</p></a>
-      <a class="card" href="/maze/"><span class="num">08 / ARCADE</span><h2>NEON MAZE</h2><p>Eat every light. Avoid the hunters.</p></a>
-      <a class="card" href="/gomoku/"><span class="num">09 / STRATEGY</span><h2>GOMOKU</h2><p>Play as Black. Connect five before the computer does.</p></a>
-      <a class="card" href="/pong/"><span class="num">10 / ARCADE</span><h2>PONG</h2><p>Deflect the ball. Outsmart the machine.</p></a>
-      <a class="card" href="/sokoban/"><span class="num">11 / PUZZLE</span><h2>SOKOBAN</h2><p>Push every crate onto its target.</p></a>
-      <a class="card" href="/asteroids/"><span class="num">12 / ARCADE</span><h2>ASTEROIDS</h2><p>Drift, turn, fire, and clear the field.</p></a>
-      <a class="card" href="/crosswalk/"><span class="num">13 / ARCADE</span><h2>CROSSWALK</h2><p>Read the traffic and reach the far side.</p></a>
-      <a class="card" href="/simon/"><span class="num">14 / MEMORY</span><h2>SIMON</h2><p>Watch the sequence. Repeat it exactly.</p></a>
-      <a class="card" href="/sudoku/"><span class="num">15 / PUZZLE</span><h2>SUDOKU</h2><p>Place the digits. Complete every row, column, and box.</p></a>
-      <a class="card" href="/lunar-lander/"><span class="num">16 / SIMULATION</span><h2>LUNAR LANDER</h2><p>Manage angle, velocity, and fuel for a safe landing.</p></a>
-      <a class="card" href="/connect-four/"><span class="num">17 / STRATEGY</span><h2>CONNECT FOUR</h2><p>Drop four in a row before the computer does.</p></a>
-      <a class="card" href="/sky-hopper/"><span class="num">18 / ARCADE</span><h2>SKY HOPPER</h2><p>Bounce higher across a shifting field of platforms.</p></a>
-      <a class="card" href="/helicopter-cave/"><span class="num">19 / ARCADE</span><h2>HELICOPTER CAVE</h2><p>Hold to rise, release to fall, and survive the cave.</p></a>
-      <a class="card" href="/endless-runner/"><span class="num">20 / ARCADE</span><h2>ENDLESS RUNNER</h2><p>Jump, collect, and keep pace with the accelerating road.</p></a>
-      <a class="card" href="/solitaire/"><span class="num">21 / CARD</span><h2>SOLITAIRE</h2><p>Build down in alternating colors. Send every suit home.</p></a>
-      <a class="card" href="/bubble-shooter/"><span class="num">22 / PUZZLE</span><h2>BUBBLE SHOOTER</h2><p>Aim, match colors, and clear the field.</p></a>
-      <a class="card" href="/nonogram/"><span class="num">23 / PUZZLE</span><h2>NONOGRAM</h2><p>Read the clues. Reveal the hidden pixel picture.</p></a>
+      <a class="card" href="/2048/"><div class="card-head"><span class="num">01 / PUZZLE</span><span class="arrow">→</span></div><div class="card-body"><h2>2048</h2><p>Join the numbers. Chase the tile.</p></div></a>
+      <a class="card" href="/shooter/"><div class="card-head"><span class="num">02 / ARCADE</span><span class="arrow">→</span></div><div class="card-body"><h2>SKY PATROL</h2><p>Move, fire, survive. A small original shooter.</p></div></a>
+      <a class="card" href="/tetris/"><div class="card-head"><span class="num">03 / PUZZLE</span><span class="arrow">→</span></div><div class="card-body"><h2>TETRIS</h2><p>Classic falling blocks. Clear lines. Keep going.</p></div></a>
+      <a class="card" href="/snake/"><div class="card-head"><span class="num">04 / ARCADE</span><span class="arrow">→</span></div><div class="card-body"><h2>SNAKE</h2><p>Eat, grow, and wrap around the walls.</p></div></a>
+      <a class="card" href="/breakout/"><div class="card-head"><span class="num">05 / ARCADE</span><span class="arrow">→</span></div><div class="card-body"><h2>BREAKOUT</h2><p>Break the wall. Keep the ball alive.</p></div></a>
+      <a class="card" href="/minesweeper/"><div class="card-head"><span class="num">06 / PUZZLE</span><span class="arrow">→</span></div><div class="card-body"><h2>MINESWEEPER</h2><p>Read the numbers. Avoid the mines.</p></div></a>
+      <a class="card" href="/space-invaders/"><div class="card-head"><span class="num">07 / ARCADE</span><span class="arrow">→</span></div><div class="card-body"><h2>ALIEN FORMATION</h2><p>Defend the line against descending aliens.</p></div></a>
+      <a class="card" href="/maze/"><div class="card-head"><span class="num">08 / ARCADE</span><span class="arrow">→</span></div><div class="card-body"><h2>NEON MAZE</h2><p>Eat every light. Avoid the hunters.</p></div></a>
+      <a class="card" href="/gomoku/"><div class="card-head"><span class="num">09 / STRATEGY</span><span class="arrow">→</span></div><div class="card-body"><h2>GOMOKU</h2><p>Play as Black. Connect five before the computer does.</p></div></a>
+      <a class="card" href="/pong/"><div class="card-head"><span class="num">10 / ARCADE</span><span class="arrow">→</span></div><div class="card-body"><h2>PONG</h2><p>Deflect the ball. Outsmart the machine.</p></div></a>
+      <a class="card" href="/sokoban/"><div class="card-head"><span class="num">11 / PUZZLE</span><span class="arrow">→</span></div><div class="card-body"><h2>SOKOBAN</h2><p>Push every crate onto its target.</p></div></a>
+      <a class="card" href="/asteroids/"><div class="card-head"><span class="num">12 / ARCADE</span><span class="arrow">→</span></div><div class="card-body"><h2>ASTEROIDS</h2><p>Drift, turn, fire, and clear the field.</p></div></a>
+      <a class="card" href="/crosswalk/"><div class="card-head"><span class="num">13 / ARCADE</span><span class="arrow">→</span></div><div class="card-body"><h2>CROSSWALK</h2><p>Read the traffic and reach the far side.</p></div></a>
+      <a class="card" href="/simon/"><div class="card-head"><span class="num">14 / MEMORY</span><span class="arrow">→</span></div><div class="card-body"><h2>SIMON</h2><p>Watch the sequence. Repeat it exactly.</p></div></a>
+      <a class="card" href="/sudoku/"><div class="card-head"><span class="num">15 / PUZZLE</span><span class="arrow">→</span></div><div class="card-body"><h2>SUDOKU</h2><p>Place the digits. Complete every row, column, and box.</p></div></a>
+      <a class="card" href="/lunar-lander/"><div class="card-head"><span class="num">16 / SIMULATION</span><span class="arrow">→</span></div><div class="card-body"><h2>LUNAR LANDER</h2><p>Manage angle, velocity, and fuel for a safe landing.</p></div></a>
+      <a class="card" href="/connect-four/"><div class="card-head"><span class="num">17 / STRATEGY</span><span class="arrow">→</span></div><div class="card-body"><h2>CONNECT FOUR</h2><p>Drop four in a row before the computer does.</p></div></a>
+      <a class="card" href="/sky-hopper/"><div class="card-head"><span class="num">18 / ARCADE</span><span class="arrow">→</span></div><div class="card-body"><h2>SKY HOPPER</h2><p>Bounce higher across a shifting field of platforms.</p></div></a>
+      <a class="card" href="/helicopter-cave/"><div class="card-head"><span class="num">19 / ARCADE</span><span class="arrow">→</span></div><div class="card-body"><h2>HELICOPTER CAVE</h2><p>Hold to rise, release to fall, and survive the cave.</p></div></a>
+      <a class="card" href="/endless-runner/"><div class="card-head"><span class="num">20 / ARCADE</span><span class="arrow">→</span></div><div class="card-body"><h2>ENDLESS RUNNER</h2><p>Jump, collect, and keep pace with the accelerating road.</p></div></a>
+      <a class="card" href="/solitaire/"><div class="card-head"><span class="num">21 / CARD</span><span class="arrow">→</span></div><div class="card-body"><h2>SOLITAIRE</h2><p>Build down in alternating colors. Send every suit home.</p></div></a>
+      <a class="card" href="/bubble-shooter/"><div class="card-head"><span class="num">22 / PUZZLE</span><span class="arrow">→</span></div><div class="card-body"><h2>BUBBLE SHOOTER</h2><p>Aim, match colors, and clear the field.</p></div></a>
+      <a class="card" href="/nonogram/"><div class="card-head"><span class="num">23 / PUZZLE</span><span class="arrow">→</span></div><div class="card-body"><h2>NONOGRAM</h2><p>Read the clues. Reveal the hidden pixel picture.</p></div></a>
     </section>
     <footer>MORE GAMES COMING SOON · BUILT FOR THE WEB</footer>
   </main>
+  <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
 </body>
 </html>

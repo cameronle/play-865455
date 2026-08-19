@@ -73,3 +73,14 @@ test('theme stylesheet keeps the compact control usable on phones',()=>{
   assert.match(css,/@media\(max-width:480px\)/);
   assert.match(css,/min-height:32px/);
 });
+
+test('root launcher index page is themed, minimalist, and uses system theme',()=>{
+  const html=fs.readFileSync('index.html','utf8');
+  assert.match(html,/href="\/theme\.css\?v=[^"]+"/i,'root theme css');
+  assert.match(html,/src="\/theme\.js\?v=[^"]+"/i,'root theme js');
+  assert.match(html,/class="[^"]*theme-toggle[^"]*"/i,'root toggle');
+  assert.match(html,/\[data-theme="dark"\]/i,'root dark theme');
+  assert.match(html,/\[data-theme="light"\]/i,'root light theme');
+  assert.match(html,/font-family:[^;]*ui-monospace/i,'root monospace font');
+  assert.doesNotMatch(html,/fonts\.googleapis\.com/i,'no external Google fonts dependency');
+});
