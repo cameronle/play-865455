@@ -23,6 +23,17 @@ test('Crosswalk ships 20 ordered levels across five chapters', () => {
   assert.ok(level(14).lanes.some(lane => lane.vehicles.some(vehicle => vehicle.kind === 'emergency')));
 });
 
+test('Crosswalk speed scale increases monotonically across 20 levels', () => {
+  for (let i = 1; i < levels.length; i++) {
+    assert.ok(
+      levels[i].speedScale > levels[i - 1].speedScale,
+      `level ${levels[i].id} speedScale (${levels[i].speedScale}) should be greater than level ${levels[i - 1].id} (${levels[i - 1].speedScale})`
+    );
+  }
+  assert.ok(levels[0].speedScale >= 0.8 && levels[0].speedScale <= 0.9);
+  assert.ok(levels[19].speedScale >= 1.7 && levels[19].speedScale <= 2.0);
+});
+
 test('every level has finite lanes and a traversable static safe-row layout', () => {
   for (const item of levels) {
     assert.ok(item.lanes.length > 0);
