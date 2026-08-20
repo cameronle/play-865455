@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#070b12">
+  <script src="/theme.js?v=puzzle15-1"></script>
+  <title>15-Puzzle</title>
+  <link rel="stylesheet" href="/theme.css?v=puzzle15-1">
+  <link rel="stylesheet" href="style.css?v=puzzle15-1">
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <a href="/">← PLAY</a>
+      <h1>15-PUZZLE</h1>
+      <div class="header-actions">
+        <button id="undoButton" type="button">UNDO</button>
+        <button id="newButton" type="button">SHUFFLE</button>
+      </div>
+    </header>
+    <section class="toolbar">
+      <label class="tool-select">
+        GRID
+        <select id="sizeSelect">
+          <option value="3">3 × 3 (8)</option>
+          <option value="4" selected>4 × 4 (15)</option>
+          <option value="5">5 × 5 (24)</option>
+        </select>
+      </label>
+      <div class="stat-pill"><span class="stat-label">MOVES</span><b id="moveStat">0</b></div>
+      <div class="stat-pill"><span class="stat-label">TIME</span><b id="timeStat">00:00</b></div>
+      <div class="stat-pill"><span class="stat-label">BEST</span><b id="bestStat">--</b></div>
+    </section>
+    <div class="frame">
+      <div id="board" class="board" aria-label="15-Puzzle grid board"></div>
+      <div id="winOverlay" class="overlay hide">
+        <b id="winTitle">PUZZLE SOLVED</b>
+        <span id="winDetail">15 TILES ORDERED</span>
+        <button id="restartButton" type="button">PLAY AGAIN</button>
+      </div>
+    </div>
+    <footer>CLICK OR SWIPE TILES INTO THE EMPTY SPACE · ARROW KEYS / WASD</footer>
+  </main>
+
+  <script src="rules.js?v=puzzle15-1"></script>
+  <script src="game.js?v=puzzle15-1"></script>
+  <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
+</body>
+</html>

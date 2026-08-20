@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#070b12">
+  <script src="/theme.js?v=bridges-1"></script>
+  <title>Bridges</title>
+  <link rel="stylesheet" href="/theme.css?v=bridges-1">
+  <link rel="stylesheet" href="style.css?v=bridges-1">
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <a href="/">← PLAY</a>
+      <h1>BRIDGES</h1>
+      <div class="header-actions">
+        <button id="levelsButton" type="button">LEVELS</button>
+        <button id="resetButton" type="button">RESET</button>
+      </div>
+    </header>
+    <section class="toolbar">
+      <label class="tool-select">
+        GRID
+        <select id="packSelect">
+          <option value="4x4">4 × 4</option>
+          <option value="6x6">6 × 6</option>
+          <option value="8x8">8 × 8</option>
+        </select>
+      </label>
+      <label class="tool-select">
+        LEVEL
+        <select id="levelSelect"></select>
+      </label>
+      <div class="stat-pill"><span class="stat-label">BRIDGES</span><b id="bridgeStat">0</b></div>
+      <div class="stat-pill"><span class="stat-label">ISLANDS</span><b id="islandStat">0 / 0</b></div>
+    </section>
+    <div class="frame">
+      <canvas id="board" width="480" height="480" aria-label="Bridges puzzle game board"></canvas>
+      <div id="winOverlay" class="overlay hide">
+        <b id="winTitle">NETWORK COMPLETE</b>
+        <span id="winDetail">ALL ISLANDS CONNECTED</span>
+        <button id="nextButton" type="button">NEXT LEVEL</button>
+      </div>
+    </div>
+    <footer>DRAG OR TAP BETWEEN ISLANDS TO BUILD 1 OR 2 BRIDGES · CONNECT ALL ISLANDS</footer>
+  </main>
+
+  <section id="levelsOverlay" class="levels-overlay" aria-hidden="true">
+    <div class="levels-dialog" role="dialog" aria-modal="true" aria-labelledby="levelsTitle">
+      <header class="levels-header">
+        <div><b id="levelsTitle">LEVEL SELECT</b><span id="levelsProgress">0 / 30 COMPLETE</span></div>
+        <button id="closeLevels" type="button">CLOSE</button>
+      </header>
+      <div id="levelGrid" class="level-grid"></div>
+    </div>
+  </section>
+
+  <script src="rules.js?v=bridges-1"></script>
+  <script src="levels.js?v=bridges-1"></script>
+  <script src="game.js?v=bridges-1"></script>
+  <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
+</body>
+</html>

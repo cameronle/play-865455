@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#070b12">
+  <script src="/theme.js?v=color-1"></script>
+  <title>Color Switch</title>
+  <link rel="stylesheet" href="/theme.css?v=color-1">
+  <link rel="stylesheet" href="style.css?v=color-1">
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <a href="/">← PLAY</a>
+      <h1>COLOR SWITCH</h1>
+      <div class="header-actions">
+        <button id="pauseButton" type="button">PAUSE</button>
+      </div>
+    </header>
+    <section class="toolbar">
+      <div class="stat-pill"><span class="stat-label">SCORE</span><b id="scoreStat">0</b></div>
+      <div class="stat-pill"><span class="stat-label">BEST</span><b id="bestStat">0</b></div>
+    </section>
+    <div class="frame">
+      <canvas id="game" width="400" height="600" aria-label="Color Switch arcade jumping game"></canvas>
+      <div id="overlay" class="overlay">
+        <b id="overlayTitle">COLOR SWITCH</b>
+        <span id="overlayText">TAP OR PRESS SPACE TO JUMP</span>
+        <button id="startButton" type="button">START GAME</button>
+      </div>
+    </div>
+    <footer>TAP ANYWHERE TO JUMP · PASS ONLY THROUGH MATCHING COLORS</footer>
+  </main>
+
+  <script src="rules.js?v=color-1"></script>
+  <script src="game.js?v=color-1"></script>
+  <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
+</body>
+</html>
