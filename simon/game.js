@@ -4,6 +4,7 @@
   const pads = [...document.querySelectorAll('[data-pad]')];
   const board = document.getElementById('board');
   const startButton = document.getElementById('startButton');
+  const resetButton = document.getElementById('resetButton');
   const strictToggle = document.getElementById('strictMode');
   const scoreDisplay = document.getElementById('score');
   const bestDisplay = document.getElementById('best');
@@ -26,13 +27,18 @@
   bestDisplay.textContent = formatScore(best);
   setPadsEnabled(false);
 
+  function isStrict() {
+    if (!strictToggle) return false;
+    return strictToggle.type === 'checkbox' ? strictToggle.checked : strictToggle.value === 'strict';
+  }
+
   function formatScore(value) {
     return String(value).padStart(2, '0');
   }
 
   function setStatus(message, state = '') {
-    statusDisplay.textContent = message;
-    statusLight.className = `status-light${state ? ` ${state}` : ''}`;
+    if (statusDisplay) statusDisplay.textContent = message;
+    if (statusLight) statusLight.className = `status-light${state ? ` ${state}` : ''}`;
   }
 
   function setPadsEnabled(enabled) {
@@ -49,21 +55,24 @@
 
   function playTone(index, duration = 240, error = false) {
     if (!audioContext) return;
-    const now = audioContext.currentTime;
-    const oscillator = audioContext.createOscillator();
-    const gain = audioContext.createGain();
-    oscillator.type = error ? 'sawtooth' : 'square';
-    oscillator.frequency.setValueAtTime(error ? 85 : frequencies[index], now);
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(error ? 0.12 : 0.075, now + 0.012);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration / 1000);
-    oscillator.connect(gain).connect(audioContext.destination);
-    oscillator.start(now);
-    oscillator.stop(now + duration / 1000 + 0.02);
+    try {
+      const now = audioContext.currentTime;
+      const oscillator = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+      oscillator.type = error ? 'sawtooth' : 'square';
+      oscillator.frequency.setValueAtTime(error ? 85 : frequencies[index], now);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(error ? 0.12 : 0.075, now + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration / 1000);
+      oscillator.connect(gain).connect(audioContext.destination);
+      oscillator.start(now);
+      oscillator.stop(now + duration / 1000 + 0.02);
+    } catch (_) { /* audio fallback */ }
   }
 
   async function flashPad(index, duration = 330, token = runToken) {
     const pad = pads[index];
+    if (!pad) return;
     pad.classList.add('active');
     playTone(index, duration);
     await wait(duration);
@@ -108,8 +117,8 @@
     gameActive = true;
     acceptingInput = false;
     scoreDisplay.textContent = '00';
-    startButton.textContent = 'RESTART SIGNAL';
-    strictToggle.disabled = true;
+    if (startButton) startButton.textContent = 'RESTART SIGNAL';
+    if (strictToggle) strictToggle.disabled = true;
     setStatus('SYNCING', 'live');
     clearPadLights();
     await wait(350);
@@ -134,7 +143,7 @@
       score = sequence.length;
       scoreDisplay.textContent = formatScore(score);
       updateBest(score);
-      setStatus('SEQUENCE CLEAR', 'live');
+      setStatus('CLEAR', 'live');
       await wait(650);
       await nextRound(token);
     } else {
@@ -149,18 +158,18 @@
     setPadsEnabled(false);
     setStatus('SIGNAL LOST', 'error');
     playTone(0, 520, true);
-    board.classList.add('error');
+    if (board) board.classList.add('error');
     pads.forEach(pad => pad.classList.add('active'));
     await wait(420);
     clearPadLights();
-    board.classList.remove('error');
+    if (board) board.classList.remove('error');
     if (token !== runToken) return;
 
-    if (strictToggle.checked) {
+    if (isStrict()) {
       gameActive = false;
-      strictToggle.disabled = false;
-      startButton.textContent = 'TRY AGAIN';
-      setStatus('STRICT FAILURE', 'error');
+      if (strictToggle) strictToggle.disabled = false;
+      if (startButton) startButton.textContent = 'TRY AGAIN';
+      setStatus('STRICT FAIL', 'error');
       return;
     }
 
@@ -183,16 +192,22 @@
   pads.forEach(pad => {
     pad.addEventListener('pointerdown', event => {
       event.preventDefault();
-      if (pad.setPointerCapture) pad.setPointerCapture(event.pointerId);
+      if (pad.setPointerCapture) {
+        try { pad.setPointerCapture(event.pointerId); } catch (_) {}
+      }
       handlePad(Number(pad.dataset.pad));
     });
   });
 
-  startButton.addEventListener('click', startGame);
+  if (startButton) startButton.addEventListener('click', startGame);
+  if (resetButton) resetButton.addEventListener('click', startGame);
 
-  strictToggle.addEventListener('change', () => {
-    setStatus(strictToggle.checked ? 'STRICT ARMED' : 'STANDBY', strictToggle.checked ? 'error' : '');
-  });
+  if (strictToggle) {
+    strictToggle.addEventListener('change', () => {
+      const strict = isStrict();
+      setStatus(strict ? 'STRICT ARMED' : 'STANDBY', strict ? 'error' : '');
+    });
+  }
 
   window.addEventListener('keydown', event => {
     if (event.repeat) return;
@@ -215,8 +230,8 @@
     acceptingInput = false;
     setPadsEnabled(false);
     clearPadLights();
-    strictToggle.disabled = false;
-    startButton.textContent = 'RESYNC';
+    if (strictToggle) strictToggle.disabled = false;
+    if (startButton) startButton.textContent = 'RESYNC';
     setStatus('PAUSED');
   });
 })();

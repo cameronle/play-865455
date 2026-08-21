@@ -49,3 +49,16 @@ test('Connect Four uses the same flat collection shell and shared theme control'
   assert.match(css,/\.board\{[^}]*background:var\(--board\)/);
   assert.doesNotMatch(js,/style\.boxShadow/);
 });
+
+test('Simon / Signal Echo uses minimalist collection topbar, home link and theme support',()=>{
+  const html=read('simon/index.html');
+  const css=read('simon/style.css');
+  assert.match(html,/<header class="topbar">/);
+  assert.match(html,/<a href="\/"[^>]*>← PLAY<\/a>/);
+  assert.match(html,/src="\/theme\.js\?v=[^"]+"/);
+  assert.match(html,/class="theme-toggle"/);
+  assert.match(css,/\[data-theme="light"\]/);
+  assert.match(css,/font:\s*12px ui-monospace/);
+  assert.doesNotMatch(css,/fonts\.googleapis\.com/);
+  assert.doesNotMatch(css,/radial-gradient/);
+});
