@@ -93,12 +93,13 @@
     else if (ball.x - ball.r > W) score(0);
   }
   function draw() {
-    ctx.fillStyle = '#091018'; ctx.fillRect(0, 0, W, H);
-    ctx.strokeStyle = '#243241'; ctx.lineWidth = 3; ctx.setLineDash([10, 13]);
+    const isLight = document.documentElement?.dataset?.theme === 'light';
+    ctx.fillStyle = isLight ? '#f7f4ec' : '#091018'; ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = isLight ? '#d8d0c5' : '#243241'; ctx.lineWidth = 3; ctx.setLineDash([10, 13]);
     ctx.beginPath(); ctx.moveTo(W / 2, 0); ctx.lineTo(W / 2, H); ctx.stroke(); ctx.setLineDash([]);
-    ctx.fillStyle = '#64e6e0'; ctx.fillRect(player.x, player.y, paddle.w, paddle.h);
-    ctx.fillStyle = '#ff668f'; ctx.fillRect(ai.x, ai.y, paddle.w, paddle.h);
-    ctx.fillStyle = '#e8f0f7'; ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = isLight ? '#0288d1' : '#64e6e0'; ctx.fillRect(player.x, player.y, paddle.w, paddle.h);
+    ctx.fillStyle = isLight ? '#e63946' : '#ff668f'; ctx.fillRect(ai.x, ai.y, paddle.w, paddle.h);
+    ctx.fillStyle = isLight ? '#3e3934' : '#e8f0f7'; ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2); ctx.fill();
   }
   function loop(now) {
     if (state !== 'playing') return;

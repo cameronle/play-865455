@@ -23,7 +23,21 @@ function update(dt){
   enemyShots.forEach(shot=>{if(invulnerable<=0&&Math.abs(shot.x-player.x)<18&&Math.abs(shot.y-player.y)<16){shot.y=H+20;lose()}});
   if(!aliens.some(alien=>alien.alive)){level++;makeWave();enemyShots=[];hud()}
 }
-function draw(){x.fillStyle='#080d15';x.fillRect(0,0,W,H);for(let i=0;i<70;i++){x.fillStyle=i%5?'#e8f0f733':'#64e6e088';x.fillRect((i*83)%W,(i*47)%H,2,2)}x.strokeStyle='#64e6e622';x.beginPath();x.moveTo(0,H-27);x.lineTo(W,H-27);x.stroke();aliens.forEach(alien=>{if(alien.alive){x.fillStyle=alien.row%2?'#ffb45c':'#64e6e0';x.fillRect(alien.x-12,alien.y-7,24,14);x.fillStyle='#080d15';x.fillRect(alien.x-7,alien.y-2,4,4);x.fillRect(alien.x+3,alien.y-2,4,4)}});if(!(invulnerable>0&&Math.floor(invulnerable*10)%2===0)){x.fillStyle='#64e6e0';x.beginPath();x.moveTo(player.x,player.y-14);x.lineTo(player.x+18,player.y+8);x.lineTo(player.x-18,player.y+8);x.closePath();x.fill()}x.fillStyle='#ffb45c';shots.forEach(shot=>x.fillRect(shot.x-2,shot.y,4,12));x.fillStyle='#ff6b7a';enemyShots.forEach(shot=>x.fillRect(shot.x-2,shot.y,4,12))}
+function draw(){
+  const isLight = document.documentElement.dataset.theme === 'light';
+  const bg = isLight ? '#f7f4ec' : '#080d15';
+  const starCol = isLight ? '#8b817733' : '#e8f0f733';
+  const cyan = isLight ? '#0288d1' : '#64e6e0';
+  const orange = isLight ? '#f77f00' : '#ffb45c';
+  const red = isLight ? '#e63946' : '#ff6b7a';
+  x.fillStyle=bg;x.fillRect(0,0,W,H);
+  for(let i=0;i<70;i++){x.fillStyle=i%5?starCol:(isLight?'#0288d155':'#64e6e088');x.fillRect((i*83)%W,(i*47)%H,2,2)}
+  x.strokeStyle=isLight?'rgba(2,136,209,.15)':'#64e6e622';x.beginPath();x.moveTo(0,H-27);x.lineTo(W,H-27);x.stroke();
+  aliens.forEach(alien=>{if(alien.alive){x.fillStyle=alien.row%2?orange:cyan;x.fillRect(alien.x-12,alien.y-7,24,14);x.fillStyle=bg;x.fillRect(alien.x-7,alien.y-2,4,4);x.fillRect(alien.x+3,alien.y-2,4,4)}});
+  if(!(invulnerable>0&&Math.floor(invulnerable*10)%2===0)){x.fillStyle=cyan;x.beginPath();x.moveTo(player.x,player.y-14);x.lineTo(player.x+18,player.y+8);x.lineTo(player.x-18,player.y+8);x.closePath();x.fill()}
+  x.fillStyle=orange;shots.forEach(shot=>x.fillRect(shot.x-2,shot.y,4,12));
+  x.fillStyle=red;enemyShots.forEach(shot=>x.fillRect(shot.x-2,shot.y,4,12));
+}
 function movePlayerButton(dir){const button=$(dir==='left'?'leftButton':'rightButton'),key=dir==='left'?'ArrowLeft':'ArrowRight',on=event=>{event.preventDefault();if(state!=='play')start();keys.add(key)},off=event=>{event.preventDefault();keys.delete(key)};button.addEventListener('pointerdown',on);['pointerup','pointercancel','pointerleave'].forEach(type=>button.addEventListener(type,off))}
 function loop(time){const dt=Math.min(.033,(time-last)/1000||0);last=time;if(state==='play')update(dt);draw();requestAnimationFrame(loop)}
 $('start').onclick=start;$('new').onclick=start;$('pause').onclick=pause;movePlayerButton('left');movePlayerButton('right');

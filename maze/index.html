@@ -4,12 +4,18 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
   <meta name="theme-color" content="#070b12">
+  <script src="/theme.js?v=maze-2"></script>
   <title>Neon Maze</title>
-  <link rel="stylesheet" href="style.css?v=45da7d4">
+  <link rel="stylesheet" href="/theme.css?v=maze-2">
+  <link rel="stylesheet" href="style.css?v=maze-2">
 </head>
 <body>
   <main class="page">
-    <header><a href="/">← PLAY</a><h1>NEON MAZE</h1><button id="pause" type="button">PAUSE</button></header>
+    <header class="topbar">
+      <a href="/">← PLAY</a>
+      <h1>NEON MAZE</h1>
+      <button id="pause" type="button">PAUSE</button>
+    </header>
     <section class="layout">
       <div class="frame">
         <canvas id="game" width="480" height="480" aria-label="Neon Maze game board"></canvas>
@@ -33,7 +39,8 @@
     </div>
     <footer>FIND THE LIGHT · AVOID THE HUNTERS</footer>
   </main>
-  <script src="logic.js?v=45da7d4"></script>
-  <script src="game.js?v=45da7d4"></script>
+  <script src="logic.js?v=maze-2"></script>
+  <script src="game.js?v=maze-2"></script>
+  <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
 </body>
 </html>

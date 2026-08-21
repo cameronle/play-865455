@@ -294,7 +294,8 @@
   }
 
   function drawRoad() {
-    ctx.fillStyle = '#071017';
+    const isLight = document.documentElement?.dataset?.theme === 'light';
+    ctx.fillStyle = isLight ? '#f7f4ec' : '#071017';
     ctx.fillRect(0, 0, W, H);
     for (let row = 0; row < ROWS; row++) {
       const y = rowY(row);

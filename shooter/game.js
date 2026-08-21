@@ -72,14 +72,20 @@
   }
 
   function draw(){
-    ctx.save(); if(shake>0)ctx.translate(rand(-3,3),rand(-3,3));ctx.fillStyle='#080d15';ctx.fillRect(0,0,W,H);
-    stars.forEach(s=>{ctx.globalAlpha=s.a;ctx.fillStyle=colors.white;ctx.fillRect(s.x,s.y,s.s,s.s)});ctx.globalAlpha=1;
-    ctx.strokeStyle='rgba(100,230,224,.08)';ctx.beginPath();ctx.moveTo(0,H-48);ctx.lineTo(W,H-48);ctx.stroke();
-    bullets.forEach(b=>{ctx.fillStyle=colors.cyan;ctx.shadowColor=colors.cyan;ctx.shadowBlur=10;ctx.fillRect(b.x-b.w/2,b.y,b.w,b.h);ctx.shadowBlur=0});
-    enemyBullets.forEach(b=>{ctx.fillStyle=colors.red;ctx.fillRect(b.x-b.w/2,b.y,b.w,b.h)});
-    enemies.forEach(e=>{ctx.save();ctx.translate(e.x,e.y);ctx.fillStyle=e.type==='heavy'?colors.red:colors.orange;ctx.strokeStyle='#101923';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-e.w/2,-e.h/3);ctx.lineTo(-e.w/5,-e.h/2);ctx.lineTo(e.w/5,-e.h/2);ctx.lineTo(e.w/2,-e.h/3);ctx.lineTo(e.w/3,e.h/3);ctx.lineTo(-e.w/3,e.h/3);ctx.closePath();ctx.fill();ctx.stroke();ctx.fillStyle='#101923';ctx.fillRect(-e.w/4,-2,4,4);ctx.fillRect(e.w/4-4,-2,4,4);if(e.maxHp>1){ctx.fillStyle='#172432';ctx.fillRect(-e.w/2,-e.h/2-8,e.w,3);ctx.fillStyle=colors.red;ctx.fillRect(-e.w/2,-e.h/2-8,e.w*(e.hp/e.maxHp),3)}ctx.restore()});
-    powerups.forEach(p=>{ctx.strokeStyle=colors.cyan;ctx.lineWidth=2;ctx.beginPath();ctx.arc(p.x,p.y,8,0,Math.PI*2);ctx.stroke();ctx.fillStyle=colors.cyan;ctx.font='bold 10px monospace';ctx.textAlign='center';ctx.fillText('×',p.x,p.y+4)});
-    if(player&&!(player.invuln>0&&Math.floor(player.invuln*12)%2===0)){ctx.save();ctx.translate(player.x,player.y);ctx.fillStyle=colors.cyan;ctx.shadowColor=colors.cyan;ctx.shadowBlur=12;ctx.beginPath();ctx.moveTo(0,-22);ctx.lineTo(15,15);ctx.lineTo(5,12);ctx.lineTo(0,22);ctx.lineTo(-5,12);ctx.lineTo(-15,15);ctx.closePath();ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#0b111a';ctx.beginPath();ctx.moveTo(0,-12);ctx.lineTo(5,4);ctx.lineTo(-5,4);ctx.closePath();ctx.fill();ctx.restore()}
+    const isLight = document.documentElement.dataset.theme === 'light';
+    ctx.save(); if(shake>0)ctx.translate(rand(-3,3),rand(-3,3));
+    ctx.fillStyle = isLight ? '#f7f4ec' : '#080d15';
+    ctx.fillRect(0,0,W,H);
+    stars.forEach(s=>{ctx.globalAlpha=s.a;ctx.fillStyle=isLight?'#8b8177':colors.white;ctx.fillRect(s.x,s.y,s.s,s.s)});ctx.globalAlpha=1;
+    ctx.strokeStyle=isLight?'rgba(2,136,209,.15)':'rgba(100,230,224,.08)';ctx.beginPath();ctx.moveTo(0,H-48);ctx.lineTo(W,H-48);ctx.stroke();
+    const cyan = isLight ? '#0288d1' : colors.cyan;
+    const red = isLight ? '#e63946' : colors.red;
+    const orange = isLight ? '#f77f00' : colors.orange;
+    bullets.forEach(b=>{ctx.fillStyle=cyan;ctx.fillRect(b.x-b.w/2,b.y,b.w,b.h)});
+    enemyBullets.forEach(b=>{ctx.fillStyle=red;ctx.fillRect(b.x-b.w/2,b.y,b.w,b.h)});
+    enemies.forEach(e=>{ctx.save();ctx.translate(e.x,e.y);ctx.fillStyle=e.type==='heavy'?red:orange;ctx.strokeStyle=isLight?'#d8d0c5':'#101923';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-e.w/2,-e.h/3);ctx.lineTo(-e.w/5,-e.h/2);ctx.lineTo(e.w/5,-e.h/2);ctx.lineTo(e.w/2,-e.h/3);ctx.lineTo(e.w/3,e.h/3);ctx.lineTo(-e.w/3,e.h/3);ctx.closePath();ctx.fill();ctx.stroke();ctx.fillStyle=isLight?'#f7f4ec':'#101923';ctx.fillRect(-e.w/4,-2,4,4);ctx.fillRect(e.w/4-4,-2,4,4);if(e.maxHp>1){ctx.fillStyle=isLight?'#d8d0c5':'#172432';ctx.fillRect(-e.w/2,-e.h/2-8,e.w,3);ctx.fillStyle=red;ctx.fillRect(-e.w/2,-e.h/2-8,e.w*(e.hp/e.maxHp),3)}ctx.restore()});
+    powerups.forEach(p=>{ctx.strokeStyle=cyan;ctx.lineWidth=2;ctx.beginPath();ctx.arc(p.x,p.y,8,0,Math.PI*2);ctx.stroke();ctx.fillStyle=cyan;ctx.font='bold 10px monospace';ctx.textAlign='center';ctx.fillText('×',p.x,p.y+4)});
+    if(player&&!(player.invuln>0&&Math.floor(player.invuln*12)%2===0)){ctx.save();ctx.translate(player.x,player.y);ctx.fillStyle=cyan;ctx.beginPath();ctx.moveTo(0,-22);ctx.lineTo(15,15);ctx.lineTo(5,12);ctx.lineTo(0,22);ctx.lineTo(-5,12);ctx.lineTo(-15,15);ctx.closePath();ctx.fill();ctx.fillStyle=isLight?'#f7f4ec':'#0b111a';ctx.beginPath();ctx.moveTo(0,-12);ctx.lineTo(5,4);ctx.lineTo(-5,4);ctx.closePath();ctx.fill();ctx.restore()}
     particles.forEach(p=>{ctx.globalAlpha=Math.max(0,p.life/p.max);ctx.fillStyle=p.color;ctx.fillRect(p.x-p.size/2,p.y-p.size/2,p.size,p.size)});ctx.globalAlpha=1;ctx.restore();
   }
   function loop(t){const dt=Math.min(.033,(t-last)/1000||0);last=t;if(state==='playing')update(dt);draw();requestAnimationFrame(loop)}

@@ -19,9 +19,50 @@ for(const p of platforms)if(landOnPlatform(p,previousBottom))break;
 if(player.y<260){const shift=260-player.y;player.y=260;cameraY-=shift;highest=Math.max(highest,-cameraY);score=Math.max(score,Math.floor(highest/5));generatePlatforms()}
 particles.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=300*dt;p.life-=dt});particles=particles.filter(p=>p.life>0);platforms=platforms.filter(p=>p.y-cameraY<H+160&&p.alpha>0);if(player.y>H+80)gameOver();updateHud()}
 function updateHud(){ui.score.textContent=String(score).padStart(6,'0');ui.best.textContent=String(best).padStart(6,'0');ui.height.textContent=String(Math.floor(highest/10)).padStart(4,'0')+'m'}
-function draw(){const gradient=ctx.createLinearGradient(0,0,0,H);gradient.addColorStop(0,'#07111f');gradient.addColorStop(1,'#0b2430');ctx.fillStyle=gradient;ctx.fillRect(0,0,W,H);for(let i=0;i<65;i++){const y=((i*97-cameraY*.13)%H+H)%H;ctx.fillStyle=i%6?'#e8f0f733':'#64e6e077';ctx.fillRect((i*83)%W,y,i%9?1:2,i%9?1:2)}platforms.forEach(drawPlatform);particles.forEach(p=>{ctx.globalAlpha=Math.max(0,p.life*3);ctx.fillStyle=p.color;ctx.fillRect(p.x-2,p.y-cameraY-2,4,4)});ctx.globalAlpha=1;if(player)drawPlayer();if(paused){ctx.fillStyle='#070b1299';ctx.fillRect(0,0,W,H)}}
-function drawPlatform(p){const y=p.y-cameraY;if(y<-25||y>H+25)return;ctx.globalAlpha=Math.max(0,p.alpha);const colors={normal:'#64e6e0',moving:'#ffb45c',breaking:'#ff6b7a',spring:'#7bf0aa',fading:'#9d8cff'};ctx.fillStyle=colors[p.type];ctx.fillRect(p.x,y,p.w,p.h);ctx.fillStyle='#07111f';if(p.type==='breaking'){ctx.fillRect(p.x+p.w*.42,y,4,p.h);ctx.fillRect(p.x+p.w*.7,y,3,p.h)}if(p.type==='spring'){ctx.strokeStyle='#e8f0f7';ctx.beginPath();ctx.moveTo(p.x+p.w/2-8,y);ctx.lineTo(p.x+p.w/2,y-12);ctx.lineTo(p.x+p.w/2+8,y);ctx.stroke()}ctx.globalAlpha=1}
-function drawPlayer(){ctx.save();ctx.translate(player.x+player.w/2,player.y+player.h/2);ctx.fillStyle='#e8f0f7';ctx.fillRect(-10,-12,20,23);ctx.fillStyle='#64e6e0';ctx.fillRect(-7,-8,5,5);ctx.fillRect(2,-8,5,5);ctx.fillStyle='#ffb45c';ctx.fillRect(-13,4,5,13);ctx.fillRect(8,4,5,13);ctx.restore()}
+function draw(){
+  const isLight = document.documentElement?.dataset?.theme === 'light';
+  if(isLight){
+    ctx.fillStyle = '#f7f4ec';
+    ctx.fillRect(0,0,W,H);
+  } else {
+    const gradient=ctx.createLinearGradient(0,0,0,H);
+    gradient.addColorStop(0,'#07111f');
+    gradient.addColorStop(1,'#0b2430');
+    ctx.fillStyle=gradient;
+    ctx.fillRect(0,0,W,H);
+  }
+  for(let i=0;i<65;i++){
+    const y=((i*97-cameraY*.13)%H+H)%H;
+    ctx.fillStyle=i%6?(isLight?'#8b817733':'#e8f0f733'):(isLight?'#0288d177':'#64e6e077');
+    ctx.fillRect((i*83)%W,y,i%9?1:2,i%9?1:2);
+  }
+  platforms.forEach(drawPlatform);
+  particles.forEach(p=>{ctx.globalAlpha=Math.max(0,p.life*3);ctx.fillStyle=p.color;ctx.fillRect(p.x-2,p.y-cameraY-2,4,4)});
+  ctx.globalAlpha=1;
+  if(player)drawPlayer();
+  if(paused){ctx.fillStyle=isLight ? '#f5f1e8aa' : '#070b1299';ctx.fillRect(0,0,W,H)}
+}
+function drawPlatform(p){
+  const isLight = document.documentElement?.dataset?.theme === 'light';
+  const y=p.y-cameraY;if(y<-25||y>H+25)return;
+  ctx.globalAlpha=Math.max(0,p.alpha);
+  const colors=isLight ? {normal:'#0288d1',moving:'#f77f00',breaking:'#e63946',spring:'#198754',fading:'#6f42c1'} : {normal:'#64e6e0',moving:'#ffb45c',breaking:'#ff6b7a',spring:'#7bf0aa',fading:'#9d8cff'};
+  ctx.fillStyle=colors[p.type];ctx.fillRect(p.x,y,p.w,p.h);
+  ctx.fillStyle=isLight ? '#f7f4ec' : '#07111f';
+  if(p.type==='breaking'){ctx.fillRect(p.x+p.w*.42,y,4,p.h);ctx.fillRect(p.x+p.w*.7,y,3,p.h)}
+  if(p.type==='spring'){
+    ctx.strokeStyle=isLight ? '#3e3934' : '#e8f0f7';ctx.beginPath();ctx.moveTo(p.x+p.w/2-8,y);ctx.lineTo(p.x+p.w/2,y-12);ctx.lineTo(p.x+p.w/2+8,y);ctx.stroke();
+  }
+  ctx.globalAlpha=1;
+}
+function drawPlayer(){
+  const isLight = document.documentElement?.dataset?.theme === 'light';
+  ctx.save();ctx.translate(player.x+player.w/2,player.y+player.h/2);
+  ctx.fillStyle=isLight ? '#3e3934' : '#e8f0f7';ctx.fillRect(-10,-12,20,23);
+  ctx.fillStyle=isLight ? '#0288d1' : '#64e6e0';ctx.fillRect(-7,-8,5,5);ctx.fillRect(2,-8,5,5);
+  ctx.fillStyle=isLight ? '#f77f00' : '#ffb45c';ctx.fillRect(-13,4,5,13);ctx.fillRect(8,4,5,13);
+  ctx.restore();
+}
 function loop(time){const dt=Math.min(.033,(time-last)/1000||0);last=time;update(dt);draw();requestAnimationFrame(loop)}
 function bindHold(id,key){const button=$(id),on=event=>{event.preventDefault();if(state!=='playing')start();input[key]=true;button.classList.add('active');button.setPointerCapture?.(event.pointerId)},off=()=>{input[key]=false;button.classList.remove('active')};button.addEventListener('pointerdown',on);['pointerup','pointercancel','pointerleave','lostpointercapture'].forEach(type=>button.addEventListener(type,off))}
 bindHold('leftButton','left');bindHold('rightButton','right');canvas.addEventListener('pointerdown',event=>{event.preventDefault();if(state!=='playing')start();const rect=canvas.getBoundingClientRect(),key=event.clientX-rect.left<rect.width/2?'left':'right';input[key]=true;canvas.setPointerCapture?.(event.pointerId);canvas.dataset.held=key});const releaseCanvas=()=>{if(canvas.dataset.held){input[canvas.dataset.held]=false;delete canvas.dataset.held}};['pointerup','pointercancel','lostpointercapture'].forEach(type=>canvas.addEventListener(type,releaseCanvas));

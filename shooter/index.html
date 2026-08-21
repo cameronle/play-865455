@@ -2,17 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
   <meta name="theme-color" content="#070b12">
+  <script src="/theme.js?v=shooter-2"></script>
   <title>Sky Patrol</title>
-  <link rel="stylesheet" href="style.css?v=touch-lock-1">
+  <link rel="stylesheet" href="/theme.css?v=shooter-2">
+  <link rel="stylesheet" href="style.css?v=shooter-2">
 </head>
 <body>
-  <main class="shell">
+  <main class="page">
     <header class="topbar">
-      <a class="back" href="/">PLAY</a>
-      <div class="brand"><span class="mark">✦</span> SKY PATROL</div>
-      <button class="sound" id="soundButton" aria-label="Toggle sound">SOUND</button>
+      <a href="/">← PLAY</a>
+      <h1>SKY PATROL</h1>
+      <div class="header-actions">
+        <button class="sound" id="soundButton" aria-label="Toggle sound" type="button">SOUND</button>
+      </div>
     </header>
 
     <section class="game-wrap" aria-label="Sky Patrol game">
@@ -23,28 +27,28 @@
       </div>
       <div class="screen-frame">
         <canvas id="game" width="480" height="648"></canvas>
-        <div class="scanlines"></div>
         <div class="overlay" id="overlay">
           <div class="intro">
             <p class="eyebrow">A SMALL ARCADE GAME</p>
             <h1>SKY<br><em>PATROL</em></h1>
             <p class="hint">MOVE WITH ARROWS / WASD &nbsp; AUTO-FIRE ENABLED</p>
-            <button class="start" id="startButton">START GAME</button>
+            <button class="start" id="startButton" type="button">START GAME</button>
             <p class="best">BEST <strong id="best">000000</strong></p>
           </div>
         </div>
       </div>
       <div class="mobile-controls" aria-label="Touch controls">
-        <button id="leftButton">←</button>
-        <button id="upButton">↑</button>
-        <button id="rightButton">→</button>
-        <button id="downButton">↓</button>
-        <button id="mobilePauseButton" aria-label="Pause or resume">PAUSE</button>
+        <button id="leftButton" type="button">←</button>
+        <button id="upButton" type="button">↑</button>
+        <button id="rightButton" type="button">→</button>
+        <button id="downButton" type="button">↓</button>
+        <button id="mobilePauseButton" aria-label="Pause or resume" type="button">PAUSE</button>
       </div>
     </section>
 
-    <footer><span>ARROWS / WASD TO MOVE</span><span>AUTO-FIRE · P PAUSE · M MUTE</span></footer>
+    <footer><span>ARROWS / WASD TO MOVE</span> · <span>AUTO-FIRE · P PAUSE · M MUTE</span></footer>
   </main>
-  <script src="game.js?v=touch-lock-1"></script>
+  <script src="game.js?v=shooter-2"></script>
+  <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
 </body>
 </html>

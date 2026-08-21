@@ -4,12 +4,18 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
   <meta name="theme-color" content="#070b12">
+  <script src="/theme.js?v=pong-2"></script>
   <title>Pong</title>
-  <link rel="stylesheet" href="style.css?v=pong-1">
+  <link rel="stylesheet" href="/theme.css?v=pong-2">
+  <link rel="stylesheet" href="style.css?v=pong-2">
 </head>
 <body>
   <main class="page">
-    <header><a href="/">← PLAY</a><h1>PONG</h1><button id="pauseButton" type="button">PAUSE</button></header>
+    <header class="topbar">
+      <a href="/">← PLAY</a>
+      <h1>PONG</h1>
+      <button id="pauseButton" type="button">PAUSE</button>
+    </header>
     <section class="scorebar" aria-live="polite">
       <div><span>YOU</span><b id="playerScore">0</b></div>
       <div class="round"><span>FIRST TO 7</span><b id="status">READY</b></div>
@@ -27,6 +33,7 @@
     <div class="mobile-controls" aria-label="Touch paddle controls"><button id="upButton" type="button">▲ UP</button><button id="downButton" type="button">▼ DOWN</button></div>
     <footer>W / S OR ↑ / ↓ · DRAG ANYWHERE ON COURT · P TO PAUSE</footer>
   </main>
-  <script src="game.js?v=pong-1"></script>
+  <script src="game.js?v=pong-2"></script>
+  <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
 </body>
 </html>

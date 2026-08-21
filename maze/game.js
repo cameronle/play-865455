@@ -85,16 +85,17 @@
     }
   }
   function draw() {
-    ctx.fillStyle = '#080d15'; ctx.fillRect(0, 0, WIDTH, WIDTH);
+    const isLight = document.documentElement?.dataset?.theme === 'light';
+    ctx.fillStyle = isLight ? '#f7f4ec' : '#080d15'; ctx.fillRect(0, 0, WIDTH, WIDTH);
     for (let row = 0; row < SIZE; row++) for (let col = 0; col < SIZE; col++) {
       if (!maze.isWall(row, col)) continue;
       const px = col * CELL, py = row * CELL;
-      ctx.fillStyle = '#132331'; ctx.fillRect(px + 3, py + 3, CELL - 6, CELL - 6);
-      ctx.strokeStyle = '#64e6e633'; ctx.strokeRect(px + 5, py + 5, CELL - 10, CELL - 10);
+      ctx.fillStyle = isLight ? '#eae4d8' : '#132331'; ctx.fillRect(px + 3, py + 3, CELL - 6, CELL - 6);
+      ctx.strokeStyle = isLight ? '#d8d0c5' : '#64e6e633'; ctx.strokeRect(px + 5, py + 5, CELL - 10, CELL - 10);
     }
     dots.forEach(key => {
       const [row, col] = key.split(',').map(Number);
-      ctx.fillStyle = '#e8f0f7'; ctx.fillRect(col * CELL + 15, row * CELL + 15, 3, 3);
+      ctx.fillStyle = isLight ? '#8b8177' : '#e8f0f7'; ctx.fillRect(col * CELL + 15, row * CELL + 15, 3, 3);
     });
     enemies.forEach(enemy => {
       const x = enemy.col * CELL + 16, y = enemy.row * CELL + 16;
@@ -102,8 +103,8 @@
       ctx.lineTo(x + 10, y + 8); ctx.lineTo(x + 5, y + 3); ctx.lineTo(x, y + 8);
       ctx.lineTo(x - 5, y + 3); ctx.lineTo(x - 10, y + 8); ctx.lineTo(x - 10, y); ctx.fill();
     });
-    ctx.fillStyle = '#64e6e0'; ctx.beginPath(); ctx.arc(player.col * CELL + 16, player.row * CELL + 16, 11, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = '#080d15'; ctx.beginPath(); ctx.arc(player.col * CELL + 20, player.row * CELL + 12, 2, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = isLight ? '#0288d1' : '#64e6e0'; ctx.beginPath(); ctx.arc(player.col * CELL + 16, player.row * CELL + 16, 11, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = isLight ? '#f7f4ec' : '#080d15'; ctx.beginPath(); ctx.arc(player.col * CELL + 20, player.row * CELL + 12, 2, 0, Math.PI * 2); ctx.fill();
   }
   function setDirection(name) { queued = directions[name]; }
   function bindButton(name) {

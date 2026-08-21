@@ -90,21 +90,23 @@
   }
 
   function draw() {
-    ctx.fillStyle = '#010307'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#9cc4ca'; stars.forEach(s => { ctx.globalAlpha = s.a; ctx.fillRect(s.x, s.y, s.r, s.r); }); ctx.globalAlpha = 1;
-    ctx.strokeStyle = '#31576a'; ctx.lineWidth = 2; ctx.beginPath(); terrain.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)); ctx.stroke();
-    ctx.lineTo(canvas.width, canvas.height); ctx.lineTo(0, canvas.height); ctx.closePath(); ctx.fillStyle = '#061019'; ctx.fill();
-    ctx.strokeStyle = '#64ffbd'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(platform.x, platform.y); ctx.lineTo(platform.x + platform.width, platform.y); ctx.stroke();
-    ctx.fillStyle = '#64ffbd'; ctx.font = '11px monospace'; ctx.fillText(`${Math.max(1, 6 - level)}×`, platform.x + platform.width / 2 - 9, platform.y + 19);
-    particles.forEach(p => { ctx.globalAlpha = Math.max(0, p.life * 2); ctx.fillStyle = p.life > .35 ? '#ffd166' : '#ff5468'; ctx.fillRect(p.x - 2, p.y - 2, 4, 4); }); ctx.globalAlpha = 1;
+    const isLight = document.documentElement?.dataset?.theme === 'light';
+    ctx.fillStyle = isLight ? '#f7f4ec' : '#010307'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = isLight ? '#8b8177' : '#9cc4ca'; stars.forEach(s => { ctx.globalAlpha = s.a; ctx.fillRect(s.x, s.y, s.r, s.r); }); ctx.globalAlpha = 1;
+    ctx.strokeStyle = isLight ? '#a89f91' : '#31576a'; ctx.lineWidth = 2; ctx.beginPath(); terrain.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)); ctx.stroke();
+    ctx.lineTo(canvas.width, canvas.height); ctx.lineTo(0, canvas.height); ctx.closePath(); ctx.fillStyle = isLight ? '#eae4d8' : '#061019'; ctx.fill();
+    ctx.strokeStyle = isLight ? '#198754' : '#64ffbd'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(platform.x, platform.y); ctx.lineTo(platform.x + platform.width, platform.y); ctx.stroke();
+    ctx.fillStyle = isLight ? '#198754' : '#64ffbd'; ctx.font = '11px monospace'; ctx.fillText(`${Math.max(1, 6 - level)}×`, platform.x + platform.width / 2 - 9, platform.y + 19);
+    particles.forEach(p => { ctx.globalAlpha = Math.max(0, p.life * 2); ctx.fillStyle = p.life > .35 ? (isLight ? '#f77f00' : '#ffd166') : (isLight ? '#e63946' : '#ff5468'); ctx.fillRect(p.x - 2, p.y - 2, 4, 4); }); ctx.globalAlpha = 1;
     if (state !== 'crashed') drawShip();
-    if (paused) { ctx.fillStyle = '#02060bcc'; ctx.fillRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = '#d8f8ef'; ctx.font = 'bold 34px monospace'; ctx.textAlign = 'center'; ctx.fillText('PAUSED', canvas.width / 2, canvas.height / 2); ctx.textAlign = 'left'; }
+    if (paused) { ctx.fillStyle = isLight ? '#f5f1e8cc' : '#02060bcc'; ctx.fillRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = isLight ? '#3e3934' : '#d8f8ef'; ctx.font = 'bold 34px monospace'; ctx.textAlign = 'center'; ctx.fillText('PAUSED', canvas.width / 2, canvas.height / 2); ctx.textAlign = 'left'; }
   }
 
   function drawShip() {
-    ctx.save(); ctx.translate(ship.x, ship.y); ctx.rotate(ship.angle); ctx.strokeStyle = '#d8f8ef'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, -15); ctx.lineTo(11, 8); ctx.lineTo(7, 12); ctx.lineTo(-7, 12); ctx.lineTo(-11, 8); ctx.closePath(); ctx.stroke();
+    const isLight = document.documentElement?.dataset?.theme === 'light';
+    ctx.save(); ctx.translate(ship.x, ship.y); ctx.rotate(ship.angle); ctx.strokeStyle = isLight ? '#3e3934' : '#d8f8ef'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, -15); ctx.lineTo(11, 8); ctx.lineTo(7, 12); ctx.lineTo(-7, 12); ctx.lineTo(-11, 8); ctx.closePath(); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(-8, 9); ctx.lineTo(-14, 16); ctx.moveTo(8, 9); ctx.lineTo(14, 16); ctx.stroke();
-    if (keys.thrust && fuel > 0 && state === 'playing') { ctx.strokeStyle = '#ffd166'; ctx.beginPath(); ctx.moveTo(-5, 13); ctx.lineTo(0, 23 + Math.random() * 8); ctx.lineTo(5, 13); ctx.stroke(); }
+    if (keys.thrust && fuel > 0 && state === 'playing') { ctx.strokeStyle = isLight ? '#f77f00' : '#ffd166'; ctx.beginPath(); ctx.moveTo(-5, 13); ctx.lineTo(0, 23 + Math.random() * 8); ctx.lineTo(5, 13); ctx.stroke(); }
     ctx.restore();
   }
 
