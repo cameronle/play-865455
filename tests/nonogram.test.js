@@ -74,7 +74,7 @@ test('Nonogram page is touch-safe, themed, keyboard accessible, and integrated a
   assert.match(js,/pointermove/);
   assert.match(js,/keydown/);
   assert.match(js,/localStorage/);
-  assert.match(index,/23 \/ PUZZLE[\s\S]*NONOGRAM/);
+  assert.match(index,/data-game="nonogram"/);
   assert.match(readme,/\.\/nonogram\//);
 });
 

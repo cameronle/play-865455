@@ -1,11 +1,12 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN" data-lang="zh">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#faf8ef">
   <script src="/theme.js?v=home-1"></script>
-  <title>PLAY — Arcade</title>
+  <script src="/i18n.js?v=home-1"></script>
+  <title>PLAY — 小游戏集合</title>
   <link rel="stylesheet" href="/theme.css?v=home-1">
   <style>
     :root {
@@ -90,6 +91,11 @@
       font-size: 9px;
       letter-spacing: 0.08em;
     }
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
     .stats {
       font-size: 9px;
       letter-spacing: 0.08em;
@@ -98,6 +104,32 @@
       background: var(--panel);
       padding: 4px 8px;
       border-radius: 3px;
+      white-space: nowrap;
+    }
+    .lang-toggle {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      background: var(--panel);
+      padding: 4px 8px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: border-color 0.12s ease, background-color 0.12s ease, color 0.12s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 24px;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .lang-toggle:hover, .lang-toggle:focus-visible {
+      border-color: var(--accent);
+      background: var(--panel-hover);
+      color: var(--accent);
+      outline: none;
     }
     .grid {
       display: grid;
@@ -149,14 +181,14 @@
     .card-body {
       flex: 1;
     }
-    .card h2 {
+    .card h2, .card-title {
       font-size: 14px;
       font-weight: 700;
       letter-spacing: 0.08em;
       margin: 0 0 5px;
       color: var(--ink);
     }
-    .card p {
+    .card p, .card-desc {
       color: var(--muted);
       font-size: 11px;
       line-height: 1.45;
@@ -182,6 +214,13 @@
       .title {
         font-size: 18px;
       }
+      .topbar-actions {
+        gap: 6px;
+      }
+      .stats, .lang-toggle {
+        font-size: 8px;
+        padding: 3px 6px;
+      }
       .grid {
         grid-template-columns: 1fr;
         gap: 8px;
@@ -201,41 +240,44 @@
     <header class="topbar">
       <div class="brand">
         <h1 class="title">PLAY</h1>
-        <span class="kicker">SMALL GAMES / NO ACCOUNTS</span>
+        <span class="kicker">无需登录 · 纯粹单机 · 随开随玩</span>
       </div>
-      <div class="stats">28 GAMES</div>
+      <div class="topbar-actions">
+        <div class="stats">28 款游戏</div>
+        <button id="langToggle" class="lang-toggle" type="button" aria-label="切换为英文 (Switch to English)" title="切换为英文 (Switch to English)">EN</button>
+      </div>
     </header>
     <section class="grid" aria-label="Games">
-      <a class="card" href="/2048/"><div class="card-head"><span class="num">01 / PUZZLE</span><span class="arrow">→</span></div><div class="card-body"><h2>2048</h2><p>Join the numbers. Chase the tile.</p></div></a>
-      <a class="card" href="/shooter/"><div class="card-head"><span class="num">02 / ARCADE</span><span class="arrow">→</span></div><div class="card-body"><h2>SKY PATROL</h2><p>Move, fire, survive. A small original shooter.</p></div></a>
-      <a class="card" href="/tetris/"><div class="card-head"><span class="num">03 / PUZZLE</span><span class="arrow">→</span></div><div class="card-body"><h2>TETRIS</h2><p>Classic falling blocks. Clear lines. Keep going.</p></div></a>
-      <a class="card" href="/snake/"><div class="card-head"><span class="num">04 / ARCADE</span><span class="arrow">→</span></div><div class="card-body"><h2>SNAKE</h2><p>Eat, grow, and wrap around the walls.</p></div></a>
-      <a class="card" href="/breakout/"><div class="card-head"><span class="num">05 / ARCADE</span><span class="arrow">→</span></div><div class="card-body"><h2>BREAKOUT</h2><p>Break the wall. Keep the ball alive.</p></div></a>
-      <a class="card" href="/minesweeper/"><div class="card-head"><span class="num">06 / PUZZLE</span><span class="arrow">→</span></div><div class="card-body"><h2>MINESWEEPER</h2><p>Read the numbers. Avoid the mines.</p></div></a>
-      <a class="card" href="/space-invaders/"><div class="card-head"><span class="num">07 / ARCADE</span><span class="arrow">→</span></div><div class="card-body"><h2>ALIEN FORMATION</h2><p>Defend the line against descending aliens.</p></div></a>
-      <a class="card" href="/maze/"><div class="card-head"><span class="num">08 / ARCADE</span><span class="arrow">→</span></div><div class="card-body"><h2>NEON MAZE</h2><p>Eat every light. Avoid the hunters.</p></div></a>
-      <a class="card" href="/gomoku/"><div class="card-head"><span class="num">09 / STRATEGY</span><span class="arrow">→</span></div><div class="card-body"><h2>GOMOKU</h2><p>Play as Black. Connect five before the computer does.</p></div></a>
-      <a class="card" href="/pong/"><div class="card-head"><span class="num">10 / ARCADE</span><span class="arrow">→</span></div><div class="card-body"><h2>PONG</h2><p>Deflect the ball. Outsmart the machine.</p></div></a>
-      <a class="card" href="/sokoban/"><div class="card-head"><span class="num">11 / PUZZLE</span><span class="arrow">→</span></div><div class="card-body"><h2>SOKOBAN</h2><p>Push every crate onto its target.</p></div></a>
-      <a class="card" href="/asteroids/"><div class="card-head"><span class="num">12 / ARCADE</span><span class="arrow">→</span></div><div class="card-body"><h2>ASTEROIDS</h2><p>Drift, turn, fire, and clear the field.</p></div></a>
-      <a class="card" href="/crosswalk/"><div class="card-head"><span class="num">13 / ARCADE</span><span class="arrow">→</span></div><div class="card-body"><h2>CROSSWALK</h2><p>Read the traffic and reach the far side.</p></div></a>
-      <a class="card" href="/simon/"><div class="card-head"><span class="num">14 / MEMORY</span><span class="arrow">→</span></div><div class="card-body"><h2>SIMON</h2><p>Watch the sequence. Repeat it exactly.</p></div></a>
-      <a class="card" href="/sudoku/"><div class="card-head"><span class="num">15 / PUZZLE</span><span class="arrow">→</span></div><div class="card-body"><h2>SUDOKU</h2><p>Place the digits. Complete every row, column, and box.</p></div></a>
-      <a class="card" href="/lunar-lander/"><div class="card-head"><span class="num">16 / SIMULATION</span><span class="arrow">→</span></div><div class="card-body"><h2>LUNAR LANDER</h2><p>Manage angle, velocity, and fuel for a safe landing.</p></div></a>
-      <a class="card" href="/connect-four/"><div class="card-head"><span class="num">17 / STRATEGY</span><span class="arrow">→</span></div><div class="card-body"><h2>CONNECT FOUR</h2><p>Drop four in a row before the computer does.</p></div></a>
-      <a class="card" href="/sky-hopper/"><div class="card-head"><span class="num">18 / ARCADE</span><span class="arrow">→</span></div><div class="card-body"><h2>SKY HOPPER</h2><p>Bounce higher across a shifting field of platforms.</p></div></a>
-      <a class="card" href="/helicopter-cave/"><div class="card-head"><span class="num">19 / ARCADE</span><span class="arrow">→</span></div><div class="card-body"><h2>HELICOPTER CAVE</h2><p>Hold to rise, release to fall, and survive the cave.</p></div></a>
-      <a class="card" href="/endless-runner/"><div class="card-head"><span class="num">20 / ARCADE</span><span class="arrow">→</span></div><div class="card-body"><h2>ENDLESS RUNNER</h2><p>Jump, collect, and keep pace with the accelerating road.</p></div></a>
-      <a class="card" href="/solitaire/"><div class="card-head"><span class="num">21 / CARD</span><span class="arrow">→</span></div><div class="card-body"><h2>SOLITAIRE</h2><p>Build down in alternating colors. Send every suit home.</p></div></a>
-      <a class="card" href="/bubble-shooter/"><div class="card-head"><span class="num">22 / PUZZLE</span><span class="arrow">→</span></div><div class="card-body"><h2>BUBBLE SHOOTER</h2><p>Aim, match colors, and clear the field.</p></div></a>
-      <a class="card" href="/nonogram/"><div class="card-head"><span class="num">23 / PUZZLE</span><span class="arrow">→</span></div><div class="card-body"><h2>NONOGRAM</h2><p>Read the clues. Reveal the hidden pixel picture.</p></div></a>
-      <a class="card" href="/flow/"><div class="card-head"><span class="num">24 / PUZZLE</span><span class="arrow">→</span></div><div class="card-body"><h2>FLOW FREE</h2><p>Connect matching colors. Fill the whole board.</p></div></a>
-      <a class="card" href="/bridges/"><div class="card-head"><span class="num">25 / PUZZLE</span><span class="arrow">→</span></div><div class="card-body"><h2>BRIDGES</h2><p>Connect the islands. Build a single network.</p></div></a>
-      <a class="card" href="/sliding-puzzle/"><div class="card-head"><span class="num">26 / PUZZLE</span><span class="arrow">→</span></div><div class="card-body"><h2>15-PUZZLE</h2><p>Slide tiles into the empty space. Put numbers in order.</p></div></a>
-      <a class="card" href="/color-bounce/"><div class="card-head"><span class="num">27 / ARCADE</span><span class="arrow">→</span></div><div class="card-body"><h2>COLOR SWITCH</h2><p>Bounce through matching colors. Avoid wrong hues.</p></div></a>
-      <a class="card" href="/flappy/"><div class="card-head"><span class="num">28 / ARCADE</span><span class="arrow">→</span></div><div class="card-body"><h2>FLAPPY WINGS</h2><p>Tap to flap, glide through pipes, and stay aloft.</p></div></a>
+      <a class="card" href="/2048/" data-game="2048" data-category="puzzle" data-num="01"><div class="card-head"><span class="num">01 / 益智</span><span class="arrow">→</span></div><div class="card-body"><h2 class="card-title">2048</h2><p class="card-desc">滑动合并相同数字，冲击 2048 方块。</p></div></a>
+      <a class="card" href="/shooter/" data-game="shooter" data-category="arcade" data-num="02"><div class="card-head"><span class="num">02 / 街机</span><span class="arrow">→</span></div><div class="card-body"><h2 class="card-title">星空巡航</h2><p class="card-desc">移动、自动发射、躲避敌机，经典飞行射击。</p></div></a>
+      <a class="card" href="/tetris/" data-game="tetris" data-category="puzzle" data-num="03"><div class="card-head"><span class="num">03 / 益智</span><span class="arrow">→</span></div><div class="card-body"><h2 class="card-title">俄罗斯方块</h2><p class="card-desc">经典下落方块，消除整行，冲击更高分。</p></div></a>
+      <a class="card" href="/snake/" data-game="snake" data-category="arcade" data-num="04"><div class="card-head"><span class="num">04 / 街机</span><span class="arrow">→</span></div><div class="card-body"><h2 class="card-title">贪吃蛇</h2><p class="card-desc">吞食豆子不断变长，支持四向穿墙。</p></div></a>
+      <a class="card" href="/breakout/" data-game="breakout" data-category="arcade" data-num="05"><div class="card-head"><span class="num">05 / 街机</span><span class="arrow">→</span></div><div class="card-body"><h2 class="card-title">打砖块</h2><p class="card-desc">弹射小球击碎砖块，考验反应与走位。</p></div></a>
+      <a class="card" href="/minesweeper/" data-game="minesweeper" data-category="puzzle" data-num="06"><div class="card-head"><span class="num">06 / 益智</span><span class="arrow">→</span></div><div class="card-body"><h2 class="card-title">经典扫雷</h2><p class="card-desc">推算数字排查雷区，20 关逐级挑战。</p></div></a>
+      <a class="card" href="/space-invaders/" data-game="space-invaders" data-category="arcade" data-num="07"><div class="card-head"><span class="num">07 / 街机</span><span class="arrow">→</span></div><div class="card-body"><h2 class="card-title">太空侵略者</h2><p class="card-desc">迎击步步逼近的外星阵列，守卫防线。</p></div></a>
+      <a class="card" href="/maze/" data-game="maze" data-category="arcade" data-num="08"><div class="card-head"><span class="num">08 / 街机</span><span class="arrow">→</span></div><div class="card-body"><h2 class="card-title">霓虹迷宫</h2><p class="card-desc">吃完所有光点，巧妙避开巡逻幽灵。</p></div></a>
+      <a class="card" href="/gomoku/" data-game="gomoku" data-category="strategy" data-num="09"><div class="card-head"><span class="num">09 / 策略</span><span class="arrow">→</span></div><div class="card-body"><h2 class="card-title">五子棋</h2><p class="card-desc">执黑先行，在电脑拦截前率先连成五子。</p></div></a>
+      <a class="card" href="/pong/" data-game="pong" data-category="arcade" data-num="10"><div class="card-head"><span class="num">10 / 街机</span><span class="arrow">→</span></div><div class="card-body"><h2 class="card-title">弹球对决</h2><p class="card-desc">滑动球拍精准截击，与电脑一较高下。</p></div></a>
+      <a class="card" href="/sokoban/" data-game="sokoban" data-category="puzzle" data-num="11"><div class="card-head"><span class="num">11 / 益智</span><span class="arrow">→</span></div><div class="card-body"><h2 class="card-title">推箱子</h2><p class="card-desc">规划移动路线，将所有箱子推入指定目标。</p></div></a>
+      <a class="card" href="/asteroids/" data-game="asteroids" data-category="arcade" data-num="12"><div class="card-head"><span class="num">12 / 街机</span><span class="arrow">→</span></div><div class="card-body"><h2 class="card-title">小行星</h2><p class="card-desc">惯性漂移、转向射击，粉碎漫天碎石。</p></div></a>
+      <a class="card" href="/crosswalk/" data-game="crosswalk" data-category="arcade" data-num="13"><div class="card-head"><span class="num">13 / 街机</span><span class="arrow">→</span></div><div class="card-body"><h2 class="card-title">过马路</h2><p class="card-desc">观察车流节奏与红绿灯，安全穿越车道。</p></div></a>
+      <a class="card" href="/simon/" data-game="simon" data-category="memory" data-num="14"><div class="card-head"><span class="num">14 / 记忆</span><span class="arrow">→</span></div><div class="card-body"><h2 class="card-title">西蒙记忆</h2><p class="card-desc">记忆声光序列并准确复现，挑战大脑极限。</p></div></a>
+      <a class="card" href="/sudoku/" data-game="sudoku" data-category="puzzle" data-num="15"><div class="card-head"><span class="num">15 / 益智</span><span class="arrow">→</span></div><div class="card-body"><h2 class="card-title">数独</h2><p class="card-desc">在九宫格填入数字，满足行列唯一解。</p></div></a>
+      <a class="card" href="/lunar-lander/" data-game="lunar-lander" data-category="simulation" data-num="16"><div class="card-head"><span class="num">16 / 模拟</span><span class="arrow">→</span></div><div class="card-body"><h2 class="card-title">月球着陆器</h2><p class="card-desc">控制推进与姿态，在有限燃料下平稳着陆。</p></div></a>
+      <a class="card" href="/connect-four/" data-game="connect-four" data-category="strategy" data-num="17"><div class="card-head"><span class="num">17 / 策略</span><span class="arrow">→</span></div><div class="card-body"><h2 class="card-title">四子棋</h2><p class="card-desc">轮流落子，抢先在横竖斜任意方向连成四子。</p></div></a>
+      <a class="card" href="/sky-hopper/" data-game="sky-hopper" data-category="arcade" data-num="18"><div class="card-head"><span class="num">18 / 街机</span><span class="arrow">→</span></div><div class="card-body"><h2 class="card-title">空中跳跃</h2><p class="card-desc">借助移动、弹簧等多种平台不断向上跃升。</p></div></a>
+      <a class="card" href="/helicopter-cave/" data-game="helicopter-cave" data-category="arcade" data-num="19"><div class="card-head"><span class="num">19 / 街机</span><span class="arrow">→</span></div><div class="card-body"><h2 class="card-title">直升机洞穴</h2><p class="card-desc">按住上升松开下落，穿行狭窄起伏的地下洞穴。</p></div></a>
+      <a class="card" href="/endless-runner/" data-game="endless-runner" data-category="arcade" data-num="20"><div class="card-head"><span class="num">20 / 街机</span><span class="arrow">→</span></div><div class="card-body"><h2 class="card-title">无尽奔跑</h2><p class="card-desc">跨越尖刺与坑洞、收集金币，跟上加速节奏。</p></div></a>
+      <a class="card" href="/solitaire/" data-game="solitaire" data-category="card" data-num="21"><div class="card-head"><span class="num">21 / 纸牌</span><span class="arrow">→</span></div><div class="card-body"><h2 class="card-title">纸牌接龙</h2><p class="card-desc">红黑交替排布纸牌，将四色花色按序归位。</p></div></a>
+      <a class="card" href="/bubble-shooter/" data-game="bubble-shooter" data-category="puzzle" data-num="22"><div class="card-head"><span class="num">22 / 益智</span><span class="arrow">→</span></div><div class="card-body"><h2 class="card-title">泡泡射手</h2><p class="card-desc">精准瞄准反弹射击，同色相连即可消除。</p></div></a>
+      <a class="card" href="/nonogram/" data-game="nonogram" data-category="puzzle" data-num="23"><div class="card-head"><span class="num">23 / 益智</span><span class="arrow">→</span></div><div class="card-body"><h2 class="card-title">数织</h2><p class="card-desc">根据行列数字推算填充，揭开隐藏像素图案。</p></div></a>
+      <a class="card" href="/flow/" data-game="flow" data-category="puzzle" data-num="24"><div class="card-head"><span class="num">24 / 益智</span><span class="arrow">→</span></div><div class="card-body"><h2 class="card-title">连线解谜</h2><p class="card-desc">连接相同颜色管道，无交叉铺满整个棋盘。</p></div></a>
+      <a class="card" href="/bridges/" data-game="bridges" data-category="puzzle" data-num="25"><div class="card-head"><span class="num">25 / 益智</span><span class="arrow">→</span></div><div class="card-body"><h2 class="card-title">数桥</h2><p class="card-desc">在岛屿间架设指定数量桥梁，连通完整网络。</p></div></a>
+      <a class="card" href="/sliding-puzzle/" data-game="sliding-puzzle" data-category="puzzle" data-num="26"><div class="card-head"><span class="num">26 / 益智</span><span class="arrow">→</span></div><div class="card-body"><h2 class="card-title">数字华容道</h2><p class="card-desc">滑动方块归位，将乱序数字按顺序排列整齐。</p></div></a>
+      <a class="card" href="/color-bounce/" data-game="color-bounce" data-category="arcade" data-num="27"><div class="card-head"><span class="num">27 / 街机</span><span class="arrow">→</span></div><div class="card-body"><h2 class="card-title">色彩跳跃</h2><p class="card-desc">控制小球穿过相同颜色的几何障碍，节奏跃动。</p></div></a>
+      <a class="card" href="/flappy/" data-game="flappy" data-category="arcade" data-num="28"><div class="card-head"><span class="num">28 / 街机</span><span class="arrow">→</span></div><div class="card-body"><h2 class="card-title">飞天小鸟</h2><p class="card-desc">轻触屏幕扑翼飞行，平稳穿梭于管道缝隙之间。</p></div></a>
     </section>
-    <footer>MORE GAMES COMING SOON · BUILT FOR THE WEB</footer>
+    <footer>更多游戏持续更新中 · 为 Web 纯粹体验而生</footer>
   </main>
   <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
 </body>

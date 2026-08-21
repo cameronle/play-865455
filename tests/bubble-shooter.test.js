@@ -40,5 +40,5 @@ test('Bubble Shooter page is themed, touch-safe, and integrated as game 22',()=>
   for(const id of ['game','score','best','misses','newButton','resultOverlay','resultButton'])assert.match(html,new RegExp(`id="${id}"`));
   assert.match(css,/touch-action:none/);assert.match(css,/-webkit-touch-callout:none/);assert.match(css,/\[data-theme="light"\]/);
   assert.match(js,/pointermove/);assert.match(js,/pointerup/);assert.match(js,/function traceAim/);assert.match(js,/function addPressureRow/);
-  assert.match(index,/22 \/ PUZZLE[\s\S]*BUBBLE SHOOTER/);assert.match(readme,/\.\/bubble-shooter\//);
+  assert.match(index,/data-game="bubble-shooter"/);assert.match(readme,/\.\/bubble-shooter\//);
 });
