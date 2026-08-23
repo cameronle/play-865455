@@ -51,9 +51,9 @@ footer{border-top:1px solid var(--line);margin-top:20px;padding-top:12px;text-al
   --theme-color:#faf8ef;
   --bg:#faf8ef;
   --panel:#f1eee7;
-  --board:#f1eee7;
-  --floor:#f7f3eb;
-  --floor-grid:#e9e2d8;
+  --board:#e7e1d7;
+  --floor:#ebe6de;
+  --floor-grid:#ded7cd;
   --wall:#b7aea1;
   --wall-border:#9c9488;
   --ink:#3e3934;

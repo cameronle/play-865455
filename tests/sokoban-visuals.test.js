@@ -33,6 +33,12 @@ test('Sokoban player tracks the last movement direction with clean vector avatar
   assert.match(js, /playerDirection === 'right'/);
 });
 
+test('Sokoban light board uses a subdued neutral center instead of a bright white playfield',()=>{
+  const css=fs.readFileSync('sokoban/style.css','utf8');
+  assert.match(css,/--board:#e7e1d7/);
+  assert.match(css,/--floor:#ebe6de/);
+  assert.match(css,/--floor-grid:#ded7cd/);
+});
 test('Sokoban visual refresh does not change the twenty-level pack', () => {
   const levels = fs.readFileSync('sokoban/levels.js', 'utf8'), html = fs.readFileSync('sokoban/index.html', 'utf8');
   assert.match(html, /01 \/ 20/);
