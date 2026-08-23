@@ -58,6 +58,7 @@ test('stage-pages creates a complete public tree without development files', () 
     }
 
     assert.match(fs.readFileSync(path.join(destination, '_redirects'), 'utf8'), /\/asteroids\/\* \/ 301/);
+    assert.match(fs.readFileSync(path.join(destination, '_redirects'), 'utf8'), /\/asteroids\/game\.js \/ 301/);
 
     const games = fs.readdirSync(destination, { withFileTypes: true })
       .filter(entry => entry.isDirectory() && fs.existsSync(path.join(destination, entry.name, 'index.html')));
