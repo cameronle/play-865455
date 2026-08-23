@@ -53,7 +53,7 @@ test('stage-pages creates a complete public tree without development files', () 
       stdio: 'pipe'
     });
 
-    for (const file of ['index.html', 'i18n.js', 'theme.css', 'theme.js']) {
+    for (const file of ['index.html', 'i18n.js', 'theme.css', 'theme.js', 'clear-game-data.js']) {
       assert.ok(fs.existsSync(path.join(destination, file)), `${file} is staged`);
     }
 
