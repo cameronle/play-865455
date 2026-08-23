@@ -4,6 +4,7 @@
   "scripts": {
     "generate:catalog": "node scripts/generate-catalog.js",
     "check:catalog": "node scripts/generate-catalog.js --check",
+    "stage:pages": "node scripts/stage-pages.js .pages-deploy",
     "test": "npm run check:catalog && node --test tests/*.test.js"
   }
 }
