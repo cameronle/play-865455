@@ -40,6 +40,14 @@ test('Asteroids exposes rotation thrust fire and pause on mobile', () => {
   assert.match(read('asteroids/game.js'), /splitAsteroid/);
 });
 
+test('Asteroids render path uses the live bullet array, playing state, and particle color', () => {
+  const js = read('asteroids/game.js');
+  assert.match(js, /bullets\.forEach/);
+  assert.doesNotMatch(js, /\blasers\b/);
+  assert.match(js, /if\(state==='playing'\)drawShip\(ship\)/);
+  assert.match(js, /p\.color/);
+});
+
 test('Crosswalk has finite lanes, goal progression, and directional touch controls', () => {
   const js = read('crosswalk/game.js'), html = read('crosswalk/index.html');
   assert.match(js, /makeLanes/);

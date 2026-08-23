@@ -62,9 +62,9 @@
     stars.forEach(s=>{ctx.globalAlpha=s.a;ctx.fillStyle=isLight ? '#8b8177' : '#d8edf4';ctx.fillRect(s.x,s.y,s.r,s.r);});
     ctx.globalAlpha=1;ctx.strokeStyle=isLight ? '#d8d0c5' : '#263746';ctx.lineWidth=1;ctx.strokeRect(12,12,W-24,H-24);
     asteroids.forEach(a=>{ctx.save();ctx.translate(a.x,a.y);ctx.rotate(a.a);ctx.strokeStyle=isLight ? '#5c5449' : '#91a7b8';ctx.lineWidth=2;ctx.beginPath();a.shape.forEach((m,i)=>{const an=i/a.shape.length*TAU,r=a.r*m;i?ctx.lineTo(Math.cos(an)*r,Math.sin(an)*r):ctx.moveTo(Math.cos(an)*r,Math.sin(an)*r);});ctx.closePath();ctx.stroke();ctx.restore();});
-    lasers.forEach(l=>{ctx.fillStyle=isLight ? '#0288d1' : '#63e6df';ctx.beginPath();ctx.arc(l.x,l.y,3,0,TAU);ctx.fill();});
-    particles.forEach(p=>{ctx.fillStyle=p.c || (isLight ? '#f77f00' : '#ffb45c');ctx.fillRect(p.x,p.y,2,2);});
-    if(state==='play')drawShip(ship);
+    bullets.forEach(b=>{ctx.fillStyle=isLight ? '#0288d1' : '#63e6df';ctx.beginPath();ctx.arc(b.x,b.y,3,0,TAU);ctx.fill();});
+    particles.forEach(p=>{ctx.fillStyle=p.color || (isLight ? '#f77f00' : '#ffb45c');ctx.fillRect(p.x,p.y,2,2);});
+    if(state==='playing')drawShip(ship);
   }
   function loop(t){const dt=Math.min(.033,(t-last)/1000||0);last=t;if(state==='playing')update(dt);draw();requestAnimationFrame(loop);}requestAnimationFrame(loop);
   const keyMap={ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right',ArrowUp:'thrust',KeyW:'thrust',Space:'fire'};
