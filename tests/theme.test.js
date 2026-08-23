@@ -68,6 +68,19 @@ test('canvas games redraw from CSS theme variables instead of fixed light backgr
   }
 });
 
+test('New Game controls use the collection action color in light theme',()=>{
+  for(const route of ['tetris','snake']){
+    const css=fs.readFileSync(`${route}/style.css`,'utf8');
+    assert.match(css,/\.secondary\{[^}]*background:#0288d1/,`${route} light action color`);
+    assert.match(css,/\.secondary:hover\{background:#0277bd/,`${route} light hover color`);
+  }
+  for(const route of ['breakout','maze','space-invaders']){
+    const css=fs.readFileSync(`${route}/style.css`,'utf8');
+    assert.match(css,/\[data-theme="light"\] \.new\s*\{[\s\S]*background:\s*#0288d1/,`${route} light action color`);
+    assert.match(css,/\[data-theme="light"\] \.new:hover\s*\{\s*background:\s*#0277bd/,`${route} light hover color`);
+  }
+});
+
 test('every canvas game has a live theme path for its playfield',()=>{
   for(const route of canvasRoutes){
     const js=fs.readFileSync(`${route}/game.js`,'utf8');

@@ -176,6 +176,12 @@ header.topbar button {
   color: #fff;
   box-shadow: 3px 3px #454039;
 }
+[data-theme="light"] .new {
+  background: #0288d1;
+  color: #fff;
+  box-shadow: 3px 3px #01579b;
+}
+[data-theme="light"] .new:hover { background: #0277bd; }
 
 aside p {
   line-height: 1.9;
