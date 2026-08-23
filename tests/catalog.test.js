@@ -47,3 +47,17 @@ test('generated launcher metadata is up to date', () => {
     stdio: 'pipe'
   });
 });
+
+test('catalog validation ignores the hidden Pages staging directory', () => {
+  const staging = path.join(ROOT, '.pages-deploy');
+  fs.mkdirSync(staging, { recursive: true });
+  fs.writeFileSync(path.join(staging, 'index.html'), '<!doctype html>');
+  try {
+    childProcess.execFileSync(process.execPath, ['scripts/generate-catalog.js', '--check'], {
+      cwd: ROOT,
+      stdio: 'pipe'
+    });
+  } finally {
+    fs.rmSync(staging, { recursive: true, force: true });
+  }
+});

@@ -32,7 +32,7 @@ function validateCatalog() {
   }
 
   const gameDirs = fs.readdirSync(ROOT, { withFileTypes: true })
-    .filter(entry => entry.isDirectory() && fs.existsSync(path.join(ROOT, entry.name, 'index.html')))
+    .filter(entry => !entry.name.startsWith('.') && entry.isDirectory() && fs.existsSync(path.join(ROOT, entry.name, 'index.html')))
     .map(entry => entry.name)
     .sort();
   const ids = catalog.map(game => game.id);
