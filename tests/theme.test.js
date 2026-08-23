@@ -68,15 +68,17 @@ test('canvas games redraw from CSS theme variables instead of fixed light backgr
   }
 });
 
-test('New Game controls use each game\'s light-theme accent',()=>{
+test('New Game controls use each game\'s theme accent in both modes',()=>{
   const expected={
-    tetris:{color:'#b85f49',hover:'#e7c9c0'},
-    snake:{color:'#4e8558',hover:'#d6e4d8'},
+    tetris:{light:{color:'#b85f49',hover:'#e7c9c0'},dark:{color:'#f0a995',hover:'#443038'}},
+    snake:{light:{color:'#4e8558',hover:'#d6e4d8'},dark:{color:'#a9d2b0',hover:'#2a4234'}},
   };
-  for(const [route,colors] of Object.entries(expected)){
+  for(const [route,modes] of Object.entries(expected)){
     const css=fs.readFileSync(`${route}/style.css`,'utf8');
-    assert.match(css,new RegExp(`\\.secondary\\{[^}]*color:${colors.color}`),`${route} light accent`);
-    assert.match(css,new RegExp(`\\.secondary:hover\\{background:${colors.hover}`),`${route} light hover`);
+    assert.match(css,new RegExp(`\\.secondary\\{[^}]*color:${modes.light.color}`),`${route} light accent`);
+    assert.match(css,new RegExp(`\\.secondary:hover\\{background:${modes.light.hover}`),`${route} light hover`);
+    assert.match(css,new RegExp(`\\[data-theme="dark"\\] \\.secondary\\{[^}]*color:${modes.dark.color}`),`${route} dark accent`);
+    assert.match(css,new RegExp(`\\[data-theme="dark"\\] \\.secondary:hover\\{background:${modes.dark.hover}`),`${route} dark hover`);
   }
   for(const route of ['breakout','maze','space-invaders']){
     const css=fs.readFileSync(`${route}/style.css`,'utf8');
