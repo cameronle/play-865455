@@ -87,6 +87,14 @@ test('New Game controls use each game\'s theme accent in both modes',()=>{
   }
 });
 
+test('Crosswalk mobile header gives the title and actions separate rows',()=>{
+  const css=fs.readFileSync('crosswalk/style.css','utf8');
+  assert.match(css,/@media \(max-width: 520px\)[\s\S]*grid-template-areas:[\s\S]*"back actions"[\s\S]*"title title"/);
+  assert.match(css,/header\.topbar > a \{ grid-area: back; \}/);
+  assert.match(css,/header\.topbar h1 \{[\s\S]*grid-area: title;/);
+  assert.match(css,/\.header-actions \{ grid-area: actions;/);
+});
+
 test('every canvas game has a live theme path for its playfield',()=>{
   for(const route of canvasRoutes){
     const js=fs.readFileSync(`${route}/game.js`,'utf8');

@@ -187,6 +187,28 @@ footer {
 .level-card.done b { color: var(--mint); }
 @media (max-width: 520px) {
   .page { padding: 12px 10px max(18px, env(safe-area-inset-bottom)); }
+  header.topbar {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "back actions"
+      "title title";
+    row-gap: 2px;
+    min-height: 72px;
+    padding-bottom: 6px;
+  }
+  header.topbar > a { grid-area: back; }
+  header.topbar h1 {
+    grid-area: title;
+    justify-self: center;
+    font-size: clamp(15px, 5vw, 19px);
+    letter-spacing: .1em;
+  }
+  .header-actions { grid-area: actions; gap: 6px; }
+  header.topbar a, header.topbar button {
+    min-height: 36px;
+    font-size: 9px;
+    letter-spacing: .07em;
+  }
   .hud { grid-template-columns: repeat(2, 1fr); gap: 6px; }
   .level-grid { grid-template-columns: repeat(2, 1fr); }
 }
