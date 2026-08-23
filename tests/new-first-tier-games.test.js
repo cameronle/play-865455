@@ -44,8 +44,17 @@ test('Asteroids render path uses the live bullet array, playing state, and parti
   const js = read('asteroids/game.js');
   assert.match(js, /bullets\.forEach/);
   assert.doesNotMatch(js, /\blasers\b/);
-  assert.match(js, /if\(state==='playing'\)drawShip\(ship\)/);
+  assert.match(js, /if\(state==='playing'\)drawShip\(ship(?:,colors)?\)/);
   assert.match(js, /p\.color/);
+});
+
+test('Asteroids render path follows shared CSS theme variables and themechange', () => {
+  const js = read('asteroids/game.js'), css = read('asteroids/style.css');
+  assert.match(js, /getComputedStyle\(document\.documentElement\)/);
+  assert.match(js, /function palette\(/);
+  assert.match(js, /document\.addEventListener\('themechange',draw\)/);
+  assert.match(css, /--board:/);
+  assert.match(css, /\.frame canvas[\s\S]*background: var\(--board\)/);
 });
 
 test('Crosswalk has finite lanes, goal progression, and directional touch controls', () => {

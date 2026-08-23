@@ -44,27 +44,40 @@
     if(ship&&ship.inv<=0)for(const a of asteroids)if(dist2(ship,a)<(ship.r+a.r*.82)**2){loseLife();break;}
     if(!asteroids.length){waveTimer+=dt;if(waveTimer>1.2){level++;if(level>12){state='won';ui.title.textContent='SECTOR CLEAR';ui.text.textContent=`FINAL SCORE ${score}`;ui.start.textContent='FLY AGAIN';ui.overlay.classList.remove('hide');}else{ship=makeShip();makeWave();updateHud();}}}
   }
-  function drawShip(s){
-    const isLight = document.documentElement?.dataset?.theme === 'light';
+  function palette(){
+    const css=typeof getComputedStyle==='function'?getComputedStyle(document.documentElement):null;
+    const get=(name,fallback)=>css?.getPropertyValue(name).trim()||fallback;
+    return {
+      board:get('--board','#050910'),
+      star:get('--muted','#748394'),
+      line:get('--line','#263746'),
+      ship:get('--cyan','#63e6df'),
+      thrust:get('--amber','#ffb45c'),
+      asteroid:get('--ink','#e8f0f7'),
+      bullet:get('--cyan','#63e6df'),
+      particle:get('--amber','#ffb45c')
+    };
+  }
+  function drawShip(s,colors){
     if(s.inv>0&&Math.floor(s.inv*10)%2===0)return;
     ctx.save();ctx.translate(s.x,s.y);ctx.rotate(s.a);
-    ctx.strokeStyle=isLight ? '#0288d1' : '#e8f0f7';
+    ctx.strokeStyle=colors.ship;
     ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(19,0);ctx.lineTo(-13,-11);ctx.lineTo(-8,0);ctx.lineTo(-13,11);ctx.closePath();ctx.stroke();
     if(keys.thrust){
-      ctx.strokeStyle=isLight ? '#f77f00' : '#ffb45c';
+      ctx.strokeStyle=colors.thrust;
       ctx.beginPath();ctx.moveTo(-10,-6);ctx.lineTo(-23,0);ctx.lineTo(-10,6);ctx.stroke();
     }
     ctx.restore();
   }
   function draw(){
-    const isLight = document.documentElement?.dataset?.theme === 'light';
-    ctx.fillStyle=isLight ? '#f7f4ec' : '#050910';ctx.fillRect(0,0,W,H);
-    stars.forEach(s=>{ctx.globalAlpha=s.a;ctx.fillStyle=isLight ? '#8b8177' : '#d8edf4';ctx.fillRect(s.x,s.y,s.r,s.r);});
-    ctx.globalAlpha=1;ctx.strokeStyle=isLight ? '#d8d0c5' : '#263746';ctx.lineWidth=1;ctx.strokeRect(12,12,W-24,H-24);
-    asteroids.forEach(a=>{ctx.save();ctx.translate(a.x,a.y);ctx.rotate(a.a);ctx.strokeStyle=isLight ? '#5c5449' : '#91a7b8';ctx.lineWidth=2;ctx.beginPath();a.shape.forEach((m,i)=>{const an=i/a.shape.length*TAU,r=a.r*m;i?ctx.lineTo(Math.cos(an)*r,Math.sin(an)*r):ctx.moveTo(Math.cos(an)*r,Math.sin(an)*r);});ctx.closePath();ctx.stroke();ctx.restore();});
-    bullets.forEach(b=>{ctx.fillStyle=isLight ? '#0288d1' : '#63e6df';ctx.beginPath();ctx.arc(b.x,b.y,3,0,TAU);ctx.fill();});
-    particles.forEach(p=>{ctx.fillStyle=p.color || (isLight ? '#f77f00' : '#ffb45c');ctx.fillRect(p.x,p.y,2,2);});
-    if(state==='playing')drawShip(ship);
+    const colors=palette();
+    ctx.fillStyle=colors.board;ctx.fillRect(0,0,W,H);
+    stars.forEach(s=>{ctx.globalAlpha=s.a;ctx.fillStyle=colors.star;ctx.fillRect(s.x,s.y,s.r,s.r);});
+    ctx.globalAlpha=1;ctx.strokeStyle=colors.line;ctx.lineWidth=1;ctx.strokeRect(12,12,W-24,H-24);
+    asteroids.forEach(a=>{ctx.save();ctx.translate(a.x,a.y);ctx.rotate(a.a);ctx.strokeStyle=colors.asteroid;ctx.lineWidth=2;ctx.beginPath();a.shape.forEach((m,i)=>{const an=i/a.shape.length*TAU,r=a.r*m;i?ctx.lineTo(Math.cos(an)*r,Math.sin(an)*r):ctx.moveTo(Math.cos(an)*r,Math.sin(an)*r);});ctx.closePath();ctx.stroke();ctx.restore();});
+    bullets.forEach(b=>{ctx.fillStyle=colors.bullet;ctx.beginPath();ctx.arc(b.x,b.y,3,0,TAU);ctx.fill();});
+    particles.forEach(p=>{ctx.fillStyle=p.color||colors.particle;ctx.fillRect(p.x,p.y,2,2);});
+    if(state==='playing')drawShip(ship,colors);
   }
   function loop(t){const dt=Math.min(.033,(t-last)/1000||0);last=t;if(state==='playing')update(dt);draw();requestAnimationFrame(loop);}requestAnimationFrame(loop);
   const keyMap={ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right',ArrowUp:'thrust',KeyW:'thrust',Space:'fire'};
@@ -73,6 +86,7 @@
   const binds={leftButton:'left',rightButton:'right',thrustButton:'thrust',fireButton:'fire'};
   Object.entries(binds).forEach(([id,name])=>{const el=$(id);const on=e=>{e.preventDefault();if(state==='title'||state==='over')resetGame();keys[name]=true;el.classList.add('active');if(name==='fire')fire();try{el.setPointerCapture(e.pointerId);}catch(_){}};const off=e=>{e.preventDefault();keys[name]=false;el.classList.remove('active');};el.addEventListener('pointerdown',on);el.addEventListener('pointerup',off);el.addEventListener('pointercancel',off);el.addEventListener('lostpointercapture',off);});
   ui.start.addEventListener('click',action);ui.pause.addEventListener('click',()=>state==='title'?action():togglePause());
+  document.addEventListener('themechange',draw);
   document.addEventListener('visibilitychange',()=>{if(document.hidden&&state==='playing')togglePause();});
   updateHud();draw();
 })();

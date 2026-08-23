@@ -1,6 +1,7 @@
 :root {
   --bg: #070b12;
   --panel: #0b121b;
+  --board: #050910;
   --ink: #e8f0f7;
   --muted: #748394;
   --line: #263746;
@@ -11,6 +12,7 @@
 [data-theme="light"] {
   --bg: #faf8ef;
   --panel: #f1eee7;
+  --board: #f7f4ec;
   --ink: #3e3934;
   --muted: #8b8177;
   --line: #d8d0c5;
@@ -117,14 +119,14 @@ header.topbar button {
   width: 100%;
   height: auto;
   aspect-ratio: 1;
-  background: #050910;
+  background: var(--board);
   touch-action:none;
   user-select: none;
   -webkit-user-select: none;
 }
 
 [data-theme="light"] .frame canvas {
-  background: #f7f4ec;
+  background: var(--board);
 }
 
 .overlay {
