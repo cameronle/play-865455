@@ -201,27 +201,9 @@ module.exports = [
     }
   },
   {
-    "id": "asteroids",
-    "path": "asteroids",
-    "order": 12,
-    "category": "arcade",
-    "name": {
-      "zh": "小行星",
-      "en": "ASTEROIDS"
-    },
-    "description": {
-      "zh": "惯性漂移、转向射击，粉碎漫天碎石。",
-      "en": "Drift, turn, fire, and clear the field."
-    },
-    "readme": {
-      "title": "Asteroids",
-      "description": "自维护的惯性太空街机游戏，支持陨石分裂、生命、关卡、键盘和完整触控操作。"
-    }
-  },
-  {
     "id": "crosswalk",
     "path": "crosswalk",
-    "order": 13,
+    "order": 12,
     "category": "arcade",
     "name": {
       "zh": "过马路",
@@ -239,7 +221,7 @@ module.exports = [
   {
     "id": "simon",
     "path": "simon",
-    "order": 14,
+    "order": 13,
     "category": "memory",
     "name": {
       "zh": "西蒙记忆",
@@ -257,7 +239,7 @@ module.exports = [
   {
     "id": "sudoku",
     "path": "sudoku",
-    "order": 15,
+    "order": 14,
     "category": "puzzle",
     "name": {
       "zh": "数独",
@@ -275,7 +257,7 @@ module.exports = [
   {
     "id": "lunar-lander",
     "path": "lunar-lander",
-    "order": 16,
+    "order": 15,
     "category": "simulation",
     "name": {
       "zh": "月球着陆器",
@@ -293,7 +275,7 @@ module.exports = [
   {
     "id": "connect-four",
     "path": "connect-four",
-    "order": 17,
+    "order": 16,
     "category": "strategy",
     "name": {
       "zh": "四子棋",
@@ -311,7 +293,7 @@ module.exports = [
   {
     "id": "sky-hopper",
     "path": "sky-hopper",
-    "order": 18,
+    "order": 17,
     "category": "arcade",
     "name": {
       "zh": "空中跳跃",
@@ -329,7 +311,7 @@ module.exports = [
   {
     "id": "helicopter-cave",
     "path": "helicopter-cave",
-    "order": 19,
+    "order": 18,
     "category": "arcade",
     "name": {
       "zh": "直升机洞穴",
@@ -347,7 +329,7 @@ module.exports = [
   {
     "id": "endless-runner",
     "path": "endless-runner",
-    "order": 20,
+    "order": 19,
     "category": "arcade",
     "name": {
       "zh": "无尽奔跑",
@@ -365,7 +347,7 @@ module.exports = [
   {
     "id": "solitaire",
     "path": "solitaire",
-    "order": 21,
+    "order": 20,
     "category": "card",
     "name": {
       "zh": "纸牌接龙",
@@ -383,7 +365,7 @@ module.exports = [
   {
     "id": "bubble-shooter",
     "path": "bubble-shooter",
-    "order": 22,
+    "order": 21,
     "category": "puzzle",
     "name": {
       "zh": "泡泡射手",
@@ -401,7 +383,7 @@ module.exports = [
   {
     "id": "nonogram",
     "path": "nonogram",
-    "order": 23,
+    "order": 22,
     "category": "puzzle",
     "name": {
       "zh": "数织",
@@ -419,7 +401,7 @@ module.exports = [
   {
     "id": "flow",
     "path": "flow",
-    "order": 24,
+    "order": 23,
     "category": "puzzle",
     "name": {
       "zh": "连线解谜",
@@ -437,7 +419,7 @@ module.exports = [
   {
     "id": "bridges",
     "path": "bridges",
-    "order": 25,
+    "order": 24,
     "category": "puzzle",
     "name": {
       "zh": "数桥",
@@ -455,7 +437,7 @@ module.exports = [
   {
     "id": "sliding-puzzle",
     "path": "sliding-puzzle",
-    "order": 26,
+    "order": 25,
     "category": "puzzle",
     "name": {
       "zh": "数字华容道",
@@ -473,7 +455,7 @@ module.exports = [
   {
     "id": "color-bounce",
     "path": "color-bounce",
-    "order": 27,
+    "order": 26,
     "category": "arcade",
     "name": {
       "zh": "色彩跳跃",
@@ -491,7 +473,7 @@ module.exports = [
   {
     "id": "flappy",
     "path": "flappy",
-    "order": 28,
+    "order": 27,
     "category": "arcade",
     "name": {
       "zh": "飞天小鸟",

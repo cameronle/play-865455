@@ -4,7 +4,6 @@
   const route = location.pathname.split('/').filter(Boolean)[0] || '';
   const rules = {
     '2048': ['play-2048-best'],
-    asteroids: ['vectorDriftHigh'],
     breakout: ['breakout-high'],
     bridges: ['bridges-progress-v1'],
     'bubble-shooter': ['bubble-shooter-best'],

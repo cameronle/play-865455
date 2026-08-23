@@ -5,7 +5,7 @@ const vm = require('node:vm');
 
 const read = path => fs.readFileSync(path, 'utf8');
 
-for (const game of ['pong','sokoban','asteroids','crosswalk','simon']) {
+for (const game of ['pong','sokoban','crosswalk','simon']) {
   test(`${game} has a complete static entrypoint and mobile viewport`, () => {
     const html = read(`${game}/index.html`);
     assert.match(html, /viewport-fit=cover/);
@@ -34,29 +34,6 @@ test('Pong exposes drag/touch controls and a playable AI match', () => {
   assert.match(js, /AI WINS|YOU WIN/);
 });
 
-test('Asteroids exposes rotation thrust fire and pause on mobile', () => {
-  const html = read('asteroids/index.html');
-  for (const id of ['leftButton','thrustButton','fireButton','rightButton','pauseButton']) assert.match(html, new RegExp(`id="${id}"`));
-  assert.match(read('asteroids/game.js'), /splitAsteroid/);
-});
-
-test('Asteroids render path uses the live bullet array, playing state, and particle color', () => {
-  const js = read('asteroids/game.js');
-  assert.match(js, /bullets\.forEach/);
-  assert.doesNotMatch(js, /\blasers\b/);
-  assert.match(js, /if\(state==='playing'\)drawShip\(ship(?:,colors)?\)/);
-  assert.match(js, /p\.color/);
-});
-
-test('Asteroids render path follows shared CSS theme variables and themechange', () => {
-  const js = read('asteroids/game.js'), css = read('asteroids/style.css');
-  assert.match(js, /getComputedStyle\(document\.documentElement\)/);
-  assert.match(js, /function palette\(/);
-  assert.match(js, /document\.addEventListener\('themechange',draw\)/);
-  assert.match(css, /--board:/);
-  assert.match(css, /\.frame canvas[\s\S]*background: var\(--board\)/);
-});
-
 test('Crosswalk has finite lanes, goal progression, and directional touch controls', () => {
   const js = read('crosswalk/game.js'), html = read('crosswalk/index.html');
   assert.match(js, /makeLanes/);
@@ -72,9 +49,9 @@ test('Simon generates a growing sequence and accepts four touch pads', () => {
   assert.equal((html.match(/data-pad=/g)||[]).length, 4);
 });
 
-test('launcher and README include all five routes', () => {
+test('launcher and README include the remaining four routes', () => {
   const index = read('index.html'), readme = read('README.md');
-  for (const route of ['pong','sokoban','asteroids','crosswalk','simon']) {
+  for (const route of ['pong','sokoban','crosswalk','simon']) {
     assert.match(index, new RegExp(`/${route}/`));
     assert.match(readme, new RegExp(`\./${route}/`));
   }
