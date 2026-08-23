@@ -39,6 +39,16 @@ test('Sokoban light board uses a subdued neutral center instead of a bright whit
   assert.match(css,/--floor:#ebe6de/);
   assert.match(css,/--floor-grid:#ded7cd/);
 });
+test('Sokoban completes with a five-second next-level countdown and safe timer cancellation',()=>{
+  const js=source();
+  assert.match(js,/const NEXT_LEVEL_SECONDS = 5/);
+  assert.match(js,/function startNextLevelCountdown\(/);
+  assert.match(js,/NEXT LEVEL IN \$\{seconds\}S/);
+  assert.match(js,/function cancelNextLevelCountdown\(/);
+  assert.match(js,/SKIP 5S/);
+  assert.match(js,/gamePhase === 'complete'/);
+});
+
 test('Sokoban visual refresh does not change the twenty-level pack', () => {
   const levels = fs.readFileSync('sokoban/levels.js', 'utf8'), html = fs.readFileSync('sokoban/index.html', 'utf8');
   assert.match(html, /01 \/ 20/);

@@ -2,6 +2,7 @@
   'use strict';
   const R = window.SokobanRules;
   const levels = window.SokobanLevels;
+  const NEXT_LEVEL_SECONDS = 5;
   const canvas = document.getElementById('game'), ctx = canvas.getContext('2d');
   const ui = {
     level: document.getElementById('level'), moves: document.getElementById('moves'), pushes: document.getElementById('pushes'), best: document.getElementById('best'),
@@ -11,6 +12,7 @@
   let levelIndex = Math.max(0, Math.min(levels.length - 1, Number(localStorage.getItem('sokobanUnlocked') || 0)));
   let state, history = [], active = false, swipeStart = null;
   let playerDirection = 'down';
+  let gamePhase = 'title', countdownTimer = 0;
 
   function cloneState(s) {
     return {width:s.width,height:s.height,walls:{...s.walls},goals:{...s.goals},boxes:{...s.boxes},player:{...s.player},moves:s.moves,pushes:s.pushes};
@@ -19,10 +21,12 @@
   function bestKey() { return `sokobanBest${levelIndex}`; }
 
   function loadLevel(index, showIntro = false) {
+    cancelNextLevelCountdown();
     levelIndex = (index + levels.length) % levels.length;
     state = R.parseLevel(levels[levelIndex]);
     history = [];
     active = !showIntro;
+    gamePhase = showIntro ? 'title' : 'playing';
     updateUi();
     draw();
     if (showIntro) showOverlay('SOKOBAN', 'PUSH EVERY CRATE ONTO A GOAL', 'START');
@@ -45,6 +49,35 @@
   }
 
   function hideOverlay() { ui.overlay.classList.add('hide'); }
+
+  function cancelNextLevelCountdown() {
+    if (countdownTimer) {
+      clearInterval(countdownTimer);
+      countdownTimer = 0;
+    }
+  }
+
+  function countdownText(seconds) {
+    return `${state.moves} MOVES · ${state.pushes} PUSHES · NEXT LEVEL IN ${seconds}S`;
+  }
+
+  function startNextLevelCountdown() {
+    if (levelIndex === levels.length - 1) {
+      showOverlay('PACK COMPLETE', `${state.moves} MOVES · ${state.pushes} PUSHES`, 'PLAY AGAIN');
+      return;
+    }
+    let remaining = NEXT_LEVEL_SECONDS;
+    showOverlay('LEVEL CLEAR', countdownText(remaining), 'SKIP 5S');
+    countdownTimer = window.setInterval(() => {
+      remaining -= 1;
+      if (remaining <= 0) {
+        cancelNextLevelCountdown();
+        loadLevel(levelIndex + 1);
+      } else {
+        ui.text.textContent = countdownText(remaining);
+      }
+    }, 1000);
+  }
 
   function tileGeometry() {
     const size = Math.floor(Math.min(canvas.width / state.width, canvas.height / state.height));
@@ -222,7 +255,12 @@
   }
 
   function attempt(dx, dy) {
-    if (!active) { active = true; hideOverlay(); }
+    if (gamePhase === 'title') {
+      gamePhase = 'playing';
+      active = true;
+      hideOverlay();
+    }
+    if (gamePhase !== 'playing') return;
     const before = cloneState(state);
     if (!R.move(state, dx, dy)) return;
     playerDirection = directionName(dx, dy);
@@ -231,12 +269,13 @@
     draw();
     if (R.isComplete(state)) {
       active = false;
+      gamePhase = 'complete';
       const old = Number(localStorage.getItem(bestKey()) || Infinity);
       if (state.moves < old) localStorage.setItem(bestKey(), state.moves);
       const unlocked = Math.max(Number(localStorage.getItem('sokobanUnlocked') || 0), Math.min(levels.length - 1, levelIndex + 1));
       localStorage.setItem('sokobanUnlocked', unlocked);
       updateUi();
-      showOverlay('LEVEL CLEAR', `${state.moves} MOVES · ${state.pushes} PUSHES`, levelIndex === levels.length - 1 ? 'PLAY AGAIN' : 'NEXT LEVEL');
+      startNextLevelCountdown();
     }
   }
 
@@ -245,9 +284,11 @@
   }
 
   function undo() {
+    cancelNextLevelCountdown();
     if (!history.length) return;
     state = history.pop();
     active = true;
+    gamePhase = 'playing';
     hideOverlay();
     updateUi();
     draw();
@@ -299,8 +340,13 @@
   document.getElementById('previousButton').addEventListener('click', () => loadLevel(levelIndex - 1));
   document.getElementById('nextButton').addEventListener('click', () => loadLevel(levelIndex + 1));
   ui.start.addEventListener('click', () => {
-    if (R.isComplete(state)) loadLevel(levelIndex === levels.length - 1 ? 0 : levelIndex + 1);
-    else { active = true; hideOverlay(); }
+    if (gamePhase === 'complete') {
+      loadLevel(levelIndex === levels.length - 1 ? 0 : levelIndex + 1);
+    } else {
+      gamePhase = 'playing';
+      active = true;
+      hideOverlay();
+    }
   });
 
   if (document.addEventListener) document.addEventListener('themechange', draw);

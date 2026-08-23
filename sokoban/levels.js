@@ -1,45 +1,45 @@
 (function(root,factory){const levels=factory();if(typeof module==='object'&&module.exports)module.exports=levels;if(root)root.SokobanLevels=levels;})(typeof globalThis!=='undefined'?globalThis:this,function(){
 'use strict';
 return [
-  // Level 01: 1 box - Warmup line push
-  ['#######','#  @$.#','#######'],
-  // Level 02: 1 box - Simple detour around wall
-  ['######','#   .#','# $ ##','# @  #','######'],
-  // Level 03: 2 boxes - Simple dual push
-  ['########','# .  . #','# $  $ #','#   @  #','#      #','########'],
-  // Level 04: 2 boxes - Column alignment
-  ['########','#  .   #','#  $   #','#  $ . #','#  @   #','#      #','########'],
-  // Level 05: 2 boxes - Corner clearance
-  ['######','#   .#','# $$ #','# .@ #','######'],
-  // Level 06: 2 boxes - Side passage routing
-  ['########','#   .. #','# @ $$ #','#      #','########'],
-  // Level 07: 2 boxes - Central obstacle
-  ['#######','#  .  #','# $#$ #','#  @  #','#  .  #','#######'],
-  // Level 08: 2 boxes - Corridor bypass
-  [' ######','#@   .#','# $#$ #','#    .#',' ######'],
-  // Level 09: 2 boxes - Wide maneuver
-  ['##########','# .    . #','# $ ## $ #','#   @    #','#        #','##########'],
-  // Level 10: 3 boxes - Trio push
-  ['#########','# . . . #','# $ $ $ #','#   @   #','#       #','#########'],
-  // Level 11: 3 boxes - Central cross
-  ['#######','#  @  #','# $#$ #','# .$. #','#  .  #','#######'],
-  // Level 12: 3 boxes - Side chambers
-  ['#######','# .   #','# $#$ #','# @ $ #','# ..  #','#######'],
-  // Level 13: 3 boxes - Tight warehouse
-  ['#######','#@  ..#','# $$$ #','#   . #','#######'],
-  // Level 14: 3 boxes - Central column
-  [' #######','##  .  #','#  $$$ #','# . # .#','#   @  #','########'],
-  // Level 15: 3 boxes - L-turn room (Classic)
-  ['  #####','###   #','# . $ #','# #$###','# .@  #','## $  #',' # .###',' #####'],
-  // Level 16: 3 boxes - Asymmetric grid
-  ['########','# .  . #','# $$   #','### # ##','#   #  #','# $  @ #','# .    #','########'],
-  // Level 17: 4 boxes - Symmetry cross
-  ['#########','#   .   #','#   $   #','# .$@$. #','#   $   #','#   .   #','#########'],
-  // Level 18: 4 boxes - Four corners
-  ['#########','# .   . #','# $ # $ #','#   @   #','# $ # $ #','# .   . #','#########'],
-  // Level 19: 4 boxes - Multi-chamber
-  [' ####','##  ####','#     .#','#.$#$  #','#  @$$.#','#  #  .#','########'],
-  // Level 20: 4 boxes - Master warehouse
-  ['########','#  . . #','# #$#$ #','# $   .#','## # ###','#  $ @ #','# .    #','########']
+  // Level 01: two-crate entry challenge
+  ["####", "# .#", "#  ###", "#*@  #", "#  $ #", "#  ###", "####"],
+  // Level 02: three-crate order planning
+  ["#######", "#. #  #", "#  $  #", "#. $#@#", "#  $  #", "#. #  #", "#######"],
+  // Level 03: three-crate central routing
+  ["#######", "#     #", "#@$$$ ##", "#  #...#", "##    ##", " ######"],
+  // Level 04: two-crate split corridor
+  ["  ####", "###  ####", "#     $ #", "# #  #$ #", "# . .#@ #", "#########"],
+  // Level 05: three-crate vertical delivery
+  ["   ####", "   #  #", "   #@ #", "####$.#", "#   $.#", "# # $.#", "#    ##", "######"],
+  // Level 06: two-crate chamber exit
+  ["  ######", "  #    #", "  # ##@##", "### # $ #", "# ..# $ #", "#       #", "#  ######", "####"],
+  // Level 07: two-crate long return route
+  ["  ####", "###  #####", "#  $  @..#", "# $    # #", "### #### #", "  #      #", "  ########"],
+  // Level 08: three-crate one-way warehouse
+  ["      #####", "      #.  #", "      #.# #", "#######.# #", "# @ $ $ $ #", "# # # # ###", "#       #", "#########"],
+  // Level 09: three-crate offset chambers
+  ["####", "#. ##", "#.@ #", "#. $#", "##$ ###", " # $  #", " #    #", " #  ###", " ####"],
+  // Level 10: three-crate multi-branch route
+  ["     ####", "     # @#", "     #  #", "###### .#", "#   $  .#", "#  $$# .#", "#    ####", "###  #", "  ####"],
+  // Level 11: two-crate double-turn corridor
+  ["  #######", "###     #", "# $ $   #", "# ### #####", "# @ . .   #", "#   ###   #", "##### #####"],
+  // Level 12: three-crate cross-room routing
+  ["      ###", "##### #.#", "#   ###.#", "#   $ #.#", "# $  $  #", "#####@# #", "    #   #", "    #####"],
+  // Level 13: two-crate narrow loop
+  ["#####", "#   ####", "# # # .#", "#    $ ###", "### #$.  #", "#   #@   #", "# # ######", "#   #", "#####"],
+  // Level 14: two-crate locked-room sequence
+  ["########", "# @ #  #", "#      #", "#####$ #", "    #  ###", " ## #$ ..#", " ## #  ###", "    ####"],
+  // Level 15: four-crate warehouse allocation
+  ["      ######", "      #    #", "  ##### .  #", "###  ###.  #", "# $  $  . ##", "# @$$ # . #", "##    #####", " ######"],
+  // Level 16: two-crate vertical shaft
+  ["  ######", "  # ..@#", "  # $$ #", "  ## ###", "   # #", "   # #", "#### #", "#    ##", "# #   #", "#   # #", "###   #", "  #####"],
+  // Level 17: four-crate asymmetric junction
+  [" ####", " #  #######", " #$ @#   .#", "## #$$   .#", "#  $  ##..#", "#   # #####", "###   #", "  #####"],
+  // Level 18: three-crate deep side chambers
+  [" ####", " #  ####", " #     ##", "## ##   #", "#. .# @$##", "#   # $$ #", "#  .#    #", "##########"],
+  // Level 19: four-crate long chamber allocation
+  ["  ######", "  #    #", "  #  $ #", " ####$ #", "## $ $ #", "#....# ##", "#     @ #", "##  #   #", " ########"],
+  // Level 20: four-crate master corridor
+  [" #########", " #       #", "##@##### #", "#  #   # #", "#  #   $.#", "#  ##$##.#", "##$##  #.#", "#   $  #.#", "#   #  ###", "########"]
 ];
 });
