@@ -3,23 +3,27 @@
   --theme-color:#070b12;
   --bg:#070b12;
   --panel:#0b111a;
-  --board:#070c14;
-  --floor:#111a26;
-  --floor-grid:#172333;
-  --wall:#222f3e;
-  --wall-top:#34495e;
-  --wall-mark:#17202a;
+  --board:#070b12;
+  --floor:#111a24;
+  --floor-line:#182434;
+  --wall:#1e293b;
+  --wall-top:#334155;
+  --wall-edge:#0f172a;
   --ink:#e8f0f7;
   --muted:#748394;
   --line:#243241;
   --cyan:#64e6e0;
-  --gold:#f59e0b;
-  --gold-frame:#b45309;
-  --gold-line:#78350f;
+  --box:#d97706;
+  --box-top:#f59e0b;
+  --box-frame:#92400e;
+  --box-line:#78350f;
+  --box-shadow:rgba(0,0,0,0.4);
+  --box-goal:#059669;
+  --box-goal-top:#10b981;
+  --box-goal-frame:#065f46;
   --goal:#f43f5e;
-  --goal-bg:rgba(244,63,94,0.15);
-  --box-goal:#10b981;
-  --box-goal-frame:#047857;
+  --goal-bg:rgba(244,63,94,0.12);
+  --goal-ring:rgba(244,63,94,0.28);
   --player:#e8f0f7;
   --player-suit:#0284c7;
   --player-hat:#fbbf24;
@@ -40,7 +44,7 @@ header button{text-align:right}
 .stats span{display:block;color:var(--muted);font-size:8px;letter-spacing:.1em;margin-bottom:3px}
 .stats b{color:var(--cyan);font-size:11px}
 .frame{position:relative;max-width:570px;margin:auto;border:1px solid var(--line);background:var(--panel);padding:6px}
-.frame canvas{display:block;width:100%;height:auto;background:var(--board);touch-action:none;user-select:none;-webkit-user-select:none}
+.frame canvas{display:block;width:100%;height:auto;background:var(--board);border-radius:4px;touch-action:none;user-select:none;-webkit-user-select:none}
 .overlay{position:absolute;inset:6px;background:#070b12e8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center}
 .overlay.hide{display:none}
 .overlay b{font-size:28px;letter-spacing:.12em}
@@ -59,27 +63,31 @@ footer{border-top:1px solid var(--line);margin-top:20px;padding-top:12px;text-al
   --theme-color:#faf8ef;
   --bg:#faf8ef;
   --panel:#f1eee7;
-  --board:#ded8cb;
-  --floor:#f7f4ec;
-  --floor-grid:#e7e1d4;
-  --wall:#78716c;
-  --wall-top:#a8a29e;
-  --wall-mark:#44403c;
+  --board:#e5dfd5;
+  --floor:#f6f3eb;
+  --floor-line:rgba(180,165,145,0.25);
+  --wall:#64748b;
+  --wall-top:#94a3b8;
+  --wall-edge:#475569;
   --ink:#3e3934;
   --muted:#8b8177;
   --line:#d8d0c5;
   --cyan:#4f9294;
-  --gold:#d97706;
-  --gold-frame:#92400e;
-  --gold-line:#78350f;
-  --goal:#e11d48;
-  --goal-bg:rgba(225,29,72,0.12);
+  --box:#d97706;
+  --box-top:#f59e0b;
+  --box-frame:#92400e;
+  --box-line:#78350f;
+  --box-shadow:rgba(62,57,52,0.22);
   --box-goal:#059669;
-  --box-goal-frame:#065f46;
+  --box-goal-top:#10b981;
+  --box-goal-frame:#047857;
+  --goal:#e11d48;
+  --goal-bg:rgba(225,29,72,0.1);
+  --goal-ring:rgba(225,29,72,0.22);
   --player:#3e3934;
   --player-suit:#0284c7;
-  --player-hat:#d97706;
-  --player-skin:#ffedd5;
+  --player-hat:#fbbf24;
+  --player-skin:#fed7aa;
   --player-boots:#475569;
 }
 [data-theme="light"] .overlay{background:#faf8efe8}
