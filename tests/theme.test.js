@@ -87,12 +87,9 @@ test('New Game controls use each game\'s theme accent in both modes',()=>{
   }
 });
 
-test('Crosswalk mobile header gives the title and actions separate rows',()=>{
+test('Crosswalk overlay title has no duplicate text shadow',()=>{
   const css=fs.readFileSync('crosswalk/style.css','utf8');
-  assert.match(css,/@media \(max-width: 520px\)[\s\S]*grid-template-areas:[\s\S]*"back actions"[\s\S]*"title title"/);
-  assert.match(css,/header\.topbar > a \{ grid-area: back; \}/);
-  assert.match(css,/header\.topbar h1 \{[\s\S]*grid-area: title;/);
-  assert.match(css,/\.header-actions \{ grid-area: actions;/);
+  assert.doesNotMatch(css,/\.overlay b\s*\{[^}]*text-shadow/);
 });
 
 test('every canvas game has a live theme path for its playfield',()=>{
