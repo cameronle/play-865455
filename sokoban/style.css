@@ -4,31 +4,23 @@
   --bg:#070b12;
   --panel:#0b111a;
   --board:#070b12;
-  --floor:#111a24;
-  --floor-line:#182434;
+  --floor:#0f1724;
+  --floor-grid:#162030;
   --wall:#1e293b;
-  --wall-top:#334155;
-  --wall-edge:#0f172a;
+  --wall-border:#334155;
   --ink:#e8f0f7;
   --muted:#748394;
   --line:#243241;
   --cyan:#64e6e0;
-  --box:#d97706;
-  --box-top:#f59e0b;
-  --box-frame:#92400e;
-  --box-line:#78350f;
-  --box-shadow:rgba(0,0,0,0.4);
-  --box-goal:#059669;
-  --box-goal-top:#10b981;
-  --box-goal-frame:#065f46;
+  --box:#f59e0b;
+  --box-border:#d97706;
+  --box-line:rgba(0,0,0,0.18);
+  --box-goal:#10b981;
+  --box-goal-border:#059669;
   --goal:#f43f5e;
   --goal-bg:rgba(244,63,94,0.12);
-  --goal-ring:rgba(244,63,94,0.28);
-  --player:#e8f0f7;
-  --player-suit:#0284c7;
-  --player-hat:#fbbf24;
-  --player-skin:#fed7aa;
-  --player-boots:#0f172a;
+  --player:#0ea5e9;
+  --player-border:#38bdf8;
 }
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font:12px ui-monospace,SFMono-Regular,Menlo,monospace}
@@ -63,32 +55,24 @@ footer{border-top:1px solid var(--line);margin-top:20px;padding-top:12px;text-al
   --theme-color:#faf8ef;
   --bg:#faf8ef;
   --panel:#f1eee7;
-  --board:#e5dfd5;
-  --floor:#f6f3eb;
-  --floor-line:rgba(180,165,145,0.25);
-  --wall:#64748b;
-  --wall-top:#94a3b8;
-  --wall-edge:#475569;
+  --board:#f1eee7;
+  --floor:#fbf9f4;
+  --floor-grid:#ece6db;
+  --wall:#78716c;
+  --wall-border:#57534e;
   --ink:#3e3934;
   --muted:#8b8177;
   --line:#d8d0c5;
   --cyan:#4f9294;
   --box:#d97706;
-  --box-top:#f59e0b;
-  --box-frame:#92400e;
-  --box-line:#78350f;
-  --box-shadow:rgba(62,57,52,0.22);
+  --box-border:#b45309;
+  --box-line:rgba(0,0,0,0.12);
   --box-goal:#059669;
-  --box-goal-top:#10b981;
-  --box-goal-frame:#047857;
+  --box-goal-border:#047857;
   --goal:#e11d48;
   --goal-bg:rgba(225,29,72,0.1);
-  --goal-ring:rgba(225,29,72,0.22);
-  --player:#3e3934;
-  --player-suit:#0284c7;
-  --player-hat:#fbbf24;
-  --player-skin:#fed7aa;
-  --player-boots:#475569;
+  --player:#0284c7;
+  --player-border:#0369a1;
 }
 [data-theme="light"] .overlay{background:#faf8efe8}
 

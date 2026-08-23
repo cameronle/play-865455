@@ -58,40 +58,30 @@
   function palette() {
     if (typeof getComputedStyle !== 'function') {
       return {
-        board: '#070b12', floor: '#101722', floorLine: '#162232', floorDot: '#1e2d42',
-        wall: '#1e293b', wallTop: '#334155', wallEdge: '#0f172a',
-        goal: '#f43f5e', goalBg: 'rgba(244, 63, 94, 0.12)', goalRing: 'rgba(244, 63, 94, 0.28)',
-        box: '#d97706', boxTop: '#f59e0b', boxFrame: '#92400e', boxLine: '#78350f', boxShadow: 'rgba(0,0,0,0.35)',
-        boxGoal: '#059669', boxGoalTop: '#10b981', boxGoalFrame: '#065f46',
-        player: '#e8f0f7', playerMark: '#0284c7',
-        playerHat: '#fbbf24', playerSkin: '#fed7aa', playerBoots: '#0f172a'
+        board: '#070b12', floor: '#111a26', floorGrid: '#172233',
+        wall: '#1e293b', wallBorder: '#334155',
+        goal: '#f43f5e', goalBg: 'rgba(244, 63, 94, 0.12)',
+        box: '#f59e0b', boxBorder: '#d97706', boxLine: 'rgba(0,0,0,0.18)',
+        boxGoal: '#10b981', boxGoalBorder: '#059669',
+        player: '#0ea5e9', playerBorder: '#0284c7'
       };
     }
     const css = getComputedStyle(document.documentElement), get = (name, fallback) => css.getPropertyValue(name).trim() || fallback;
     return {
       board: get('--board', '#070b12'),
-      floor: get('--floor', '#101722'),
-      floorLine: get('--floor-line', '#162232'),
-      floorDot: get('--floor-dot', '#1e2d42'),
+      floor: get('--floor', '#111a26'),
+      floorGrid: get('--floor-grid', '#172233'),
       wall: get('--wall', '#1e293b'),
-      wallTop: get('--wall-top', '#334155'),
-      wallEdge: get('--wall-edge', '#0f172a'),
+      wallBorder: get('--wall-border', '#334155'),
       goal: get('--goal', '#f43f5e'),
       goalBg: get('--goal-bg', 'rgba(244, 63, 94, 0.12)'),
-      goalRing: get('--goal-ring', 'rgba(244, 63, 94, 0.28)'),
-      box: get('--box', '#d97706'),
-      boxTop: get('--box-top', '#f59e0b'),
-      boxFrame: get('--box-frame', '#92400e'),
-      boxLine: get('--box-line', '#78350f'),
-      boxShadow: get('--box-shadow', 'rgba(0,0,0,0.35)'),
-      boxGoal: get('--box-goal', '#059669'),
-      boxGoalTop: get('--box-goal-top', '#10b981'),
-      boxGoalFrame: get('--box-goal-frame', '#065f46'),
-      player: get('--player', '#e8f0f7'),
-      playerMark: get('--player-suit', '#0284c7'),
-      playerHat: get('--player-hat', '#fbbf24'),
-      playerSkin: get('--player-skin', '#fed7aa'),
-      playerBoots: get('--player-boots', '#0f172a')
+      box: get('--box', '#f59e0b'),
+      boxBorder: get('--box-border', '#d97706'),
+      boxLine: get('--box-line', 'rgba(0,0,0,0.18)'),
+      boxGoal: get('--box-goal', '#10b981'),
+      boxGoalBorder: get('--box-goal-border', '#059669'),
+      player: get('--player', '#0ea5e9'),
+      playerBorder: get('--player-border', '#0284c7')
     };
   }
 
@@ -102,7 +92,7 @@
     return x >= 0 && x < state.width && y >= 0 && y < state.height;
   }
 
-  function roundRectPath(x, y, w, h, r) {
+  function roundRect(x, y, w, h, r) {
     ctx.beginPath();
     ctx.moveTo(x + r, y);
     ctx.lineTo(x + w - r, y);
@@ -116,175 +106,128 @@
     ctx.closePath();
   }
 
-  function drawWall(x, y, size, colors) {
-    const s = size;
-    const r = Math.max(3, s * 0.08);
-
-    // Wall base block with soft rounded corners
-    roundRectPath(x + 1.5, y + 1.5, s - 3, s - 3, r);
+  function drawWall(x, y, s, colors) {
+    const r = Math.max(3, s * 0.1);
+    roundRect(x + 1.5, y + 1.5, s - 3, s - 3, r);
     ctx.fillStyle = colors.wall;
     ctx.fill();
-
-    // Subtle 3D top bevel cap
-    roundRectPath(x + 2, y + 2, s - 4, s * 0.42, Math.max(2, r - 1));
-    ctx.fillStyle = colors.wallTop;
-    ctx.fill();
-
-    // Clean outer outline
-    roundRectPath(x + 1.5, y + 1.5, s - 3, s - 3, r);
-    ctx.strokeStyle = colors.wallEdge;
+    ctx.strokeStyle = colors.wallBorder || colors.wall;
     ctx.lineWidth = 1;
     ctx.stroke();
   }
 
-  function drawGoal(x, y, size, colors, covered = false) {
-    const s = size;
-    const inset = size * 0.24, arm = size * 0.15, line = Math.max(2,size*.055);
+  function drawGoal(x, y, s, colors, covered = false) {
     const cx = x + s / 2, cy = y + s / 2;
+    const r = s * 0.26;
 
     if (!covered) {
-      // Soft ambient circular pad
+      // Soft background pad
       ctx.fillStyle = colors.goalBg;
       ctx.beginPath();
-      ctx.arc(cx, cy, s * 0.34, 0, Math.PI * 2);
+      ctx.arc(cx, cy, r + s * 0.08, 0, Math.PI * 2);
       ctx.fill();
-
-      // Subtle target ring
-      ctx.strokeStyle = colors.goalRing;
-      ctx.lineWidth = Math.max(1, s * 0.03);
-      ctx.stroke();
     }
 
-    // Target corner brackets
+    // Target outer ring
     ctx.strokeStyle = colors.goal;
-    ctx.lineWidth = line;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
+    ctx.lineWidth = Math.max(2, s * 0.06);
     ctx.beginPath();
-    ctx.moveTo(x + inset + arm, y + inset); ctx.lineTo(x + inset, y + inset); ctx.lineTo(x + inset, y + inset + arm);
-    ctx.moveTo(x + size - inset - arm, y + inset); ctx.lineTo(x + size - inset, y + inset); ctx.lineTo(x + size - inset, y + inset + arm);
-    ctx.moveTo(x + inset, y + size - inset - arm); ctx.lineTo(x + inset, y + size - inset); ctx.lineTo(x + inset + arm, y + size - inset);
-    ctx.moveTo(x + size - inset - arm, y + size - inset); ctx.lineTo(x + size - inset, y + size - inset); ctx.lineTo(x + size - inset, y + size - inset - arm);
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
     ctx.stroke();
 
-    if(!covered) {
-      // Glowing center beacon dot
+    if (!covered) {
+      // Target center dot
       ctx.fillStyle = colors.goal;
-      ctx.fillRect(x+size*.47,y+size*.47,size*.06,size*.06);
+      ctx.beginPath();
+      ctx.arc(cx, cy, Math.max(2.5, s * 0.09), 0, Math.PI * 2);
+      ctx.fill();
     }
   }
 
-  function drawCrate(x, y, size, colors, onGoal) {
-    const s = size;
-    const inset = size * 0.14, boxSize = size * 0.72;
-    const r = Math.max(3, boxSize * 0.1);
+  function drawCrate(x, y, s, colors, onGoal) {
+    const inset = s * 0.12, boxSize = s * 0.76;
+    const r = Math.max(3, boxSize * 0.12);
 
-    if (onGoal) drawGoal(x, y, size, colors, true);
-
-    // Soft grounded shadow beneath crate
-    ctx.fillStyle = colors.boxShadow;
-    ctx.beginPath();
-    ctx.ellipse(x + s / 2, y + inset + boxSize + s * 0.02, boxSize * 0.44, s * 0.06, 0, 0, Math.PI * 2);
-    ctx.fill();
+    if (onGoal) drawGoal(x, y, s, colors, true);
 
     const mainColor = onGoal ? colors.boxGoal : colors.box;
-    const topColor = onGoal ? colors.boxGoalTop : colors.boxTop;
-    const frameColor = onGoal ? colors.boxGoalFrame : (colors.boxFrame || colors.playerMark);
+    const borderColor = onGoal ? colors.boxGoalBorder : colors.boxBorder;
 
-    // Main rounded box body
-    roundRectPath(x + inset, y + inset, boxSize, boxSize, r);
+    // Clean flat rounded box body
+    roundRect(x + inset, y + inset, boxSize, boxSize, r);
     ctx.fillStyle = mainColor;
     ctx.fill();
 
-    // Top bevel highlight
-    roundRectPath(x + inset + 2, y + inset + 2, boxSize - 4, boxSize * 0.38, Math.max(2, r - 1));
-    ctx.fillStyle = topColor;
-    ctx.fill();
-
-    // Outer structural frame
-    roundRectPath(x + inset, y + inset, boxSize, boxSize, r);
-    ctx.strokeStyle = frameColor;
-    ctx.lineWidth = Math.max(1.5, size * 0.04);
+    // Clean crisp border
+    ctx.strokeStyle = borderColor;
+    ctx.lineWidth = Math.max(1.5, s * 0.04);
     ctx.stroke();
 
-    // Diagonal structural bracing (X)
-    ctx.strokeStyle = onGoal ? 'rgba(255, 255, 255, 0.4)' : (colors.boxLine || frameColor);
-    ctx.lineWidth = Math.max(1.5, size * 0.035);
-    ctx.beginPath();
-    ctx.moveTo(x+size*.3,y+size*.3);
-    ctx.lineTo(x+size*.7,y+size*.7);
-    ctx.moveTo(x+size*.7,y+size*.3);
-    ctx.lineTo(x+size*.3,y+size*.7);
-    ctx.stroke();
-
-    // Clean corner rivets
-    ctx.fillStyle = onGoal ? '#ffffff' : colors.player;
-    const rivet = Math.max(2, size * 0.04);
-    for (const [rx, ry] of [[0.22, 0.22], [0.74, 0.22], [0.22, 0.74], [0.74, 0.74]]) {
-      ctx.fillRect(x + size * rx, y + size * ry, rivet, rivet);
-    }
-
-    // Clear completed check mark
-    if(onGoal) {
+    if (onGoal) {
+      // Bold, clean white checkmark
       ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = Math.max(2.5, size * 0.08);
+      ctx.lineWidth = Math.max(2.5, s * 0.08);
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
       ctx.beginPath();
-      ctx.moveTo(x + size * 0.37, y + size * 0.51);
-      ctx.lineTo(x + size * 0.47, y + size * 0.61);
-      ctx.lineTo(x + size * 0.66, y + size * 0.39);
+      ctx.moveTo(x + s * 0.36, y + s * 0.50);
+      ctx.lineTo(x + s * 0.46, y + s * 0.60);
+      ctx.lineTo(x + s * 0.64, y + s * 0.40);
+      ctx.stroke();
+    } else {
+      // Subtle minimalist cross brace
+      ctx.strokeStyle = colors.boxLine || 'rgba(0,0,0,0.15)';
+      ctx.lineWidth = Math.max(1.5, s * 0.035);
+      ctx.beginPath();
+      ctx.moveTo(x + s * 0.28, y + s * 0.28);
+      ctx.lineTo(x + s * 0.72, y + s * 0.72);
+      ctx.moveTo(x + s * 0.72, y + s * 0.28);
+      ctx.lineTo(x + s * 0.28, y + s * 0.72);
       ctx.stroke();
     }
   }
 
-  function drawPlayer(x, y, size, colors) {
-    const s = size;
-    const bodyW = s * 0.48, bodyH = s * 0.36;
-    const bodyX = x + (s - bodyW) / 2, bodyY = y + s * 0.4;
-    const helmet = s * 0.16;
+  function drawPlayer(x, y, s, colors) {
+    const cx = x + s / 2, cy = y + s / 2;
+    const radius = s * 0.36;
 
-    // Soft grounded shadow beneath player
-    ctx.fillStyle = colors.boxShadow;
+    // Clean circular player avatar
+    ctx.fillStyle = colors.player;
     ctx.beginPath();
-    ctx.ellipse(x + s / 2, y + s * 0.86, s * 0.26, s * 0.05, 0, 0, Math.PI * 2);
+    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
     ctx.fill();
 
-    // High-visibility uniform torso (blue/cyan)
-    ctx.fillStyle = colors.playerMark;
-    ctx.fillRect(bodyX, bodyY, bodyW, bodyH);
+    ctx.strokeStyle = colors.playerBorder || '#ffffff';
+    ctx.lineWidth = Math.max(1.5, s * 0.04);
+    ctx.stroke();
 
-    // Face / skin area
-    ctx.fillStyle = colors.playerSkin || '#fed7aa';
-    ctx.fillRect(x + s * 0.32, y + s * 0.28, s * 0.36, s * 0.16);
+    // Directional eyes
+    ctx.fillStyle = '#ffffff';
+    const eyeR = Math.max(2, s * 0.07);
+    let ex1 = cx - s * 0.12, ex2 = cx + s * 0.12, ey = cy - s * 0.04;
 
-    // Safety Helmet (yellow/amber with brim)
-    ctx.fillStyle = colors.playerHat || '#fbbf24';
-    ctx.fillRect(x + s * 0.24, y + s * 0.22, s * 0.52, helmet);
-    ctx.fillRect(x + s * 0.31, y + s * 0.16, s * 0.38, s * 0.09);
+    if (playerDirection === 'left') {
+      ex1 = cx - s * 0.22; ex2 = cx - s * 0.04; ey = cy;
+    } else if (playerDirection === 'right') {
+      ex1 = cx + s * 0.04; ex2 = cx + s * 0.22; ey = cy;
+    } else if (playerDirection === 'up') {
+      ex1 = cx - s * 0.12; ex2 = cx + s * 0.12; ey = cy - s * 0.16;
+    } else if (playerDirection === 'down') {
+      ex1 = cx - s * 0.12; ex2 = cx + s * 0.12; ey = cy + s * 0.08;
+    }
 
-    // Eyes / Visor directional rendering
+    ctx.beginPath();
+    ctx.arc(ex1, ey, eyeR, 0, Math.PI * 2);
+    ctx.arc(ex2, ey, eyeR, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Dark pupils
     ctx.fillStyle = '#0f172a';
-    const eye = Math.max(2, s * 0.06), eyeY = y + s * 0.32;
-    let eye1 = x + s * 0.37, eye2 = x + s * 0.55;
-    if (playerDirection==='left') {
-      eye1 = x + s * 0.32; eye2 = x + s * 0.45;
-    }
-    if (playerDirection==='right') {
-      eye1 = x + s * 0.49; eye2 = x + s * 0.62;
-    }
-    if (playerDirection === 'up') {
-      ctx.fillStyle = colors.playerHat || '#fbbf24';
-      ctx.fillRect(x + s * 0.28, y + s * 0.26, s * 0.44, s * 0.16);
-    } else {
-      ctx.fillRect(eye1, eyeY, eye, eye);
-      ctx.fillRect(eye2, eyeY, eye, eye);
-    }
-
-    // Work boots
-    ctx.fillStyle = colors.playerBoots || '#0f172a';
-    ctx.fillRect(x + s * 0.29, y + s * 0.74, s * 0.16, s * 0.11);
-    ctx.fillRect(x + s * 0.55, y + s * 0.74, s * 0.16, s * 0.11);
+    const pupilR = Math.max(1, eyeR * 0.55);
+    ctx.beginPath();
+    ctx.arc(ex1, ey, pupilR, 0, Math.PI * 2);
+    ctx.arc(ex2, ey, pupilR, 0, Math.PI * 2);
+    ctx.fill();
   }
 
   function draw() {
@@ -301,12 +244,12 @@
         if (state.walls[k]) {
           drawWall(px, py, s, colors);
         } else if (isInterior(x, y)) {
-          // Warm clean floor tile
+          // Flat seamless floor tile
           ctx.fillStyle = colors.floor;
           ctx.fillRect(px + 1, py + 1, s - 2, s - 2);
 
-          // Delicate floor grid outline
-          ctx.strokeStyle = colors.floorLine || colors.board;
+          // Subtle floor grid line
+          ctx.strokeStyle = colors.floorGrid || colors.board;
           ctx.lineWidth = 1;
           ctx.strokeRect(px + 0.5, py + 0.5, s - 1, s - 1);
         }
@@ -329,7 +272,7 @@
     if (!active) { active = true; hideOverlay(); }
     const before = cloneState(state);
     if (!R.move(state, dx, dy)) return;
-    playerDirection=directionName(dx,dy);
+    playerDirection = directionName(dx, dy);
     history.push(before);
     updateUi();
     draw();
