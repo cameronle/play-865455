@@ -1,2 +1,3 @@
 .wrangler/
 .pages-deploy/
+node_modules/

@@ -5,6 +5,10 @@
     "generate:catalog": "node scripts/generate-catalog.js",
     "check:catalog": "node scripts/generate-catalog.js --check",
     "stage:pages": "node scripts/stage-pages.js .pages-deploy",
+    "deploy:pages": "wrangler pages deploy .pages-deploy --project-name=2048 --branch=main",
     "test": "npm run check:catalog && node --test tests/*.test.js"
+  },
+  "devDependencies": {
+    "wrangler": "4.125.0"
   }
 }

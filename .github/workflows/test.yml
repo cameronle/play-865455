@@ -28,6 +28,9 @@ jobs:
         with:
           node-version-file: .nvmrc
 
+      - name: Install locked dependencies
+        run: npm ci --ignore-scripts
+
       - name: Run tests
         run: npm test
 
@@ -48,6 +51,9 @@ jobs:
         with:
           node-version-file: .nvmrc
 
+      - name: Install locked dependencies
+        run: npm ci --ignore-scripts
+
       - name: Prepare Pages assets
         run: npm run stage:pages
 
@@ -55,4 +61,4 @@ jobs:
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        run: npx --yes wrangler@4.125.0 pages deploy .pages-deploy --project-name=2048 --branch=main
+        run: npm run deploy:pages
