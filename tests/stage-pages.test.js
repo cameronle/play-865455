@@ -53,9 +53,11 @@ test('stage-pages creates a complete public tree without development files', () 
       stdio: 'pipe'
     });
 
-    for (const file of ['index.html', 'i18n.js', 'theme.css', 'theme.js', 'clear-game-data.js']) {
+    for (const file of ['index.html', 'i18n.js', 'theme.css', 'theme.js', 'clear-game-data.js', '_redirects']) {
       assert.ok(fs.existsSync(path.join(destination, file)), `${file} is staged`);
     }
+
+    assert.match(fs.readFileSync(path.join(destination, '_redirects'), 'utf8'), /\/asteroids\/\* \/ 301/);
 
     const games = fs.readdirSync(destination, { withFileTypes: true })
       .filter(entry => entry.isDirectory() && fs.existsSync(path.join(destination, entry.name, 'index.html')));

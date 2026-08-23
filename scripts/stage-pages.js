@@ -11,7 +11,7 @@ const DEFAULT_DESTINATION = path.join(ROOT, '.pages-deploy');
 const TEMP_PREFIX = 'play-865455-pages-';
 const destinationArg = process.argv[2] || '.pages-deploy';
 const DESTINATION = resolveDestination(destinationArg);
-const ROOT_FILES = ['index.html', 'i18n.js', 'theme.css', 'theme.js', 'clear-game-data.js'];
+const ROOT_FILES = ['index.html', 'i18n.js', 'theme.css', 'theme.js', 'clear-game-data.js', '_redirects'];
 
 function fail(message) {
   throw new Error(`[pages-stage] ${message}`);
