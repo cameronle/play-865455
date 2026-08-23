@@ -4,6 +4,7 @@
 
 ## 游戏列表
 
+<!-- BEGIN GENERATED: game-list -->
 - [Classic 2048](./2048/) — 本仓库自维护的纯 HTML5/CSS/JavaScript 2048，支持键盘、触摸、计分和本地最高分。
 - [Sky Patrol](./shooter/) — 自维护的 HTML5 Canvas 街机飞行射击游戏，支持自动发射、关卡、生命、道具、音效和移动端触控。
 - [Classic Tetris](./tetris/) — 自维护的纯 HTML5 Canvas 俄罗斯方块，支持键盘、完整触控、计分、等级、下一个方块和本地最高分。
@@ -32,6 +33,7 @@
 - [15-Puzzle](./sliding-puzzle/) — 自维护的数字华容道，支持 3×3、4×4、5×5 三种尺寸、可解性乱序生成、整行整列滑动、键盘操作与本地最佳纪录。
 - [Color Switch](./color-bounce/) — 自维护的色彩节拍弹跳街机，支持颜色匹配穿越、旋转几何体碰撞、换色道具与本地最高分。
 - [Flappy Wings](./flappy/) — 自维护的极简飞行街机，支持单键轻触扑翼、重力加速度、平滑水管穿越与本地最高分。
+<!-- END GENERATED: game-list -->
 
 ## 本地开发
 
@@ -43,10 +45,18 @@ python3 -m http.server 8080
 
 然后打开 `http://127.0.0.1:8080/`。
 
+首页目录元数据以 `data/games.js` 为唯一来源。修改游戏名称、简介、排序或 README 文案后，运行：
+
+```bash
+npm run generate:catalog
+npm test
+```
+
 ## 部署
 
 当前 Cloudflare Pages 项目名为 `2048`，目录结构直接对应线上路径：
 
+<!-- BEGIN GENERATED: deploy-paths -->
 ```text
 /2048/
 /shooter/
@@ -77,6 +87,7 @@ python3 -m http.server 8080
 /color-bounce/
 /flappy/
 ```
+<!-- END GENERATED: deploy-paths -->
 
 ## 许可证
 

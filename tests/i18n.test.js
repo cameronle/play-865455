@@ -3,19 +3,13 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 const i18n = require('../i18n.js');
+const catalog = require('../data/games.js');
 
-const EXPECTED_GAMES = [
-  '2048', 'shooter', 'tetris', 'snake', 'breakout', 'minesweeper',
-  'space-invaders', 'maze', 'gomoku', 'pong', 'sokoban', 'asteroids',
-  'crosswalk', 'simon', 'sudoku', 'lunar-lander', 'connect-four',
-  'sky-hopper', 'helicopter-cave', 'endless-runner', 'solitaire',
-  'bubble-shooter', 'nonogram', 'flow', 'bridges', 'sliding-puzzle',
-  'color-bounce', 'flappy'
-];
+const EXPECTED_GAMES = catalog.map(game => game.id);
 
 const EXPECTED_CATEGORIES = ['puzzle', 'arcade', 'strategy', 'memory', 'simulation', 'card'];
 
-test('i18n dictionary contains all 28 games and categories for both zh and en', () => {
+test('i18n dictionary contains all catalog games and categories for both zh and en', () => {
   assert.equal(i18n.LANGUAGES.length, 2);
   assert.ok(i18n.LANGUAGES.includes('zh'));
   assert.ok(i18n.LANGUAGES.includes('en'));
@@ -42,7 +36,7 @@ test('i18n dictionary contains all 28 games and categories for both zh and en', 
   }
 });
 
-test('index.html includes i18n assets, lang button and 28 valid card data attributes', () => {
+test('index.html includes i18n assets, lang button and valid catalog card data attributes', () => {
   const html = fs.readFileSync('index.html', 'utf8');
   assert.match(html, /src="\/i18n\.js\?v=[^"]+"/i, 'i18n script included');
   assert.match(html, /id="langToggle"/i, 'lang toggle button present');
@@ -54,6 +48,8 @@ test('index.html includes i18n assets, lang button and 28 valid card data attrib
     const pattern = new RegExp(`data-game="${game}"`, 'i');
     assert.match(html, pattern, `card with data-game="${game}" present in index.html`);
   }
+  const cardIds = [...html.matchAll(/data-game="([^"]+)"/g)].map(match => match[1]);
+  assert.deepEqual(cardIds, EXPECTED_GAMES, 'index card order must follow the canonical catalog');
 });
 
 function bootI18nSandbox(savedLang = null) {
