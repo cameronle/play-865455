@@ -68,11 +68,15 @@ test('canvas games redraw from CSS theme variables instead of fixed light backgr
   }
 });
 
-test('New Game controls use the collection action color in light theme',()=>{
-  for(const route of ['tetris','snake']){
+test('New Game controls use each game\'s light-theme accent',()=>{
+  const expected={
+    tetris:{color:'#b85f49',hover:'#e7c9c0'},
+    snake:{color:'#4e8558',hover:'#d6e4d8'},
+  };
+  for(const [route,colors] of Object.entries(expected)){
     const css=fs.readFileSync(`${route}/style.css`,'utf8');
-    assert.match(css,/\.secondary\{[^}]*background:#0288d1/,`${route} light action color`);
-    assert.match(css,/\.secondary:hover\{background:#0277bd/,`${route} light hover color`);
+    assert.match(css,new RegExp(`\\.secondary\\{[^}]*color:${colors.color}`),`${route} light accent`);
+    assert.match(css,new RegExp(`\\.secondary:hover\\{background:${colors.hover}`),`${route} light hover`);
   }
   for(const route of ['breakout','maze','space-invaders']){
     const css=fs.readFileSync(`${route}/style.css`,'utf8');
