@@ -95,3 +95,12 @@ test('Crosswalk page exposes level selector and versioned rules asset', () => {
   assert.match(html, /rules\.js\?v=/);
   assert.match(fs.readFileSync('crosswalk/game.js', 'utf8'), /renderLevelGrid/);
 });
+
+test('Crosswalk mobile topbar keeps the full title and actions inside narrow screens', () => {
+  const css = fs.readFileSync('crosswalk/style.css', 'utf8');
+  assert.match(css, /@media\s*\(max-width:\s*520px\)[\s\S]*header\.topbar\s*\{[^}]*grid-template-columns:\s*auto minmax\(0,\s*1fr\) auto/);
+  assert.match(css, /@media\s*\(max-width:\s*520px\)[\s\S]*header\.topbar h1\s*\{[^}]*font-size:\s*16px/);
+  assert.match(css, /@media\s*\(max-width:\s*520px\)[\s\S]*header\.topbar a, header\.topbar button\s*\{[^}]*font-size:\s*9px/);
+  assert.doesNotMatch(css, /font:\s*9px inherit/);
+  assert.match(css, /@media\s*\(max-width:\s*520px\)[\s\S]*\.header-actions\s*\{[^}]*gap:\s*6px/);
+});

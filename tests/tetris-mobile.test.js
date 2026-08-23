@@ -53,3 +53,13 @@ test('touch controls suppress long-press text selection and callout menus', () =
   assert.match(css,/\.touch-controls button\{[^}]*-webkit-touch-callout:none/);
   assert.match(css,/\.touch-controls button\{[^}]*touch-action:none/);
 });
+
+test('mobile touch controls leave clearance for the fixed theme utilities', () => {
+  const css=fs.readFileSync('tetris/style.css','utf8');
+  assert.match(css, /@media\(max-width:560px\)[\s\S]*\.touch-controls\{[^}]*margin:6px auto 0/);
+});
+
+test('very narrow mobile screens keep the utility buttons below the controls', () => {
+  const css=fs.readFileSync('tetris/style.css','utf8');
+  assert.match(css, /@media\(max-width:360px\)\{[^}]*[\s\S]*?\.touch-controls\{margin-top:-4px\}/);
+});
