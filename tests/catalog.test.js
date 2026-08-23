@@ -14,7 +14,7 @@ test('canonical game catalog exists', () => {
 test('catalog covers every game directory with unique ordered metadata', () => {
   const games = require(CATALOG_PATH);
   const gameDirs = fs.readdirSync(ROOT, { withFileTypes: true })
-    .filter(entry => entry.isDirectory() && fs.existsSync(path.join(ROOT, entry.name, 'index.html')))
+    .filter(entry => !entry.name.startsWith('.') && entry.isDirectory() && fs.existsSync(path.join(ROOT, entry.name, 'index.html')))
     .map(entry => entry.name)
     .sort();
   const ids = games.map(game => game.id);

@@ -2,25 +2,42 @@
 'use strict';
 
 const fs = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
 const catalog = require('../data/games.js');
 
 const ROOT = path.resolve(__dirname, '..');
+const DEFAULT_DESTINATION = path.join(ROOT, '.pages-deploy');
+const TEMP_PREFIX = 'play-865455-pages-';
 const destinationArg = process.argv[2] || '.pages-deploy';
-const DESTINATION = path.resolve(ROOT, destinationArg);
+const DESTINATION = resolveDestination(destinationArg);
 const ROOT_FILES = ['index.html', 'i18n.js', 'theme.css', 'theme.js'];
 
 function fail(message) {
   throw new Error(`[pages-stage] ${message}`);
 }
 
-if (DESTINATION === ROOT || DESTINATION === path.parse(DESTINATION).root) {
-  fail('refusing to use the repository root or filesystem root as the destination');
+function resolveDestination(value) {
+  const destination = path.resolve(ROOT, value);
+  const tempRoot = path.resolve(os.tmpdir());
+  const isDefault = destination === DEFAULT_DESTINATION;
+  const isApprovedTemp = destination.startsWith(`${tempRoot}${path.sep}`)
+    && path.basename(destination).startsWith(TEMP_PREFIX);
+
+  if (!isDefault && !isApprovedTemp) {
+    fail(`destination must be ${DEFAULT_DESTINATION} or a temporary ${TEMP_PREFIX}* directory`);
+  }
+  if (fs.existsSync(destination)) {
+    const stat = fs.lstatSync(destination);
+    if (stat.isSymbolicLink()) fail('destination must not be a symbolic link');
+    if (!stat.isDirectory()) fail('destination must be a directory');
+  }
+  return destination;
 }
 
 const catalogPaths = catalog.map(game => game.path);
 const gameDirs = fs.readdirSync(ROOT, { withFileTypes: true })
-  .filter(entry => entry.isDirectory() && fs.existsSync(path.join(ROOT, entry.name, 'index.html')))
+  .filter(entry => !entry.name.startsWith('.') && entry.isDirectory() && fs.existsSync(path.join(ROOT, entry.name, 'index.html')))
   .map(entry => entry.name);
 
 if (catalogPaths.length !== gameDirs.length || catalogPaths.some(gamePath => !gameDirs.includes(gamePath))) {

@@ -7,6 +7,44 @@ const path = require('node:path');
 
 const ROOT = path.resolve(__dirname, '..');
 
+test('stage-pages rejects destinations outside the approved staging locations', () => {
+  const unsafeDestinations = [
+    path.join(ROOT, '2048'),
+    path.join(ROOT, 'data'),
+    path.join(ROOT, 'unsafe-pages-output'),
+    path.join(os.tmpdir(), 'play-865455-unsafe-output')
+  ];
+
+  for (const destination of unsafeDestinations) {
+    try {
+      const result = childProcess.spawnSync(process.execPath, ['scripts/stage-pages.js', destination], {
+        cwd: ROOT,
+        encoding: 'utf8'
+      });
+      assert.notEqual(result.status, 0, `${destination} must be rejected`);
+    } finally {
+      if (destination !== path.join(ROOT, '2048') && destination !== path.join(ROOT, 'data')) {
+        fs.rmSync(destination, { recursive: true, force: true });
+      }
+    }
+  }
+});
+
+test('stage-pages rejects symlink destinations', () => {
+  const destination = path.join(os.tmpdir(), 'play-865455-pages-symlink');
+  fs.rmSync(destination, { recursive: true, force: true });
+  fs.symlinkSync(ROOT, destination, 'dir');
+  try {
+    const result = childProcess.spawnSync(process.execPath, ['scripts/stage-pages.js', destination], {
+      cwd: ROOT,
+      encoding: 'utf8'
+    });
+    assert.notEqual(result.status, 0);
+  } finally {
+    fs.rmSync(destination, { recursive: true, force: true });
+  }
+});
+
 test('stage-pages creates a complete public tree without development files', () => {
   const destination = fs.mkdtempSync(path.join(os.tmpdir(), 'play-865455-pages-'));
   try {
