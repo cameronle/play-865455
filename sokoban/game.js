@@ -58,30 +58,27 @@
   function palette() {
     if (typeof getComputedStyle !== 'function') {
       return {
-        board: '#070b12', floor: '#111a26', floorGrid: '#172233',
-        wall: '#1e293b', wallBorder: '#334155',
-        goal: '#f43f5e', goalBg: 'rgba(244, 63, 94, 0.12)',
-        box: '#f59e0b', boxBorder: '#d97706', boxLine: 'rgba(0,0,0,0.18)',
-        boxGoal: '#10b981', boxGoalBorder: '#059669',
-        player: '#0ea5e9', playerBorder: '#0284c7'
+        board: '#090d14', floor: '#151c24', floorGrid: '#293442',
+        wall: '#3e4955', wallBorder: '#202933',
+        goal: '#ff6b7a', goalBg: 'rgba(255,107,122,0.12)',
+        orange: '#ffb45c', orangeBorder: '#c98740',
+        player: '#64e6e0', playerBorder: '#2f9994', ink: '#e8edf3'
       };
     }
     const css = getComputedStyle(document.documentElement), get = (name, fallback) => css.getPropertyValue(name).trim() || fallback;
     return {
-      board: get('--board', '#070b12'),
-      floor: get('--floor', '#111a26'),
-      floorGrid: get('--floor-grid', '#172233'),
-      wall: get('--wall', '#1e293b'),
-      wallBorder: get('--wall-border', '#334155'),
-      goal: get('--goal', '#f43f5e'),
-      goalBg: get('--goal-bg', 'rgba(244, 63, 94, 0.12)'),
-      box: get('--box', '#f59e0b'),
-      boxBorder: get('--box-border', '#d97706'),
-      boxLine: get('--box-line', 'rgba(0,0,0,0.18)'),
-      boxGoal: get('--box-goal', '#10b981'),
-      boxGoalBorder: get('--box-goal-border', '#059669'),
-      player: get('--player', '#0ea5e9'),
-      playerBorder: get('--player-border', '#0284c7')
+      board: get('--board', '#090d14'),
+      floor: get('--floor', '#151c24'),
+      floorGrid: get('--floor-grid', '#293442'),
+      wall: get('--wall', '#3e4955'),
+      wallBorder: get('--wall-border', '#202933'),
+      goal: get('--red', '#ff6b7a'),
+      goalBg: get('--goal-bg', 'rgba(255,107,122,0.12)'),
+      orange: get('--orange', '#ffb45c'),
+      orangeBorder: get('--orange-border', '#c98740'),
+      player: get('--cyan', '#64e6e0'),
+      playerBorder: get('--cyan-border', '#2f9994'),
+      ink: get('--ink', '#e8edf3')
     };
   }
 
@@ -92,142 +89,106 @@
     return x >= 0 && x < state.width && y >= 0 && y < state.height;
   }
 
-  function roundRect(x, y, w, h, r) {
-    ctx.beginPath();
-    ctx.moveTo(x + r, y);
-    ctx.lineTo(x + w - r, y);
-    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-    ctx.lineTo(x + w, y + h - r);
-    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-    ctx.lineTo(x + r, y + h);
-    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-    ctx.lineTo(x, y + r);
-    ctx.quadraticCurveTo(x, y, x + r, y);
-    ctx.closePath();
-  }
-
   function drawWall(x, y, s, colors) {
-    const r = Math.max(3, s * 0.1);
-    roundRect(x + 1.5, y + 1.5, s - 3, s - 3, r);
     ctx.fillStyle = colors.wall;
-    ctx.fill();
+    ctx.fillRect(x + 1, y + 1, s - 2, s - 2);
     ctx.strokeStyle = colors.wallBorder || colors.wall;
     ctx.lineWidth = 1;
-    ctx.stroke();
+    ctx.strokeRect(x + 0.5, y + 0.5, s - 1, s - 1);
   }
 
   function drawGoal(x, y, s, colors, covered = false) {
-    const cx = x + s / 2, cy = y + s / 2;
-    const r = s * 0.26;
+    const inset = s * 0.23;
+    const size = s - inset * 2;
+    const radius = Math.max(2, s * 0.05);
 
-    if (!covered) {
-      // Soft background pad
-      ctx.fillStyle = colors.goalBg;
-      ctx.beginPath();
-      ctx.arc(cx, cy, r + s * 0.08, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    // Target outer ring
+    // One square language for target, crate and player.
     ctx.strokeStyle = colors.goal;
-    ctx.lineWidth = Math.max(2, s * 0.06);
+    ctx.lineWidth = Math.max(2, s * 0.055);
     ctx.beginPath();
-    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.moveTo(x + inset + radius, y + inset);
+    ctx.lineTo(x + inset + size - radius, y + inset);
+    ctx.lineTo(x + inset + size, y + inset + radius);
+    ctx.lineTo(x + inset + size, y + inset + size - radius);
+    ctx.lineTo(x + inset + size - radius, y + inset + size);
+    ctx.lineTo(x + inset + radius, y + inset + size);
+    ctx.lineTo(x + inset, y + inset + size - radius);
+    ctx.lineTo(x + inset, y + inset + radius);
+    ctx.closePath();
     ctx.stroke();
 
     if (!covered) {
-      // Target center dot
       ctx.fillStyle = colors.goal;
-      ctx.beginPath();
-      ctx.arc(cx, cy, Math.max(2.5, s * 0.09), 0, Math.PI * 2);
-      ctx.fill();
+      ctx.fillRect(x + s * 0.47, y + s * 0.47, s * 0.06, s * 0.06);
     }
   }
 
   function drawCrate(x, y, s, colors, onGoal) {
-    const inset = s * 0.12, boxSize = s * 0.76;
-    const r = Math.max(3, boxSize * 0.12);
+    const inset = s * 0.13;
+    const size = s - inset * 2;
 
+    // Keep the target outline visible behind a box on a goal.
     if (onGoal) drawGoal(x, y, s, colors, true);
 
-    const mainColor = onGoal ? colors.boxGoal : colors.box;
-    const borderColor = onGoal ? colors.boxGoalBorder : colors.boxBorder;
-
-    // Clean flat rounded box body
-    roundRect(x + inset, y + inset, boxSize, boxSize, r);
-    ctx.fillStyle = mainColor;
-    ctx.fill();
-
-    // Clean crisp border
-    ctx.strokeStyle = borderColor;
-    ctx.lineWidth = Math.max(1.5, s * 0.04);
-    ctx.stroke();
+    ctx.fillStyle = colors.orange;
+    ctx.fillRect(x + inset, y + inset, size, size);
+    ctx.strokeStyle = colors.orangeBorder || colors.orange;
+    ctx.lineWidth = Math.max(1.5, s * 0.035);
+    ctx.strokeRect(x + inset + 0.5, y + inset + 0.5, size - 1, size - 1);
 
     if (onGoal) {
-      // Bold, clean white checkmark
-      ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = Math.max(2.5, s * 0.08);
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
+      ctx.strokeStyle = colors.ink;
+      ctx.lineWidth = Math.max(2, s * 0.07);
+      ctx.lineCap = 'square';
+      ctx.lineJoin = 'miter';
       ctx.beginPath();
-      ctx.moveTo(x + s * 0.36, y + s * 0.50);
-      ctx.lineTo(x + s * 0.46, y + s * 0.60);
-      ctx.lineTo(x + s * 0.64, y + s * 0.40);
+      ctx.moveTo(x + s * 0.36, y + s * 0.51);
+      ctx.lineTo(x + s * 0.46, y + s * 0.61);
+      ctx.lineTo(x + s * 0.65, y + s * 0.39);
       ctx.stroke();
     } else {
-      // Subtle minimalist cross brace
-      ctx.strokeStyle = colors.boxLine || 'rgba(0,0,0,0.15)';
-      ctx.lineWidth = Math.max(1.5, s * 0.035);
+      ctx.strokeStyle = 'rgba(0,0,0,0.18)';
+      ctx.lineWidth = Math.max(1.5, s * 0.03);
       ctx.beginPath();
-      ctx.moveTo(x + s * 0.28, y + s * 0.28);
-      ctx.lineTo(x + s * 0.72, y + s * 0.72);
-      ctx.moveTo(x + s * 0.72, y + s * 0.28);
-      ctx.lineTo(x + s * 0.28, y + s * 0.72);
+      ctx.moveTo(x + s * 0.29, y + s * 0.29);
+      ctx.lineTo(x + s * 0.71, y + s * 0.71);
+      ctx.moveTo(x + s * 0.71, y + s * 0.29);
+      ctx.lineTo(x + s * 0.29, y + s * 0.71);
       ctx.stroke();
     }
   }
 
   function drawPlayer(x, y, s, colors) {
-    const cx = x + s / 2, cy = y + s / 2;
-    const radius = s * 0.36;
+    const inset = s * 0.18;
+    const size = s - inset * 2;
 
-    // Clean circular player avatar
+    // A small flat square avatar, not a separate cartoon style.
     ctx.fillStyle = colors.player;
-    ctx.beginPath();
-    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.fillRect(x + inset, y + inset, size, size);
+    ctx.strokeStyle = colors.playerBorder || colors.player;
+    ctx.lineWidth = Math.max(1.5, s * 0.035);
+    ctx.strokeRect(x + inset + 0.5, y + inset + 0.5, size - 1, size - 1);
 
-    ctx.strokeStyle = colors.playerBorder || '#ffffff';
-    ctx.lineWidth = Math.max(1.5, s * 0.04);
-    ctx.stroke();
-
-    // Directional eyes
-    ctx.fillStyle = '#ffffff';
-    const eyeR = Math.max(2, s * 0.07);
-    let ex1 = cx - s * 0.12, ex2 = cx + s * 0.12, ey = cy - s * 0.04;
-
+    ctx.fillStyle = colors.ink;
+    const eye = Math.max(2, s * 0.06);
+    let eye1 = x + s * 0.39;
+    let eye2 = x + s * 0.55;
+    let eyeY = y + s * 0.43;
     if (playerDirection === 'left') {
-      ex1 = cx - s * 0.22; ex2 = cx - s * 0.04; ey = cy;
+      eye1 = x + s * 0.32;
+      eye2 = x + s * 0.46;
+      eyeY = y + s * 0.50;
     } else if (playerDirection === 'right') {
-      ex1 = cx + s * 0.04; ex2 = cx + s * 0.22; ey = cy;
+      eye1 = x + s * 0.48;
+      eye2 = x + s * 0.62;
+      eyeY = y + s * 0.50;
     } else if (playerDirection === 'up') {
-      ex1 = cx - s * 0.12; ex2 = cx + s * 0.12; ey = cy - s * 0.16;
+      eyeY = y + s * 0.34;
     } else if (playerDirection === 'down') {
-      ex1 = cx - s * 0.12; ex2 = cx + s * 0.12; ey = cy + s * 0.08;
+      eyeY = y + s * 0.54;
     }
-
-    ctx.beginPath();
-    ctx.arc(ex1, ey, eyeR, 0, Math.PI * 2);
-    ctx.arc(ex2, ey, eyeR, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Dark pupils
-    ctx.fillStyle = '#0f172a';
-    const pupilR = Math.max(1, eyeR * 0.55);
-    ctx.beginPath();
-    ctx.arc(ex1, ey, pupilR, 0, Math.PI * 2);
-    ctx.arc(ex2, ey, pupilR, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.fillRect(eye1, eyeY, eye, eye);
+    ctx.fillRect(eye2, eyeY, eye, eye);
   }
 
   function draw() {
@@ -244,23 +205,15 @@
         if (state.walls[k]) {
           drawWall(px, py, s, colors);
         } else if (isInterior(x, y)) {
-          // Flat seamless floor tile
           ctx.fillStyle = colors.floor;
           ctx.fillRect(px + 1, py + 1, s - 2, s - 2);
-
-          // Subtle floor grid line
           ctx.strokeStyle = colors.floorGrid || colors.board;
           ctx.lineWidth = 1;
           ctx.strokeRect(px + 0.5, py + 0.5, s - 1, s - 1);
         }
 
-        if (state.goals[k] && !state.boxes[k]) {
-          drawGoal(px, py, s, colors);
-        }
-        if (state.boxes[k]) {
-          const onGoal = !!state.goals[k];
-          drawCrate(px, py, s, colors, onGoal);
-        }
+        if (state.goals[k] && !state.boxes[k]) drawGoal(px, py, s, colors);
+        if (state.boxes[k]) drawCrate(px, py, s, colors, !!state.goals[k]);
       }
     }
 

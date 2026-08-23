@@ -17,10 +17,11 @@ test('Sokoban crates use clean flat design and completed crates expose a check m
   assert.match(js, /if\s*\(onGoal\)[\s\S]*ctx\.lineTo/);
 });
 
-test('Sokoban goals use clean circular target marker with center dot', () => {
-  const js = source();
-  assert.match(js, /function drawGoal\(/);
-  assert.match(js, /ctx\.arc\(/);
+test('Sokoban goals use the same flat rounded-square language as the other tokens',()=>{
+  const js=source();
+  assert.match(js,/function drawGoal\(/);
+  assert.match(js,/ctx\.moveTo\(x \+ inset \+ radius, y \+ inset\)/);
+  assert.match(js,/ctx\.fillRect\(x \+ s \* 0\.47, y \+ s \* 0\.47/);
 });
 
 test('Sokoban player tracks the last movement direction with clean vector avatar', () => {

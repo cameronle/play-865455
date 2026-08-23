@@ -22,18 +22,22 @@ test('Gomoku board keeps readable wood but drops ornamental frame effects',()=>{
   assert.doesNotMatch(css,/inset 0 0 0 5px|6px 8px 0/);
 });
 
-test('Sokoban uses flat neutral tiles and collection theme support',()=>{
+test('Sokoban uses the collection flat palette and shared theme support',()=>{
   const html=read('sokoban/index.html');
   const css=read('sokoban/style.css');
   const js=read('sokoban/game.js');
   assert.match(html,/src="\/theme\.js\?v=[^"]+"/);
   assert.match(html,/class="theme-toggle"/);
   assert.match(css,/\[data-theme="light"\]/);
+  assert.match(css,/--cyan:/);
+  assert.match(css,/--orange:/);
+  assert.match(css,/--red:/);
   assert.match(css,/\.frame\{[^}]*border:1px solid var\(--line\)/);
-  assert.doesNotMatch(css,/box-shadow:5px 5px/);
+  assert.doesNotMatch(css,/box-shadow:|radial-gradient|linear-gradient/);
   assert.match(js,/function palette\(/);
-  assert.doesNotMatch(js,/roundedRect\(/);
-  assert.doesNotMatch(js,/ctx\.arc\(px,py-s\*\.08/);
+  assert.doesNotMatch(js,/ctx\.arc\(/);
+  assert.doesNotMatch(js,/ctx\.ellipse\(/);
+  assert.doesNotMatch(js,/quadraticCurveTo/);
 });
 
 test('Connect Four uses the same flat collection shell and shared theme control',()=>{
