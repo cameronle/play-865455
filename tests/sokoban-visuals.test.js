@@ -35,9 +35,9 @@ test('Sokoban player tracks the last movement direction with clean vector avatar
 
 test('Sokoban light board uses a subdued neutral center instead of a bright white playfield',()=>{
   const css=fs.readFileSync('sokoban/style.css','utf8');
-  assert.match(css,/--board:#e7e1d7/);
-  assert.match(css,/--floor:#ebe6de/);
-  assert.match(css,/--floor-grid:#ded7cd/);
+  assert.match(css,/--board:#dcd7ce/);
+  assert.match(css,/--floor:#e1ddd5/);
+  assert.match(css,/--floor-grid:#cfc8be/);
 });
 test('Sokoban completes with a five-second next-level countdown and safe timer cancellation',()=>{
   const js=source();
