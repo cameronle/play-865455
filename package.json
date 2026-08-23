@@ -1,0 +1,7 @@
+{
+  "name": "play-865455",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/*.test.js"
+  }
+}
