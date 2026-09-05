@@ -3,41 +3,41 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-  <meta name="theme-color" content="#fff8e7">
-  <script src="/theme.js?v=sticker-1"></script><script src="/clear-game-data.js?v=clear-1"></script>
-  <title>Sticker Reveal</title>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=sticker-1">
-  <link rel="stylesheet" href="style.css?v=sticker-1">
+  <meta name="theme-color" content="#070b12">
+  <script src="/theme.js?v=nonogram-retry-reset"></script><script src="/clear-game-data.js?v=clear-1"></script>
+  <title>Nonogram</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=classic-1">
+  <link rel="stylesheet" href="style.css?v=nonogram-retry-reset">
   <link rel="stylesheet" href="/theme.css?v=clear-1">
 </head>
 <body>
   <main class="page">
-    <header class="topbar"><a href="/">← PLAY</a><div class="brand"><h1>STICKER REVEAL</h1><span>FILL THE PAGE · FIND THE PICTURE</span></div><div class="header-actions"><button id="levelButton" type="button">ALBUM</button><button id="newButton" type="button">NEW</button></div></header>
+    <header class="topbar"><a href="/">← PLAY</a><h1>NONOGRAM</h1><div class="header-actions"><button id="levelButton" type="button">LEVELS</button><button id="newButton" type="button">NEW</button></div></header>
     <section class="toolbar">
-      <label class="tool-size">SHEET <select id="sizeSelect"><option value="5">5 × 5</option><option value="10" selected>10 × 10</option><option value="15">15 × 15</option></select></label>
-      <label class="tool-puzzle">STICKER <select id="puzzleSelect"></select></label>
-      <div class="stat stat-time">TIME <b id="timer">00:00</b></div><div class="stat stat-mistakes">MESSY CELLS <b id="mistakes">0 / 3</b></div><div class="stat stat-best">BEST <b id="best">--:--</b></div>
+      <label class="tool-size">SIZE <select id="sizeSelect"><option value="5">5 × 5</option><option value="10" selected>10 × 10</option><option value="15">15 × 15</option></select></label>
+      <label class="tool-puzzle">PUZZLE <select id="puzzleSelect"></select></label>
+      <div class="stat stat-time">TIME <b id="timer">00:00</b></div><div class="stat stat-mistakes">MISTAKES <b id="mistakes">0 / 3</b></div><div class="stat stat-best">BEST <b id="best">--:--</b></div>
     </section>
     <section class="game-layout">
       <div class="puzzle-frame" id="puzzleFrame">
-        <div class="corner" aria-hidden="true"><span>ALBUM</span><b>#01</b></div>
+        <div class="corner" aria-hidden="true">PIXEL<br>LOGIC</div>
         <div id="colClues" class="col-clues" aria-label="Column clues"></div>
         <div id="rowClues" class="row-clues" aria-label="Row clues"></div>
-        <div id="board" class="board" role="grid" aria-label="Sticker reveal puzzle"></div>
-        <div id="revealName" class="reveal-name" aria-live="polite"><span>STICKER FOUND</span><b></b></div>
-        <div id="resultOverlay" class="result-overlay"><b id="resultTitle">STICKER COMPLETE</b><span id="resultText">THE PAGE IS READY FOR YOUR ALBUM</span><button id="resultButton" type="button">NEXT STICKER</button></div>
+        <div id="board" class="board" role="grid" aria-label="Nonogram puzzle"></div>
+        <div id="revealName" class="reveal-name" aria-live="polite"><span>PICTURE REVEALED</span><b></b></div>
+        <div id="resultOverlay" class="result-overlay"><b id="resultTitle">PICTURE COMPLETE</b><span id="resultText">EVERY LINE IS SOLVED</span><button id="resultButton" type="button">NEXT PUZZLE</button></div>
       </div>
       <aside>
         <button id="progressSummary" class="progress-summary" type="button">10×10 PACK · 0 / 15</button>
-        <div class="mode-switch" role="group" aria-label="Cell mode"><button id="modeFill" class="active" type="button"><i></i>PAINT</button><button id="modeMark" type="button"><i>×</i>MARK</button></div>
-        <div class="actions"><button id="undoButton" type="button">↶<span>UNDO</span></button><button id="hintButton" type="button">?<span>CLUE</span></button><button id="resetButton" type="button">↺<span>RESET</span></button></div>
-        <div class="sticker-note"><b>HOW TO STICK</b><p>Follow each little number strip. Paint the hidden cells and mark the ones that stay blank.</p></div>
+        <div class="mode-switch" role="group" aria-label="Cell mode"><button id="modeFill" class="active" type="button"><i></i>FILL</button><button id="modeMark" type="button"><i>×</i>MARK</button></div>
+        <div class="actions"><button id="undoButton" type="button">↶<span>UNDO</span></button><button id="hintButton" type="button">?<span>HINT</span></button><button id="resetButton" type="button">↺<span>RESET</span></button></div>
+        <p>Fill cells to match every row and column clue. Mark cells that must stay empty.</p>
       </aside>
     </section>
-    <footer>TAP OR DRAG TO PAINT · RIGHT CLICK TO MARK · F / X SWITCH MODE</footer>
+    <footer>TAP OR DRAG TO PAINT · RIGHT CLICK TO MARK · F / X SWITCH MODE · ARROWS MOVE</footer>
   </main>
-  <section id="levelOverlay" class="level-overlay" aria-hidden="true"><div class="level-dialog"><header><div><span>STICKER ALBUM</span><b id="galleryProgress">0 / 15 COLLECTED</b></div><button id="closeLevels" type="button" aria-label="Close sticker album">CLOSE</button></header><div id="levelGrid" class="level-grid"></div></div></section>
-  <script src="rules.js?v=sticker-1"></script><script src="game.js?v=sticker-1"></script>
+  <section id="levelOverlay" class="level-overlay" aria-hidden="true"><div class="level-dialog"><header><div><span>PUZZLE LIBRARY</span><b id="galleryProgress">0 / 15 COMPLETE</b></div><button id="closeLevels" type="button" aria-label="Close level selection">CLOSE</button></header><div id="levelGrid" class="level-grid"></div></div></section>
+  <script src="rules.js?v=nonogram-retry-reset"></script><script src="game.js?v=nonogram-retry-reset"></script>
   <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
 </body>
 </html>

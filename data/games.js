@@ -386,16 +386,16 @@ module.exports = [
     "order": 22,
     "category": "puzzle",
     "name": {
-      "zh": "贴纸揭晓",
-      "en": "STICKER REVEAL"
+      "zh": "数织",
+      "en": "NONOGRAM"
     },
     "description": {
-      "zh": "根据行列数字涂满贴纸页，揭开一张张手绘图案。",
-      "en": "Fill the sticker page from the clues and reveal a little picture."
+      "zh": "根据行列数字推算填充，揭开隐藏像素图案。",
+      "en": "Read the clues. Reveal the hidden pixel picture."
     },
     "readme": {
-      "title": "Sticker Reveal",
-      "description": "自维护的卡通涂鸦数织谜题，包含 5×5、10×10 和 15×15 共 45 张贴纸，支持拖动涂格、标记、撤销、提示、计时和本地收藏进度。"
+      "title": "Nonogram",
+      "description": "自维护的数织像素谜题，包含 5×5、10×10 和 15×15 共 45 关，支持填充、标记、拖动绘制、撤销、提示、计时和本地最佳时间。"
     }
   },
   {

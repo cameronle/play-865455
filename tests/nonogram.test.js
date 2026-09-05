@@ -78,6 +78,16 @@ test('Nonogram page is touch-safe, themed, keyboard accessible, and integrated a
   assert.match(readme,/\.\/nonogram\//);
 });
 
+test('Nonogram restores the classic minimalist presentation', () => {
+  const html = read('nonogram/index.html');
+  const css = read('nonogram/style.css');
+  assert.match(html, /<title>Nonogram<\/title>/);
+  assert.match(html, />NONOGRAM</);
+  assert.doesNotMatch(html, /STICKER REVEAL|STICKER ALBUM/);
+  assert.match(css, /--bg:#070b12/);
+  assert.match(css, /font-family:ui-monospace/);
+  assert.match(css, /--cyan:#64e6e0/);
+});
 test('Nonogram exposes a visual level gallery with saved completion progress', () => {
   const html=read('nonogram/index.html'),css=read('nonogram/style.css'),js=read('nonogram/game.js');
   for(const id of ['levelButton','progressSummary','levelOverlay','levelGrid','closeLevels']) assert.match(html,new RegExp(`id="${id}"`));
