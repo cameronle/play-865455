@@ -5,7 +5,6 @@
   const rules = {
     '2048': ['play-2048-best'],
     breakout: ['breakout-high'],
-    bridges: ['bridges-progress-v1'],
     'bubble-shooter': ['bubble-shooter-best'],
     'color-bounce': ['color-bounce-best-v1'],
     'connect-four': ['connectFourRecord'],

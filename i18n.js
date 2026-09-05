@@ -9,7 +9,7 @@
       htmlLang: 'zh-CN',
       title: 'PLAY — 小游戏集合',
       kicker: '无需登录 · 纯粹单机 · 随开随玩',
-      stats: '27 款游戏',
+      stats: '26 款游戏',
       langBtn: 'EN',
       langBtnLabel: '切换为英文 (Switch to English)',
       footer: '更多游戏持续更新中 · 为 Web 纯粹体验而生',
@@ -45,7 +45,6 @@
         "bubble-shooter": {"name":"泡泡花园","desc":"瞄准发射彩色花朵泡泡，让相同颜色的花朵一起绽放。"},
         "nonogram": {"name":"数织","desc":"根据行列数字推算填充，揭开隐藏像素图案。"},
         "flow": {"name":"彩带路线","desc":"把同色彩带从纽扣连到纽扣，铺满整张纸页。"},
-        "bridges": {"name":"岛屿连线","desc":"在手绘地图上架起绳桥，连接每座岛屿的海岸。"},
         "sliding-puzzle": {"name":"数字华容道","desc":"滑动方块归位，将乱序数字按顺序排列整齐。"},
         "color-bounce": {"name":"颜料巡游","desc":"带着小变色龙穿过同色颜料圈，收集飞溅一路向上。"},
         "flappy": {"name":"小鸟邮差","desc":"操控背着邮包的小鸟穿过云朵，安全送出每一封信。"}
@@ -55,7 +54,7 @@
       htmlLang: 'en',
       title: 'PLAY — Arcade',
       kicker: 'SMALL GAMES / NO ACCOUNTS',
-      stats: '27 GAMES',
+      stats: '26 GAMES',
       langBtn: '中文',
       langBtnLabel: 'Switch to Chinese (切换为中文)',
       footer: 'MORE GAMES COMING SOON · BUILT FOR THE WEB',
@@ -91,7 +90,6 @@
         "bubble-shooter": {"name":"BUBBLE GARDEN","desc":"Aim colorful flower bubbles and make matching blossoms bloom together."},
         "nonogram": {"name":"NONOGRAM","desc":"Read the clues. Reveal the hidden pixel picture."},
         "flow": {"name":"RIBBON ROUTE","desc":"Weave matching ribbons between buttons and cover the whole page."},
-        "bridges": {"name":"ISLAND LINKS","desc":"Draw rope bridges across the map and connect every little island."},
         "sliding-puzzle": {"name":"15-PUZZLE","desc":"Slide tiles into the empty space. Put numbers in order."},
         "color-bounce": {"name":"PAINT PARADE","desc":"Guide a tiny chameleon through matching paint hoops and collect splashes."},
         "flappy": {"name":"BIRDIE POST","desc":"Guide a tiny mail bird through cloud gaps and deliver every letter."}

@@ -62,7 +62,7 @@ test('stage-pages creates a complete public tree without development files', () 
 
     const games = fs.readdirSync(destination, { withFileTypes: true })
       .filter(entry => entry.isDirectory() && fs.existsSync(path.join(destination, entry.name, 'index.html')));
-    assert.equal(games.length, 27);
+    assert.equal(games.length, 26);
 
     for (const name of ['.git', '.github', 'tests', 'scripts', 'package.json', 'README.md', 'data']) {
       assert.equal(fs.existsSync(path.join(destination, name)), false, `${name} is not public content`);

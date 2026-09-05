@@ -4,7 +4,7 @@ const fs=require('node:fs');
 const vm=require('node:vm');
 
 const lightRoutes=['2048','tetris','snake','minesweeper','sudoku','gomoku'];
-const canvasRoutes=['breakout','bridges','bubble-shooter','color-bounce','crosswalk','endless-runner','flappy','flow','helicopter-cave','lunar-lander','maze','pong','shooter','sky-hopper','snake','sokoban','space-invaders','tetris'];
+const canvasRoutes=['breakout','bubble-shooter','color-bounce','crosswalk','endless-runner','flappy','flow','helicopter-cave','lunar-lander','maze','pong','shooter','sky-hopper','snake','sokoban','space-invaders','tetris'];
 
 function bootTheme(saved=null,dark=false){
   const listeners={};

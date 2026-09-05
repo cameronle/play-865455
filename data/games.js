@@ -417,27 +417,9 @@ module.exports = [
     }
   },
   {
-    "id": "bridges",
-    "path": "bridges",
-    "order": 24,
-    "category": "puzzle",
-    "name": {
-      "zh": "岛屿连线",
-      "en": "ISLAND LINKS"
-    },
-    "description": {
-      "zh": "在手绘地图上架起绳桥，连接每座岛屿的海岸。",
-      "en": "Draw rope bridges across the map and connect every little island."
-    },
-    "readme": {
-      "title": "Island Links",
-      "description": "自维护的卡通涂鸦数桥谜题，采用手绘地图、岛屿和绳桥主题，包含 3 种尺寸共 30 张地图，支持架桥、撤销、连通性验证与关卡选择。"
-    }
-  },
-  {
     "id": "sliding-puzzle",
     "path": "sliding-puzzle",
-    "order": 25,
+    "order": 24,
     "category": "puzzle",
     "name": {
       "zh": "数字华容道",
@@ -455,7 +437,7 @@ module.exports = [
   {
     "id": "color-bounce",
     "path": "color-bounce",
-    "order": 26,
+    "order": 25,
     "category": "arcade",
     "name": {
       "zh": "颜料巡游",
@@ -473,7 +455,7 @@ module.exports = [
   {
     "id": "flappy",
     "path": "flappy",
-    "order": 27,
+    "order": 26,
     "category": "arcade",
     "name": {
       "zh": "小鸟邮差",
