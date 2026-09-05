@@ -65,7 +65,7 @@ test('Sudoku initial runtime renders 81 cells and starts from the overlay', () =
   const sandbox={window:{SudokuRules:rules(),addEventListener(){}},document:{getElementById:id=>elements.get(id),querySelectorAll:()=>numberButtons,createElement:()=>make(),addEventListener(){},hidden:false},localStorage:{getItem(){return null},setItem(){}},setInterval:()=>1,clearInterval(){},setTimeout:fn=>fn(),Date,Math,console};
   vm.createContext(sandbox);vm.runInContext(fs.readFileSync('sudoku/game.js','utf8'),sandbox);
   assert.equal(elements.get('board').children.length,81);
-  assert.equal(elements.get('overlayTitle').textContent,'SUDOKU');
+  assert.equal(elements.get('overlayTitle').textContent,'BENTO NUMBERS');
 });
 
 test('launcher and README include Sudoku', () => {

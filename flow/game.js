@@ -11,14 +11,14 @@
   const STORAGE_KEY = 'flow-progress-v1';
 
   const COLORS = [
-    '#ff4b5c', // 0: Red
-    '#38ef7d', // 1: Green
-    '#00d2fc', // 2: Cyan/Blue
-    '#ffbe0b', // 3: Yellow
-    '#b5179e', // 4: Purple/Magenta
-    '#fb5607', // 5: Orange
-    '#e2e8f0', // 6: White/Silver
-    '#8338ec', // 7: Indigo
+    '#e98575', // coral ribbon
+    '#8abf93', // mint ribbon
+    '#80bdd8', // blue ribbon
+    '#f2ca62', // yellow ribbon
+    '#b8a7e8', // purple ribbon
+    '#e69b52', // orange ribbon
+    '#d47d95',
+    '#75a9b8',
   ];
 
   const $ = id => document.getElementById(id);
@@ -296,6 +296,8 @@
 
       ctx.save();
       ctx.strokeStyle = color;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 5;
       ctx.lineWidth = cellSize * 0.38;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';

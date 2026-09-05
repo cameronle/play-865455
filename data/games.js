@@ -242,16 +242,16 @@ module.exports = [
     "order": 14,
     "category": "puzzle",
     "name": {
-      "zh": "数独",
-      "en": "SUDOKU"
+      "zh": "便当数字",
+      "en": "BENTO NUMBERS"
     },
     "description": {
-      "zh": "在九宫格填入数字，满足行列唯一解。",
-      "en": "Place the digits. Complete every row, column, and box."
+      "zh": "把数字整齐装进九宫格便当盒，行列和小格都不能重复。",
+      "en": "Pack every number into the bento grid without repeating a compartment."
     },
     "readme": {
-      "title": "Sudoku",
-      "description": "自维护的数独游戏，支持唯一解题目、三档难度、笔记、撤销、提示、错误计数、计时和本地最佳时间。"
+      "title": "Bento Numbers",
+      "description": "自维护的卡通涂鸦数独，采用便当盒数字主题，支持唯一解、三档难度、笔记、撤销、提示、错误计数、计时和本地最佳时间。"
     }
   },
   {
@@ -404,16 +404,16 @@ module.exports = [
     "order": 23,
     "category": "puzzle",
     "name": {
-      "zh": "连线解谜",
-      "en": "FLOW FREE"
+      "zh": "彩带路线",
+      "en": "RIBBON ROUTE"
     },
     "description": {
-      "zh": "连接相同颜色管道，无交叉铺满整个棋盘。",
-      "en": "Connect matching colors. Fill the whole board."
+      "zh": "把同色彩带从纽扣连到纽扣，铺满整张纸页。",
+      "en": "Weave matching ribbons between buttons and cover the whole page."
     },
     "readme": {
-      "title": "Flow Free",
-      "description": "自维护的连线填格解谜游戏，包含 4 种尺寸共 40 关，支持触摸拖动连线、全盘覆盖验证、关卡选择与最佳时间。"
+      "title": "Ribbon Route",
+      "description": "自维护的卡通涂鸦连线谜题，采用彩带和纽扣主题，包含 4 种尺寸共 40 关，支持触摸拖线、全盘覆盖、关卡选择与最佳时间。"
     }
   },
   {
@@ -422,16 +422,16 @@ module.exports = [
     "order": 24,
     "category": "puzzle",
     "name": {
-      "zh": "数桥",
-      "en": "BRIDGES"
+      "zh": "岛屿连线",
+      "en": "ISLAND LINKS"
     },
     "description": {
-      "zh": "在岛屿间架设指定数量桥梁，连通完整网络。",
-      "en": "Connect the islands. Build a single network."
+      "zh": "在手绘地图上架起绳桥，连接每座岛屿的海岸。",
+      "en": "Draw rope bridges across the map and connect every little island."
     },
     "readme": {
-      "title": "Bridges",
-      "description": "自维护的数桥解谜游戏，包含 3 种尺寸共 30 关，支持岛屿架桥、并查集连通性验证、撤销与关卡选择。"
+      "title": "Island Links",
+      "description": "自维护的卡通涂鸦数桥谜题，采用手绘地图、岛屿和绳桥主题，包含 3 种尺寸共 30 张地图，支持架桥、撤销、连通性验证与关卡选择。"
     }
   },
   {

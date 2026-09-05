@@ -220,7 +220,7 @@
       const isH = islA.r === islB.r;
 
       ctx.save();
-      ctx.strokeStyle = isDark ? '#69c6ff' : '#0288d1';
+      ctx.strokeStyle = isDark ? '#80c7df' : '#75aec7';
       ctx.lineWidth = Math.max(2.5, radius * 0.18);
       ctx.lineCap = 'round';
 
@@ -249,7 +249,7 @@
     if (dragStart && dragCurrent) {
       const ptA = getIslandCenter(dragStart);
       ctx.save();
-      ctx.strokeStyle = '#ffe9a3';
+      ctx.strokeStyle = '#f2ce68';
       ctx.lineWidth = 3;
       ctx.setLineDash([6, 4]);
       ctx.beginPath();
@@ -284,7 +284,7 @@
         ctx.strokeStyle = isDark ? '#73f0b0' : '#38b000';
         ctx.lineWidth = 2.5;
       } else {
-        ctx.fillStyle = isDark ? '#152230' : '#e2dbcd';
+        ctx.fillStyle = isDark ? '#2c4a50' : '#f6e3b8';
         ctx.strokeStyle = isDark ? '#3d5166' : '#a89c89';
         ctx.lineWidth = 2;
       }
@@ -293,7 +293,7 @@
       ctx.stroke();
 
       // Island count number
-      ctx.fillStyle = isOver ? (isDark ? '#ff7088' : '#e63946') : (isSatisfied ? (isDark ? '#73f0b0' : '#38b000') : (isDark ? '#e8f0f7' : '#3e3934'));
+      ctx.fillStyle = isOver ? (isDark ? '#ed927e' : '#e98575') : (isSatisfied ? (isDark ? '#8fd2a4' : '#8abf93') : (isDark ? '#fff0c9' : '#3f3a34'));
       ctx.font = `bold ${Math.round(radius * 1.05)}px monospace`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
