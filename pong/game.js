@@ -119,7 +119,7 @@
     const y = (event.clientY - rect.top) * H / rect.height;
     player.y = Math.max(0, Math.min(H - paddle.h, y - paddle.h / 2));
   }
-  canvas.addEventListener('pointerdown', e => { canvas.setPointerCapture(e.pointerId); movePointer(e); if (state === 'title' || state === 'over') newMatch(); else if (state === 'paused') togglePause(); });
+  canvas.addEventListener('pointerdown', e => { try { canvas.setPointerCapture(e.pointerId); } catch (_) {} movePointer(e); if (state === 'title' || state === 'over') newMatch(); else if (state === 'paused') togglePause(); });
   canvas.addEventListener('pointermove', e => { if (e.buttons || e.pointerType === 'touch') movePointer(e); });
   window.addEventListener('keydown', e => {
     if (['ArrowUp','ArrowDown','Space'].includes(e.code)) e.preventDefault();
@@ -128,7 +128,7 @@
   window.addEventListener('keyup', e => keys.delete(e.code));
   function bindHold(id, direction) {
     const el = document.getElementById(id);
-    const start = e => { e.preventDefault(); heldDirection = direction; el.setPointerCapture?.(e.pointerId); };
+    const start = e => { e.preventDefault(); heldDirection = direction; try { el.setPointerCapture(e.pointerId); } catch (_) {} };
     const end = () => { if (heldDirection === direction) heldDirection = 0; };
     el.addEventListener('pointerdown', start); el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end); el.addEventListener('pointerleave', end);
   }
