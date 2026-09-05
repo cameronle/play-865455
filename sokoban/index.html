@@ -3,22 +3,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-  <meta name="theme-color" content="#070b12">
-  <script src="/theme.js?v=theme-2"></script><script src="/clear-game-data.js?v=clear-1"></script>
-  <title>Sokoban</title>
-  <link rel="stylesheet" href="style.css?v=style-6">
+  <meta name="theme-color" content="#fffaf0">
+  <script src="/theme.js?v=bear-boxes-1"></script>
+  <script src="/clear-game-data.js?v=clear-1"></script>
+  <title>Bear &amp; Boxes</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=bear-boxes-1">
+  <link rel="stylesheet" href="style.css?v=bear-boxes-1">
   <link rel="stylesheet" href="/theme.css?v=clear-1">
 </head>
 <body>
   <main class="page">
-    <header><a href="/">← PLAY</a><h1>SOKOBAN</h1><button id="resetButton" type="button">RESET</button></header>
+    <header class="topbar"><a href="/" aria-label="Back to games">← PLAY</a><div class="brand"><h1>BEAR &amp; BOXES</h1><span>HELP THE BEAR BRING HOME THE FRUIT.</span></div><button id="resetButton" type="button">RESET</button></header>
     <section class="stats" aria-live="polite"><div><span>LEVEL</span><b id="level">01 / 20</b></div><div><span>MOVES</span><b id="moves">000</b></div><div><span>PUSHES</span><b id="pushes">000</b></div><div><span>BEST</span><b id="best">---</b></div></section>
-    <div class="frame"><canvas id="game" width="560" height="560" aria-label="Sokoban puzzle board"></canvas><div id="overlay" class="overlay"><b id="overlayTitle">SOKOBAN</b><span id="overlayText">PUSH EVERY CRATE ONTO A GOAL</span><button id="startButton" type="button">START</button></div></div>
+    <div class="frame"><canvas id="game" width="560" height="560" aria-label="Bear and Boxes puzzle board"></canvas><div id="overlay" class="overlay"><div class="overlay-spark" aria-hidden="true">✿</div><b id="overlayTitle">BEAR &amp; BOXES</b><span id="overlayText">PUSH EVERY FRUIT CRATE ONTO A BASKET</span><button id="startButton" type="button">START THE WALK</button></div></div>
     <div class="tools"><button id="previousButton" type="button">← LEVEL</button><button id="undoButton" type="button">UNDO</button><button id="nextButton" type="button">LEVEL →</button></div>
-    <div class="dpad" aria-label="Directional controls"><i></i><button data-dir="up" type="button">↑</button><i></i><button data-dir="left" type="button">←</button><button data-dir="down" type="button">↓</button><button data-dir="right" type="button">→</button></div>
+    <div class="dpad" aria-label="Directional controls"><i></i><button data-dir="up" type="button" aria-label="Move up">↑</button><i></i><button data-dir="left" type="button" aria-label="Move left">←</button><button data-dir="down" type="button" aria-label="Move down">↓</button><button data-dir="right" type="button" aria-label="Move right">→</button></div>
     <footer>ARROW KEYS / WASD · SWIPE OR TAP · R RESET · Z UNDO</footer>
   </main>
-  <script src="rules.js?v=visual-1"></script><script src="levels.js?v=levels-hard-1"></script><script src="game.js?v=visual-4"></script>
+  <script src="rules.js?v=bear-boxes-1"></script><script src="levels.js?v=levels-hard-1"></script><script src="game.js?v=bear-boxes-1"></script>
   <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
 </body>
 </html>

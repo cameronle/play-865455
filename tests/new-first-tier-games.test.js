@@ -39,6 +39,7 @@ test('Crosswalk has finite lanes, goal progression, and directional touch contro
   assert.match(js, /makeLanes/);
   assert.match(js, /level\+\+/);
   assert.match(js, /lives--/);
+  assert.match(html, /TINY CROSSING/);
   assert.match(html, /data-dir="up"/);
 });
 
@@ -47,6 +48,7 @@ test('Simon generates a growing sequence and accepts four touch pads', () => {
   assert.match(js, /sequence\.push/);
   assert.match(js, /playSequence/);
   assert.equal((html.match(/data-pad=/g)||[]).length, 4);
+  assert.match(html, /MONSTER BAND/);
 });
 
 test('launcher and README include the remaining four routes', () => {

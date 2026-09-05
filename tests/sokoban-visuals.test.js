@@ -52,5 +52,6 @@ test('Sokoban completes with a five-second next-level countdown and safe timer c
 test('Sokoban visual refresh does not change the twenty-level pack', () => {
   const levels = fs.readFileSync('sokoban/levels.js', 'utf8'), html = fs.readFileSync('sokoban/index.html', 'utf8');
   assert.match(html, /01 \/ 20/);
+  assert.match(html, /BEAR &amp; BOXES/);
   assert.match(levels, /root\.SokobanLevels/);
 });

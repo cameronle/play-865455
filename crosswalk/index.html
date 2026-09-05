@@ -3,33 +3,36 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-  <meta name="theme-color" content="#070b12">
-  <script src="/theme.js?v=crosswalk-20-5"></script><script src="/clear-game-data.js?v=clear-1"></script>
-  <title>Night Crossing</title>
+  <meta name="theme-color" content="#fffaf0">
+  <script src="/theme.js?v=tiny-crossing-1"></script>
+  <script src="/clear-game-data.js?v=clear-1"></script>
+  <title>Tiny Crossing</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=tiny-crossing-1">
   <link rel="stylesheet" href="/theme.css?v=clear-1">
-  <link rel="stylesheet" href="style.css?v=crosswalk-20-9">
+  <link rel="stylesheet" href="style.css?v=tiny-crossing-1">
 </head>
 <body>
   <main class="page">
     <header class="topbar">
-      <a href="/">← PLAY</a>
-      <h1>NIGHT CROSSING</h1>
+      <a href="/" aria-label="Back to games">← PLAY</a>
+      <div class="brand"><h1>TINY CROSSING</h1><span>GET HOME, LITTLE DUCK.</span></div>
       <div class="header-actions">
         <button id="levelsButton" type="button">LEVELS</button>
         <button id="pauseButton" type="button">PAUSE</button>
       </div>
     </header>
-    <section class="hud">
+    <section class="hud" aria-label="Game status">
       <div><span>SCORE</span><b id="score">000000</b></div>
       <div><span>LEVEL</span><b id="level">01 / 20</b></div>
       <div><span>CHAPTER</span><b id="chapter">01 / 05</b></div>
       <div><span>LIVES</span><b id="lives">♥ ♥ ♥</b></div>
     </section>
     <div class="frame">
-      <canvas id="game" width="600" height="720" aria-label="Night Crossing traffic game"></canvas>
+      <canvas id="game" width="600" height="720" aria-label="Tiny Crossing animal traffic game"></canvas>
       <div id="overlay" class="overlay">
-        <b id="overlayTitle">NIGHT CROSSING</b>
-        <span id="overlayText">REACH THE LIGHTED EXIT</span>
+        <div class="overlay-spark" aria-hidden="true">✦</div>
+        <b id="overlayTitle">TINY CROSSING</b>
+        <span id="overlayText">HELP THE LITTLE DUCK REACH HOME</span>
         <button id="startButton" type="button">START CROSSING</button>
       </div>
     </div>
@@ -41,20 +44,15 @@
     </section>
     <footer>ARROW KEYS / WASD · SWIPE OR TAP TO MOVE · P PAUSE · LEVELS TO REPLAY</footer>
   </main>
-
   <section id="levelsOverlay" class="levels-overlay" aria-hidden="true">
     <div class="levels-dialog" role="dialog" aria-modal="true" aria-labelledby="levelsTitle">
-      <header class="levels-header">
-        <div><b id="levelsTitle">LEVEL SELECT</b><span id="levelsProgress">0 / 20 COMPLETE</span></div>
-        <button id="closeLevels" type="button">CLOSE</button>
-      </header>
+      <header class="levels-header"><div><b id="levelsTitle">LEVEL SELECT</b><span id="levelsProgress">0 / 20 COMPLETE</span></div><button id="closeLevels" type="button">CLOSE</button></header>
       <div id="levelGrid" class="level-grid"></div>
     </div>
   </section>
-
-  <script src="rules.js?v=crosswalk-20-5"></script>
-  <script src="levels.js?v=crosswalk-20-5"></script>
-  <script src="game.js?v=crosswalk-20-5"></script>
+  <script src="rules.js?v=tiny-crossing-1"></script>
+  <script src="levels.js?v=tiny-crossing-1"></script>
+  <script src="game.js?v=tiny-crossing-1"></script>
   <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
 </body>
 </html>

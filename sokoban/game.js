@@ -29,7 +29,7 @@
     gamePhase = showIntro ? 'title' : 'playing';
     updateUi();
     draw();
-    if (showIntro) showOverlay('SOKOBAN', 'PUSH EVERY CRATE ONTO A GOAL', 'START');
+    if (showIntro) showOverlay('BEAR & BOXES', 'PUSH EVERY FRUIT CRATE INTO A BASKET', 'START THE WALK');
     else hideOverlay();
   }
 
@@ -348,6 +348,39 @@
       hideOverlay();
     }
   });
+
+  function drawGoal(x, y, s, colors, covered = false) {
+    const inset = s * 0.2, size = s - inset * 2;
+    ctx.strokeStyle = colors.goal; ctx.lineWidth = Math.max(2, s * 0.055); ctx.strokeRect(x + inset, y + inset, size, size);
+    if (!covered) { ctx.fillStyle = colors.goal; ctx.fillRect(x + s * .31, y + s * .47, s * .12, s * .12); ctx.fillRect(x + s * .57, y + s * .47, s * .12, s * .12); ctx.strokeStyle = colors.orange; ctx.lineWidth = Math.max(1.5, s * .04); ctx.beginPath(); ctx.moveTo(x + s * .28, y + s * .73); ctx.lineTo(x + s * .72, y + s * .73); ctx.stroke(); }
+  }
+
+  function drawCrate(x, y, s, colors, onGoal) {
+    if (onGoal) drawGoal(x, y, s, colors, true);
+    const inset = s * .12, size = s - inset * 2;
+    ctx.fillStyle = colors.orange; ctx.fillRect(x + inset, y + inset, size, size); ctx.strokeStyle = colors.orangeBorder || colors.orange; ctx.lineWidth = Math.max(1.5, s * .035); ctx.strokeRect(x + inset + .5, y + inset + .5, size - 1, size - 1);
+    ctx.strokeStyle = colors.orangeBorder || colors.ink; ctx.lineWidth = Math.max(1.5, s * .03); ctx.beginPath(); ctx.moveTo(x + s * .2, y + s * .34); ctx.lineTo(x + s * .8, y + s * .34); ctx.moveTo(x + s * .2, y + s * .65); ctx.lineTo(x + s * .8, y + s * .65); ctx.stroke();
+    ctx.fillStyle = colors.red; ctx.fillRect(x + s * .28, y + s * .43, s * .12, s * .12); ctx.fillStyle = colors.cyan; ctx.fillRect(x + s * .45, y + s * .39, s * .12, s * .12); ctx.fillStyle = colors.player; ctx.fillRect(x + s * .61, y + s * .45, s * .12, s * .12);
+    ctx.strokeStyle = colors.ink; ctx.lineWidth = Math.max(1.5, s * .035); ctx.beginPath(); ctx.moveTo(x + s * .34, y + s * .43); ctx.lineTo(x + s * .37, y + s * .36); ctx.moveTo(x + s * .51, y + s * .39); ctx.lineTo(x + s * .54, y + s * .32); ctx.moveTo(x + s * .67, y + s * .45); ctx.lineTo(x + s * .7, y + s * .38); ctx.stroke();
+    if (onGoal) { ctx.strokeStyle = colors.ink; ctx.lineWidth = Math.max(2, s * .07); ctx.lineCap = 'square'; ctx.beginPath(); ctx.moveTo(x + s * .32, y + s * .54); ctx.lineTo(x + s * .44, y + s * .66); ctx.lineTo(x + s * .7, y + s * .37); ctx.stroke(); }
+  }
+
+  function drawPlayer(x, y, s, colors) {
+    const bodyX = x + s * 0.2, bodyY = y + s * 0.37, bodyW = s * 0.6, bodyH = s * 0.46;
+    ctx.fillStyle = colors.player; ctx.strokeStyle = colors.playerBorder || colors.player; ctx.lineWidth = Math.max(2, s * 0.035); ctx.lineJoin = 'round';
+    ctx.fillRect(bodyX, bodyY, bodyW, bodyH); ctx.strokeRect(bodyX + .5, bodyY + .5, bodyW - 1, bodyH - 1);
+    ctx.fillStyle = colors.player; ctx.fillRect(x + s * .18, y + s * .16, s * .64, s * .46); ctx.strokeStyle = colors.playerBorder || colors.player; ctx.strokeRect(x + s * .185, y + s * .165, s * .63, s * .45);
+    ctx.fillStyle = colors.orange; ctx.fillRect(x + s * .12, y + s * .06, s * .18, s * .18); ctx.fillRect(x + s * .7, y + s * .06, s * .18, s * .18); ctx.strokeStyle = colors.ink; ctx.lineWidth = Math.max(1.5, s * .03); ctx.strokeRect(x + s * .12, y + s * .06, s * .18, s * .18); ctx.strokeRect(x + s * .7, y + s * .06, s * .18, s * .18);
+    ctx.fillStyle = colors.ink; const eye = Math.max(2, s * .06); ctx.fillRect(x + s * .34, y + s * .31, eye, eye); ctx.fillRect(x + s * .58, y + s * .31, eye, eye);
+    ctx.fillStyle = colors.red; ctx.fillRect(x + s * .46, y + s * .41, s * .08, s * .06);
+    ctx.fillStyle = colors.orange; ctx.fillRect(x + s * .18, y + s * .78, s * .64, s * .09); ctx.strokeStyle = colors.ink; ctx.lineWidth = Math.max(1.5, s * .03); ctx.strokeRect(x + s * .18, y + s * .78, s * .64, s * .09);
+  }
+
+  function draw() {
+    const colors = palette(); ctx.fillStyle = colors.board; ctx.fillRect(0, 0, canvas.width, canvas.height); const g = tileGeometry(), s = g.size;
+    for (let y = 0; y < state.height; y++) for (let x = 0; x < state.width; x++) { const k = `${x},${y}`, px = g.ox + x * s, py = g.oy + y * s; if (state.walls[k]) drawWall(px, py, s, colors); else if (isInterior(x, y)) { ctx.fillStyle = colors.floor; ctx.fillRect(px + 1, py + 1, s - 2, s - 2); ctx.strokeStyle = colors.floorGrid || colors.board; ctx.lineWidth = 1; ctx.strokeRect(px + .5, py + .5, s - 1, s - 1); } if (state.goals[k] && !state.boxes[k]) drawGoal(px, py, s, colors); if (state.boxes[k]) drawCrate(px, py, s, colors, !!state.goals[k]); }
+    drawPlayer(g.ox + state.player.x * s, g.oy + state.player.y * s, s, colors);
+  }
 
   if (document.addEventListener) document.addEventListener('themechange', draw);
   loadLevel(levelIndex, true);

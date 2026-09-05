@@ -578,9 +578,83 @@
     if (document.hidden && state === 'playing') togglePause();
   });
 
+  function doodlePalette() {
+    if (typeof getComputedStyle !== 'function') return { paper:'#fffaf0', grid:'#b9dfe0', ink:'#3d3832', muted:'#8a7c6e', mint:'#9eddbd', blue:'#8fc9eb', yellow:'#f7d66c', coral:'#f28c78', purple:'#b8a7e8', road:'#fffdf7', roadLine:'#c8bfae', line:'#d9cfc1' };
+    const style = getComputedStyle(document.documentElement);
+    const get = (name, fallback) => style.getPropertyValue(name).trim() || fallback;
+    return { paper:get('--paper','#fffaf0'), grid:get('--grid','#b9dfe0'), ink:get('--ink','#3d3832'), muted:get('--muted','#8a7c6e'), mint:get('--mint','#9eddbd'), blue:get('--blue','#8fc9eb'), yellow:get('--yellow','#f7d66c'), coral:get('--coral','#f28c78'), purple:get('--purple','#b8a7e8'), road:get('--road','#fffdf7'), roadLine:get('--road-line','#c8bfae'), line:get('--line','#d9cfc1') };
+  }
+
+  function doodleRect(x, y, width, height, radius, fill, stroke, lineWidth = 2) {
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x, y, width, height, radius);
+    else ctx.rect(x, y, width, height);
+    if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+    if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = lineWidth; ctx.stroke(); }
+  }
+
+  function doodleCloud(x, y, scale, fill, p) {
+    ctx.save(); ctx.translate(x, y); ctx.strokeStyle = p.ink; ctx.lineWidth = 2.5; ctx.lineCap = 'round'; ctx.fillStyle = fill;
+    ctx.beginPath(); ctx.moveTo(-34 * scale, 8 * scale); ctx.bezierCurveTo(-39 * scale, -6 * scale, -28 * scale, -16 * scale, -17 * scale, -12 * scale); ctx.bezierCurveTo(-12 * scale, -29 * scale, 8 * scale, -29 * scale, 14 * scale, -13 * scale); ctx.bezierCurveTo(30 * scale, -20 * scale, 41 * scale, -5 * scale, 33 * scale, 9 * scale); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
+  }
+
+  function drawRoad() {
+    const p = doodlePalette();
+    ctx.fillStyle = p.paper; ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = p.grid; ctx.globalAlpha = .42; ctx.lineWidth = 1;
+    for (let x = 0; x <= W; x += 32) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+    for (let y = 0; y <= H; y += 32) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+    ctx.globalAlpha = 1;
+    doodleCloud(78, 64, .62, p.paper, p); doodleCloud(500, 111, .42, p.paper, p);
+    ctx.fillStyle = p.mint; ctx.globalAlpha = .72; ctx.fillRect(0, rowY(0), W, CELL_H); ctx.fillRect(0, rowY(1), W, CELL_H); ctx.fillRect(0, rowY(10), W, CELL_H); ctx.fillRect(0, rowY(11), W, CELL_H); ctx.globalAlpha = 1;
+    for (let row = 2; row <= 9; row++) {
+      const y = rowY(row); ctx.fillStyle = row % 2 ? p.road : p.paper; ctx.fillRect(0, y, W, CELL_H);
+      ctx.strokeStyle = p.roadLine; ctx.lineWidth = 2; ctx.setLineDash([18, 18]); ctx.beginPath(); ctx.moveTo(0, y + CELL_H / 2); ctx.lineTo(W, y + CELL_H / 2); ctx.stroke(); ctx.setLineDash([]);
+      ctx.strokeStyle = p.line; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
+    const movingRows = (activeLevel.safeRows || []).filter(item => item.moving);
+    for (const config of movingRows) {
+      for (const col of R.movingSafeColumns(config.moving, COLS, worldTime)) {
+        ctx.fillStyle = p.blue; doodleRect(col * CELL + 3, rowY(config.row) + 7, CELL - 6, CELL_H - 14, 7, p.blue, p.ink, 1.5);
+      }
+    }
+    ctx.fillStyle = p.ink; ctx.font = '900 11px ui-rounded, system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('HOME', W / 2, rowY(0) + 27); ctx.fillText('START', W / 2, rowY(11) + 27);
+    ctx.strokeStyle = p.coral; ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(24, rowY(1) + 18); ctx.lineTo(31, rowY(1) + 11); ctx.lineTo(38, rowY(1) + 18); ctx.stroke(); ctx.beginPath(); ctx.moveTo(W - 40, rowY(10) + 18); ctx.lineTo(W - 33, rowY(10) + 11); ctx.lineTo(W - 26, rowY(10) + 18); ctx.stroke();
+    for (const config of activeLevel.safeRows || []) for (const col of config.blocks) drawBlocker(col, config.row);
+    for (const lane of lanes) drawSignal(lane);
+  }
+
+  function drawBlocker(col, row) {
+    const p = doodlePalette(), x = col * CELL + CELL / 2, y = rowY(row) + CELL_H / 2;
+    ctx.save(); ctx.translate(x, y); ctx.strokeStyle = p.ink; ctx.lineWidth = 2.5; ctx.fillStyle = p.coral; doodleRect(-17, -13, 34, 24, 6, p.coral, p.ink, 2.5); ctx.fillStyle = p.yellow; ctx.beginPath(); ctx.arc(0, -3, 5, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); ctx.strokeStyle = p.ink; ctx.beginPath(); ctx.moveTo(-8, 11); ctx.lineTo(-12, 17); ctx.moveTo(8, 11); ctx.lineTo(12, 17); ctx.stroke(); ctx.restore();
+  }
+
+  function drawSignal(lane) {
+    if (!lane.signal) return; const p = doodlePalette(), go = R.signalState(lane.signal, worldTime) === 'go', x = W - 17, y = rowY(lane.row) + 9;
+    ctx.save(); ctx.strokeStyle = p.ink; ctx.lineWidth = 2; doodleRect(x - 9, y - 7, 18, 34, 8, p.paper, p.ink, 2); ctx.fillStyle = go ? p.mint : p.coral; ctx.beginPath(); ctx.arc(x, y + 1, 4, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); ctx.fillStyle = go ? p.muted : p.yellow; ctx.beginPath(); ctx.arc(x, y + 15, 3, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); ctx.restore();
+  }
+
+  function drawVehicle(car, x, y, lane) {
+    const p = doodlePalette(); ctx.save(); ctx.translate(x, y); const width = car.w, height = 30, direction = lane.dir > 0 ? 1 : -1;
+    const fill = car.kind === 'bus' ? p.purple : car.kind === 'truck' ? p.coral : car.kind === 'emergency' ? p.paper : car.color;
+    doodleRect(-width / 2, -height / 2, width, height, 8, fill, p.ink, 2.5);
+    ctx.fillStyle = p.blue; doodleRect(-width * .28, -10, width * .48, 9, 3, p.blue, p.ink, 1.5);
+    if (car.kind === 'bus') { ctx.fillStyle = p.yellow; for (let i = -1; i <= 1; i++) doodleRect(i * 17 - 5, 3, 10, 5, 2, p.yellow, p.ink, 1); }
+    if (car.kind === 'truck') { ctx.fillStyle = p.yellow; doodleRect(direction * width * .12, -11, width * .28, 21, 3, p.yellow, p.ink, 1.5); }
+    if (car.kind === 'emergency') { ctx.fillStyle = p.coral; ctx.fillRect(-width * .35, -6, width * .25, 12); ctx.fillStyle = p.blue; ctx.fillRect(width * .1, -6, width * .25, 12); ctx.fillStyle = worldTime % .5 < .25 ? p.coral : p.blue; ctx.fillRect(-4, -height / 2 - 5, 8, 4); }
+    ctx.fillStyle = p.ink; ctx.beginPath(); ctx.arc(-width * .28, height / 2, 6, 0, Math.PI * 2); ctx.arc(width * .28, height / 2, 6, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = p.paper; ctx.beginPath(); ctx.arc(-width * .28, height / 2, 2, 0, Math.PI * 2); ctx.arc(width * .28, height / 2, 2, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = p.yellow; ctx.fillRect(direction * (width / 2 - 5), -8, 4, 5); ctx.fillRect(direction * (width / 2 - 5), 4, 4, 5); ctx.fillStyle = p.coral; ctx.fillRect(-direction * (width / 2 - 5), -7, 3, 4); ctx.fillRect(-direction * (width / 2 - 5), 4, 3, 4); ctx.restore();
+  }
+
+  function drawPlayer() {
+    if (!player || (!player.alive && Math.floor(deathTimer * 14) % 2 === 0)) return; const p = doodlePalette(); ctx.save(); ctx.translate(player.x, player.y); ctx.rotate(Math.sin(worldTime * 8) * .04); ctx.strokeStyle = p.ink; ctx.lineWidth = 2.5; ctx.fillStyle = p.yellow; ctx.beginPath(); ctx.arc(0, 0, 17, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); ctx.fillStyle = p.yellow; ctx.beginPath(); ctx.ellipse(-14, 5, 7, 12, -.5, 0, Math.PI * 2); ctx.ellipse(14, 5, 7, 12, .5, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); ctx.fillStyle = p.coral; ctx.beginPath(); ctx.moveTo(14, -2); ctx.lineTo(26, 2); ctx.lineTo(14, 7); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.fillStyle = p.paper; ctx.beginPath(); ctx.arc(6, -7, 5, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); ctx.fillStyle = p.ink; ctx.beginPath(); ctx.arc(7, -7, 2, 0, Math.PI * 2); ctx.fill(); ctx.strokeStyle = p.coral; ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(-15, 9); ctx.quadraticCurveTo(0, 15, 16, 9); ctx.stroke(); ctx.strokeStyle = p.ink; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(-6, -15); ctx.lineTo(-2, -23); ctx.moveTo(5, -15); ctx.lineTo(8, -23); ctx.stroke(); ctx.restore();
+  }
+
+  function draw() { drawRoad(); drawCars(); drawPlayer(); const p = doodlePalette(); ctx.strokeStyle = p.ink; ctx.lineWidth = 2; ctx.strokeRect(1, 1, W - 2, H - 2); }
+
   startLevel(0);
   updateHud();
-  show('NIGHT CROSSING', 'REACH THE LIGHTED EXIT', 'START CROSSING', 'start');
+  show('TINY CROSSING', 'HELP THE LITTLE DUCK REACH HOME', 'START CROSSING', 'start');
   requestAnimationFrame(loop);
 
   window.CrosswalkGame = {

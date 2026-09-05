@@ -188,16 +188,16 @@ module.exports = [
     "order": 11,
     "category": "puzzle",
     "name": {
-      "zh": "推箱子",
-      "en": "SOKOBAN"
+      "zh": "小熊搬果篮",
+      "en": "BEAR & BOXES"
     },
     "description": {
-      "zh": "规划移动路线，将所有箱子推入指定目标。",
-      "en": "Push every crate onto its target."
+      "zh": "帮小熊把果篮推回野餐点，规划路线完成 20 个森林关卡。",
+      "en": "Help a little bear push fruit crates back to the picnic baskets."
     },
     "readme": {
-      "title": "Sokoban",
-      "description": "自维护的推箱子游戏，包含原创关卡，支持撤销、重置、键盘、滑动和触控操作。"
+      "title": "Bear & Boxes",
+      "description": "自维护的卡通涂鸦推箱子游戏，包含 20 个原创关卡、撤销、重置、键盘、滑动和触控操作。"
     }
   },
   {
@@ -206,16 +206,16 @@ module.exports = [
     "order": 12,
     "category": "arcade",
     "name": {
-      "zh": "过马路",
-      "en": "CROSSWALK"
+      "zh": "小鸭过街",
+      "en": "TINY CROSSING"
     },
     "description": {
-      "zh": "观察车流节奏与红绿灯，安全穿越车道。",
-      "en": "Read the traffic and reach the far side."
+      "zh": "护送小鸭子穿过车流、红绿灯和施工路段，平安回到家。",
+      "en": "Guide a little duck through traffic, signals, and roadworks to get home."
     },
     "readme": {
-      "title": "Crosswalk",
-      "description": "自维护的车流躲避街机游戏，包含 20 个逐关解锁关卡、信号节奏、路线选择、移动安全区，支持生命、键盘、滑动和触控操作。"
+      "title": "Tiny Crossing",
+      "description": "自维护的卡通涂鸦车流躲避街机，包含 20 个逐关解锁关卡、信号节奏、路线选择、移动安全区，支持生命、键盘、滑动和触控操作。"
     }
   },
   {
@@ -224,16 +224,16 @@ module.exports = [
     "order": 13,
     "category": "memory",
     "name": {
-      "zh": "西蒙记忆",
-      "en": "SIMON"
+      "zh": "怪兽乐队",
+      "en": "MONSTER BAND"
     },
     "description": {
-      "zh": "记忆声光序列并准确复现，挑战大脑极限。",
-      "en": "Watch the sequence. Repeat it exactly."
+      "zh": "记住四只小怪兽的节奏，按正确顺序让乐队继续演奏。",
+      "en": "Remember the monster beat and play it back in the right order."
     },
     "readme": {
-      "title": "Simon",
-      "description": "自维护的音序记忆游戏，包含四个触控色块、音效、严格模式和本地最高分。"
+      "title": "Monster Band",
+      "description": "自维护的卡通涂鸦音序记忆游戏，包含四只小怪兽、音效、严格模式和本地最高分。"
     }
   },
   {

@@ -3,59 +3,41 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-  <meta name="theme-color" content="#070b12">
-  <script src="/theme.js?v=simon-2"></script><script src="/clear-game-data.js?v=clear-1"></script>
-  <title>Signal Echo — Memory Game</title>
+  <meta name="theme-color" content="#fffaf0">
+  <script src="/theme.js?v=monster-band-1"></script>
+  <script src="/clear-game-data.js?v=clear-1"></script>
+  <title>Monster Band</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=monster-band-1">
+  <link rel="stylesheet" href="style.css?v=monster-band-1">
   <link rel="stylesheet" href="/theme.css?v=clear-1">
-  <link rel="stylesheet" href="style.css?v=simon-2">
 </head>
 <body>
   <main class="page">
     <header class="topbar">
-      <a href="/">← PLAY</a>
-      <h1>SIGNAL ECHO</h1>
-      <div class="header-actions">
-        <button id="resetButton" type="button">NEW</button>
-      </div>
+      <a href="/" aria-label="Back to games">← PLAY</a>
+      <div class="brand"><h1>MONSTER BAND</h1><span>LISTEN CLOSE. PLAY IT BACK.</span></div>
+      <div class="header-actions"><button id="resetButton" type="button">NEW</button></div>
     </header>
-
-    <section class="toolbar">
-      <div class="stat-pill"><span class="stat-label">SCORE</span><b id="score">00</b></div>
-      <div class="stat-pill status-pill">
-        <span class="stat-label">STATUS</span>
-        <span class="status-wrap">
-          <span class="status-light" id="statusLight"></span>
-          <b id="status">STANDBY</b>
-        </span>
-      </div>
-      <div class="stat-pill"><span class="stat-label">BEST</span><b id="best">00</b></div>
-      <label class="tool-select">
-        MODE
-        <select id="strictMode">
-          <option value="normal" selected>NORMAL</option>
-          <option value="strict">STRICT</option>
-        </select>
-      </label>
+    <section class="toolbar" aria-label="Game status">
+      <div class="stat-pill"><span>SCORE</span><b id="score">00</b></div>
+      <div class="stat-pill status-pill"><span>STATUS</span><span class="status-wrap"><span class="status-light" id="statusLight"></span><b id="status">STANDBY</b></span></div>
+      <div class="stat-pill"><span>BEST</span><b id="best">00</b></div>
+      <label class="tool-select">MODE<select id="strictMode"><option value="normal" selected>NORMAL</option><option value="strict">STRICT</option></select></label>
     </section>
-
     <div class="frame">
-      <div class="board" id="board" aria-label="Four-color memory board">
-        <button class="pad pad-green" data-pad="0" aria-label="Green pad, keyboard 1 or Q"><span>1</span></button>
-        <button class="pad pad-red" data-pad="1" aria-label="Red pad, keyboard 2 or W"><span>2</span></button>
-        <button class="pad pad-yellow" data-pad="2" aria-label="Yellow pad, keyboard 3 or A"><span>3</span></button>
-        <button class="pad pad-blue" data-pad="3" aria-label="Blue pad, keyboard 4 or S"><span>4</span></button>
-        <div class="core" aria-hidden="true"><span>ECHO</span></div>
+      <div class="board" id="board" aria-label="Four-monster memory band">
+        <button class="pad pad-green" data-pad="0" aria-label="Green monster, keyboard 1 or Q"><span class="monster-face" aria-hidden="true"></span><b>1</b></button>
+        <button class="pad pad-red" data-pad="1" aria-label="Red monster, keyboard 2 or W"><span class="monster-face" aria-hidden="true"></span><b>2</b></button>
+        <button class="pad pad-yellow" data-pad="2" aria-label="Yellow monster, keyboard 3 or A"><span class="monster-face" aria-hidden="true"></span><b>3</b></button>
+        <button class="pad pad-blue" data-pad="3" aria-label="Blue monster, keyboard 4 or S"><span class="monster-face" aria-hidden="true"></span><b>4</b></button>
+        <div class="core" aria-hidden="true"><span>BEAT</span><i>♪</i></div>
       </div>
     </div>
-
-    <div class="controls">
-      <button class="btn-action" id="startButton" type="button">START SIGNAL</button>
-    </div>
-
+    <div class="controls"><button class="btn-action" id="startButton" type="button">START THE BAND</button></div>
+    <div class="tips"><span>WATCH THE COLORS</span><span>REPEAT THE BEAT</span><span>STRICT MODE = ONE TAKE</span></div>
     <footer>1 2 3 4 OR Q W A S TO PLAY · SPACE TO START · STRICT ENDS ON MISTAKE</footer>
   </main>
-
-  <script src="game.js?v=simon-2"></script>
   <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
+  <script src="game.js?v=monster-band-1"></script>
 </body>
 </html>
