@@ -3,41 +3,44 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-  <meta name="theme-color" content="#070b12">
-  <script src="/theme.js?v=breakout-4"></script><script src="/clear-game-data.js?v=clear-1"></script>
-  <title>Breakout</title>
+  <meta name="theme-color" content="#14263d">
+  <script src="/theme.js?v=firelight-1"></script>
+  <script src="/clear-game-data.js?v=clear-1"></script>
+  <title>Firelight Garden</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=firelight-1">
   <link rel="stylesheet" href="/theme.css?v=clear-1">
-  <link rel="stylesheet" href="style.css?v=breakout-5">
+  <link rel="stylesheet" href="style.css?v=firelight-1">
 </head>
 <body>
   <main class="page">
     <header class="topbar">
       <a href="/">← PLAY</a>
-      <h1>BREAKOUT</h1>
+      <div class="brand"><h1>FIRELIGHT GARDEN</h1><span>KEEP THE LITTLE LIGHTS GLOWING</span></div>
       <button id="pause" type="button">PAUSE</button>
     </header>
     <section class="layout">
       <div class="frame">
-        <canvas id="game" width="480" height="640" aria-label="Breakout playfield"></canvas>
+        <canvas id="game" width="480" height="640" aria-label="Firelight Garden playfield"></canvas>
         <div id="overlay" class="overlay">
-          <b id="title">BREAKOUT</b>
-          <span id="hint">TAP START TO LAUNCH</span>
-          <button id="start" type="button">START &amp; LAUNCH</button>
+          <div class="firefly-mark" aria-hidden="true">✦</div>
+          <b id="title">FIRELIGHT GARDEN</b>
+          <span id="hint">TAP START TO RELEASE THE FIREFLY</span>
+          <button id="start" type="button">START &amp; GLOW</button>
         </div>
       </div>
       <aside>
-        <div class="stat"><span>SCORE</span><b id="score">000000</b></div>
-        <div class="stat"><span>HIGH SCORE</span><b id="high">000000</b></div>
-        <div class="stat"><span>LEVEL</span><b id="level">01</b></div>
-        <div class="stat"><span>LIVES</span><b id="lives">♥♥♥</b></div>
-        <button class="new" id="new" type="button">NEW GAME</button>
-        <p>← → MOVE<br>SPACE LAUNCH<br>P PAUSE</p>
+        <div class="stat"><span>LIGHTS</span><b id="score">000000</b></div>
+        <div class="stat"><span>BEST GLOW</span><b id="high">000000</b></div>
+        <div class="stat"><span>GARDEN</span><b id="level">01</b></div>
+        <div class="stat"><span>CHANCES</span><b id="lives">♥♥♥</b></div>
+        <button class="new" id="new" type="button">NEW NIGHT</button>
+        <p>← → MOVE LEAF<br>SPACE RELEASE<br>P PAUSE</p>
       </aside>
     </section>
-    <div class="mobile-actions"><button id="mobileLaunch" type="button">START / LAUNCH</button></div>
-    <footer>CLASSIC BRICK BREAKER · DRAG TO MOVE</footer>
+    <div class="mobile-actions"><button id="mobileLaunch" type="button">START / RELEASE</button></div>
+    <footer>BREAK THE FLOWERS · KEEP THE FIREFLY IN THE GARDEN</footer>
   </main>
-  <script src="game.js?v=breakout-4"></script>
+  <script src="game.js?v=firelight-1"></script>
   <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
 </body>
 </html>

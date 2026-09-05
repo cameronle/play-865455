@@ -3,38 +3,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-  <meta name="theme-color" content="#070b12">
-  <script src="/theme.js?v=color-1"></script><script src="/clear-game-data.js?v=clear-1"></script>
-  <title>Color Switch</title>
+  <meta name="theme-color" content="#fff7e8">
+  <script src="/theme.js?v=paint-1"></script><script src="/clear-game-data.js?v=clear-1"></script>
+  <title>Paint Parade</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=paint-1">
   <link rel="stylesheet" href="/theme.css?v=clear-1">
-  <link rel="stylesheet" href="style.css?v=color-1">
+  <link rel="stylesheet" href="style.css?v=paint-1">
 </head>
 <body>
   <main class="page">
-    <header class="topbar">
-      <a href="/">← PLAY</a>
-      <h1>COLOR SWITCH</h1>
-      <div class="header-actions">
-        <button id="pauseButton" type="button">PAUSE</button>
-      </div>
-    </header>
-    <section class="toolbar">
-      <div class="stat-pill"><span class="stat-label">SCORE</span><b id="scoreStat">0</b></div>
-      <div class="stat-pill"><span class="stat-label">BEST</span><b id="bestStat">0</b></div>
-    </section>
+    <header class="topbar"><a href="/">← PLAY</a><div class="brand"><h1>PAINT PARADE</h1><span>CHANGE COLOR · KEEP BOUNCING</span></div><div class="header-actions"><button id="pauseButton" type="button">PAUSE</button></div></header>
+    <section class="toolbar"><div class="stat-pill"><span class="stat-label">SPLASHES</span><b id="scoreStat">0</b></div><div class="stat-pill"><span class="stat-label">BEST PARADE</span><b id="bestStat">0</b></div></section>
     <div class="frame">
-      <canvas id="game" width="400" height="600" aria-label="Color Switch arcade jumping game"></canvas>
-      <div id="overlay" class="overlay">
-        <b id="overlayTitle">COLOR SWITCH</b>
-        <span id="overlayText">TAP OR PRESS SPACE TO JUMP</span>
-        <button id="startButton" type="button">START GAME</button>
-      </div>
+      <canvas id="game" width="400" height="600" aria-label="Paint Parade color matching game"></canvas>
+      <div id="overlay" class="overlay"><div class="paint-mark" aria-hidden="true">●</div><b id="overlayTitle">PAINT PARADE</b><span id="overlayText">TAP OR PRESS SPACE TO BOUNCE</span><button id="startButton" type="button">START PARADE</button></div>
     </div>
-    <footer>TAP ANYWHERE TO JUMP · PASS ONLY THROUGH MATCHING COLORS</footer>
+    <footer>TAP ANYWHERE TO BOUNCE · PASS THROUGH YOUR OWN COLOR</footer>
   </main>
-
-  <script src="rules.js?v=color-1"></script>
-  <script src="game.js?v=color-1"></script>
+  <script src="rules.js?v=paint-1"></script><script src="game.js?v=paint-1"></script>
   <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
 </body>
 </html>

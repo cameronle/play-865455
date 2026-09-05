@@ -80,10 +80,14 @@ test('New Game controls use each game\'s theme accent in both modes',()=>{
     assert.match(css,new RegExp(`\\[data-theme="dark"\\] \\.secondary\\{[^}]*color:${modes.dark.color}`),`${route} dark accent`);
     assert.match(css,new RegExp(`\\[data-theme="dark"\\] \\.secondary:hover\\{background:${modes.dark.hover}`),`${route} dark hover`);
   }
-  for(const route of ['breakout','maze','space-invaders']){
+  for(const [route,colors] of Object.entries({
+    breakout:{light:'#ef8b70',hover:'#e77966'},
+    maze:{light:'#0288d1',hover:'#0277bd'},
+    'space-invaders':{light:'#0288d1',hover:'#0277bd'},
+  })){
     const css=fs.readFileSync(`${route}/style.css`,'utf8');
-    assert.match(css,/\[data-theme="light"\] \.new\s*\{[\s\S]*background:\s*#0288d1/,`${route} light action color`);
-    assert.match(css,/\[data-theme="light"\] \.new:hover\s*\{\s*background:\s*#0277bd/,`${route} light hover color`);
+    assert.match(css,new RegExp(`\\[data-theme="light"\\] \\.new\\s*\\{[\\s\\S]*background:\\s*${colors.light}`),`${route} light action color`);
+    assert.match(css,new RegExp(`\\[data-theme="light"\\] \\.new:hover\\s*\\{\\s*background:\\s*${colors.hover}`),`${route} light hover color`);
   }
 });
 

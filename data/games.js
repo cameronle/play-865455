@@ -80,16 +80,16 @@ module.exports = [
     "order": 5,
     "category": "arcade",
     "name": {
-      "zh": "打砖块",
-      "en": "BREAKOUT"
+      "zh": "萤火花园",
+      "en": "FIRELIGHT GARDEN"
     },
     "description": {
-      "zh": "弹射小球击碎砖块，考验反应与走位。",
-      "en": "Break the wall. Keep the ball alive."
+      "zh": "在深夜花园里弹开花灯，守住小萤火虫的微光。",
+      "en": "Break the flower lights and keep a little firefly glowing."
     },
     "readme": {
-      "title": "Breakout",
-      "description": "自维护的纯 HTML5 Canvas 打砖块，支持反弹、关卡、生命、本地最高分、手机拖动和一键开始发球。"
+      "title": "Firelight Garden",
+      "description": "自维护的卡通涂鸦打砖块，加入萤火虫、花灯、叶片挡板、关卡、生命和移动端拖动操作。"
     }
   },
   {
@@ -386,16 +386,16 @@ module.exports = [
     "order": 22,
     "category": "puzzle",
     "name": {
-      "zh": "数织",
-      "en": "NONOGRAM"
+      "zh": "贴纸揭晓",
+      "en": "STICKER REVEAL"
     },
     "description": {
-      "zh": "根据行列数字推算填充，揭开隐藏像素图案。",
-      "en": "Read the clues. Reveal the hidden pixel picture."
+      "zh": "根据行列数字涂满贴纸页，揭开一张张手绘图案。",
+      "en": "Fill the sticker page from the clues and reveal a little picture."
     },
     "readme": {
-      "title": "Nonogram",
-      "description": "自维护的数织像素谜题，包含 5×5、10×10 和 15×15 共 45 关，支持填充、标记、拖动绘制、撤销、提示、计时和本地最佳时间。"
+      "title": "Sticker Reveal",
+      "description": "自维护的卡通涂鸦数织谜题，包含 5×5、10×10 和 15×15 共 45 张贴纸，支持拖动涂格、标记、撤销、提示、计时和本地收藏进度。"
     }
   },
   {
@@ -458,16 +458,16 @@ module.exports = [
     "order": 26,
     "category": "arcade",
     "name": {
-      "zh": "色彩跳跃",
-      "en": "COLOR SWITCH"
+      "zh": "颜料巡游",
+      "en": "PAINT PARADE"
     },
     "description": {
-      "zh": "控制小球穿过相同颜色的几何障碍，节奏跃动。",
-      "en": "Bounce through matching colors. Avoid wrong hues."
+      "zh": "带着小变色龙穿过同色颜料圈，收集飞溅一路向上。",
+      "en": "Guide a tiny chameleon through matching paint hoops and collect splashes."
     },
     "readme": {
-      "title": "Color Switch",
-      "description": "自维护的色彩节拍弹跳街机，支持颜色匹配穿越、旋转几何体碰撞、换色道具与本地最高分。"
+      "title": "Paint Parade",
+      "description": "自维护的卡通涂鸦颜色匹配街机，加入变色龙、颜料圈、颜色切换、飞溅粒子、暂停和移动端跳跃操作。"
     }
   },
   {

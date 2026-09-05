@@ -26,7 +26,7 @@
         "shooter": {"name":"星空巡航","desc":"移动、自动发射、躲避敌机，经典飞行射击。"},
         "tetris": {"name":"纸片积木","desc":"拼接彩色纸片、消除整行，把凌乱桌面整理干净。"},
         "snake": {"name":"毛毛虫花园","desc":"操控贪吃的小毛毛虫收集苹果和浆果，越吃越长。"},
-        "breakout": {"name":"打砖块","desc":"弹射小球击碎砖块，考验反应与走位。"},
+        "breakout": {"name":"萤火花园","desc":"在深夜花园里弹开花灯，守住小萤火虫的微光。"},
         "minesweeper": {"name":"鼹鼠巡逻","desc":"在地下花园里推算数字、插好小旗，避开危险蘑菇。"},
         "space-invaders": {"name":"太空侵略者","desc":"迎击步步逼近的外星阵列，守卫防线。"},
         "maze": {"name":"猫咪幽灵","desc":"帮助小猫收集所有鱼干，躲开在房间里巡逻的床单幽灵。"},
@@ -43,11 +43,11 @@
         "endless-runner": {"name":"无尽奔跑","desc":"跨越尖刺与坑洞、收集金币，跟上加速节奏。"},
         "solitaire": {"name":"兔子茶会","desc":"整理红黑茶点卡牌，把四种花色送回各自的茶盘。"},
         "bubble-shooter": {"name":"泡泡花园","desc":"瞄准发射彩色花朵泡泡，让相同颜色的花朵一起绽放。"},
-        "nonogram": {"name":"数织","desc":"根据行列数字推算填充，揭开隐藏像素图案。"},
+        "nonogram": {"name":"贴纸揭晓","desc":"根据行列数字涂满贴纸页，揭开一张张手绘图案。"},
         "flow": {"name":"连线解谜","desc":"连接相同颜色管道，无交叉铺满整个棋盘。"},
         "bridges": {"name":"数桥","desc":"在岛屿间架设指定数量桥梁，连通完整网络。"},
         "sliding-puzzle": {"name":"数字华容道","desc":"滑动方块归位，将乱序数字按顺序排列整齐。"},
-        "color-bounce": {"name":"色彩跳跃","desc":"控制小球穿过相同颜色的几何障碍，节奏跃动。"},
+        "color-bounce": {"name":"颜料巡游","desc":"带着小变色龙穿过同色颜料圈，收集飞溅一路向上。"},
         "flappy": {"name":"小鸟邮差","desc":"操控背着邮包的小鸟穿过云朵，安全送出每一封信。"}
       }
     },
@@ -72,7 +72,7 @@
         "shooter": {"name":"SKY PATROL","desc":"Move, fire, survive. A small original shooter."},
         "tetris": {"name":"PAPER BLOCKS","desc":"Fit colorful paper pieces, clear lines, and tidy the desk."},
         "snake": {"name":"WORM & APPLE","desc":"Guide a hungry little worm through the garden and grow longer."},
-        "breakout": {"name":"BREAKOUT","desc":"Break the wall. Keep the ball alive."},
+        "breakout": {"name":"FIRELIGHT GARDEN","desc":"Break the flower lights and keep a little firefly glowing."},
         "minesweeper": {"name":"MOLE PATROL","desc":"Read the underground clues, place flags, and avoid the bad mushrooms."},
         "space-invaders": {"name":"ALIEN FORMATION","desc":"Defend the line against descending aliens."},
         "maze": {"name":"CAT & GHOSTS","desc":"Help the cat find every fish treat while dodging the sheet ghosts."},
@@ -89,11 +89,11 @@
         "endless-runner": {"name":"ENDLESS RUNNER","desc":"Jump, collect, and keep pace with the accelerating road."},
         "solitaire": {"name":"BUNNY TEA TIME","desc":"Sort the tea cards and send every suit home to its tray."},
         "bubble-shooter": {"name":"BUBBLE GARDEN","desc":"Aim colorful flower bubbles and make matching blossoms bloom together."},
-        "nonogram": {"name":"NONOGRAM","desc":"Read the clues. Reveal the hidden pixel picture."},
+        "nonogram": {"name":"STICKER REVEAL","desc":"Fill the sticker page from the clues and reveal a little picture."},
         "flow": {"name":"FLOW FREE","desc":"Connect matching colors. Fill the whole board."},
         "bridges": {"name":"BRIDGES","desc":"Connect the islands. Build a single network."},
         "sliding-puzzle": {"name":"15-PUZZLE","desc":"Slide tiles into the empty space. Put numbers in order."},
-        "color-bounce": {"name":"COLOR SWITCH","desc":"Bounce through matching colors. Avoid wrong hues."},
+        "color-bounce": {"name":"PAINT PARADE","desc":"Guide a tiny chameleon through matching paint hoops and collect splashes."},
         "flappy": {"name":"BIRDIE POST","desc":"Guide a tiny mail bird through cloud gaps and deliver every letter."}
       }
     }
