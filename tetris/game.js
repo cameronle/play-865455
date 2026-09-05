@@ -64,7 +64,7 @@
   function move(dx){if(state==='playing'&&!collides(piece,dx,0)){piece.x+=dx;draw()}}
   function turn(){if(state!=='playing')return;const rotated=rotate(piece.matrix);for(const kick of [0,-1,1,-2,2])if(!collides(piece,kick,0,rotated)){piece.matrix=rotated;piece.x+=kick;draw();return}}
   function hardDrop(){if(state!=='playing')return;let distance=0;while(!collides(piece,0,1)){piece.y++;distance++}addScore(distance*2);lock();draw()}
-  function tick(time){const dt=Math.min(100,lastTime?time-lastTime:0);lastTime=time;if(state==='playing'){dropTimer+=dt;const interval=Math.max(80,800-(level-1)*65);if(dropTimer>=interval){dropTimer=0;stepDown()}if(softDropRequested&&stepDown())addScore(1);if(softDropRequested)dropTimer=0;draw()}requestAnimationFrame(tick)}
+  function tick(time){const dt=Math.min(100,lastTime?time-lastTime:0);lastTime=time;if(state==='playing'){dropTimer+=dt;const interval=Math.max(80,800-(level-1)*65);let locked=false;if(collides(piece,0,1)){lock();dropTimer=0;locked=true}else if(dropTimer>=interval){dropTimer=0;if(!stepDown())locked=true}if(!locked&&softDropRequested&&stepDown())addScore(1);if(softDropRequested)dropTimer=0;draw()}requestAnimationFrame(tick)}
   function beginSoftDrop(){if(softDropHeld||state!=='playing'||!piece)return;softDropHeld=true;softDropRequested=true;if(stepDown())addScore(1);draw()}
   function endSoftDrop(){softDropHeld=false;softDropRequested=false}
   function action(name){
