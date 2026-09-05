@@ -3,51 +3,25 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-  <meta name="theme-color" content="#faf8ef">
-  <script src="/theme.js?v=theme-1"></script><script src="/clear-game-data.js?v=clear-1"></script>
-  <title>Classic Tetris</title>
-  <link rel="stylesheet" href="style.css?v=touch-7">
+  <meta name="theme-color" content="#fffaf0">
+  <script src="/theme.js?v=paper-blocks-1"></script>
+  <script src="/clear-game-data.js?v=clear-1"></script>
+  <title>Paper Blocks</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=paper-blocks-1">
+  <link rel="stylesheet" href="style.css?v=paper-blocks-1">
   <link rel="stylesheet" href="/theme.css?v=clear-1">
 </head>
 <body>
   <main class="page">
-    <header class="topbar">
-      <a href="/" class="back">← PLAY</a>
-      <h1>TETRIS</h1>
-      <button id="pauseButton" class="quiet" type="button">PAUSE</button>
-    </header>
-
-    <section class="game-layout" aria-label="Classic Tetris">
-      <div class="board-wrap">
-        <canvas id="board" width="300" height="600" aria-label="Tetris board"></canvas>
-        <div id="message" class="message">
-          <strong id="messageTitle">TETRIS</strong>
-          <span id="messageHint">PRESS START TO PLAY</span>
-          <button id="startButton" type="button">START</button>
-        </div>
-      </div>
-
-      <aside class="sidebar">
-        <div class="stat"><span>SCORE</span><strong id="score">000000</strong></div>
-        <div class="stat"><span>HIGH SCORE</span><strong id="highScore">000000</strong></div>
-        <div class="stat"><span>LEVEL</span><strong id="level">01</strong></div>
-        <div class="stat"><span>LINES</span><strong id="lines">000</strong></div>
-        <div class="next-box"><span>NEXT</span><canvas id="next" width="120" height="90" aria-label="Next piece"></canvas></div>
-        <button id="newGameButton" class="secondary" type="button">NEW GAME</button>
-        <p class="keys"><b>← →</b> MOVE<br><b>↑</b> ROTATE<br><b>↓</b> SOFT DROP<br><b>SPACE</b> HARD DROP<br><b>P</b> PAUSE</p>
-      </aside>
+    <header class="topbar"><a href="/" class="back" aria-label="Back to games">← PLAY</a><div class="brand"><h1>PAPER BLOCKS</h1><span>FOLD, FIT, AND CLEAR THE DESK.</span></div><button id="pauseButton" class="quiet" type="button">PAUSE</button></header>
+    <section class="game-layout" aria-label="Paper Blocks">
+      <div class="board-wrap"><canvas id="board" width="300" height="600" aria-label="Paper Blocks board"></canvas><div id="message" class="message"><div class="message-spark" aria-hidden="true">✂</div><strong id="messageTitle">PAPER BLOCKS</strong><span id="messageHint">PRESS START TO PLAY</span><button id="startButton" type="button">START FOLDING</button></div></div>
+      <aside class="sidebar"><div class="stat stat-score"><span>SCORE</span><strong id="score">000000</strong></div><div class="stat stat-high"><span>BEST</span><strong id="highScore">000000</strong></div><div class="stat stat-level"><span>LEVEL</span><strong id="level">01</strong></div><div class="stat stat-lines"><span>LINES</span><strong id="lines">000</strong></div><div class="next-box"><span>NEXT PIECE</span><canvas id="next" width="120" height="90" aria-label="Next paper piece"></canvas></div><button id="newGameButton" class="secondary" type="button">NEW SHEET</button><p class="keys"><b>← →</b> MOVE<br><b>↑</b> ROTATE<br><b>↓</b> SOFT DROP<br><b>SPACE</b> HARD DROP<br><b>P</b> PAUSE</p></aside>
     </section>
-
-    <div class="touch-controls" aria-label="Touch controls">
-      <button data-action="left" aria-label="Move left">←</button>
-      <button data-action="rotate" aria-label="Rotate">↻</button>
-      <button data-action="right" aria-label="Move right">→</button>
-      <button data-action="down" aria-label="Soft drop">↓</button>
-      <button data-action="drop" aria-label="Hard drop">⇣</button>
-    </div>
-    <footer>CLASSIC RULES · NO ACCOUNT · LOCAL HIGH SCORE</footer>
+    <div class="touch-controls" aria-label="Touch controls"><button data-action="left" aria-label="Move left">←</button><button data-action="rotate" aria-label="Rotate">↻</button><button data-action="right" aria-label="Move right">→</button><button data-action="down" aria-label="Soft drop">↓</button><button data-action="drop" aria-label="Hard drop">⇣</button></div>
+    <footer>FOLD THE SHAPES · CLEAR THE LINES · KEEP THE DESK TIDY</footer>
   </main>
-  <script src="game.js?v=softdrop-1"></script>
   <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
+  <script src="game.js?v=paper-blocks-1"></script>
 </body>
 </html>

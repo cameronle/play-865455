@@ -70,7 +70,7 @@ test('canvas games redraw from CSS theme variables instead of fixed light backgr
 
 test('New Game controls use each game\'s theme accent in both modes',()=>{
   const expected={
-    tetris:{light:{color:'#b85f49',hover:'#e7c9c0'},dark:{color:'#f0a995',hover:'#443038'}},
+    tetris:{light:{color:'#3d3832',hover:'#ccebd7'},dark:{color:'#20323a',hover:'#b6e3c2'}},
     snake:{light:{color:'#25433d',hover:'#ccebd7'},dark:{color:'#25433d',hover:'#b6e3c2'}},
   };
   for(const [route,modes] of Object.entries(expected)){

@@ -1,3 +1,28 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#faf8ef"><script src="/theme.js?v=theme-1"></script><title>Minesweeper</title><link rel="stylesheet" href="style.css?v=levels-1"><link rel="stylesheet" href="/theme.css?v=clear-1"></head><script src="/clear-game-data.js?v=clear-1"></script>
-<body><main class="page"><header><a href="/">← PLAY</a><h1>MINESWEEPER</h1><button id="levels" type="button">LEVELS</button><button id="new" type="button">NEW</button></header><section class="layout"><div class="gamebox"><div class="top"><span>LEVEL <b id="levelLabel">01 / 20</b></span><span>MINES <b id="mines">008</b></span><span>TIME <b id="time">000</b></span></div><div id="grid" class="grid"></div><div id="message" class="message"><b id="title">MINESWEEPER</b><span id="hint">LEVEL 01 · TAP A CELL TO START</span><button id="start" type="button">START</button></div></div><aside><div class="stat"><span>STATUS</span><b id="status">READY</b></div><div class="stat"><span>BEST</span><b id="best">---</b></div><div class="stat"><span>PROGRESS</span><b id="progress">0 / 20</b></div><p><b>CLICK / TAP</b> REVEAL<br><b>RIGHT CLICK</b> FLAG<br><b>TOUCH</b> LONG PRESS</p></aside></section><section id="levelsPanel" class="levels-panel hide" aria-labelledby="levelsTitle"><div class="levels-head"><div><b id="levelsTitle">SELECT LEVEL</b><span id="levelsProgress">0 / 20 CLEARED</span></div><button id="closeLevels" type="button">CLOSE</button></div><div id="levelList" class="level-list"></div></section><footer>20 LEVELS · CLASSIC RULES · LOCAL BEST TIMES</footer></main><script src="levels.js?v=levels-1"></script><script src="game.js?v=levels-1"></script><button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button></body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#fffaf0">
+  <script src="/theme.js?v=mole-patrol-1"></script>
+  <script src="/clear-game-data.js?v=clear-1"></script>
+  <title>Mole Patrol</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=mole-patrol-1">
+  <link rel="stylesheet" href="style.css?v=mole-patrol-1">
+  <link rel="stylesheet" href="/theme.css?v=clear-1">
+</head>
+<body>
+  <main class="page">
+    <header><a href="/" aria-label="Back to games">← PLAY</a><div class="brand"><h1>MOLE PATROL</h1><span>DIG CAREFULLY. KEEP THE GARDEN SAFE.</span></div><button id="levels" type="button">LEVELS</button><button id="new" type="button">NEW</button></header>
+    <section class="layout">
+      <div class="gamebox"><div class="top"><span>PATCH <b id="levelLabel">01 / 20</b></span><span>HAZARDS <b id="mines">008</b></span><span>TIME <b id="time">000</b></span></div><div id="grid" class="grid"></div><div id="message" class="message"><div class="message-spark" aria-hidden="true">✿</div><b id="title">MOLE PATROL</b><span id="hint">LEVEL 01 · TAP A PATCH TO START</span><button id="start" type="button">START DIGGING</button></div></div>
+      <aside><div class="stat stat-status"><span>STATUS</span><b id="status">READY</b></div><div class="stat stat-best"><span>BEST DIG</span><b id="best">---</b></div><div class="stat stat-progress"><span>PROGRESS</span><b id="progress">0 / 20</b></div><p><b>TAP</b> OPEN A PATCH<br><b>RIGHT CLICK</b> PLACE A FLAG<br><b>LONG PRESS</b> FLAG A HAZARD</p></aside>
+    </section>
+    <section id="levelsPanel" class="levels-panel hide" aria-labelledby="levelsTitle"><div class="levels-head"><div><b id="levelsTitle">SELECT PATCH</b><span id="levelsProgress">0 / 20 CLEARED</span></div><button id="closeLevels" type="button">CLOSE</button></div><div id="levelList" class="level-list"></div></section>
+    <footer>20 PATCHES · FIND SAFE GROUND · LOCAL BEST TIMES</footer>
+  </main>
+  <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
+  <script src="levels.js?v=mole-patrol-1"></script>
+  <script src="game.js?v=mole-patrol-1"></script>
+</body>
+</html>

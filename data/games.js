@@ -44,16 +44,16 @@ module.exports = [
     "order": 3,
     "category": "puzzle",
     "name": {
-      "zh": "俄罗斯方块",
-      "en": "TETRIS"
+      "zh": "纸片积木",
+      "en": "PAPER BLOCKS"
     },
     "description": {
-      "zh": "经典下落方块，消除整行，冲击更高分。",
-      "en": "Classic falling blocks. Clear lines. Keep going."
+      "zh": "拼接彩色纸片、消除整行，把凌乱桌面整理干净。",
+      "en": "Fit colorful paper pieces, clear lines, and tidy the desk."
     },
     "readme": {
-      "title": "Classic Tetris",
-      "description": "自维护的纯 HTML5 Canvas 俄罗斯方块，支持键盘、完整触控、计分、等级、下一个方块和本地最高分。"
+      "title": "Paper Blocks",
+      "description": "自维护的卡通涂鸦俄罗斯方块，支持键盘、完整触控、软降/硬降、计分、等级、下一个方块和本地最高分。"
     }
   },
   {
@@ -98,16 +98,16 @@ module.exports = [
     "order": 6,
     "category": "puzzle",
     "name": {
-      "zh": "经典扫雷",
-      "en": "MINESWEEPER"
+      "zh": "鼹鼠巡逻",
+      "en": "MOLE PATROL"
     },
     "description": {
-      "zh": "推算数字排查雷区，20 关逐级挑战。",
-      "en": "Read the numbers. Avoid the mines."
+      "zh": "在地下花园里推算数字、插好小旗，避开危险蘑菇。",
+      "en": "Read the underground clues, place flags, and avoid the bad mushrooms."
     },
     "readme": {
-      "title": "Minesweeper",
-      "description": "自维护的经典扫雷，包含 20 个逐关解锁的关卡，支持首次落子保护、点击、右键或长按插旗、计时和每关本地最佳时间。"
+      "title": "Mole Patrol",
+      "description": "自维护的卡通涂鸦扫雷，包含 20 个逐关解锁关卡、首格保护、长按插旗、计时和每关最佳时间。"
     }
   },
   {
@@ -350,16 +350,16 @@ module.exports = [
     "order": 20,
     "category": "card",
     "name": {
-      "zh": "纸牌接龙",
-      "en": "SOLITAIRE"
+      "zh": "兔子茶会",
+      "en": "BUNNY TEA TIME"
     },
     "description": {
-      "zh": "红黑交替排布纸牌，将四色花色按序归位。",
-      "en": "Build down in alternating colors. Send every suit home."
+      "zh": "整理红黑茶点卡牌，把四种花色送回各自的茶盘。",
+      "en": "Sort the tea cards and send every suit home to its tray."
     },
     "readme": {
-      "title": "Solitaire",
-      "description": "自维护的经典 Klondike 接龙，支持点选移动、双击自动收牌、撤销、提示和本地战绩。"
+      "title": "Bunny Tea Time",
+      "description": "自维护的卡通涂鸦 Klondike 接龙，支持点选移动、双击自动收牌、撤销、提示和本地战绩。"
     }
   },
   {
