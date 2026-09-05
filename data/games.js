@@ -8,16 +8,16 @@ module.exports = [
     "order": 1,
     "category": "puzzle",
     "name": {
-      "zh": "小小星球",
-      "en": "LITTLE PLANETS"
+      "zh": "2048",
+      "en": "2048"
     },
     "description": {
-      "zh": "合并相同的小星球，从一颗小小行星一路成长到太阳。",
-      "en": "Merge matching little worlds and grow from a pebble to a sun."
+      "zh": "滑动并合并相同数字，挑战 2048。",
+      "en": "Slide and merge matching numbers to reach 2048."
     },
     "readme": {
-      "title": "Little Planets",
-      "description": "自维护的卡通涂鸦 2048，保留数字合并规则，加入小星球、轨道纹理、浅深主题和移动端滑动操作。"
+      "title": "2048",
+      "description": "自维护的简约 2048 数字合并游戏，支持键盘、移动端滑动、方向按钮、本地最高分和浅深主题。"
     }
   },
   {

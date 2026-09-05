@@ -22,7 +22,7 @@
         card: '纸牌'
       },
       games: {
-        "2048": {"name":"小小星球","desc":"合并相同的小星球，从一颗小小行星一路成长到太阳。"},
+        "2048": {"name":"2048","desc":"滑动并合并相同数字，挑战 2048。"},
         "shooter": {"name":"星空巡航","desc":"移动、自动发射、躲避敌机，经典飞行射击。"},
         "tetris": {"name":"纸片积木","desc":"拼接彩色纸片、消除整行，把凌乱桌面整理干净。"},
         "snake": {"name":"毛毛虫花园","desc":"操控贪吃的小毛毛虫收集苹果和浆果，越吃越长。"},
@@ -68,7 +68,7 @@
         card: 'CARD'
       },
       games: {
-        "2048": {"name":"LITTLE PLANETS","desc":"Merge matching little worlds and grow from a pebble to a sun."},
+        "2048": {"name":"2048","desc":"Slide and merge matching numbers to reach 2048."},
         "shooter": {"name":"SKY PATROL","desc":"Move, fire, survive. A small original shooter."},
         "tetris": {"name":"PAPER BLOCKS","desc":"Fit colorful paper pieces, clear lines, and tidy the desk."},
         "snake": {"name":"WORM & APPLE","desc":"Guide a hungry little worm through the garden and grow longer."},
