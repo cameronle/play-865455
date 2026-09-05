@@ -36,6 +36,43 @@ test('Color Bounce circle obstacle collision validates matching color and detect
   assert.equal(rules.checkObstacleCollision(farBall, 240, obstacle), 'none');
 });
 
+test('Color Bounce preserves a safe ring crossing while the hoop rotates', () => {
+  const obstacle = {
+    type: 'circle', y: 300, radius: 80, thickness: 16,
+    angle: 0, colors: [0, 1, 2, 3]
+  };
+  const ball = { x: 240, y: 380, r: 8, color: 1, vy: -400 };
+  const first = rules.resolveRingCollision(ball, 240, obstacle, rules.createRingCrossingState());
+  assert.equal(first.result, 'safe');
+  assert.equal(first.state.phase, 'passing');
+
+  const rotated = { ...obstacle, angle: Math.PI / 3 };
+  const during = rules.resolveRingCollision({ ...ball, y: 320 }, 240, rotated, first.state);
+  assert.equal(during.result, 'safe');
+  assert.equal(during.state.phase, 'passing');
+
+  const exited = rules.resolveRingCollision({ ...ball, y: 200 }, 240, rotated, during.state);
+  assert.equal(exited.result, 'passed');
+  assert.equal(exited.state.phase, 'passed');
+
+  const later = rules.resolveRingCollision({ ...ball, y: 300, color: 0 }, 240, rotated, exited.state);
+  assert.equal(later.result, 'none');
+});
+
+test('Color Bounce still rejects a wrong-color first contact', () => {
+  const obstacle = {
+    type: 'circle', y: 300, radius: 80, thickness: 16,
+    angle: 0, colors: [0, 1, 2, 3]
+  };
+  const result = rules.resolveRingCollision(
+    { x: 240, y: 380, r: 8, color: 0, vy: -400 },
+    240,
+    obstacle,
+    rules.createRingCrossingState()
+  );
+  assert.equal(result.result, 'hit');
+  assert.equal(result.state.phase, 'approaching');
+});
 test('Color Bounce page is a complete themed mobile static entrypoint', () => {
   const html = fs.readFileSync('color-bounce/index.html', 'utf8');
   assert.match(html, /viewport-fit=cover/);

@@ -41,10 +41,45 @@
     return 'none';
   }
 
+  function createRingCrossingState() {
+    return { phase: 'approaching', safeSegment: null };
+  }
+
+  function ringSegment(ball, cx, obstacle) {
+    const angle = normalizeAngle(Math.atan2(ball.y - obstacle.y, ball.x - cx) - obstacle.angle);
+    return Math.floor((angle / (Math.PI * 2)) * 4) % 4;
+  }
+
+  function resolveRingCollision(ball, cx, obstacle, crossing = createRingCrossingState()) {
+    const state = crossing && crossing.phase ? crossing : createRingCrossingState();
+    if (!ball || !obstacle || obstacle.type !== 'circle' || state.phase === 'passed') {
+      return { result: 'none', state };
+    }
+
+    const outer = obstacle.radius + obstacle.thickness / 2;
+    if (state.phase === 'passing') {
+      if (ball.y + ball.r < obstacle.y - outer) {
+        return { result: 'passed', state: { ...state, phase: 'passed' } };
+      }
+      return { result: 'safe', state };
+    }
+
+    const result = checkObstacleCollision(ball, cx, obstacle);
+    if (result === 'safe' && (ball.vy === undefined || ball.vy < 0)) {
+      return {
+        result: 'safe',
+        state: { phase: 'passing', safeSegment: ringSegment(ball, cx, obstacle) }
+      };
+    }
+    return { result, state };
+  }
+
   return {
     updatePhysics,
     applyJump,
     normalizeAngle,
     checkObstacleCollision,
+    createRingCrossingState,
+    resolveRingCollision,
   };
 });
