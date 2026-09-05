@@ -10,7 +10,13 @@ test('first revealed cell is protected from mines', () => {
 
 test('win requires every non-mine cell to be open, not merely flagged', () => {
   const source=fs.readFileSync('minesweeper/game.js','utf8');
+  const css=fs.readFileSync('minesweeper/style.css','utf8');
   assert.match(source,/cells\.every\(cell=>cell\.mine\|\|cell\.open\)/);
+  assert.match(source,/event\.preventDefault\(\);if\(event\.pointerType==='touch'/);
+  assert.match(source,/selectstart/);
+  assert.match(source,/contextmenu/);
+  assert.match(css,/-webkit-user-select:none/);
+  assert.match(css,/-webkit-touch-callout:none/);
   assert.doesNotMatch(source,/x\.open\|\|x\.mine\|\|x\.flag/);
 });
 
