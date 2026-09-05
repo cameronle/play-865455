@@ -170,16 +170,16 @@ module.exports = [
     "order": 10,
     "category": "arcade",
     "name": {
-      "zh": "弹球对决",
-      "en": "PONG"
+      "zh": "潮汐网球",
+      "en": "TIDAL TENNIS"
     },
     "description": {
-      "zh": "滑动球拍精准截击，与电脑一较高下。",
-      "en": "Deflect the ball. Outsmart the machine."
+      "zh": "在潮汐海面上挥动冲浪板球拍，先拿到 7 分。",
+      "en": "Ride the tide with surfboard paddles and score seven before the tide bot."
     },
     "readme": {
-      "title": "Pong",
-      "description": "自维护的人机乒乓球游戏，支持指针拖动、目标比分和本地战绩。"
+      "title": "Tidal Tennis",
+      "description": "自维护的卡通涂鸦 Pong 改造版，采用潮汐海面、冲浪板球拍和海泡球，支持人机对战、拖动、键盘、触控和本地胜场。"
     }
   },
   {

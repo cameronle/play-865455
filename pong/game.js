@@ -93,13 +93,21 @@
     else if (ball.x - ball.r > W) score(0);
   }
   function draw() {
-    const isLight = document.documentElement?.dataset?.theme === 'light';
-    ctx.fillStyle = isLight ? '#f7f4ec' : '#091018'; ctx.fillRect(0, 0, W, H);
-    ctx.strokeStyle = isLight ? '#d8d0c5' : '#243241'; ctx.lineWidth = 3; ctx.setLineDash([10, 13]);
-    ctx.beginPath(); ctx.moveTo(W / 2, 0); ctx.lineTo(W / 2, H); ctx.stroke(); ctx.setLineDash([]);
-    ctx.fillStyle = isLight ? '#0288d1' : '#64e6e0'; ctx.fillRect(player.x, player.y, paddle.w, paddle.h);
-    ctx.fillStyle = isLight ? '#e63946' : '#ff668f'; ctx.fillRect(ai.x, ai.y, paddle.w, paddle.h);
-    ctx.fillStyle = isLight ? '#3e3934' : '#e8f0f7'; ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2); ctx.fill();
+    const light = document.documentElement?.dataset?.theme === 'light';
+    const sea = light ? '#dff2ec' : '#173b49';
+    const foam = light ? '#fffdf5' : '#e9f5e8';
+    const deep = light ? '#75aec7' : '#80c7df';
+    const coral = light ? '#e98575' : '#ed927e';
+    const sand = light ? '#f2ca62' : '#f2ce68';
+    ctx.fillStyle = sea; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle = light ? 'rgba(255,255,255,.55)' : 'rgba(255,255,255,.1)';
+    for(let i=0;i<9;i++){ctx.beginPath();ctx.ellipse(70+i*78,70+(i%3)*90,56,7,0,0,Math.PI*2);ctx.fill()}
+    ctx.strokeStyle = light ? '#75aec7' : '#80c7df'; ctx.lineWidth=3;
+    for(let y=55;y<H;y+=72){ctx.beginPath();ctx.moveTo(0,y);ctx.quadraticCurveTo(W*.25,y-12,W*.5,y);ctx.quadraticCurveTo(W*.75,y+12,W,y);ctx.stroke()}
+    ctx.strokeStyle = light ? '#e98575' : '#ed927e'; ctx.lineWidth=2; ctx.setLineDash([5,8]); ctx.beginPath();ctx.moveTo(W/2,0);ctx.lineTo(W/2,H);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=deep;ctx.beginPath();ctx.ellipse(player.x+paddle.w/2,player.y+paddle.h/2,paddle.w*.9,paddle.h/2,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle=foam;ctx.lineWidth=2;ctx.stroke();
+    ctx.fillStyle=coral;ctx.beginPath();ctx.ellipse(ai.x+paddle.w/2,ai.y+paddle.h/2,paddle.w*.9,paddle.h/2,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle=foam;ctx.lineWidth=2;ctx.stroke();
+    ctx.fillStyle=sand;ctx.shadowColor=sand;ctx.shadowBlur=12;ctx.beginPath();ctx.arc(ball.x,ball.y,ball.r+2,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.fillStyle=foam;ctx.beginPath();ctx.arc(ball.x-2,ball.y-2,2,0,Math.PI*2);ctx.fill();
   }
   function loop(now) {
     if (state !== 'playing') return;
