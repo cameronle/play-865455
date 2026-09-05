@@ -62,16 +62,16 @@ module.exports = [
     "order": 4,
     "category": "arcade",
     "name": {
-      "zh": "贪吃蛇",
-      "en": "SNAKE"
+      "zh": "毛毛虫花园",
+      "en": "WORM & APPLE"
     },
     "description": {
-      "zh": "吞食豆子不断变长，支持四向穿墙。",
-      "en": "Eat, grow, and wrap around the walls."
+      "zh": "操控贪吃的小毛毛虫收集苹果和浆果，越吃越长。",
+      "en": "Guide a hungry little worm through the garden and grow longer."
     },
     "readme": {
-      "title": "Classic Snake",
-      "description": "自维护的纯 HTML5 Canvas 贪食蛇，支持键盘、触摸、加速和穿墙玩法。"
+      "title": "Worm & Apple",
+      "description": "自维护的卡通涂鸦贪食蛇，支持苹果、浆果和叶子收集、加速、穿墙、键盘与触控操作。"
     }
   },
   {
@@ -368,16 +368,16 @@ module.exports = [
     "order": 21,
     "category": "puzzle",
     "name": {
-      "zh": "泡泡射手",
-      "en": "BUBBLE SHOOTER"
+      "zh": "泡泡花园",
+      "en": "BUBBLE GARDEN"
     },
     "description": {
-      "zh": "精准瞄准反弹射击，同色相连即可消除。",
-      "en": "Aim, match colors, and clear the field."
+      "zh": "瞄准发射彩色花朵泡泡，让相同颜色的花朵一起绽放。",
+      "en": "Aim colorful flower bubbles and make matching blossoms bloom together."
     },
     "readme": {
-      "title": "Bubble Shooter",
-      "description": "自维护的泡泡射手，支持触屏瞄准、墙壁反弹、同色消除、悬空掉落和本地最高分。"
+      "title": "Bubble Garden",
+      "description": "自维护的卡通涂鸦泡泡射手，支持触屏瞄准、墙壁反弹、同色消除、悬空掉落和本地最高分。"
     }
   },
   {
@@ -476,16 +476,16 @@ module.exports = [
     "order": 27,
     "category": "arcade",
     "name": {
-      "zh": "飞天小鸟",
-      "en": "FLAPPY WINGS"
+      "zh": "小鸟邮差",
+      "en": "BIRDIE POST"
     },
     "description": {
-      "zh": "轻触屏幕扑翼飞行，平稳穿梭于管道缝隙之间。",
-      "en": "Tap to flap, glide through pipes, and stay aloft."
+      "zh": "操控背着邮包的小鸟穿过云朵，安全送出每一封信。",
+      "en": "Guide a tiny mail bird through cloud gaps and deliver every letter."
     },
     "readme": {
-      "title": "Flappy Wings",
-      "description": "自维护的极简飞行街机，支持单键轻触扑翼、重力加速度、平滑水管穿越与本地最高分。"
+      "title": "Birdie Post",
+      "description": "自维护的卡通涂鸦飞行街机，支持单键扑翼、云朵障碍、暂停、移动端触控和本地最高分。"
     }
   }
 ];

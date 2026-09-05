@@ -14,3 +14,12 @@ test('touch controls remain visible and large enough to use', () => {
   assert.match(css,/\.touch-controls button\{[^}]*height:52px/);
   assert.match(css,/@media\(max-width:600px\)[\s\S]*\.touch-controls\{display:grid/);
 });
+
+test('Worm & Apple exposes the doodle garden brand and theme path', () => {
+  const html=fs.readFileSync('snake/index.html','utf8');
+  const js=fs.readFileSync('snake/game.js','utf8');
+  assert.match(html,/WORM &amp; APPLE/);
+  assert.match(html,/worm-apple-1/);
+  assert.match(js,/function drawApple/);
+  assert.match(js,/function drawWorm/);
+});

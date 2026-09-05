@@ -3,23 +3,41 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-  <meta name="theme-color" content="#070b12">
-  <script src="/theme.js?v=bubble-1"></script><script src="/clear-game-data.js?v=clear-1"></script>
-  <title>Bubble Shooter</title>
-  <link rel="stylesheet" href="style.css?v=bubble-1">
+  <meta name="theme-color" content="#fffaf0">
+  <script src="/theme.js?v=bubble-garden-1"></script>
+  <script src="/clear-game-data.js?v=clear-1"></script>
+  <title>Bubble Garden</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=bubble-garden-1">
+  <link rel="stylesheet" href="style.css?v=bubble-garden-1">
   <link rel="stylesheet" href="/theme.css?v=clear-1">
 </head>
 <body>
   <main class="page">
-    <header class="topbar"><a href="/">← PLAY</a><h1>BUBBLE SHOOTER</h1><button id="newButton" type="button">NEW</button></header>
-    <section class="stats"><div><span>SCORE</span><b id="score">000000</b></div><div><span>BEST</span><b id="best">000000</b></div><div><span>SHOTS TO ROW</span><b id="misses">05</b></div><div><span>NEXT</span><i id="nextBubble"></i></div></section>
-    <section class="game-shell">
-      <canvas id="game" width="480" height="720" aria-label="Bubble Shooter board"></canvas>
-      <div id="resultOverlay" class="result-overlay"><b id="resultTitle">FIELD CLEAR</b><span id="resultText">NO BUBBLES REMAIN</span><button id="resultButton" type="button">PLAY AGAIN</button></div>
+    <header class="topbar">
+      <a href="/" aria-label="Back to games">← PLAY</a>
+      <div class="brand"><h1>BUBBLE GARDEN</h1><span>BLOOM, MATCH, AND POP.</span></div>
+      <button id="newButton" type="button">NEW</button>
+    </header>
+    <section class="stats" aria-label="Game status">
+      <div class="stat stat-score"><span>SCORE</span><b id="score">000000</b></div>
+      <div class="stat stat-best"><span>BEST</span><b id="best">000000</b></div>
+      <div class="stat stat-misses"><span>SHOTS LEFT</span><b id="misses">05</b></div>
+      <div class="stat stat-next"><span>NEXT</span><i id="nextBubble" aria-label="Next bubble"></i></div>
     </section>
-    <footer>DRAG TO AIM · RELEASE TO SHOOT · BANK SHOTS OFF THE WALLS</footer>
+    <section class="game-shell">
+      <canvas id="game" width="480" height="720" aria-label="Bubble Garden board"></canvas>
+      <div id="resultOverlay" class="result-overlay">
+        <div class="result-sparkle" aria-hidden="true">✿</div>
+        <b id="resultTitle">GARDEN CLEAR</b>
+        <span id="resultText">NO BUBBLES REMAIN</span>
+        <button id="resultButton" type="button">PLAY AGAIN</button>
+      </div>
+    </section>
+    <div class="tips"><span>AIM WITH A DRAG</span><span>MATCH THREE TO BLOOM</span><span>BANK SHOTS OFF THE WALLS</span></div>
+    <footer>DRAG TO AIM · RELEASE TO SHOOT · CLEAR THE GARDEN</footer>
   </main>
-  <script src="rules.js?v=bubble-1"></script><script src="game.js?v=bubble-1"></script>
   <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
+  <script src="rules.js?v=bubble-garden-1"></script>
+  <script src="game.js?v=bubble-garden-1"></script>
 </body>
 </html>

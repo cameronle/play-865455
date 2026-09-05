@@ -39,6 +39,7 @@ test('Flappy Wings page is a complete themed mobile static entrypoint', () => {
   assert.match(html, /viewport-fit=cover/);
   assert.match(html, /user-scalable=no/);
   assert.match(html, /id="game"/);
+  assert.match(html, /BIRDIE POST/);
   assert.match(html, /rules\.js\?v=/);
   assert.match(html, /game\.js\?v=/);
   assert.match(fs.readFileSync('flappy/style.css', 'utf8'), /touch-action:\s*none/);

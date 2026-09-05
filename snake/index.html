@@ -2,49 +2,50 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-  <meta name="theme-color" content="#faf8ef">
-  <script src="/theme.js?v=theme-1"></script><script src="/clear-game-data.js?v=clear-1"></script>
-  <title>Classic Snake</title>
-  <link rel="stylesheet" href="style.css?v=theme-4">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#fffaf0">
+  <script src="/theme.js?v=worm-apple-1"></script>
+  <script src="/clear-game-data.js?v=clear-1"></script>
+  <title>Worm &amp; Apple</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=worm-apple-1">
+  <link rel="stylesheet" href="style.css?v=worm-apple-1">
   <link rel="stylesheet" href="/theme.css?v=clear-1">
 </head>
 <body>
   <main class="page">
     <header class="topbar">
-      <a href="/" class="back">← PLAY</a>
-      <h1>SNAKE</h1>
+      <a class="back" href="/" aria-label="Back to games">← PLAY</a>
+      <div class="brand"><h1>WORM &amp; APPLE</h1><span>GROW A LITTLE GARDEN.</span></div>
       <button id="pauseButton" class="quiet" type="button">PAUSE</button>
     </header>
 
-    <section class="game-layout" aria-label="Classic Snake">
+    <section class="game-layout" aria-label="Worm and Apple">
       <div class="board-wrap">
-        <canvas id="board" width="400" height="400" aria-label="Snake board"></canvas>
+        <canvas id="board" width="400" height="400" aria-label="Worm and Apple garden board"></canvas>
         <div id="message" class="message">
-          <strong id="messageTitle">SNAKE</strong>
+          <div class="message-spark" aria-hidden="true">✿</div>
+          <strong id="messageTitle">WORM &amp; APPLE</strong>
           <span id="messageHint">PRESS START TO PLAY</span>
-          <button id="startButton" type="button">START</button>
+          <button id="startButton" type="button">START GROWING</button>
         </div>
       </div>
-
       <aside class="sidebar">
-        <div class="stat"><span>SCORE</span><strong id="score">000000</strong></div>
-        <div class="stat"><span>HIGH SCORE</span><strong id="highScore">000000</strong></div>
-        <div class="stat"><span>SPEED</span><strong id="speed">01</strong></div>
-        <div class="stat"><span>WALLS</span><strong>WRAP</strong></div>
-        <button id="newGameButton" class="secondary" type="button">NEW GAME</button>
+        <div class="stat stat-score"><span>SCORE</span><strong id="score">000000</strong></div>
+        <div class="stat stat-high"><span>BEST</span><strong id="highScore">000000</strong></div>
+        <div class="stat stat-speed"><span>SPEED</span><strong id="speed">01</strong></div>
+        <div class="stat stat-walls"><span>WALLS</span><strong>WRAP</strong></div>
+        <button id="newGameButton" class="secondary" type="button">NEW GARDEN</button>
         <p class="keys"><b>← → ↑ ↓</b> MOVE<br><b>W A S D</b> MOVE<br><b>P</b> PAUSE<br><b>WALLS</b> WRAP AROUND</p>
       </aside>
     </section>
 
     <div class="touch-controls" aria-label="Touch controls">
-      <span></span><button data-action="up" aria-label="Move up">↑</button><span></span>
-      <button data-action="left" aria-label="Move left">←</button><button data-action="down" aria-label="Move down">↓</button><button data-action="right" aria-label="Move right">→</button>
+      <span></span><button data-action="up" data-dir="up" aria-label="Move up">↑</button><span></span>
+      <button data-action="left" data-dir="left" aria-label="Move left">←</button><button data-action="down" data-dir="down" aria-label="Move down">↓</button><button data-action="right" data-dir="right" aria-label="Move right">→</button>
     </div>
-    <footer>CLASSIC RULES · WALLS WRAP · LOCAL HIGH SCORE</footer>
+    <footer>COLLECT APPLES · GROW LONGER · WALLS WRAP AROUND</footer>
   </main>
-  <script src="game.js?v=theme-1"></script>
   <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
+  <script src="game.js?v=worm-apple-1"></script>
 </body>
 </html>
-

@@ -3,38 +3,39 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-  <meta name="theme-color" content="#070b12">
-  <script src="/theme.js?v=flappy-1"></script><script src="/clear-game-data.js?v=clear-1"></script>
-  <title>Flappy Wings</title>
+  <meta name="theme-color" content="#fffaf0">
+  <script src="/theme.js?v=birdie-post-1"></script>
+  <script src="/clear-game-data.js?v=clear-1"></script>
+  <title>Birdie Post</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=birdie-post-1">
+  <link rel="stylesheet" href="style.css?v=birdie-post-1">
   <link rel="stylesheet" href="/theme.css?v=clear-1">
-  <link rel="stylesheet" href="style.css?v=flappy-1">
 </head>
 <body>
   <main class="page">
     <header class="topbar">
-      <a href="/">← PLAY</a>
-      <h1>FLAPPY WINGS</h1>
-      <div class="header-actions">
-        <button id="pauseButton" type="button">PAUSE</button>
-      </div>
+      <a class="back" href="/" aria-label="Back to games">← PLAY</a>
+      <div class="brand"><h1>BIRDIE POST</h1><span>DELIVER JOY. DODGE CLOUDS.</span></div>
+      <button id="pauseButton" type="button">PAUSE</button>
     </header>
-    <section class="toolbar">
-      <div class="stat-pill"><span class="stat-label">SCORE</span><b id="scoreStat">0</b></div>
-      <div class="stat-pill"><span class="stat-label">BEST</span><b id="bestStat">0</b></div>
+    <section class="toolbar" aria-label="Game status">
+      <div class="stat-pill stat-score"><span>SCORE</span><b id="scoreStat">0</b></div>
+      <div class="stat-pill stat-best"><span>BEST</span><b id="bestStat">0</b></div>
     </section>
     <div class="frame">
-      <canvas id="game" width="400" height="600" aria-label="Flappy Wings arcade flying game"></canvas>
+      <canvas id="game" width="400" height="600" aria-label="Birdie Post flying game"></canvas>
       <div id="overlay" class="overlay">
-        <b id="overlayTitle">FLAPPY WINGS</b>
-        <span id="overlayText">TAP OR PRESS SPACE TO FLAP</span>
+        <div class="stamp" aria-hidden="true">✉</div>
+        <b id="overlayTitle">BIRDIE POST</b>
+        <span id="overlayText">TAP TO FLAP · DELIVER THE MAIL</span>
         <button id="startButton" type="button">START FLYING</button>
       </div>
     </div>
-    <footer>TAP ANYWHERE OR PRESS SPACE TO FLY · FLY THROUGH PIPE GAPS</footer>
+    <div class="tips"><span>ONE TAP, ONE FLAP</span><span>FIND THE CLOUD GAP</span></div>
+    <footer>TAP ANYWHERE OR PRESS SPACE · FLY THROUGH THE CLOUD GAPS</footer>
   </main>
-
-  <script src="rules.js?v=flappy-1"></script>
-  <script src="game.js?v=flappy-1"></script>
   <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
+  <script src="rules.js?v=birdie-post-1"></script>
+  <script src="game.js?v=birdie-post-1"></script>
 </body>
 </html>

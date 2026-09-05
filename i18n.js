@@ -25,7 +25,7 @@
         "2048": {"name":"2048","desc":"滑动合并相同数字，冲击 2048 方块。"},
         "shooter": {"name":"星空巡航","desc":"移动、自动发射、躲避敌机，经典飞行射击。"},
         "tetris": {"name":"俄罗斯方块","desc":"经典下落方块，消除整行，冲击更高分。"},
-        "snake": {"name":"贪吃蛇","desc":"吞食豆子不断变长，支持四向穿墙。"},
+        "snake": {"name":"毛毛虫花园","desc":"操控贪吃的小毛毛虫收集苹果和浆果，越吃越长。"},
         "breakout": {"name":"打砖块","desc":"弹射小球击碎砖块，考验反应与走位。"},
         "minesweeper": {"name":"经典扫雷","desc":"推算数字排查雷区，20 关逐级挑战。"},
         "space-invaders": {"name":"太空侵略者","desc":"迎击步步逼近的外星阵列，守卫防线。"},
@@ -42,13 +42,13 @@
         "helicopter-cave": {"name":"直升机洞穴","desc":"按住上升松开下落，穿行狭窄起伏的地下洞穴。"},
         "endless-runner": {"name":"无尽奔跑","desc":"跨越尖刺与坑洞、收集金币，跟上加速节奏。"},
         "solitaire": {"name":"纸牌接龙","desc":"红黑交替排布纸牌，将四色花色按序归位。"},
-        "bubble-shooter": {"name":"泡泡射手","desc":"精准瞄准反弹射击，同色相连即可消除。"},
+        "bubble-shooter": {"name":"泡泡花园","desc":"瞄准发射彩色花朵泡泡，让相同颜色的花朵一起绽放。"},
         "nonogram": {"name":"数织","desc":"根据行列数字推算填充，揭开隐藏像素图案。"},
         "flow": {"name":"连线解谜","desc":"连接相同颜色管道，无交叉铺满整个棋盘。"},
         "bridges": {"name":"数桥","desc":"在岛屿间架设指定数量桥梁，连通完整网络。"},
         "sliding-puzzle": {"name":"数字华容道","desc":"滑动方块归位，将乱序数字按顺序排列整齐。"},
         "color-bounce": {"name":"色彩跳跃","desc":"控制小球穿过相同颜色的几何障碍，节奏跃动。"},
-        "flappy": {"name":"飞天小鸟","desc":"轻触屏幕扑翼飞行，平稳穿梭于管道缝隙之间。"}
+        "flappy": {"name":"小鸟邮差","desc":"操控背着邮包的小鸟穿过云朵，安全送出每一封信。"}
       }
     },
     en: {
@@ -71,7 +71,7 @@
         "2048": {"name":"2048","desc":"Join the numbers. Chase the tile."},
         "shooter": {"name":"SKY PATROL","desc":"Move, fire, survive. A small original shooter."},
         "tetris": {"name":"TETRIS","desc":"Classic falling blocks. Clear lines. Keep going."},
-        "snake": {"name":"SNAKE","desc":"Eat, grow, and wrap around the walls."},
+        "snake": {"name":"WORM & APPLE","desc":"Guide a hungry little worm through the garden and grow longer."},
         "breakout": {"name":"BREAKOUT","desc":"Break the wall. Keep the ball alive."},
         "minesweeper": {"name":"MINESWEEPER","desc":"Read the numbers. Avoid the mines."},
         "space-invaders": {"name":"ALIEN FORMATION","desc":"Defend the line against descending aliens."},
@@ -88,13 +88,13 @@
         "helicopter-cave": {"name":"HELICOPTER CAVE","desc":"Hold to rise, release to fall, and survive the cave."},
         "endless-runner": {"name":"ENDLESS RUNNER","desc":"Jump, collect, and keep pace with the accelerating road."},
         "solitaire": {"name":"SOLITAIRE","desc":"Build down in alternating colors. Send every suit home."},
-        "bubble-shooter": {"name":"BUBBLE SHOOTER","desc":"Aim, match colors, and clear the field."},
+        "bubble-shooter": {"name":"BUBBLE GARDEN","desc":"Aim colorful flower bubbles and make matching blossoms bloom together."},
         "nonogram": {"name":"NONOGRAM","desc":"Read the clues. Reveal the hidden pixel picture."},
         "flow": {"name":"FLOW FREE","desc":"Connect matching colors. Fill the whole board."},
         "bridges": {"name":"BRIDGES","desc":"Connect the islands. Build a single network."},
         "sliding-puzzle": {"name":"15-PUZZLE","desc":"Slide tiles into the empty space. Put numbers in order."},
         "color-bounce": {"name":"COLOR SWITCH","desc":"Bounce through matching colors. Avoid wrong hues."},
-        "flappy": {"name":"FLAPPY WINGS","desc":"Tap to flap, glide through pipes, and stay aloft."}
+        "flappy": {"name":"BIRDIE POST","desc":"Guide a tiny mail bird through cloud gaps and deliver every letter."}
       }
     }
   };

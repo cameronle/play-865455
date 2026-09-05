@@ -36,7 +36,7 @@ test('Bubble Shooter adds a shifted pressure row without losing existing bubbles
 
 test('Bubble Shooter page is themed, touch-safe, and integrated as game 22',()=>{
   const html=read('bubble-shooter/index.html'),css=read('bubble-shooter/style.css'),js=read('bubble-shooter/game.js'),index=read('index.html'),readme=read('README.md');
-  assert.match(html,/viewport-fit=cover/);assert.match(html,/src="\/theme\.js\?v=/);assert.match(html,/class="theme-toggle"/);
+  assert.match(html,/BUBBLE GARDEN/);assert.match(html,/viewport-fit=cover/);assert.match(html,/src="\/theme\.js\?v=/);assert.match(html,/class="theme-toggle"/);
   for(const id of ['game','score','best','misses','newButton','resultOverlay','resultButton'])assert.match(html,new RegExp(`id="${id}"`));
   assert.match(css,/touch-action:none/);assert.match(css,/-webkit-touch-callout:none/);assert.match(css,/\[data-theme="light"\]/);
   assert.match(js,/pointermove/);assert.match(js,/pointerup/);assert.match(js,/function traceAim/);assert.match(js,/function addPressureRow/);
