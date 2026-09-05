@@ -3,32 +3,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-  <meta name="theme-color" content="#faf8ef">
-  <script src="/theme.js?v=theme-1"></script><script src="/clear-game-data.js?v=clear-1"></script>
-  <title>2048</title>
-  <link rel="stylesheet" href="style.css?v=theme-1">
+  <meta name="theme-color" content="#fffaf0">
+  <script src="/theme.js?v=little-planets-1"></script>
+  <script src="/clear-game-data.js?v=clear-1"></script>
+  <title>Little Planets</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=little-planets-1">
+  <link rel="stylesheet" href="style.css?v=little-planets-1">
   <link rel="stylesheet" href="/theme.css?v=clear-1">
 </head>
 <body>
   <main class="page">
-    <header class="topbar">
-      <a href="/" class="back">← PLAY</a>
-      <h1>2048</h1>
-      <button id="newGame" class="quiet" type="button">NEW GAME</button>
-    </header>
-    <section class="scorebar">
-      <div class="score"><span>SCORE</span><strong id="score">000000</strong></div>
-      <div class="score"><span>BEST</span><strong id="best">000000</strong></div>
-    </section>
-    <section class="board-wrap">
-      <div id="board" class="board" aria-label="2048 board"></div>
-      <div id="overlay" class="overlay hidden"><strong id="overlayTitle">GAME OVER</strong><button id="tryAgain" type="button">TRY AGAIN</button></div>
-    </section>
+    <header class="topbar"><a href="/" class="back" aria-label="Back to games">← PLAY</a><div class="brand"><h1>LITTLE PLANETS</h1><span>JOIN SMALL WORLDS. GROW A GALAXY.</span></div><button id="newGame" class="quiet" type="button">NEW GALAXY</button></header>
+    <section class="scorebar" aria-label="Game status"><div class="score score-current"><span>SCORE</span><strong id="score">000000</strong></div><div class="score score-best"><span>BEST</span><strong id="best">000000</strong></div></section>
+    <section class="board-wrap"><div id="board" class="board" aria-label="Little Planets board"></div><div id="overlay" class="overlay hidden"><div class="overlay-spark" aria-hidden="true">✦</div><strong id="overlayTitle">GALAXY COMPLETE</strong><span>KEEP EXPLORING OR START A NEW SKY</span><button id="tryAgain" type="button">TRY AGAIN</button></div></section>
     <div class="controls" aria-label="Touch controls"><span></span><button data-dir="up" aria-label="Move up">↑</button><span></span><button data-dir="left" aria-label="Move left">←</button><button data-dir="down" aria-label="Move down">↓</button><button data-dir="right" aria-label="Move right">→</button></div>
-    <footer>JOIN THE TILES · REACH 2048</footer>
+    <div class="legend"><span><i class="legend-dot orbit"></i>MERGE WORLDS</span><span><i class="legend-dot spark"></i>REACH THE SUN</span></div>
+    <footer>SWIPE OR USE ARROW KEYS · MERGE MATCHING PLANETS · REACH 2048</footer>
   </main>
-  <script src="game.js?v=bffa164"></script>
   <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
+  <script src="game.js?v=little-planets-1"></script>
 </body>
 </html>
-

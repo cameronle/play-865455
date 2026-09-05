@@ -8,16 +8,16 @@ module.exports = [
     "order": 1,
     "category": "puzzle",
     "name": {
-      "zh": "2048",
-      "en": "2048"
+      "zh": "小小星球",
+      "en": "LITTLE PLANETS"
     },
     "description": {
-      "zh": "滑动合并相同数字，冲击 2048 方块。",
-      "en": "Join the numbers. Chase the tile."
+      "zh": "合并相同的小星球，从一颗小小行星一路成长到太阳。",
+      "en": "Merge matching little worlds and grow from a pebble to a sun."
     },
     "readme": {
-      "title": "Classic 2048",
-      "description": "本仓库自维护的纯 HTML5/CSS/JavaScript 2048，支持键盘、触摸、计分和本地最高分。"
+      "title": "Little Planets",
+      "description": "自维护的卡通涂鸦 2048，保留数字合并规则，加入小星球、轨道纹理、浅深主题和移动端滑动操作。"
     }
   },
   {
@@ -134,16 +134,16 @@ module.exports = [
     "order": 8,
     "category": "arcade",
     "name": {
-      "zh": "霓虹迷宫",
-      "en": "NEON MAZE"
+      "zh": "猫咪幽灵",
+      "en": "CAT & GHOSTS"
     },
     "description": {
-      "zh": "吃完所有光点，巧妙避开巡逻幽灵。",
-      "en": "Eat every light. Avoid the hunters."
+      "zh": "帮助小猫收集所有鱼干，躲开在房间里巡逻的床单幽灵。",
+      "en": "Help the cat find every fish treat while dodging the sheet ghosts."
     },
     "readme": {
-      "title": "Neon Maze",
-      "description": "原创迷宫吃点游戏，支持寻路敌人、关卡、生命、本地最高分、手机滑动和触屏方向键。"
+      "title": "Cat & Ghosts",
+      "description": "自维护的卡通涂鸦迷宫游戏，包含小猫、鱼干、床单幽灵、寻路敌人、关卡、生命和移动端触控。"
     }
   },
   {
@@ -260,16 +260,16 @@ module.exports = [
     "order": 15,
     "category": "simulation",
     "name": {
-      "zh": "月球着陆器",
-      "en": "LUNAR LANDER"
+      "zh": "月兔着陆",
+      "en": "MOON BUNNY"
     },
     "description": {
-      "zh": "控制推进与姿态，在有限燃料下平稳着陆。",
-      "en": "Manage angle, velocity, and fuel for a safe landing."
+      "zh": "驾驶小兔子的纸盒飞船，在有限燃料下平稳降落月面。",
+      "en": "Pilot a paper rocket and land the moon bunny softly with limited fuel."
     },
     "readme": {
-      "title": "Lunar Lander",
-      "description": "自维护的月球着陆物理游戏，支持随机地形、有限燃料、递增重力、完整触控和本地最高分。"
+      "title": "Moon Bunny",
+      "description": "自维护的卡通涂鸦月面着陆物理游戏，支持随机地形、有限燃料、递增重力、完整触控和本地最高分。"
     }
   },
   {

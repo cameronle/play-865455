@@ -106,6 +106,25 @@
     ctx.fillStyle = isLight ? '#0288d1' : '#64e6e0'; ctx.beginPath(); ctx.arc(player.col * CELL + 16, player.row * CELL + 16, 11, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = isLight ? '#f7f4ec' : '#080d15'; ctx.beginPath(); ctx.arc(player.col * CELL + 20, player.row * CELL + 12, 2, 0, Math.PI * 2); ctx.fill();
   }
+  function mazePalette() {
+    if (typeof getComputedStyle !== 'function') return { paper:'#fffaf0', grid:'rgba(75,156,149,.13)', wall:'#b8a7e8', wallBorder:'#3d3832', ink:'#3d3832', mint:'#9eddbd', yellow:'#f7d66c', coral:'#f28c78', purple:'#b8a7e8', ghost:'#b8a7e8', ghostAlt:'#8fc9eb', fish:'#f28c78' };
+    const style = getComputedStyle(document.documentElement), get = (name, fallback) => style.getPropertyValue(name).trim() || fallback;
+    return { paper:get('--canvas-bg','#fffaf0'), grid:get('--canvas-grid','rgba(75,156,149,.13)'), wall:get('--wall','#b8a7e8'), wallBorder:get('--wall-border','#3d3832'), ink:get('--ink','#3d3832'), mint:get('--mint','#9eddbd'), yellow:get('--yellow','#f7d66c'), coral:get('--coral','#f28c78'), purple:get('--purple','#b8a7e8'), ghost:get('--ghost','#b8a7e8'), ghostAlt:get('--blue','#8fc9eb'), fish:get('--fish','#f28c78') };
+  }
+
+  function mazeBlock(x, y, width, height, radius, fill, stroke, lineWidth = 2) {
+    ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(x, y, width, height, radius); else ctx.rect(x, y, width, height); ctx.fillStyle = fill; ctx.fill(); ctx.strokeStyle = stroke; ctx.lineWidth = lineWidth; ctx.stroke();
+  }
+
+  function draw() {
+    const p = mazePalette(); ctx.fillStyle = p.paper; ctx.fillRect(0, 0, WIDTH, WIDTH); ctx.strokeStyle = p.grid; ctx.lineWidth = 1;
+    for (let i = 0; i <= SIZE; i++) { ctx.beginPath(); ctx.moveTo(i * CELL, 0); ctx.lineTo(i * CELL, WIDTH); ctx.stroke(); ctx.beginPath(); ctx.moveTo(0, i * CELL); ctx.lineTo(WIDTH, i * CELL); ctx.stroke(); }
+    for (let row = 0; row < SIZE; row++) for (let col = 0; col < SIZE; col++) if (maze.isWall(row, col)) { const x = col * CELL + 3, y = row * CELL + 3; mazeBlock(x, y, CELL - 6, CELL - 6, 7, p.wall, p.wallBorder, 2); ctx.strokeStyle = p.paper; ctx.globalAlpha = .28; ctx.beginPath(); ctx.moveTo(x + 8, y + 9); ctx.lineTo(x + 13, y + 5); ctx.moveTo(x + 17, y + 20); ctx.lineTo(x + 23, y + 15); ctx.stroke(); ctx.globalAlpha = 1; }
+    dots.forEach(key => { const [row, col] = key.split(',').map(Number), x = col * CELL + 16, y = row * CELL + 16; ctx.save(); ctx.translate(x, y); ctx.fillStyle = p.fish; ctx.strokeStyle = p.ink; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(-7, 0); ctx.lineTo(4, -5); ctx.lineTo(8, 0); ctx.lineTo(4, 5); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.beginPath(); ctx.moveTo(-7, 0); ctx.lineTo(-11, -5); ctx.moveTo(-7, 0); ctx.lineTo(-11, 5); ctx.stroke(); ctx.fillStyle = p.ink; ctx.beginPath(); ctx.arc(4, -1, 1, 0, Math.PI * 2); ctx.fill(); ctx.restore(); });
+    enemies.forEach((enemy, index) => { const x = enemy.col * CELL + 16, y = enemy.row * CELL + 16, fill = index ? p.ghostAlt : p.ghost; ctx.save(); ctx.translate(x, y); ctx.fillStyle = fill; ctx.strokeStyle = p.ink; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(0, -2, 11, Math.PI, 0); ctx.lineTo(11, 10); ctx.lineTo(5, 6); ctx.lineTo(0, 11); ctx.lineTo(-5, 6); ctx.lineTo(-11, 10); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.fillStyle = p.paper; ctx.beginPath(); ctx.arc(-4, -3, 3, 0, Math.PI * 2); ctx.arc(4, -3, 3, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = p.ink; ctx.beginPath(); ctx.arc(-3, -3, 1.2, 0, Math.PI * 2); ctx.arc(5, -3, 1.2, 0, Math.PI * 2); ctx.fill(); ctx.restore(); });
+    if (player) { const x = player.col * CELL + 16, y = player.row * CELL + 16; ctx.save(); ctx.translate(x, y); ctx.fillStyle = p.yellow; ctx.strokeStyle = p.ink; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(-10, -5); ctx.lineTo(-9, -14); ctx.lineTo(-2, -9); ctx.arc(0, -3, 11, Math.PI, 0); ctx.lineTo(9, -9); ctx.lineTo(10, -14); ctx.lineTo(11, 6); ctx.quadraticCurveTo(0, 16, -11, 6); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.fillStyle = p.ink; ctx.beginPath(); ctx.arc(-4, -4, 2, 0, Math.PI * 2); ctx.arc(4, -4, 2, 0, Math.PI * 2); ctx.fill(); ctx.strokeStyle = p.ink; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(-4, 3); ctx.lineTo(0, 6); ctx.lineTo(4, 3); ctx.moveTo(-7, 3); ctx.lineTo(-14, 1); ctx.moveTo(-7, 6); ctx.lineTo(-14, 7); ctx.moveTo(7, 3); ctx.lineTo(14, 1); ctx.moveTo(7, 6); ctx.lineTo(14, 7); ctx.stroke(); ctx.restore(); }
+  }
+
   function setDirection(name) { queued = directions[name]; }
   function bindButton(name) {
     const button = document.querySelector(`[data-dir="${name}"]`);
@@ -144,5 +163,5 @@
     if (event.key === 'p' || event.key === 'P') pause();
   };
 
-  setup(); message('NEON MAZE', 'PRESS START TO PLAY', 'START'); requestAnimationFrame(loop);
+  setup(); message('CAT & GHOSTS', 'HELP THE CAT FIND EVERY FISH TREAT', 'START HUNTING'); requestAnimationFrame(loop);
 })();

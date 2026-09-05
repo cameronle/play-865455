@@ -110,6 +110,33 @@
     ctx.restore();
   }
 
+  function moonPalette() {
+    const style = getComputedStyle(document.documentElement), get = (name, fallback) => style.getPropertyValue(name).trim() || fallback;
+    return { paper:get('--paper','#fffaf0'), grid:get('--grid','#b9dfe0'), ink:get('--ink','#3d3832'), muted:get('--muted','#8a7c6e'), mint:get('--mint','#9eddbd'), blue:get('--blue','#8fc9eb'), yellow:get('--yellow','#f7d66c'), coral:get('--coral','#f28c78'), purple:get('--purple','#b8a7e8'), moon:get('--moon','#ded7c7'), crater:get('--crater','#c5bbaa'), space:get('--space','#fffaf0') };
+  }
+
+  function draw() {
+    const p = moonPalette(); ctx.fillStyle = p.space; ctx.fillRect(0, 0, canvas.width, canvas.height); ctx.strokeStyle = p.grid; ctx.globalAlpha = .38; ctx.lineWidth = 1;
+    for (let x = 0; x <= canvas.width; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke(); }
+    for (let y = 0; y <= canvas.height; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke(); } ctx.globalAlpha = 1;
+    ctx.fillStyle = p.yellow; ctx.strokeStyle = p.ink; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(84, 86, 25, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); ctx.strokeStyle = p.coral; ctx.lineWidth = 2; for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; ctx.beginPath(); ctx.moveTo(84 + Math.cos(a) * 33, 86 + Math.sin(a) * 33); ctx.lineTo(84 + Math.cos(a) * 42, 86 + Math.sin(a) * 42); ctx.stroke(); }
+    ctx.fillStyle = p.muted; stars.forEach(star => { ctx.globalAlpha = star.a; ctx.fillRect(star.x, star.y, star.r, star.r); }); ctx.globalAlpha = 1;
+    ctx.beginPath(); terrain.forEach((point, index) => index ? ctx.lineTo(point.x, point.y) : ctx.moveTo(point.x, point.y)); ctx.lineTo(canvas.width, canvas.height); ctx.lineTo(0, canvas.height); ctx.closePath(); ctx.fillStyle = p.moon; ctx.fill(); ctx.strokeStyle = p.ink; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = p.crater; ctx.strokeStyle = p.ink; ctx.lineWidth = 1.5; for (let i = 0; i < 11; i++) { const x = (i * 97 + 31) % canvas.width, y = 515 + (i % 3) * 17; ctx.beginPath(); ctx.ellipse(x, y, 10 + (i % 3) * 4, 4 + (i % 2) * 2, -.15, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); }
+    ctx.strokeStyle = p.coral; ctx.lineWidth = 5; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(platform.x, platform.y); ctx.lineTo(platform.x + platform.width, platform.y); ctx.stroke(); ctx.strokeStyle = p.ink; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(platform.x + platform.width / 2, platform.y); ctx.lineTo(platform.x + platform.width / 2, platform.y - 28); ctx.stroke(); ctx.fillStyle = p.yellow; ctx.beginPath(); ctx.moveTo(platform.x + platform.width / 2, platform.y - 27); ctx.lineTo(platform.x + platform.width / 2 + 22, platform.y - 21); ctx.lineTo(platform.x + platform.width / 2, platform.y - 15); ctx.closePath(); ctx.fill(); ctx.stroke();
+    particles.forEach(part => { ctx.globalAlpha = Math.max(0, part.life * 2); ctx.fillStyle = part.life > .35 ? p.yellow : p.coral; ctx.beginPath(); ctx.arc(part.x, part.y, 3, 0, Math.PI * 2); ctx.fill(); }); ctx.globalAlpha = 1;
+    if (state !== 'crashed') drawShip(); if (paused) { ctx.fillStyle = p.paper + 'bb'; ctx.fillRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = p.ink; ctx.font = '950 34px ui-rounded, system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('PAUSED', canvas.width / 2, canvas.height / 2); ctx.textAlign = 'left'; }
+  }
+
+  function drawShip() {
+    if (!ship) return; const p = moonPalette(); ctx.save(); ctx.translate(ship.x, ship.y); ctx.rotate(ship.angle); ctx.strokeStyle = p.ink; ctx.lineWidth = 2.5; ctx.lineJoin = 'round';
+    if (keys.thrust && fuel > 0 && state === 'playing') { ctx.fillStyle = p.coral; ctx.beginPath(); ctx.moveTo(-7, 17); ctx.lineTo(0, 34 + Math.random() * 9); ctx.lineTo(7, 17); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.fillStyle = p.yellow; ctx.beginPath(); ctx.moveTo(-3, 17); ctx.lineTo(0, 27 + Math.random() * 5); ctx.lineTo(3, 17); ctx.closePath(); ctx.fill(); }
+    ctx.fillStyle = p.paper; ctx.beginPath(); ctx.ellipse(0, 4, 20, 18, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); ctx.fillStyle = p.mint; ctx.beginPath(); ctx.ellipse(-11, 17, 10, 5, -.2, 0, Math.PI * 2); ctx.ellipse(11, 17, 10, 5, .2, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = p.paper; ctx.beginPath(); ctx.ellipse(-9, -20, 7, 16, -.15, 0, Math.PI * 2); ctx.ellipse(9, -20, 7, 16, .15, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); ctx.fillStyle = p.coral; ctx.beginPath(); ctx.ellipse(-9, -20, 3, 10, -.15, 0, Math.PI * 2); ctx.ellipse(9, -20, 3, 10, .15, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = p.ink; ctx.beginPath(); ctx.arc(-7, -1, 3, 0, Math.PI * 2); ctx.arc(7, -1, 3, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = p.coral; ctx.beginPath(); ctx.arc(0, 7, 4, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); ctx.fillStyle = p.yellow; ctx.beginPath(); ctx.arc(0, 6, 1.5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = p.blue; ctx.beginPath(); ctx.moveTo(-18, 9); ctx.lineTo(-28, 19); ctx.lineTo(-17, 17); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.beginPath(); ctx.moveTo(18, 9); ctx.lineTo(28, 19); ctx.lineTo(17, 17); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
+  }
+
   function frame(now) { const dt = Math.min(.033, (now - lastTime) / 1000 || 0); lastTime = now; update(dt); draw(); requestAnimationFrame(frame); }
   function togglePause() { if (state !== 'playing') return; paused = !paused; ui.pauseButton.textContent = paused ? 'RESUME' : 'PAUSE'; }
   function primaryAction() { if (state === 'landed') { level++; beginLevel(); } else if (state === 'crashed') beginLevel(); else if (state === 'title') newMission(); }
@@ -119,5 +146,5 @@
   document.addEventListener('keyup', e => { const k = e.key.toLowerCase(); if (['arrowleft','a'].includes(k)) keys.left = false; if (['arrowright','d'].includes(k)) keys.right = false; if (['arrowup','w',' '].includes(k)) keys.thrust = false; });
   ui.startButton.addEventListener('click', primaryAction); ui.pauseButton.addEventListener('click', togglePause);
   stars = Array.from({ length: 95 }, () => ({ x: Math.random() * canvas.width, y: Math.random() * 430, r: Math.random() < .85 ? 1 : 2, a: .25 + Math.random() * .7 }));
-  terrain = makeTerrain(); resetShip(); showOverlay('LUNAR LANDER', 'LAND SOFTLY ON THE LIT PLATFORM', 'START MISSION'); updateHud(); requestAnimationFrame(frame);
+  terrain = makeTerrain(); resetShip(); showOverlay('MOON BUNNY', 'LAND SOFTLY ON THE LIT MOON PLATFORM', 'START MISSION'); updateHud(); requestAnimationFrame(frame);
 })();

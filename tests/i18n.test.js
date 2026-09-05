@@ -138,8 +138,8 @@ test('i18n defaults to Chinese (zh) when localStorage is empty', () => {
   assert.equal(env.kickerEl.textContent, '无需登录 · 纯粹单机 · 随开随玩');
   assert.equal(env.statsEl.textContent, '27 款游戏');
   assert.equal(env.langBtn.textContent, 'EN');
-  assert.equal(env.cards[0]._cardTitleEl.textContent, '2048');
-  assert.equal(env.cards[0]._cardDescEl.textContent, '滑动合并相同数字，冲击 2048 方块。');
+  assert.equal(env.cards[0]._cardTitleEl.textContent, '小小星球');
+  assert.equal(env.cards[0]._cardDescEl.textContent, '合并相同的小星球，从一颗小小行星一路成长到太阳。');
 });
 
 test('i18n switches to English (en) on toggle and saves to localStorage', () => {
@@ -153,8 +153,8 @@ test('i18n switches to English (en) on toggle and saves to localStorage', () => 
   assert.equal(env.kickerEl.textContent, 'SMALL GAMES / NO ACCOUNTS');
   assert.equal(env.statsEl.textContent, '27 GAMES');
   assert.equal(env.langBtn.textContent, '中文');
-  assert.equal(env.cards[0]._cardTitleEl.textContent, '2048');
-  assert.equal(env.cards[0]._cardDescEl.textContent, 'Join the numbers. Chase the tile.');
+  assert.equal(env.cards[0]._cardTitleEl.textContent, 'LITTLE PLANETS');
+  assert.equal(env.cards[0]._cardDescEl.textContent, 'Merge matching little worlds and grow from a pebble to a sun.');
 
   // Toggle back to Chinese
   env.listeners.click();
@@ -162,7 +162,7 @@ test('i18n switches to English (en) on toggle and saves to localStorage', () => 
   assert.equal(env.root.lang, 'zh-CN');
   assert.equal(env.root.dataset.lang, 'zh');
   assert.equal(env.langBtn.textContent, 'EN');
-  assert.equal(env.cards[0]._cardDescEl.textContent, '滑动合并相同数字，冲击 2048 方块。');
+  assert.equal(env.cards[0]._cardDescEl.textContent, '合并相同的小星球，从一颗小小行星一路成长到太阳。');
 });
 
 test('i18n loads saved language preference from localStorage', () => {
