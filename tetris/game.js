@@ -40,12 +40,13 @@
     context.fillStyle='rgba(255,255,255,.22)';context.fillRect(x*size+pad,y*size+pad,size-pad*2,Math.max(2,size*.1));
     context.strokeStyle=cssValue('--canvas-grid','rgba(62,57,52,.14)');context.strokeRect(x*size+pad+.5,y*size+pad+.5,size-pad*2-1,size-pad*2-1);
   }
+  function drawGhostCell(context,x,y,color,size){const pad=Math.max(2,size*.1);context.save();context.globalAlpha=.7;context.strokeStyle=color;context.lineWidth=Math.max(2,size*.07);context.setLineDash([Math.max(3,size*.16),Math.max(2,size*.1)]);context.strokeRect(x*size+pad+.5,y*size+pad+.5,size-pad*2-1,size-pad*2-1);context.setLineDash([]);context.globalAlpha=.08;context.fillStyle=color;context.fillRect(x*size+pad,y*size+pad,size-pad*2,size-pad*2);context.restore()}
   function draw(){
     ctx.fillStyle=cssValue('--canvas-bg','#d8d1c5');ctx.fillRect(0,0,boardCanvas.width,boardCanvas.height);
     for(let y=0;y<ROWS;y++) for(let x=0;x<COLS;x++) if(grid[y][x]) drawCell(ctx,x,y,COLORS[grid[y][x]],CELL);
     if(piece){
       const ghost={...piece,y:piece.y};while(!collides(ghost,0,1))ghost.y++;
-      piece.matrix.forEach((row,y)=>row.forEach((v,x)=>{if(v){ctx.globalAlpha=.12;drawCell(ctx,piece.x+x,ghost.y+y,COLORS[piece.type],CELL);ctx.globalAlpha=1}}));
+      piece.matrix.forEach((row,y)=>row.forEach((v,x)=>{if(v)drawGhostCell(ctx,piece.x+x,ghost.y+y,COLORS[piece.type],CELL)}));
       piece.matrix.forEach((row,y)=>row.forEach((v,x)=>{if(v)drawCell(ctx,piece.x+x,piece.y+y,COLORS[piece.type],CELL)}));
     }
     nextCtx.clearRect(0,0,nextCanvas.width,nextCanvas.height);if(nextType){const m=SHAPES[nextType],size=22,ox=(nextCanvas.width-m[0].length*size)/2,oy=(nextCanvas.height-m.length*size)/2; m.forEach((row,y)=>row.forEach((v,x)=>{if(v){nextCtx.save();nextCtx.translate(ox,oy);drawCell(nextCtx,x,y,COLORS[nextType],size);nextCtx.restore()}}))}
