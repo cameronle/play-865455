@@ -296,16 +296,16 @@ module.exports = [
     "order": 17,
     "category": "arcade",
     "name": {
-      "zh": "空中跳跃",
-      "en": "SKY HOPPER"
+      "zh": "涂鸦弹跳",
+      "en": "DOODLE HOP!"
     },
     "description": {
-      "zh": "借助移动、弹簧等多种平台不断向上跃升。",
-      "en": "Bounce higher across a shifting field of platforms."
+      "zh": "在手绘平台间自动弹跳，收集星星，继续向上冒险。",
+      "en": "Bounce through a hand-drawn sky, collect stars, and climb higher."
     },
     "readme": {
-      "title": "Sky Hopper",
-      "description": "自维护的纵向平台跳跃游戏，支持自动弹跳、滚动场景、五种平台、键盘与触控操作和本地最高分。"
+      "title": "Doodle Hop!",
+      "description": "自维护的卡通涂鸦纵向平台跳跃游戏，支持自动弹跳、星星收集、五种平台、键盘与触控操作和本地最高分。"
     }
   },
   {

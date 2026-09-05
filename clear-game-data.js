@@ -22,7 +22,7 @@
     pong: ['pongMatchWins'],
     shooter: ['sky-patrol-best'],
     simon: ['signalEchoBest'],
-    'sky-hopper': ['skyHopperBest'],
+    'sky-hopper': ['doodleHopBest', 'doodleHopBestStars', 'skyHopperBest'],
     'sliding-puzzle': ['sliding-puzzle-best-v1'],
     snake: ['classic-snake-high-score'],
     sokoban: ['sokoban'],
@@ -48,7 +48,6 @@
     for (const key of savedKeys()) localStorage.removeItem(key);
     try { sessionStorage.clear(); } catch (_) {}
 
-    // Clear Cache Storage too, if a browser or future service worker created one.
     try {
       if (window.caches) {
         const names = await caches.keys();

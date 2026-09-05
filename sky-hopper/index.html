@@ -3,45 +3,54 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-  <meta name="theme-color" content="#070b12">
-  <script src="/theme.js?v=hopper-2"></script><script src="/clear-game-data.js?v=clear-1"></script>
-  <title>Sky Hopper</title>
+  <meta name="theme-color" content="#fffaf0">
+  <script src="/theme.js?v=doodle-hop-1"></script>
+  <script src="/clear-game-data.js?v=clear-1"></script>
+  <title>Doodle Hop!</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=doodle-hop-1">
   <link rel="stylesheet" href="/theme.css?v=clear-1">
-  <link rel="stylesheet" href="style.css?v=hopper-2">
+  <link rel="stylesheet" href="style.css?v=doodle-hop-1">
 </head>
 <body>
   <main class="page">
     <header class="topbar">
-      <a href="/">← PLAY</a>
-      <h1>SKY HOPPER</h1>
+      <a class="back-link" href="/" aria-label="Back to games">← PLAY</a>
+      <div class="brand">
+        <h1>DOODLE HOP!</h1>
+        <span>A LITTLE JUMP. A BIG ADVENTURE.</span>
+      </div>
       <button id="pauseButton" type="button">PAUSE</button>
     </header>
-    <section class="hud">
-      <div><span>SCORE</span><b id="score">000000</b></div>
-      <div><span>BEST</span><b id="best">000000</b></div>
-      <div><span>HEIGHT</span><b id="height">0000m</b></div>
+
+    <section class="hud" aria-label="Game status">
+      <div class="stat stat-score"><span>SCORE</span><b id="score">000000</b></div>
+      <div class="stat stat-stars"><span>STARS</span><b id="stars">00</b></div>
+      <div class="stat stat-height"><span>HEIGHT</span><b id="height">0000m</b></div>
+      <div class="stat stat-best"><span>BEST</span><b id="best">000000</b></div>
     </section>
+
     <div class="screen">
-      <canvas id="game" width="480" height="720" aria-label="Sky Hopper playfield"></canvas>
+      <canvas id="game" width="480" height="720" aria-label="Doodle Hop playfield"></canvas>
       <div id="overlay" class="overlay">
-        <b id="message">SKY HOPPER</b>
-        <span id="detail">BOUNCE UP · DO NOT FALL</span>
-        <button id="startButton" type="button">START</button>
+        <div class="overlay-scribble" aria-hidden="true">✦</div>
+        <b id="message">DOODLE HOP!</b>
+        <span id="detail">BOUNCE UP · COLLECT LITTLE STARS</span>
+        <button id="startButton" type="button">START JUMPING</button>
       </div>
     </div>
+
     <section class="controls" aria-label="Movement controls">
-      <button id="leftButton" type="button">← LEFT</button>
-      <button id="rightButton" type="button">RIGHT →</button>
+      <button id="leftButton" type="button">← HOLD LEFT</button>
+      <button id="rightButton" type="button">HOLD RIGHT →</button>
     </section>
-    <section class="legend">
-      <span><i class="normal"></i>NORMAL</span>
-      <span><i class="moving"></i>MOVING</span>
-      <span><i class="breaking"></i>BREAKING</span>
-      <span><i class="spring"></i>SPRING</span>
-    </section>
+    <div class="tips" aria-label="How to play">
+      <span>HOLD TO STEER</span>
+      <span>WRAP AROUND THE EDGES</span>
+      <span>FIND THE NEXT PLATFORM</span>
+    </div>
     <footer>ARROWS / A D MOVE · TOUCH EITHER SIDE · P PAUSE</footer>
   </main>
-  <script src="game.js?v=hopper-2"></script>
   <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
+  <script src="game.js?v=doodle-hop-1"></script>
 </body>
 </html>
