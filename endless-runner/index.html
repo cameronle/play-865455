@@ -3,44 +3,23 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-  <meta name="theme-color" content="#070b12">
-  <script src="/theme.js?v=runner-2"></script><script src="/clear-game-data.js?v=clear-1"></script>
-  <title>Endless Runner</title>
+  <meta name="theme-color" content="#fff7e7">
+  <script src="/theme.js?v=desk-dash-1"></script><script src="/clear-game-data.js?v=clear-1"></script>
+  <title>Desk Dash</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=desk-dash-1">
   <link rel="stylesheet" href="/theme.css?v=clear-1">
-  <link rel="stylesheet" href="style.css?v=runner-2">
+  <link rel="stylesheet" href="style.css?v=desk-dash-1">
 </head>
 <body>
   <main class="page">
-    <header class="topbar">
-      <a href="/">← PLAY</a>
-      <h1>ENDLESS RUNNER</h1>
-      <button id="pauseButton" type="button">PAUSE</button>
-    </header>
-    <section class="hud">
-      <div><span>DISTANCE</span><b id="distance">00000m</b></div>
-      <div><span>BEST</span><b id="best">00000m</b></div>
-      <div><span>SPEED</span><b id="speed">1.00×</b></div>
-    </section>
-    <div class="screen">
-      <canvas id="game" width="800" height="450" aria-label="Endless Runner playfield"></canvas>
-      <div id="overlay" class="overlay">
-        <b id="message">ENDLESS RUNNER</b>
-        <span id="detail">JUMP · CLEAR THE GAPS · KEEP MOVING</span>
-        <button id="startButton" type="button">START RUN</button>
-      </div>
-    </div>
-    <section class="controls" aria-label="Runner controls">
-      <button id="dropButton" type="button">▼ FAST FALL</button>
-      <button id="jumpButton" type="button">▲ HOLD TO JUMP</button>
-    </section>
-    <section class="legend">
-      <span>SHORT TAP: LOW JUMP</span>
-      <span>HOLD: HIGH JUMP</span>
-      <span>DOWN: FAST FALL</span>
-    </section>
-    <footer>SPACE / TAP JUMP · DOWN / SWIPE DOWN FAST FALL · P PAUSE</footer>
+    <header class="topbar"><a href="/">← PLAY</a><div class="brand"><h1>DESK DASH</h1><span>RUN THE DESK · CATCH THE STICKERS</span></div><button id="pauseButton" type="button">PAUSE</button></header>
+    <section class="hud"><div><span>DESK METRES</span><b id="distance">00000m</b></div><div><span>BEST</span><b id="best">00000m</b></div><div><span>PACE</span><b id="speed">1.00×</b></div></section>
+    <div class="screen"><canvas id="game" width="800" height="450" aria-label="Desk Dash playfield"></canvas><div id="overlay" class="overlay"><div class="paper-star" aria-hidden="true">★</div><b id="message">DESK DASH</b><span id="detail">JUMP THE PENCILS · GRAB THE STICKERS</span><button id="startButton" type="button">START DASH</button></div></div>
+    <section class="controls" aria-label="Runner controls"><button id="dropButton" type="button">▼ FAST FALL</button><button id="jumpButton" type="button">▲ HOLD TO JUMP</button></section>
+    <section class="legend"><span>SHORT TAP: LOW HOP</span><span>HOLD: HIGH HOP</span><span>DOWN: DROP FAST</span></section>
+    <footer>SPACE / TAP HOP · DOWN / SWIPE DOWN · P PAUSE</footer>
   </main>
-  <script src="game.js?v=runner-2"></script>
+  <script src="game.js?v=desk-dash-1"></script>
   <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
 </body>
 </html>

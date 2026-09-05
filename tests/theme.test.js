@@ -83,7 +83,7 @@ test('New Game controls use each game\'s theme accent in both modes',()=>{
   for(const [route,colors] of Object.entries({
     breakout:{light:'#ef8b70',hover:'#e77966'},
     maze:{light:'#0288d1',hover:'#0277bd'},
-    'space-invaders':{light:'#0288d1',hover:'#0277bd'},
+    'space-invaders':{light:'#e98575',hover:'#d97467'},
   })){
     const css=fs.readFileSync(`${route}/style.css`,'utf8');
     assert.match(css,new RegExp(`\\[data-theme="light"\\] \\.new\\s*\\{[\\s\\S]*background:\\s*${colors.light}`),`${route} light action color`);

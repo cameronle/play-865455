@@ -3,41 +3,23 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-  <meta name="theme-color" content="#070b12">
-  <script src="/theme.js?v=cave-2"></script><script src="/clear-game-data.js?v=clear-1"></script>
-  <title>Helicopter Cave</title>
+  <meta name="theme-color" content="#132633">
+  <script src="/theme.js?v=firefly-cave-1"></script><script src="/clear-game-data.js?v=clear-1"></script>
+  <title>Firefly Cave</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=firefly-cave-1">
   <link rel="stylesheet" href="/theme.css?v=clear-1">
-  <link rel="stylesheet" href="style.css?v=cave-2">
+  <link rel="stylesheet" href="style.css?v=firefly-cave-1">
 </head>
 <body>
   <main class="page">
-    <header class="topbar">
-      <a href="/">← PLAY</a>
-      <h1>HELICOPTER CAVE</h1>
-      <button id="pauseButton" type="button">PAUSE</button>
-    </header>
-    <section class="hud">
-      <div><span>DISTANCE</span><b id="distance">00000m</b></div>
-      <div><span>BEST</span><b id="best">00000m</b></div>
-      <div><span>SPEED</span><b id="speed">1.00×</b></div>
-    </section>
-    <div class="screen">
-      <canvas id="game" width="720" height="480" aria-label="Helicopter Cave playfield"></canvas>
-      <div id="overlay" class="overlay">
-        <b id="message">HELICOPTER CAVE</b>
-        <span id="detail">HOLD TO RISE · RELEASE TO FALL</span>
-        <button id="startButton" type="button">START</button>
-      </div>
-    </div>
+    <header class="topbar"><a href="/">← PLAY</a><div class="brand"><h1>FIREFLY CAVE</h1><span>HOLD THE LIGHT · FIND THE WAY</span></div><button id="pauseButton" type="button">PAUSE</button></header>
+    <section class="hud"><div><span>CAVE METRES</span><b id="distance">00000m</b></div><div><span>BEST</span><b id="best">00000m</b></div><div><span>DEPTH</span><b id="speed">1.00×</b></div></section>
+    <div class="screen"><canvas id="game" width="720" height="480" aria-label="Firefly Cave playfield"></canvas><div id="overlay" class="overlay"><div class="glow-mark" aria-hidden="true">✦</div><b id="message">FIREFLY CAVE</b><span id="detail">HOLD TO RISE · RELEASE TO DESCEND</span><button id="startButton" type="button">ENTER CAVE</button></div></div>
     <button id="thrustButton" class="thrust" type="button">▲ HOLD TO RISE</button>
-    <section class="instructions">
-      <span>HOLD: LIFT</span>
-      <span>RELEASE: DESCEND</span>
-      <span>AVOID ROCK AND GATES</span>
-    </section>
-    <footer>SPACE / MOUSE / TOUCH · P PAUSE</footer>
+    <section class="instructions"><span>HOLD: RISE</span><span>RELEASE: FALL</span><span>AVOID CRYSTALS</span></section>
+    <footer>SPACE / TOUCH / MOUSE · P PAUSE</footer>
   </main>
-  <script src="game.js?v=cave-2"></script>
+  <script src="game.js?v=firefly-cave-1"></script>
   <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
 </body>
 </html>

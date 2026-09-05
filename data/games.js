@@ -116,16 +116,16 @@ module.exports = [
     "order": 7,
     "category": "arcade",
     "name": {
-      "zh": "太空侵略者",
-      "en": "ALIEN FORMATION"
+      "zh": "月面花园防守",
+      "en": "MOON GARDEN DEFENSE"
     },
     "description": {
-      "zh": "迎击步步逼近的外星阵列，守卫防线。",
-      "en": "Defend the line against descending aliens."
+      "zh": "守住月面温室，让自动花粉炮击退一波波太空害虫。",
+      "en": "Protect the moon greenhouse as the flower cannon clears waves of space pests."
     },
     "readme": {
-      "title": "Alien Formation",
-      "description": "自维护的经典固定阵型射击游戏，支持自动发射、左右移动、波次、受击保护、手机触控和本地最高分。"
+      "title": "Moon Garden Defense",
+      "description": "自维护的卡通涂鸦自动射击游戏，加入月面温室、月光植物、太空害虫、波次、生命和移动端左右瞄准。"
     }
   },
   {
@@ -314,16 +314,16 @@ module.exports = [
     "order": 18,
     "category": "arcade",
     "name": {
-      "zh": "直升机洞穴",
-      "en": "HELICOPTER CAVE"
+      "zh": "萤火洞穴",
+      "en": "FIREFLY CAVE"
     },
     "description": {
-      "zh": "按住上升松开下落，穿行狭窄起伏的地下洞穴。",
-      "en": "Hold to rise, release to fall, and survive the cave."
+      "zh": "按住点亮萤火虫，穿过水晶洞穴和狭窄通道。",
+      "en": "Hold the firefly up through crystals, vines, and narrowing cave walls."
     },
     "readme": {
-      "title": "Helicopter Cave",
-      "description": "自维护的单键洞穴飞行游戏，支持程序生成的可通行地形、障碍、速度递增、键盘与触控操作和本地最远距离。"
+      "title": "Firefly Cave",
+      "description": "自维护的卡通涂鸦单键洞穴飞行游戏，加入发光萤火虫、水晶障碍、程序生成洞壁、速度递增和移动端长按操作。"
     }
   },
   {
@@ -332,16 +332,16 @@ module.exports = [
     "order": 19,
     "category": "arcade",
     "name": {
-      "zh": "无尽奔跑",
-      "en": "ENDLESS RUNNER"
+      "zh": "桌面冲刺",
+      "en": "DESK DASH"
     },
     "description": {
-      "zh": "跨越尖刺与坑洞、收集金币，跟上加速节奏。",
-      "en": "Jump, collect, and keep pace with the accelerating road."
+      "zh": "跨过铅笔和橡皮、收集贴纸，在桌面上一路冲刺。",
+      "en": "Hop over pencils, dodge erasers, and catch stickers across the desk."
     },
     "readme": {
-      "title": "Endless Runner",
-      "description": "自维护的横版跑酷游戏，支持高低跳、快速落地、按速度生成的公平障碍、坑洞、金币、触控操作和本地纪录。"
+      "title": "Desk Dash",
+      "description": "自维护的卡通涂鸦桌面跑酷，加入文具障碍、贴纸收集、坑洞、高低跳、快速落地和移动端长按操作。"
     }
   },
   {

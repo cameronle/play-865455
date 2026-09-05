@@ -3,44 +3,21 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-  <meta name="theme-color" content="#070b12">
-  <script src="/theme.js?v=invaders-2"></script><script src="/clear-game-data.js?v=clear-1"></script>
-  <title>Alien Formation</title>
+  <meta name="theme-color" content="#17243a">
+  <script src="/theme.js?v=moon-garden-1"></script><script src="/clear-game-data.js?v=clear-1"></script>
+  <title>Moon Garden Defense</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=moon-garden-1">
   <link rel="stylesheet" href="/theme.css?v=clear-1">
-  <link rel="stylesheet" href="style.css?v=invaders-3">
+  <link rel="stylesheet" href="style.css?v=moon-garden-1">
 </head>
 <body>
   <main class="page">
-    <header class="topbar">
-      <a href="/">← PLAY</a>
-      <h1>ALIEN FORMATION</h1>
-      <button id="pause" type="button">PAUSE</button>
-    </header>
-    <section class="layout">
-      <div class="frame">
-        <canvas id="game" width="480" height="620" aria-label="Alien Formation playfield"></canvas>
-        <div id="overlay" class="overlay">
-          <b id="title">ALIEN FORMATION</b>
-          <span id="hint">MOVE TO AIM · AUTO-FIRE ENABLED</span>
-          <button id="start" type="button">START</button>
-        </div>
-      </div>
-      <aside>
-        <div class="stat"><span>SCORE</span><b id="score">000000</b></div>
-        <div class="stat"><span>HIGH SCORE</span><b id="high">000000</b></div>
-        <div class="stat"><span>LEVEL</span><b id="level">01</b></div>
-        <div class="stat"><span>LIVES</span><b id="lives">♥♥♥</b></div>
-        <button id="new" class="new" type="button">NEW GAME</button>
-        <p>← → MOVE<br>AUTO-FIRE<br>P PAUSE</p>
-      </aside>
-    </section>
-    <div class="mobile-controls" aria-label="Touch controls">
-      <button id="leftButton" type="button">← LEFT</button>
-      <button id="rightButton" type="button">RIGHT →</button>
-    </div>
-    <footer>MOVE TO AIM · AUTO-FIRE ENABLED</footer>
+    <header class="topbar"><a href="/">← PLAY</a><div class="brand"><h1>MOON GARDEN DEFENSE</h1><span>PROTECT THE NIGHT BLOOMS</span></div><button id="pause" type="button">PAUSE</button></header>
+    <section class="layout"><div class="frame"><canvas id="game" width="480" height="620" aria-label="Moon Garden Defense playfield"></canvas><div id="overlay" class="overlay"><div class="moon-mark" aria-hidden="true">☾</div><b id="title">MOON GARDEN DEFENSE</b><span id="hint">MOVE TO AIM · FLOWER CANNON AUTO-FIRES</span><button id="start" type="button">OPEN THE DOME</button></div></div><aside><div class="stat"><span>SEEDS SAVED</span><b id="score">000000</b></div><div class="stat"><span>BEST HARVEST</span><b id="high">000000</b></div><div class="stat"><span>WAVE</span><b id="level">01</b></div><div class="stat"><span>HEARTS</span><b id="lives">♥♥♥</b></div><button id="new" class="new" type="button">NEW NIGHT</button><p>← → AIM<br>AUTO-FIRE<br>P PAUSE</p></aside></section>
+    <div class="mobile-controls" aria-label="Touch controls"><button id="leftButton" type="button">← AIM LEFT</button><button id="rightButton" type="button">AIM RIGHT →</button></div>
+    <footer>MOVE TO AIM · THE FLOWER CANNON FIRES ON ITS OWN</footer>
   </main>
-  <script src="game.js?v=invaders-2"></script>
+  <script src="game.js?v=moon-garden-1"></script>
   <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
 </body>
 </html>

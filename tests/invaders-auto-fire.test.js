@@ -19,5 +19,5 @@ test('manual fire controls and instructions are removed', () => {
 test('start and new-game actions begin play without requiring a shot input', () => {
   assert.match(source, /\$\('start'\)\.onclick=start/);
   assert.match(source, /\$\('new'\)\.onclick=start/);
-  assert.match(html, />START</);
+  assert.match(html, />(?:START|OPEN THE DOME)</);
 });
