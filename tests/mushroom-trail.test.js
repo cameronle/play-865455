@@ -31,7 +31,8 @@ test('Mushroom Trail includes collision, stomp, power-up, lives, checkpoint, and
   const js = read('mushroom-trail/game.js');
   for (const marker of ['function resolvePlayer', 'function stompOrHurt', 'function spawnPowerup', 'function reachCheckpoint', 'function levelClear', 'localStorage.setItem']) assert.match(js, new RegExp(marker.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   assert.match(js, /player\.powered/);
-  assert.match(js, /lives--/);
+  assert.match(js, /lives--;/);
+  assert.match(js, /lives--;setPlayerSpawn\(\);player\.inv/);
   assert.match(js, /state\s*=\s*'over'/);
 });
 
