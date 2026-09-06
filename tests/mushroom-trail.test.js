@@ -24,7 +24,7 @@ test('Mushroom Trail ships multiple handcrafted levels and classic platformer va
   assert.match(js, /id:\s*'1-1'/);
   assert.match(js, /id:\s*'1-2'/);
   assert.match(js, /id:\s*'1-3'/);
-  for (const marker of ['question', 'brick', 'moving', 'walker', 'hopper', 'checkpoint', 'goal']) assert.match(js, new RegExp(marker));
+  for (const marker of ['question', 'brick', 'pipe', 'moving', 'walker', 'hopper', 'checkpoint', 'goal']) assert.match(js, new RegExp(marker));
 });
 
 test('Mushroom Trail includes collision, stomp, power-up, lives, checkpoint, and best-score rules', () => {
