@@ -36,6 +36,16 @@ test('Melon Lab exposes pointer, keyboard, pause, and state-aware actions', () =
   assert.match(js, /themechange/);
 });
 
+test('Melon Lab keeps the aim arrow aligned with the actual drop center at pool edges', () => {
+  const js = read('melon-lab/game.js');
+  assert.match(js, /function aimBounds\(level=nextLevel\)/);
+  assert.match(js, /function clampAimX\(value,level=nextLevel\)/);
+  assert.match(js, /const type=FRUITS\[level\],safeX=clampAimX\(x,level\);aimX=safeX/);
+  assert.match(js, /return clampAimX\(BIN\.x\+/);
+  assert.match(js, /aimX=clampAimX\(aimX-34\)/);
+  assert.match(js, /aimX=clampAimX\(aimX\+34\)/);
+});
+
 test('launcher, README, and clear-data routing include Melon Lab', () => {
   assert.match(read('index.html'), /\/melon-lab\//);
   assert.match(read('README.md'), /\.\/melon-lab\//);
