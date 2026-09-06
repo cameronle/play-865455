@@ -46,6 +46,15 @@ test('Melon Lab keeps the aim arrow aligned with the actual drop center at pool 
   assert.match(js, /aimX=clampAimX\(aimX\+34\)/);
 });
 
+test('Melon Lab stir uses a visible rolling vortex and tangent fruit impulse', () => {
+  const js = read('melon-lab/game.js');
+  assert.match(js, /STIR_DURATION/);
+  assert.match(js, /f\.stirTime=STIR_DURATION/);
+  assert.match(js, /f\.stirDirection/);
+  assert.match(js, /function drawStirEffect\(p\)/);
+  assert.match(js, /drawStirEffect\(p\)/);
+});
+
 test('launcher, README, and clear-data routing include Melon Lab', () => {
   assert.match(read('index.html'), /\/melon-lab\//);
   assert.match(read('README.md'), /\.\/melon-lab\//);
