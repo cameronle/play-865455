@@ -32,6 +32,7 @@
 - [Paint Parade](./color-bounce/) — 自维护的卡通涂鸦颜色匹配街机，加入变色龙、颜料圈、颜色切换、飞溅粒子、暂停和移动端跳跃操作。
 - [Birdie Post](./flappy/) — 自维护的卡通涂鸦飞行街机，支持单键扑翼、云朵障碍、暂停、移动端触控和本地最高分。
 - [Mushroom Trail](./mushroom-trail/) — 自维护的原创经典横版平台跳跃冒险，包含三段手工关卡、金币、问号砖块、绿色管道、弹跳虫、移动平台、强化道具、检查点、终点旗帜和移动端三键操作。
+- [Melon Lab](./melon-lab/) — 自维护的原创半流体水果合成街机，支持碰撞合并、半流体/平稳模式、搅动能量、危险线、合成路线、本地最高分和移动端触控。
 <!-- END GENERATED: game-list -->
 
 ## 本地开发
@@ -84,6 +85,7 @@ npm test
 /color-bounce/
 /flappy/
 /mushroom-trail/
+/melon-lab/
 ```
 <!-- END GENERATED: deploy-paths -->
 

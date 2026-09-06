@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#fff8ec">
+  <script src="/theme.js?v=melon-lab-1"></script>
+  <script src="/clear-game-data.js?v=clear-1"></script>
+  <title>Melon Lab</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=melon-lab-1">
+  <link rel="stylesheet" href="/theme.css?v=clear-1">
+  <link rel="stylesheet" href="style.css?v=melon-lab-1">
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <a class="back-link" href="/" aria-label="Back to games">← PLAY</a>
+      <div class="brand">
+        <h1>MELON LAB</h1>
+        <span>SEMI-FLUID FRUIT SYNTHESIS</span>
+      </div>
+      <button id="pauseButton" type="button">PAUSE</button>
+    </header>
+
+    <section class="hud" aria-label="Lab status">
+      <div class="stat stat-score"><span>SCORE</span><b id="score">000000</b></div>
+      <div class="stat stat-best"><span>BEST</span><b id="best">000000</b></div>
+      <div class="stat stat-energy"><span>ENERGY</span><b id="energy">100/100</b></div>
+      <div class="stat stat-fruit"><span>FRUIT</span><b id="fruitCount">00</b></div>
+    </section>
+
+    <section class="workbench">
+      <div class="arena">
+        <canvas id="game" width="720" height="720" aria-label="Melon Lab fruit synthesis playfield"></canvas>
+        <div id="overlay" class="overlay">
+          <div class="overlay-mark" aria-hidden="true">✦</div>
+          <b id="message">MELON LAB</b>
+          <span id="detail">DROP · COLLIDE · MERGE · DISCOVER</span>
+          <button id="startButton" type="button">START EXPERIMENT</button>
+        </div>
+      </div>
+
+      <aside class="lab-panel" aria-label="Lab controls">
+        <div class="mode-card">
+          <span class="eyebrow">PHYSICS MODE</span>
+          <button id="modeButton" class="mode-button" type="button">SEMI-FLUID <span>ON</span></button>
+          <p>Fruits slide, settle and push each other inside the pool.</p>
+        </div>
+        <div class="next-card">
+          <span class="eyebrow">NEXT SAMPLE</span>
+          <div class="next-fruit"><i id="nextDot" aria-hidden="true"></i><b id="nextFruit">KIWI</b></div>
+          <small>TAP THE POOL TO DROP</small>
+        </div>
+        <button id="stirButton" class="stir-button" type="button"><span>STIR POOL</span><b>30 ⚡</b></button>
+        <div class="lab-readout">
+          <span class="eyebrow">LAB NOTE</span>
+          <p>Match two identical samples to synthesize the next fruit. Keep the stack below the pink line.</p>
+        </div>
+      </aside>
+    </section>
+
+    <section class="mobile-actions" aria-label="Mobile game actions">
+      <button id="dropButton" type="button">DROP FRUIT</button>
+      <button id="mobileStirButton" type="button">STIR · 30 ⚡</button>
+    </section>
+
+    <section class="synthesis" aria-label="Synthesis route">
+      <div class="synthesis-head"><span>MERGE ROUTE</span><small>KIWI → LEMON → CHERRY → PEACH → ORANGE → MELON</small></div>
+      <div class="route" id="route"></div>
+    </section>
+    <footer>TAP TO AIM · SPACE / ENTER DROP · P PAUSE · KEEP THE FRUIT BELOW THE LINE</footer>
+  </main>
+  <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
+  <script src="game.js?v=melon-lab-1"></script>
+</body>
+</html>

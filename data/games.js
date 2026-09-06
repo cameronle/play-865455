@@ -487,5 +487,23 @@ module.exports = [
       "title": "Mushroom Trail",
       "description": "自维护的原创经典横版平台跳跃冒险，包含三段手工关卡、金币、问号砖块、绿色管道、弹跳虫、移动平台、强化道具、检查点、终点旗帜和移动端三键操作。"
     }
+  },
+  {
+    "id": "melon-lab",
+    "path": "melon-lab",
+    "order": 28,
+    "category": "arcade",
+    "name": {
+      "zh": "瓜体实验室",
+      "en": "MELON LAB"
+    },
+    "description": {
+      "zh": "把水果丢进半流体果池，碰撞合成更大的样本，守住危险线。",
+      "en": "Drop fruit into a semi-fluid pool, merge matching samples, and beat the danger line."
+    },
+    "readme": {
+      "title": "Melon Lab",
+      "description": "自维护的原创半流体水果合成街机，支持碰撞合并、半流体/平稳模式、搅动能量、危险线、合成路线、本地最高分和移动端触控。"
+    }
   }
 ];
