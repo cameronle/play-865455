@@ -22,6 +22,7 @@
     shooter: ['sky-patrol-best'],
     simon: ['signalEchoBest'],
     'sky-hopper': ['doodleHopBest', 'doodleHopBestStars', 'skyHopperBest'],
+    'mushroom-trail': ['mushroomTrailBest'],
     'sliding-puzzle': ['sliding-puzzle-best-v1'],
     snake: ['classic-snake-high-score'],
     sokoban: ['sokoban'],

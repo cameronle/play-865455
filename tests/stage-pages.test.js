@@ -4,6 +4,7 @@ const childProcess = require('node:child_process');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
+const catalog = require('../data/games.js');
 
 const ROOT = path.resolve(__dirname, '..');
 
@@ -62,7 +63,7 @@ test('stage-pages creates a complete public tree without development files', () 
 
     const games = fs.readdirSync(destination, { withFileTypes: true })
       .filter(entry => entry.isDirectory() && fs.existsSync(path.join(destination, entry.name, 'index.html')));
-    assert.equal(games.length, 26);
+    assert.equal(games.length, catalog.length);
 
     for (const name of ['.git', '.github', 'tests', 'scripts', 'package.json', 'README.md', 'data']) {
       assert.equal(fs.existsSync(path.join(destination, name)), false, `${name} is not public content`);

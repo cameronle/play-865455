@@ -9,7 +9,7 @@
       htmlLang: 'zh-CN',
       title: 'PLAY — 小游戏集合',
       kicker: '无需登录 · 纯粹单机 · 随开随玩',
-      stats: '26 款游戏',
+      stats: '27 款游戏',
       langBtn: 'EN',
       langBtnLabel: '切换为英文 (Switch to English)',
       footer: '更多游戏持续更新中 · 为 Web 纯粹体验而生',
@@ -47,14 +47,15 @@
         "flow": {"name":"彩带路线","desc":"把同色彩带从纽扣连到纽扣，铺满整张纸页。"},
         "sliding-puzzle": {"name":"数字华容道","desc":"滑动方块归位，将乱序数字按顺序排列整齐。"},
         "color-bounce": {"name":"颜料巡游","desc":"带着小变色龙穿过同色颜料圈，收集飞溅一路向上。"},
-        "flappy": {"name":"小鸟邮差","desc":"操控背着邮包的小鸟穿过云朵，安全送出每一封信。"}
+        "flappy": {"name":"小鸟邮差","desc":"操控背着邮包的小鸟穿过云朵，安全送出每一封信。"},
+        "mushroom-trail": {"name":"蘑菇勇者","desc":"奔跑、跳跃、踩扁弹跳虫，穿过三段原创平台关卡。"}
       }
     },
     en: {
       htmlLang: 'en',
       title: 'PLAY — Arcade',
       kicker: 'SMALL GAMES / NO ACCOUNTS',
-      stats: '26 GAMES',
+      stats: '27 GAMES',
       langBtn: '中文',
       langBtnLabel: 'Switch to Chinese (切换为中文)',
       footer: 'MORE GAMES COMING SOON · BUILT FOR THE WEB',
@@ -92,7 +93,8 @@
         "flow": {"name":"RIBBON ROUTE","desc":"Weave matching ribbons between buttons and cover the whole page."},
         "sliding-puzzle": {"name":"15-PUZZLE","desc":"Slide tiles into the empty space. Put numbers in order."},
         "color-bounce": {"name":"PAINT PARADE","desc":"Guide a tiny chameleon through matching paint hoops and collect splashes."},
-        "flappy": {"name":"BIRDIE POST","desc":"Guide a tiny mail bird through cloud gaps and deliver every letter."}
+        "flappy": {"name":"BIRDIE POST","desc":"Guide a tiny mail bird through cloud gaps and deliver every letter."},
+        "mushroom-trail": {"name":"MUSHROOM TRAIL","desc":"Run, jump, stomp bugs, and cross three original platforming worlds."}
       }
     }
   };

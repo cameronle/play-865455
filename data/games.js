@@ -469,5 +469,23 @@ module.exports = [
       "title": "Birdie Post",
       "description": "自维护的卡通涂鸦飞行街机，支持单键扑翼、云朵障碍、暂停、移动端触控和本地最高分。"
     }
+  },
+  {
+    "id": "mushroom-trail",
+    "path": "mushroom-trail",
+    "order": 27,
+    "category": "arcade",
+    "name": {
+      "zh": "蘑菇勇者",
+      "en": "MUSHROOM TRAIL"
+    },
+    "description": {
+      "zh": "奔跑、跳跃、踩扁弹跳虫，穿过三段原创平台关卡。",
+      "en": "Run, jump, stomp bugs, and cross three original platforming worlds."
+    },
+    "readme": {
+      "title": "Mushroom Trail",
+      "description": "自维护的原创马里奥风格平台跳跃冒险，包含三段手工关卡、金币、问号砖块、弹跳虫、移动平台、强化道具、检查点、终点旗帜和移动端三键操作。"
+    }
   }
 ];

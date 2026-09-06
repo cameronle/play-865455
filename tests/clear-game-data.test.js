@@ -2,6 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
+const catalog = require('../data/games.js');
 
 const ROOT = process.cwd();
 const source = fs.readFileSync('clear-game-data.js', 'utf8');
@@ -48,7 +49,7 @@ function boot(route, initialKeys) {
 }
 
 test('every game page loads the shared clear-data utility', () => {
-  assert.equal(games.length, 26);
+  assert.equal(games.length, catalog.length);
   for (const game of games) {
     const html = fs.readFileSync(`${game}/index.html`, 'utf8');
     assert.match(html, /src="\/clear-game-data\.js\?v=clear-1"/, `${game} clear-data script`);
