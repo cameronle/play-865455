@@ -55,6 +55,18 @@ test('Melon Lab stir uses a visible rolling vortex and tangent fruit impulse', (
   assert.match(js, /drawStirEffect\(p\)/);
 });
 
+test('Melon Lab clears two top-tier watermelons with a bonus', () => {
+  const js = read('melon-lab/game.js');
+  const html = read('melon-lab/index.html');
+  assert.match(js, /id:'watermelon',label:'WATERMELON'/);
+  assert.match(js, /TOP_CLEAR_BONUS=3200/);
+  assert.match(js, /if\(a\.level===FRUITS\.length-1\)/);
+  assert.match(js, /clearPulse=TOP_CLEAR_DURATION/);
+  assert.match(js, /score\+=TOP_CLEAR_BONUS/);
+  assert.match(js, /function drawClearEffect\(p\)/);
+  assert.match(html, /MELON → WATERMELON/);
+});
+
 test('launcher, README, and clear-data routing include Melon Lab', () => {
   assert.match(read('index.html'), /\/melon-lab\//);
   assert.match(read('README.md'), /\.\/melon-lab\//);
