@@ -6,9 +6,7 @@ const catalog = require('../data/games.js');
 
 const ROOT = process.cwd();
 const source = fs.readFileSync('clear-game-data.js', 'utf8');
-const games = fs.readdirSync(ROOT, {withFileTypes: true})
-  .filter(entry => entry.isDirectory() && fs.existsSync(`${entry.name}/index.html`))
-  .map(entry => entry.name);
+const games = catalog.map(game => game.path);
 
 function boot(route, initialKeys) {
   const storage = {};
