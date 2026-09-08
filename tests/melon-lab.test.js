@@ -25,7 +25,10 @@ test('Melon Lab has multiple fruit tiers, danger line, collisions, merges, and s
     assert.match(js, new RegExp(marker.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   }
   const rules = require('../melon-lab/rules.js');
-  assert.deepEqual(rules.FRUITS.map(fruit => fruit.id), ['kiwi', 'lemon', 'cherry', 'peach', 'orange', 'melon', 'watermelon']);
+  assert.deepEqual(rules.FRUITS.map(fruit => fruit.id), [
+    'kiwi', 'lemon', 'cherry', 'peach', 'orange', 'pear', 'pineapple',
+    'melon', 'dragonfruit', 'papaya', 'watermelon'
+  ]);
 });
 
 test('Melon Lab exposes pointer, keyboard, pause, and state-aware actions', () => {
@@ -61,26 +64,48 @@ test('Melon Lab clears two top-tier watermelons with a bonus', () => {
   const html = read('melon-lab/index.html');
   const rules = require('../melon-lab/rules.js');
   assert.equal(rules.FRUITS.at(-1).id, 'watermelon');
-  assert.equal(rules.topTierClearBonus(), 3200);
+  assert.equal(rules.topTierClearBonus(), rules.FRUITS.at(-1).score * rules.DIFFICULTY_PROFILE.topTierBonusMultiplier);
   assert.match(js, /if\(a\.level===FRUITS\.length-1\)/);
   assert.match(js, /clearPulse=TOP_CLEAR_DURATION/);
   assert.match(js, /score\+=RULES\.topTierClearBonus\(\)/);
   assert.match(js, /function drawClearEffect\(p\)/);
-  assert.match(html, /MELON → WATERMELON/);
+  assert.match(html, /MELON → DRAGONFRUIT → PAPAYA → WATERMELON/);
 });
 
-test('Melon Lab exports the seven current fruit tiers and stable IDs', () => {
+test('Melon Lab exports eleven fruit tiers with stable IDs and increasing synthesis values', () => {
   const rules = require('../melon-lab/rules.js');
-  assert.equal(rules.FRUITS.length, 7);
+  assert.equal(rules.FRUITS.length, 11);
   assert.deepEqual(rules.FRUITS.map(fruit => [fruit.id, fruit.label]), [
     ['kiwi', 'KIWI'],
     ['lemon', 'LEMON'],
     ['cherry', 'CHERRY'],
     ['peach', 'PEACH'],
     ['orange', 'ORANGE'],
+    ['pear', 'PEAR'],
+    ['pineapple', 'PINEAPPLE'],
     ['melon', 'MELON'],
+    ['dragonfruit', 'DRAGONFRUIT'],
+    ['papaya', 'PAPAYA'],
     ['watermelon', 'WATERMELON']
   ]);
+  assert.equal(new Set(rules.FRUITS.map(fruit => fruit.id)).size, rules.FRUITS.length);
+  assert.ok(rules.FRUITS.every(fruit => ['shape', 'color', 'dark', 'light', 'r', 'score'].every(field => field in fruit)));
+  assert.ok(rules.FRUITS.every(fruit => typeof fruit.shape === 'string' && fruit.shape.length > 0));
+  assert.ok(rules.FRUITS.every((fruit, index) => index === 0 || fruit.r > rules.FRUITS[index - 1].r));
+  assert.ok(rules.FRUITS.every((fruit, index) => index === 0 || fruit.score > rules.FRUITS[index - 1].score));
+  assert.equal(rules.FRUITS.at(-1).id, 'watermelon');
+});
+
+test('Melon Lab displays the complete route and has distinct renderers for new fruit silhouettes', () => {
+  const html = read('melon-lab/index.html');
+  const js = read('melon-lab/game.js');
+  for (const label of ['KIWI', 'LEMON', 'CHERRY', 'PEACH', 'ORANGE', 'PEAR', 'PINEAPPLE', 'MELON', 'DRAGONFRUIT', 'PAPAYA', 'WATERMELON']) {
+    assert.match(html, new RegExp(label));
+  }
+  assert.doesNotMatch(js, /FRUITS\.slice\(0,6\)/);
+  for (const id of ['pear', 'pineapple', 'dragonfruit', 'papaya']) {
+    assert.match(js, new RegExp(`t\\.id==='${id}'`));
+  }
 });
 
 test('Melon Lab chooses direct drop levels at deterministic random boundaries', () => {
@@ -102,7 +127,6 @@ test('Melon Lab danger line rises monotonically and stops at the profile cap', (
 test('Melon Lab derives the top-tier clear bonus from the top fruit score', () => {
   const rules = require('../melon-lab/rules.js');
   assert.equal(rules.topTierClearBonus(), rules.FRUITS.at(-1).score * rules.DIFFICULTY_PROFILE.topTierBonusMultiplier);
-  assert.equal(rules.topTierClearBonus(), 3200);
 });
 
 test('launcher, README, and clear-data routing include Melon Lab', () => {

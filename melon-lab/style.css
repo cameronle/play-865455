@@ -76,8 +76,9 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .synthesis { width: min(100%, 820px); margin: 14px auto 0; padding: 11px 13px 12px; border: 2px solid var(--ink); border-radius: 14px 11px 16px 10px; background: var(--panel); box-shadow: 3px 4px 0 var(--shadow); }
 .synthesis-head { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; color: var(--muted); font-size: 8px; font-weight: 950; letter-spacing: .1em; }
 .synthesis-head small { text-align: right; font-size: 7px; letter-spacing: .05em; }
-.route { display: flex; align-items: center; justify-content: space-between; gap: 4px; margin-top: 10px; }
-.route-item { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; color: var(--muted); font-size: 7px; font-weight: 900; letter-spacing: .05em; }
+.route { display: flex; align-items: center; justify-content: flex-start; gap: 4px; margin-top: 10px; overflow-x: auto; overflow-y: hidden; padding: 0 2px 5px; scrollbar-width: thin; }
+.route-item { position: relative; display: flex; flex: 0 0 auto; flex-direction: column; align-items: center; gap: 4px; min-width: 52px; color: var(--muted); font-size: 7px; font-weight: 900; letter-spacing: .05em; }
+.route-item span { white-space: nowrap; }
 .route-item:not(:last-child)::after { content: "→"; position: absolute; top: 8px; left: calc(100% + 1px); color: var(--accent); font-size: 13px; }
 .route-fruit { width: 28px; height: 28px; display: block; border: 2px solid var(--ink); border-radius: 50%; background: #8dbd6b; box-shadow: inset 5px -4px 0 #6b9a55; }
 .route-item:nth-child(2) .route-fruit { background: #f5d267; box-shadow: inset 5px -4px 0 #d9a63f; }
@@ -85,6 +86,11 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .route-item:nth-child(4) .route-fruit { background: #ef9e89; box-shadow: inset 5px -4px 0 #c66e68; }
 .route-item:nth-child(5) .route-fruit { background: #f39b42; box-shadow: inset 5px -4px 0 #c86f2b; }
 .route-item:nth-child(6) .route-fruit { background: #76ba66; box-shadow: inset 5px -4px 0 #4b8e57; }
+.route-item:nth-child(7) .route-fruit { background: #e7bd55; box-shadow: inset 5px -4px 0 #ae7b30; }
+.route-item:nth-child(8) .route-fruit { background: #7abd6b; box-shadow: inset 5px -4px 0 #4d9157; }
+.route-item:nth-child(9) .route-fruit { background: #e56f8c; box-shadow: inset 5px -4px 0 #a94368; }
+.route-item:nth-child(10) .route-fruit { background: #f19d58; box-shadow: inset 5px -4px 0 #c56a3b; }
+.route-item:nth-child(11) .route-fruit { background: #5ca865; box-shadow: inset 5px -4px 0 #3c7d50; }
 footer { margin-top: 12px; color: var(--muted); font-size: 9px; font-weight: 800; letter-spacing: .08em; line-height: 1.5; text-align: center; }
 @media (max-width: 700px) {
   .page { padding: 10px 10px max(19px, env(safe-area-inset-bottom)); }
