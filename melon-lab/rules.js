@@ -5,6 +5,8 @@
 })(typeof globalThis==='object'?globalThis:this,function(){
   'use strict';
 
+  // Canonical levels never move. Profiles only change which levels are active
+  // and which canonical level follows a merge.
   const FRUITS=Object.freeze([
     Object.freeze({id:'kiwi',label:'KIWI',shape:'kiwi',color:'#82be68',dark:'#578f58',light:'#d3ec9b',r:22,score:10}),
     Object.freeze({id:'lemon',label:'LEMON',shape:'lemon',color:'#f3d15f',dark:'#d39b38',light:'#fff4a8',r:29,score:20}),
@@ -19,34 +21,95 @@
     Object.freeze({id:'watermelon',label:'WATERMELON',shape:'watermelon',color:'#5ca865',dark:'#3c7d50',light:'#e1f3a1',r:100,score:10240})
   ]);
 
-  const DIFFICULTY_PROFILE=Object.freeze({
-    directDropLevels:6,
-    directDropCumulative:Object.freeze([.2,.4,.6,.75,.9,1]),
+  const COMMON={
     dangerLineStart:250,
     dangerLineStep:-13,
     dangerStageDrops:24,
     dangerLineCap:224,
     dangerGracePeriod:1.4,
     topTierBonusMultiplier:5
-  });
+  };
 
-  function chooseDropLevel(randomValue){
+  const PROFILES=Object.freeze([
+    Object.freeze({
+      id:'classic7',
+      label:'CLASSIC 7',
+      unlockScore:0,
+      minDrops:0,
+      activeLevels:Object.freeze([0,1,2,3,4,7,10]),
+      directDropLevels:Object.freeze([0,1,2,3]),
+      directDropCumulative:Object.freeze([.24,.48,.72,1]),
+      mergeNext:Object.freeze([1,2,3,4,7,null,null,10,null,null,null]),
+      scoreByLevel:Object.freeze([10,20,40,80,160,null,null,320,null,null,640]),
+      newIds:Object.freeze([]),
+      ...COMMON
+    }),
+    Object.freeze({
+      id:'expanded9',
+      label:'EXPANDED 9',
+      unlockScore:720,
+      minDrops:12,
+      activeLevels:Object.freeze([0,1,2,3,4,5,6,7,10]),
+      directDropLevels:Object.freeze([0,1,2,3,4,5]),
+      directDropCumulative:Object.freeze([.2,.4,.6,.75,.9,1]),
+      mergeNext:Object.freeze([1,2,3,4,5,6,7,10,null,null,null]),
+      scoreByLevel:Object.freeze([10,20,40,80,160,320,640,1280,null,null,2560]),
+      newIds:Object.freeze(['pear','pineapple']),
+      ...COMMON
+    }),
+    Object.freeze({
+      id:'expanded11',
+      label:'EXPANDED 11',
+      unlockScore:2400,
+      minDrops:28,
+      activeLevels:Object.freeze([0,1,2,3,4,5,6,7,8,9,10]),
+      directDropLevels:Object.freeze([0,1,2,3,4,5]),
+      directDropCumulative:Object.freeze([.2,.4,.6,.75,.9,1]),
+      mergeNext:Object.freeze([1,2,3,4,5,6,7,8,9,10,null]),
+      scoreByLevel:Object.freeze([10,20,40,80,160,320,640,1280,2560,5120,10240]),
+      newIds:Object.freeze(['dragonfruit','papaya']),
+      ...COMMON
+    })
+  ]);
+
+  function chooseDropLevel(randomValue,profile=PROFILES[0]){
     const value=Number(randomValue);
-    if(Number.isNaN(value)||value<=0)return 0;
-    if(value>=1)return DIFFICULTY_PROFILE.directDropLevels-1;
-    return DIFFICULTY_PROFILE.directDropCumulative.findIndex(limit=>value<limit);
+    if(Number.isNaN(value)||value<=0)return profile.directDropLevels[0];
+    if(value>=1)return profile.directDropLevels[profile.directDropLevels.length-1];
+    const index=profile.directDropCumulative.findIndex(limit=>value<limit);
+    return profile.directDropLevels[index < 0 ? profile.directDropLevels.length-1 : index];
   }
 
-  function dangerLineY(dropCount,profile=DIFFICULTY_PROFILE){
+  function dangerLineY(dropCount,profile=PROFILES[2]){
     const count=Number(dropCount);
     const safeCount=Number.isFinite(count)?Math.max(0,count):0;
     const stage=Math.min(2,Math.floor(safeCount/profile.dangerStageDrops));
     return Math.max(profile.dangerLineCap,profile.dangerLineStart+stage*profile.dangerLineStep);
   }
 
-  function topTierClearBonus(){
-    return FRUITS[FRUITS.length-1].score*DIFFICULTY_PROFILE.topTierBonusMultiplier;
+  function profileForProgress(score,dropCount){
+    const safeScore=Number.isFinite(Number(score))?Number(score):0;
+    const safeDrops=Number.isFinite(Number(dropCount))?Number(dropCount):0;
+    for(let i=PROFILES.length-1;i>=0;i--){
+      const profile=PROFILES[i];
+      if(safeScore>=profile.unlockScore&&safeDrops>=profile.minDrops)return profile;
+    }
+    return PROFILES[0];
   }
 
-  return {FRUITS,DIFFICULTY_PROFILE,chooseDropLevel,dangerLineY,topTierClearBonus};
+  function nextMergeLevel(level,profile=PROFILES[0]){
+    const next=profile.mergeNext[Number(level)];
+    return Number.isInteger(next)?next:null;
+  }
+
+  function scoreForLevel(level,profile=PROFILES[2]){
+    const score=profile.scoreByLevel[Number(level)];
+    return Number.isFinite(score)?score:FRUITS[Number(level)]?.score||0;
+  }
+
+  function topTierClearBonus(profile=PROFILES[2]){
+    return scoreForLevel(FRUITS.length-1,profile)*profile.topTierBonusMultiplier;
+  }
+
+  return {FRUITS,PROFILES,chooseDropLevel,dangerLineY,profileForProgress,nextMergeLevel,scoreForLevel,topTierClearBonus};
 });

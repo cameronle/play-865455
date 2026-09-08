@@ -9,14 +9,14 @@ test('Melon Lab has a self-contained mobile fruit-synthesis entrypoint', () => {
   const css = read('melon-lab/style.css');
   assert.match(html, /viewport-fit=cover/);
   assert.match(html, /user-scalable=no/);
-  for (const id of ['game', 'overlay', 'startButton', 'pauseButton', 'stirButton', 'mobileStirButton', 'dropButton', 'modeButton', 'score', 'best', 'energy', 'fruitCount', 'nextFruit', 'route']) {
+  for (const id of ['game', 'overlay', 'unlockToast', 'startButton', 'pauseButton', 'stirButton', 'mobileStirButton', 'dropButton', 'modeButton', 'score', 'best', 'energy', 'fruitCount', 'nextFruit', 'route']) {
     assert.match(html, new RegExp(`id="${id}"`));
   }
   assert.match(html, /MELON LAB/);
   assert.match(html, /SEMI-FLUID/);
-  assert.match(html, /rules\.js\?v=melon-lab-3/);
-  assert.match(html, /game\.js\?v=melon-lab-7/);
-  assert.match(html, /style\.css\?v=melon-lab-3/);
+  assert.match(html, /rules\.js\?v=melon-lab-5/);
+  assert.match(html, /game\.js\?v=melon-lab-9/);
+  assert.match(html, /style\.css\?v=melon-lab-5/);
   assert.match(css, /touch-action:\s*none/);
   assert.match(css, /user-select:\s*none/);
   assert.doesNotMatch(html, /fonts\.googleapis\.com|unpkg\.com|jsdelivr\.net/);
@@ -24,7 +24,7 @@ test('Melon Lab has a self-contained mobile fruit-synthesis entrypoint', () => {
 
 test('Melon Lab has multiple fruit tiers, danger line, collisions, merges, and stir energy', () => {
   const js = read('melon-lab/game.js');
-  for (const marker of ['const RULES=MelonLabRules', 'const FRUITS=RULES.FRUITS', 'DANGER_Y', 'function mergeFruits', 'function stirPool', 'function spawnFruit', 'dangerTimer', 'energy', 'localStorage.setItem']) {
+  for (const marker of ['const RULES=MelonLabRules', 'const FRUITS=RULES.FRUITS', 'DANGER_Y', 'function mergeFruits', 'function stirPool', 'function spawnFruit', 'dangerTimer', 'energy', 'localStorage.setItem', 'currentProfileIndex', 'clearBonus']) {
     assert.match(js, new RegExp(marker.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   }
   const rules = require('../melon-lab/rules.js');
@@ -67,10 +67,11 @@ test('Melon Lab clears two top-tier watermelons with a bonus', () => {
   const html = read('melon-lab/index.html');
   const rules = require('../melon-lab/rules.js');
   assert.equal(rules.FRUITS.at(-1).id, 'watermelon');
-  assert.equal(rules.topTierClearBonus(), rules.FRUITS.at(-1).score * rules.DIFFICULTY_PROFILE.topTierBonusMultiplier);
+  assert.equal(rules.topTierClearBonus(rules.PROFILES[0]), rules.scoreForLevel(rules.FRUITS.length - 1, rules.PROFILES[0]) * rules.PROFILES[0].topTierBonusMultiplier);
   assert.match(js, /if\(a\.level===FRUITS\.length-1\)/);
   assert.match(js, /clearPulse=TOP_CLEAR_DURATION/);
-  assert.match(js, /score\+=RULES\.topTierClearBonus\(\)/);
+  assert.match(js, /clearBonus=RULES\.topTierClearBonus\(profile\)/);
+  assert.match(js, /score\+=clearBonus/);
   assert.match(js, /function drawClearEffect\(p\)/);
   assert.match(html, /MELON → DRAGONFRUIT → PAPAYA → WATERMELON/);
 });
@@ -99,6 +100,41 @@ test('Melon Lab exports eleven fruit tiers with stable IDs and increasing synthe
   assert.equal(rules.FRUITS.at(-1).id, 'watermelon');
 });
 
+test('Melon Lab has classic7, expanded9, and expanded11 current-run profiles', () => {
+  const rules = require('../melon-lab/rules.js');
+  assert.deepEqual(rules.PROFILES.map(profile => profile.id), ['classic7', 'expanded9', 'expanded11']);
+  assert.deepEqual(rules.PROFILES.map(profile => profile.activeLevels.map(level => rules.FRUITS[level].id)), [
+    ['kiwi', 'lemon', 'cherry', 'peach', 'orange', 'melon', 'watermelon'],
+    ['kiwi', 'lemon', 'cherry', 'peach', 'orange', 'pear', 'pineapple', 'melon', 'watermelon'],
+    ['kiwi', 'lemon', 'cherry', 'peach', 'orange', 'pear', 'pineapple', 'melon', 'dragonfruit', 'papaya', 'watermelon']
+  ]);
+  assert.ok(rules.PROFILES[0].unlockScore < rules.PROFILES[1].unlockScore);
+  assert.ok(rules.PROFILES[1].unlockScore < rules.PROFILES[2].unlockScore);
+});
+
+test('Melon Lab unlocks one profile at a time using score plus minimum activity', () => {
+  const rules = require('../melon-lab/rules.js');
+  assert.equal(rules.profileForProgress(0, 0).id, 'classic7');
+  assert.equal(rules.profileForProgress(rules.PROFILES[1].unlockScore - 1, rules.PROFILES[1].minDrops).id, 'classic7');
+  assert.equal(rules.profileForProgress(rules.PROFILES[1].unlockScore, rules.PROFILES[1].minDrops - 1).id, 'classic7');
+  assert.equal(rules.profileForProgress(rules.PROFILES[1].unlockScore, rules.PROFILES[1].minDrops).id, 'expanded9');
+  assert.equal(rules.profileForProgress(rules.PROFILES[2].unlockScore, rules.PROFILES[2].minDrops).id, 'expanded11');
+});
+
+test('Melon Lab keeps canonical fruit levels stable while merge targets change by profile', () => {
+  const rules = require('../melon-lab/rules.js');
+  const classic = rules.PROFILES[0];
+  const expanded9 = rules.PROFILES[1];
+  const expanded11 = rules.PROFILES[2];
+  assert.equal(rules.nextMergeLevel(4, classic), 7);
+  assert.equal(rules.nextMergeLevel(7, classic), 10);
+  assert.equal(rules.nextMergeLevel(4, expanded9), 5);
+  assert.equal(rules.nextMergeLevel(7, expanded9), 10);
+  assert.equal(rules.nextMergeLevel(7, expanded11), 8);
+  assert.equal(rules.nextMergeLevel(9, expanded11), 10);
+  assert.equal(rules.nextMergeLevel(10, expanded11), null);
+});
+
 test('Melon Lab displays the complete route and has distinct renderers for new fruit silhouettes', () => {
   const html = read('melon-lab/index.html');
   const js = read('melon-lab/game.js');
@@ -116,13 +152,14 @@ test('Melon Lab displays the complete route and has distinct renderers for new f
 
 test('Melon Lab chooses direct drop levels at deterministic random boundaries', () => {
   const rules = require('../melon-lab/rules.js');
-  const rolls = [0, .199999, .2, .399999, .4, .599999, .6, .749999, .75, .899999, .9, 1];
-  assert.deepEqual(rolls.map(roll => rules.chooseDropLevel(roll)), [0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5]);
+  const rolls = [0, .239999, .24, .479999, .48, .719999, .72, .999999, 1];
+  assert.deepEqual(rolls.map(roll => rules.chooseDropLevel(roll, rules.PROFILES[0])), [0, 0, 1, 1, 2, 2, 3, 3, 3]);
+  assert.deepEqual([0, .199999, .2, .399999, .4, .599999, .6, .749999, .75, .899999, .9, 1].map(roll => rules.chooseDropLevel(roll, rules.PROFILES[2])), [0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5]);
 });
 
 test('Melon Lab danger line rises in two stages and stops at the profile cap', () => {
   const rules = require('../melon-lab/rules.js');
-  const profile = rules.DIFFICULTY_PROFILE;
+  const profile = rules.PROFILES[2];
   const positions = [0, 23, 24, 47, 48, 1000].map(dropCount => rules.dangerLineY(dropCount, profile));
   assert.ok(positions.every((position, index) => index === 0 || position <= positions[index - 1]));
   assert.equal(positions[0], profile.dangerLineStart);
@@ -138,16 +175,18 @@ test('Melon Lab wires successful drops to weighted levels and staged danger pres
   const rules = require('../melon-lab/rules.js');
   assert.match(js, /dropCount=0/);
   assert.match(js, /dropCount\+=1/);
-  assert.match(js, /RULES\.chooseDropLevel\(Math\.random\(\)\)/);
+  assert.match(js, /RULES\.chooseDropLevel\(Math\.random\(\),currentProfile\(\)\)/);
   assert.match(js, /DANGER_Y\(\)/);
   assert.match(js, /dangerGracePeriod/);
-  assert.equal(rules.DIFFICULTY_PROFILE.directDropLevels, 6);
-  assert.equal(rules.DIFFICULTY_PROFILE.dangerStageDrops, 24);
+  assert.equal(rules.PROFILES[2].directDropLevels.length, 6);
+  assert.equal(rules.PROFILES[2].dangerStageDrops, 24);
 });
 
 test('Melon Lab derives the top-tier clear bonus from the top fruit score', () => {
   const rules = require('../melon-lab/rules.js');
-  assert.equal(rules.topTierClearBonus(), rules.FRUITS.at(-1).score * rules.DIFFICULTY_PROFILE.topTierBonusMultiplier);
+  assert.equal(rules.topTierClearBonus(rules.PROFILES[0]), 3200);
+  assert.equal(rules.topTierClearBonus(rules.PROFILES[1]), 12800);
+  assert.equal(rules.topTierClearBonus(rules.PROFILES[2]), 51200);
 });
 
 test('launcher, README, and clear-data routing include Melon Lab', () => {
