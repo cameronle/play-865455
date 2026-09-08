@@ -14,7 +14,7 @@ test('Melon Lab has a self-contained mobile fruit-synthesis entrypoint', () => {
   }
   assert.match(html, /MELON LAB/);
   assert.match(html, /SEMI-FLUID/);
-  assert.match(html, /rules\.js\?v=melon-lab-6/);
+  assert.match(html, /rules\.js\?v=melon-lab-7/);
   assert.match(html, /game\.js\?v=melon-lab-10/);
   assert.match(html, /style\.css\?v=melon-lab-5/);
   assert.match(css, /touch-action:\s*none/);
@@ -114,7 +114,7 @@ test('Melon Lab has classic7, expanded9, and expanded11 current-run profiles', (
 
 test('Melon Lab unlocks one profile at a time using score, drops, and watermelon clears', () => {
   const rules = require('../melon-lab/rules.js');
-  assert.deepEqual(rules.PROFILES.map(profile => profile.unlockScore), [0, 4000, 8000]);
+  assert.deepEqual(rules.PROFILES.map(profile => profile.unlockScore), [0, 24000, 120000]);
   assert.deepEqual(rules.PROFILES.map(profile => profile.minWatermelonClears), [0, 3, 6]);
   assert.equal(rules.profileForProgress(0, 0, 0).id, 'classic7');
   assert.equal(rules.profileForProgress(rules.PROFILES[1].unlockScore - 1, rules.PROFILES[1].minDrops, 3).id, 'classic7');

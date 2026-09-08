@@ -48,7 +48,7 @@
     Object.freeze({
       id:'expanded9',
       label:'EXPANDED 9',
-      unlockScore:4000,
+      unlockScore:24000,
       minDrops:12,
       minWatermelonClears:3,
       activeLevels:Object.freeze([0,1,2,3,4,5,6,7,10]),
@@ -62,7 +62,7 @@
     Object.freeze({
       id:'expanded11',
       label:'EXPANDED 11',
-      unlockScore:8000,
+      unlockScore:120000,
       minDrops:28,
       minWatermelonClears:6,
       activeLevels:Object.freeze([0,1,2,3,4,5,6,7,8,9,10]),
