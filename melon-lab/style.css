@@ -110,6 +110,7 @@ footer { margin-top: 12px; color: var(--muted); font-size: 9px; font-weight: 800
   .overlay b { font-size: 25px; }
   .overlay span { font-size: 8px; }
   .lab-panel { display: grid; grid-template-columns: 1fr 1fr; margin-top: 13px; gap: 8px; }
+  .lab-panel .stir-button { display: none; }
   .mode-card, .next-card, .lab-readout { min-height: 0; padding: 10px; box-shadow: 2px 3px 0 var(--shadow); }
   .lab-readout { grid-column: 1 / -1; }
   .mode-card p, .lab-readout p { font-size: 9px; }

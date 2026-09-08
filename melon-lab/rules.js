@@ -20,24 +20,28 @@
   ]);
 
   const DIFFICULTY_PROFILE=Object.freeze({
-    directDropLevels:4,
-    directDropBand:.24,
+    directDropLevels:6,
+    directDropCumulative:Object.freeze([.2,.4,.6,.75,.9,1]),
     dangerLineStart:250,
-    dangerLineRise:.25,
-    dangerLineCap:430,
+    dangerLineStep:-13,
+    dangerStageDrops:24,
+    dangerLineCap:224,
+    dangerGracePeriod:1.4,
     topTierBonusMultiplier:5
   });
 
   function chooseDropLevel(randomValue){
     const value=Number(randomValue);
-    if(Number.isNaN(value))return 0;
-    return Math.min(DIFFICULTY_PROFILE.directDropLevels-1,Math.max(0,Math.floor(value/DIFFICULTY_PROFILE.directDropBand)));
+    if(Number.isNaN(value)||value<=0)return 0;
+    if(value>=1)return DIFFICULTY_PROFILE.directDropLevels-1;
+    return DIFFICULTY_PROFILE.directDropCumulative.findIndex(limit=>value<limit);
   }
 
   function dangerLineY(dropCount,profile=DIFFICULTY_PROFILE){
     const count=Number(dropCount);
     const safeCount=Number.isFinite(count)?Math.max(0,count):0;
-    return Math.min(profile.dangerLineCap,profile.dangerLineStart+safeCount*profile.dangerLineRise);
+    const stage=Math.min(2,Math.floor(safeCount/profile.dangerStageDrops));
+    return Math.max(profile.dangerLineCap,profile.dangerLineStart+stage*profile.dangerLineStep);
   }
 
   function topTierClearBonus(){

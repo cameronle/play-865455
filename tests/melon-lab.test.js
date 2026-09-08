@@ -99,6 +99,7 @@ test('Melon Lab exports eleven fruit tiers with stable IDs and increasing synthe
 test('Melon Lab displays the complete route and has distinct renderers for new fruit silhouettes', () => {
   const html = read('melon-lab/index.html');
   const js = read('melon-lab/game.js');
+  const css = read('melon-lab/style.css');
   for (const label of ['KIWI', 'LEMON', 'CHERRY', 'PEACH', 'ORANGE', 'PEAR', 'PINEAPPLE', 'MELON', 'DRAGONFRUIT', 'PAPAYA', 'WATERMELON']) {
     assert.match(html, new RegExp(label));
   }
@@ -106,22 +107,38 @@ test('Melon Lab displays the complete route and has distinct renderers for new f
   for (const id of ['pear', 'pineapple', 'dragonfruit', 'papaya']) {
     assert.match(js, new RegExp(`t\\.id==='${id}'`));
   }
+  assert.match(css, /\.lab-panel \.stir-button\s*\{\s*display:\s*none;/);
 });
 
 test('Melon Lab chooses direct drop levels at deterministic random boundaries', () => {
   const rules = require('../melon-lab/rules.js');
-  const rolls = [0, .239999, .24, .479999, .48, .719999, .72, 1];
-  assert.deepEqual(rolls.map(roll => rules.chooseDropLevel(roll)), [0, 0, 1, 1, 2, 2, 3, 3]);
+  const rolls = [0, .199999, .2, .399999, .4, .599999, .6, .749999, .75, .899999, .9, 1];
+  assert.deepEqual(rolls.map(roll => rules.chooseDropLevel(roll)), [0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5]);
 });
 
-test('Melon Lab danger line rises monotonically and stops at the profile cap', () => {
+test('Melon Lab danger line rises in two stages and stops at the profile cap', () => {
   const rules = require('../melon-lab/rules.js');
   const profile = rules.DIFFICULTY_PROFILE;
-  const positions = [0, 1, 10, 1000].map(dropCount => rules.dangerLineY(dropCount, profile));
-  assert.ok(positions.every((position, index) => index === 0 || position >= positions[index - 1]));
+  const positions = [0, 23, 24, 47, 48, 1000].map(dropCount => rules.dangerLineY(dropCount, profile));
+  assert.ok(positions.every((position, index) => index === 0 || position <= positions[index - 1]));
   assert.equal(positions[0], profile.dangerLineStart);
   assert.equal(positions.at(-1), profile.dangerLineCap);
   assert.equal(rules.dangerLineY(1001, profile), profile.dangerLineCap);
+  assert.ok(positions[2] < positions[1]);
+  assert.equal(positions[3], positions[2]);
+  assert.ok(positions[4] < positions[3]);
+});
+
+test('Melon Lab wires successful drops to weighted levels and staged danger pressure', () => {
+  const js = read('melon-lab/game.js');
+  const rules = require('../melon-lab/rules.js');
+  assert.match(js, /dropCount=0/);
+  assert.match(js, /dropCount\+=1/);
+  assert.match(js, /RULES\.chooseDropLevel\(Math\.random\(\)\)/);
+  assert.match(js, /DANGER_Y\(\)/);
+  assert.match(js, /dangerGracePeriod/);
+  assert.equal(rules.DIFFICULTY_PROFILE.directDropLevels, 6);
+  assert.equal(rules.DIFFICULTY_PROFILE.dangerStageDrops, 24);
 });
 
 test('Melon Lab derives the top-tier clear bonus from the top fruit score', () => {
