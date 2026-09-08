@@ -16,7 +16,7 @@ test('Melon Lab has a self-contained mobile fruit-synthesis entrypoint', () => {
   assert.match(html, /SEMI-FLUID/);
   assert.match(html, /rules\.js\?v=melon-lab-3/);
   assert.match(html, /game\.js\?v=melon-lab-7/);
-  assert.match(html, /style\.css\?v=melon-lab-2/);
+  assert.match(html, /style\.css\?v=melon-lab-3/);
   assert.match(css, /touch-action:\s*none/);
   assert.match(css, /user-select:\s*none/);
   assert.doesNotMatch(html, /fonts\.googleapis\.com|unpkg\.com|jsdelivr\.net/);
@@ -107,6 +107,7 @@ test('Melon Lab displays the complete route and has distinct renderers for new f
     assert.match(html, new RegExp(label));
   }
   assert.doesNotMatch(js, /FRUITS\.slice\(0,6\)/);
+  assert.match(js, /data-shape="\$\{item\.shape\}"/);
   for (const id of ['pear', 'pineapple', 'dragonfruit', 'papaya']) {
     assert.match(js, new RegExp(`t\\.id==='${id}'`));
   }

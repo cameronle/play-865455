@@ -80,17 +80,27 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .route-item { position: relative; display: flex; flex: 0 0 auto; flex-direction: column; align-items: center; gap: 4px; min-width: 52px; color: var(--muted); font-size: 7px; font-weight: 900; letter-spacing: .05em; }
 .route-item span { white-space: nowrap; }
 .route-item:not(:last-child)::after { content: "→"; position: absolute; top: 8px; left: calc(100% + 1px); color: var(--accent); font-size: 13px; }
-.route-fruit { width: 28px; height: 28px; display: block; border: 2px solid var(--ink); border-radius: 50%; background: #8dbd6b; box-shadow: inset 5px -4px 0 #6b9a55; }
-.route-item:nth-child(2) .route-fruit { background: #f5d267; box-shadow: inset 5px -4px 0 #d9a63f; }
-.route-item:nth-child(3) .route-fruit { background: #df6571; box-shadow: inset 5px -4px 0 #ad435a; }
-.route-item:nth-child(4) .route-fruit { background: #ef9e89; box-shadow: inset 5px -4px 0 #c66e68; }
-.route-item:nth-child(5) .route-fruit { background: #f39b42; box-shadow: inset 5px -4px 0 #c86f2b; }
-.route-item:nth-child(6) .route-fruit { background: #76ba66; box-shadow: inset 5px -4px 0 #4b8e57; }
-.route-item:nth-child(7) .route-fruit { background: #e7bd55; box-shadow: inset 5px -4px 0 #ae7b30; }
-.route-item:nth-child(8) .route-fruit { background: #7abd6b; box-shadow: inset 5px -4px 0 #4d9157; }
-.route-item:nth-child(9) .route-fruit { background: #e56f8c; box-shadow: inset 5px -4px 0 #a94368; }
-.route-item:nth-child(10) .route-fruit { background: #f19d58; box-shadow: inset 5px -4px 0 #c56a3b; }
-.route-item:nth-child(11) .route-fruit { background: #5ca865; box-shadow: inset 5px -4px 0 #3c7d50; }
+.route-fruit { position: relative; width: 28px; height: 28px; display: block; flex: 0 0 auto; border: 2px solid var(--ink); border-radius: 50%; background: #8dbd6b; box-shadow: inset 5px -4px 0 #6b9a55; }
+.route-fruit::before, .route-fruit::after { content: ""; position: absolute; pointer-events: none; }
+.route-fruit[data-shape="kiwi"] { background: radial-gradient(circle, #d3ec9b 0 37%, #82be68 39% 100%); }
+.route-fruit[data-shape="kiwi"]::after { width: 3px; height: 3px; left: 8px; top: 9px; border-radius: 50%; background: #578f58; box-shadow: 8px 3px 0 #578f58, 3px 9px 0 #578f58, 11px 11px 0 #578f58; }
+.route-fruit[data-shape="lemon"] { border-radius: 58% 42% 58% 42%; transform: rotate(-18deg) scale(.94, .78); background: linear-gradient(155deg, #fff4a8 0 20%, #f3d15f 22% 100%); box-shadow: inset 4px -4px 0 #d39b38; }
+.route-fruit[data-shape="lemon"]::after { width: 18px; height: 2px; left: 3px; top: 12px; background: #fff4a8; transform: rotate(18deg); }
+.route-fruit[data-shape="cherry"] { border: 0; border-radius: 0; background: radial-gradient(circle at 30% 67%, #f5a1a8 0 10%, #dc6274 12% 38%, transparent 40%), radial-gradient(circle at 70% 67%, #f5a1a8 0 10%, #dc6274 12% 38%, transparent 40%); box-shadow: none; }
+.route-fruit[data-shape="cherry"]::before { width: 12px; height: 13px; left: 8px; top: 0; border-left: 2px solid #47794e; border-right: 2px solid #47794e; border-radius: 50%; transform: rotate(9deg); }
+.route-fruit[data-shape="peach"] { border-radius: 48% 52% 50% 50% / 42% 42% 58% 58%; background: radial-gradient(circle at 34% 28%, #ffd0ab 0 13%, transparent 15%), #ef9d83; box-shadow: inset 5px -4px 0 #c76b65; }
+.route-fruit[data-shape="peach"]::after { width: 10px; height: 15px; left: 8px; top: 8px; border-right: 2px solid #c76b65; border-radius: 50%; transform: rotate(28deg); }
+.route-fruit[data-shape="orange"] { background: conic-gradient(from 15deg, #ffd477 0 9%, #f09a3e 10% 19%, #ffd477 20% 24%, #f09a3e 25% 44%, #ffd477 45% 49%, #f09a3e 50% 69%, #ffd477 70% 74%, #f09a3e 75% 100%); box-shadow: inset 5px -4px 0 #c66b29; }
+.route-fruit[data-shape="pear"] { width: 25px; height: 29px; margin: 0 2px -1px; border-radius: 48% 48% 42% 42% / 38% 38% 64% 64%; background: radial-gradient(circle at 34% 28%, #eff5a8 0 12%, transparent 14%), #b4c95d; box-shadow: inset 5px -4px 0 #718d3f; }
+.route-fruit[data-shape="pear"]::before { width: 3px; height: 7px; left: 11px; top: -5px; border-radius: 3px; background: #718d3f; transform: rotate(10deg); }
+.route-fruit[data-shape="pineapple"] { border-radius: 42% 42% 48% 48% / 46% 46% 58% 58%; background: repeating-linear-gradient(45deg, transparent 0 4px, #b0792e 5px 6px), repeating-linear-gradient(-45deg, #fff0a0 0 5px, #e6b94f 6px 10px); box-shadow: inset 5px -4px 0 #b0792e; }
+.route-fruit[data-shape="pineapple"]::before { width: 18px; height: 9px; left: 3px; top: -7px; border-radius: 70% 20% 70% 20%; background: #b0792e; transform: rotate(-4deg); clip-path: polygon(0 100%, 18% 0, 42% 78%, 58% 0, 77% 78%, 100% 12%, 88% 100%); }
+.route-fruit[data-shape="melon"] { background: radial-gradient(circle at 35% 28%, #d8ee99 0 12%, transparent 14%), repeating-linear-gradient(75deg, #78b968 0 5px, #4e9055 6px 8px); box-shadow: inset 5px -4px 0 #4e9055; }
+.route-fruit[data-shape="dragonfruit"] { background: radial-gradient(circle at 50% 50%, #f8c4d5 0 34%, #e56b8a 36% 100%); box-shadow: inset 5px -4px 0 #a94368; }
+.route-fruit[data-shape="dragonfruit"]::after { width: 5px; height: 7px; left: 2px; top: 3px; border-radius: 80% 0 80% 0; background: #a94368; transform: rotate(-30deg); box-shadow: 17px 1px 0 #a94368, 9px 17px 0 #a94368; }
+.route-fruit[data-shape="papaya"] { width: 23px; height: 29px; margin: 0 3px -1px; border-radius: 50% 50% 48% 48% / 42% 42% 58% 58%; background: radial-gradient(ellipse at center, #ffd28e 0 35%, #f19b55 37% 100%); box-shadow: inset 5px -4px 0 #c96b39; }
+.route-fruit[data-shape="papaya"]::after { width: 3px; height: 4px; left: 10px; top: 10px; border-radius: 50%; background: #c96b39; box-shadow: -4px 3px 0 #c96b39, 4px 3px 0 #c96b39, 0 7px 0 #c96b39; }
+.route-fruit[data-shape="watermelon"] { background: radial-gradient(circle at 38% 30%, #e1f3a1 0 12%, transparent 14%), repeating-linear-gradient(72deg, #5ca865 0 5px, #3c7d50 6px 8px); box-shadow: inset 5px -4px 0 #3c7d50; }
 footer { margin-top: 12px; color: var(--muted); font-size: 9px; font-weight: 800; letter-spacing: .08em; line-height: 1.5; text-align: center; }
 @media (max-width: 700px) {
   .page { padding: 10px 10px max(19px, env(safe-area-inset-bottom)); }
