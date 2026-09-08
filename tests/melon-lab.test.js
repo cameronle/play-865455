@@ -14,8 +14,8 @@ test('Melon Lab has a self-contained mobile fruit-synthesis entrypoint', () => {
   }
   assert.match(html, /MELON LAB/);
   assert.match(html, /SEMI-FLUID/);
-  assert.match(html, /rules\.js\?v=melon-lab-5/);
-  assert.match(html, /game\.js\?v=melon-lab-9/);
+  assert.match(html, /rules\.js\?v=melon-lab-6/);
+  assert.match(html, /game\.js\?v=melon-lab-10/);
   assert.match(html, /style\.css\?v=melon-lab-5/);
   assert.match(css, /touch-action:\s*none/);
   assert.match(css, /user-select:\s*none/);
@@ -24,7 +24,7 @@ test('Melon Lab has a self-contained mobile fruit-synthesis entrypoint', () => {
 
 test('Melon Lab has multiple fruit tiers, danger line, collisions, merges, and stir energy', () => {
   const js = read('melon-lab/game.js');
-  for (const marker of ['const RULES=MelonLabRules', 'const FRUITS=RULES.FRUITS', 'DANGER_Y', 'function mergeFruits', 'function stirPool', 'function spawnFruit', 'dangerTimer', 'energy', 'localStorage.setItem', 'currentProfileIndex', 'clearBonus']) {
+  for (const marker of ['const RULES=MelonLabRules', 'const FRUITS=RULES.FRUITS', 'DANGER_Y', 'function mergeFruits', 'function stirPool', 'function spawnFruit', 'dangerTimer', 'energy', 'localStorage.setItem', 'currentProfileIndex', 'watermelonClears', 'clearBonus']) {
     assert.match(js, new RegExp(marker.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   }
   const rules = require('../melon-lab/rules.js');
@@ -112,13 +112,17 @@ test('Melon Lab has classic7, expanded9, and expanded11 current-run profiles', (
   assert.ok(rules.PROFILES[1].unlockScore < rules.PROFILES[2].unlockScore);
 });
 
-test('Melon Lab unlocks one profile at a time using score plus minimum activity', () => {
+test('Melon Lab unlocks one profile at a time using score, drops, and watermelon clears', () => {
   const rules = require('../melon-lab/rules.js');
-  assert.equal(rules.profileForProgress(0, 0).id, 'classic7');
-  assert.equal(rules.profileForProgress(rules.PROFILES[1].unlockScore - 1, rules.PROFILES[1].minDrops).id, 'classic7');
-  assert.equal(rules.profileForProgress(rules.PROFILES[1].unlockScore, rules.PROFILES[1].minDrops - 1).id, 'classic7');
-  assert.equal(rules.profileForProgress(rules.PROFILES[1].unlockScore, rules.PROFILES[1].minDrops).id, 'expanded9');
-  assert.equal(rules.profileForProgress(rules.PROFILES[2].unlockScore, rules.PROFILES[2].minDrops).id, 'expanded11');
+  assert.deepEqual(rules.PROFILES.map(profile => profile.unlockScore), [0, 4000, 8000]);
+  assert.deepEqual(rules.PROFILES.map(profile => profile.minWatermelonClears), [0, 3, 6]);
+  assert.equal(rules.profileForProgress(0, 0, 0).id, 'classic7');
+  assert.equal(rules.profileForProgress(rules.PROFILES[1].unlockScore - 1, rules.PROFILES[1].minDrops, 3).id, 'classic7');
+  assert.equal(rules.profileForProgress(rules.PROFILES[1].unlockScore, rules.PROFILES[1].minDrops - 1, 3).id, 'classic7');
+  assert.equal(rules.profileForProgress(rules.PROFILES[1].unlockScore, rules.PROFILES[1].minDrops, 2).id, 'classic7');
+  assert.equal(rules.profileForProgress(rules.PROFILES[1].unlockScore, rules.PROFILES[1].minDrops, 3).id, 'expanded9');
+  assert.equal(rules.profileForProgress(rules.PROFILES[2].unlockScore, rules.PROFILES[2].minDrops, 5).id, 'expanded9');
+  assert.equal(rules.profileForProgress(rules.PROFILES[2].unlockScore, rules.PROFILES[2].minDrops, 6).id, 'expanded11');
 });
 
 test('Melon Lab keeps canonical fruit levels stable while merge targets change by profile', () => {

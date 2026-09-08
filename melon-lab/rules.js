@@ -36,6 +36,7 @@
       label:'CLASSIC 7',
       unlockScore:0,
       minDrops:0,
+      minWatermelonClears:0,
       activeLevels:Object.freeze([0,1,2,3,4,7,10]),
       directDropLevels:Object.freeze([0,1,2,3]),
       directDropCumulative:Object.freeze([.24,.48,.72,1]),
@@ -47,8 +48,9 @@
     Object.freeze({
       id:'expanded9',
       label:'EXPANDED 9',
-      unlockScore:720,
+      unlockScore:4000,
       minDrops:12,
+      minWatermelonClears:3,
       activeLevels:Object.freeze([0,1,2,3,4,5,6,7,10]),
       directDropLevels:Object.freeze([0,1,2,3,4,5]),
       directDropCumulative:Object.freeze([.2,.4,.6,.75,.9,1]),
@@ -60,8 +62,9 @@
     Object.freeze({
       id:'expanded11',
       label:'EXPANDED 11',
-      unlockScore:2400,
+      unlockScore:8000,
       minDrops:28,
+      minWatermelonClears:6,
       activeLevels:Object.freeze([0,1,2,3,4,5,6,7,8,9,10]),
       directDropLevels:Object.freeze([0,1,2,3,4,5]),
       directDropCumulative:Object.freeze([.2,.4,.6,.75,.9,1]),
@@ -87,12 +90,13 @@
     return Math.max(profile.dangerLineCap,profile.dangerLineStart+stage*profile.dangerLineStep);
   }
 
-  function profileForProgress(score,dropCount){
+  function profileForProgress(score,dropCount,watermelonClears){
     const safeScore=Number.isFinite(Number(score))?Number(score):0;
     const safeDrops=Number.isFinite(Number(dropCount))?Number(dropCount):0;
+    const safeWatermelonClears=Number.isFinite(Number(watermelonClears))?Number(watermelonClears):0;
     for(let i=PROFILES.length-1;i>=0;i--){
       const profile=PROFILES[i];
-      if(safeScore>=profile.unlockScore&&safeDrops>=profile.minDrops)return profile;
+      if(safeScore>=profile.unlockScore&&safeDrops>=profile.minDrops&&safeWatermelonClears>=profile.minWatermelonClears)return profile;
     }
     return PROFILES[0];
   }
