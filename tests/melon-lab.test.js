@@ -14,8 +14,8 @@ test('Melon Lab has a self-contained mobile fruit-synthesis entrypoint', () => {
   }
   assert.match(html, /MELON LAB/);
   assert.match(html, /SEMI-FLUID/);
-  assert.match(html, /rules\.js\?v=melon-lab-7/);
-  assert.match(html, /game\.js\?v=melon-lab-10/);
+  assert.match(html, /rules\.js\?v=melon-lab-8/);
+  assert.match(html, /game\.js\?v=melon-lab-11/);
   assert.match(html, /style\.css\?v=melon-lab-5/);
   assert.match(css, /touch-action:\s*none/);
   assert.match(css, /user-select:\s*none/);
@@ -47,7 +47,7 @@ test('Melon Lab keeps the aim arrow aligned with the actual drop center at pool 
   const js = read('melon-lab/game.js');
   assert.match(js, /function aimBounds\(level=nextLevel\)/);
   assert.match(js, /function clampAimX\(value,level=nextLevel\)/);
-  assert.match(js, /const type=FRUITS\[level\],safeX=clampAimX\(x,level\);aimX=safeX/);
+  assert.match(js, /const type=FRUITS\[level\],safeX=clampAimX\(x,level\),collisionR=RULES\.collisionRadius\(type\),boundaryR=RULES\.boundaryRadius\(type\);aimX=safeX/);
   assert.match(js, /return clampAimX\(BIN\.x\+/);
   assert.match(js, /aimX=clampAimX\(aimX-34\)/);
   assert.match(js, /aimX=clampAimX\(aimX\+34\)/);
@@ -93,11 +93,39 @@ test('Melon Lab exports eleven fruit tiers with stable IDs and increasing synthe
     ['watermelon', 'WATERMELON']
   ]);
   assert.equal(new Set(rules.FRUITS.map(fruit => fruit.id)).size, rules.FRUITS.length);
-  assert.ok(rules.FRUITS.every(fruit => ['shape', 'color', 'dark', 'light', 'r', 'score'].every(field => field in fruit)));
+  assert.ok(rules.FRUITS.every(fruit => ['shape', 'color', 'dark', 'light', 'r', 'collisionR', 'boundaryR', 'score'].every(field => field in fruit)));
   assert.ok(rules.FRUITS.every(fruit => typeof fruit.shape === 'string' && fruit.shape.length > 0));
   assert.ok(rules.FRUITS.every((fruit, index) => index === 0 || fruit.r > rules.FRUITS[index - 1].r));
   assert.ok(rules.FRUITS.every((fruit, index) => index === 0 || fruit.score > rules.FRUITS[index - 1].score));
   assert.equal(rules.FRUITS.at(-1).id, 'watermelon');
+});
+
+test('Melon Lab gives pear a narrower contact radius while preserving its boundary envelope', () => {
+  const rules = require('../melon-lab/rules.js');
+  const pear = rules.FRUITS.find(fruit => fruit.id === 'pear');
+  const peach = rules.FRUITS.find(fruit => fruit.id === 'peach');
+  assert.equal(pear.collisionR, 47);
+  assert.equal(pear.boundaryR, 53);
+  assert.ok(pear.collisionR < pear.r);
+  assert.equal(rules.collisionRadius(pear), pear.collisionR);
+  assert.equal(rules.boundaryRadius(pear), pear.boundaryR);
+  assert.equal(rules.collisionRadius(peach), peach.r);
+  const oldContactDistance = pear.r + peach.r;
+  const newContactDistance = pear.collisionR + peach.collisionR;
+  assert.ok(newContactDistance < oldContactDistance);
+  const visualGapProbeDistance = (newContactDistance + oldContactDistance) / 2;
+  assert.ok(visualGapProbeDistance > newContactDistance);
+  assert.ok(visualGapProbeDistance < oldContactDistance);
+});
+
+test('Melon Lab routes the pear geometry parameters through aiming, boundaries, and pair collisions', () => {
+  const js = read('melon-lab/game.js');
+  assert.match(js, /RULES\.boundaryRadius\(type\)/);
+  assert.match(js, /collisionR=RULES\.collisionRadius\(type\),boundaryR=RULES\.boundaryRadius\(type\)/);
+  assert.match(js, /y:BIN\.y\+boundaryR\+8/);
+  assert.match(js, /RULES\.boundaryRadius\(f\)/);
+  assert.match(js, /min=RULES\.collisionRadius\(a\)\+RULES\.collisionRadius\(b\)/);
+  assert.match(js, /collisionR=RULES\.collisionRadius\(next\),boundaryR=RULES\.boundaryRadius\(next\)/);
 });
 
 test('Melon Lab has classic7, expanded9, and expanded11 current-run profiles', () => {

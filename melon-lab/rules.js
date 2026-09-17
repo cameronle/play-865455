@@ -8,17 +8,17 @@
   // Canonical levels never move. Profiles only change which levels are active
   // and which canonical level follows a merge.
   const FRUITS=Object.freeze([
-    Object.freeze({id:'kiwi',label:'KIWI',shape:'kiwi',color:'#82be68',dark:'#578f58',light:'#d3ec9b',r:22,score:10}),
-    Object.freeze({id:'lemon',label:'LEMON',shape:'lemon',color:'#f3d15f',dark:'#d39b38',light:'#fff4a8',r:29,score:20}),
-    Object.freeze({id:'cherry',label:'CHERRY',shape:'cherry',color:'#dc6274',dark:'#9e405b',light:'#f5a1a8',r:36,score:40}),
-    Object.freeze({id:'peach',label:'PEACH',shape:'peach',color:'#ef9d83',dark:'#c76b65',light:'#ffd0ab',r:44,score:80}),
-    Object.freeze({id:'orange',label:'ORANGE',shape:'orange',color:'#f09a3e',dark:'#c66b29',light:'#ffd477',r:52,score:160}),
-    Object.freeze({id:'pear',label:'PEAR',shape:'pear',color:'#b4c95d',dark:'#718d3f',light:'#eff5a8',r:60,score:320}),
-    Object.freeze({id:'pineapple',label:'PINEAPPLE',shape:'pineapple',color:'#e6b94f',dark:'#b0792e',light:'#fff0a0',r:68,score:640}),
-    Object.freeze({id:'melon',label:'MELON',shape:'melon',color:'#78b968',dark:'#4e9055',light:'#d8ee99',r:76,score:1280}),
-    Object.freeze({id:'dragonfruit',label:'DRAGONFRUIT',shape:'dragonfruit',color:'#e56b8a',dark:'#a94368',light:'#f8c4d5',r:84,score:2560}),
-    Object.freeze({id:'papaya',label:'PAPAYA',shape:'papaya',color:'#f19b55',dark:'#c96b39',light:'#ffd28e',r:92,score:5120}),
-    Object.freeze({id:'watermelon',label:'WATERMELON',shape:'watermelon',color:'#5ca865',dark:'#3c7d50',light:'#e1f3a1',r:100,score:10240})
+    Object.freeze({id:'kiwi',label:'KIWI',shape:'kiwi',color:'#82be68',dark:'#578f58',light:'#d3ec9b',r:22,collisionR:22,boundaryR:22,score:10}),
+    Object.freeze({id:'lemon',label:'LEMON',shape:'lemon',color:'#f3d15f',dark:'#d39b38',light:'#fff4a8',r:29,collisionR:29,boundaryR:29,score:20}),
+    Object.freeze({id:'cherry',label:'CHERRY',shape:'cherry',color:'#dc6274',dark:'#9e405b',light:'#f5a1a8',r:36,collisionR:36,boundaryR:36,score:40}),
+    Object.freeze({id:'peach',label:'PEACH',shape:'peach',color:'#ef9d83',dark:'#c76b65',light:'#ffd0ab',r:44,collisionR:44,boundaryR:44,score:80}),
+    Object.freeze({id:'orange',label:'ORANGE',shape:'orange',color:'#f09a3e',dark:'#c66b29',light:'#ffd477',r:52,collisionR:52,boundaryR:52,score:160}),
+    Object.freeze({id:'pear',label:'PEAR',shape:'pear',color:'#b4c95d',dark:'#718d3f',light:'#eff5a8',r:60,collisionR:47,boundaryR:53,score:320}),
+    Object.freeze({id:'pineapple',label:'PINEAPPLE',shape:'pineapple',color:'#e6b94f',dark:'#b0792e',light:'#fff0a0',r:68,collisionR:68,boundaryR:68,score:640}),
+    Object.freeze({id:'melon',label:'MELON',shape:'melon',color:'#78b968',dark:'#4e9055',light:'#d8ee99',r:76,collisionR:76,boundaryR:76,score:1280}),
+    Object.freeze({id:'dragonfruit',label:'DRAGONFRUIT',shape:'dragonfruit',color:'#e56b8a',dark:'#a94368',light:'#f8c4d5',r:84,collisionR:84,boundaryR:84,score:2560}),
+    Object.freeze({id:'papaya',label:'PAPAYA',shape:'papaya',color:'#f19b55',dark:'#c96b39',light:'#ffd28e',r:92,collisionR:92,boundaryR:92,score:5120}),
+    Object.freeze({id:'watermelon',label:'WATERMELON',shape:'watermelon',color:'#5ca865',dark:'#3c7d50',light:'#e1f3a1',r:100,collisionR:100,boundaryR:100,score:10240})
   ]);
 
   const COMMON={
@@ -111,9 +111,17 @@
     return Number.isFinite(score)?score:FRUITS[Number(level)]?.score||0;
   }
 
+  function radiusFor(fruit,key){
+    const value=Number(fruit?.[key]);
+    return Number.isFinite(value)&&value>0?value:Number(fruit?.r)||0;
+  }
+
+  function collisionRadius(fruit){return radiusFor(fruit,'collisionR')}
+  function boundaryRadius(fruit){return radiusFor(fruit,'boundaryR')}
+
   function topTierClearBonus(profile=PROFILES[2]){
     return scoreForLevel(FRUITS.length-1,profile)*profile.topTierBonusMultiplier;
   }
 
-  return {FRUITS,PROFILES,chooseDropLevel,dangerLineY,profileForProgress,nextMergeLevel,scoreForLevel,topTierClearBonus};
+  return {FRUITS,PROFILES,chooseDropLevel,dangerLineY,profileForProgress,nextMergeLevel,scoreForLevel,topTierClearBonus,collisionRadius,boundaryRadius};
 });
