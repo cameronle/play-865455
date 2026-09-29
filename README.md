@@ -54,7 +54,9 @@ npm test
 
 ## 部署
 
-当前 Cloudflare Pages 项目名为 `2048`，目录结构直接对应线上路径：
+当前 Cloudflare Pages 项目名为 `2048-git`，由 Cloudflare Builder 从 `cameronle/play-865455` 的 `main` 分支自动构建部署，构建输出目录为 `.pages-deploy`；目录结构直接对应线上路径。
+
+生产部署不再由 GitHub Actions 直传。`package.json` 中的 `deploy:pages` 仅保留为旧项目 `2048` 的人工回滚工具。
 
 <!-- BEGIN GENERATED: deploy-paths -->
 ```text
