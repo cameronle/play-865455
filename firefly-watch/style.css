@@ -50,7 +50,7 @@ button,a{-webkit-tap-highlight-color:transparent}
 button{font:inherit}
 .page{width:min(820px,100%);padding:14px 14px max(22px,env(safe-area-inset-bottom))}
 .topbar{min-height:56px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:12px;margin-bottom:10px}
-.topbar a,.topbar button{min-height:42px;border:0;background:none;color:var(--muted);font-weight:800;font-size:9px;letter-spacing:.08em;text-decoration:none;cursor:pointer}
+.topbar a,.topbar button{min-height:44px;border:0;background:none;color:var(--muted);font-weight:800;font-size:9px;letter-spacing:.08em;text-decoration:none;cursor:pointer}
 .topbar a:hover,.topbar button:hover,.topbar a:focus-visible,.topbar button:focus-visible{color:var(--ink);outline:none}
 .brand{text-align:center;min-width:0}
 .brand h1{margin:0;font-size:clamp(18px,4vw,26px);letter-spacing:.1em;white-space:nowrap}
@@ -99,7 +99,7 @@ footer{margin-top:12px;border-top:1px solid var(--line);padding:10px 64px 0;text
   .page{padding:9px 8px max(62px,env(safe-area-inset-bottom))}
   .topbar{min-height:48px;gap:6px}.brand h1{font-size:17px}.brand span{font-size:6px}.topbar a,.topbar button{font-size:8px;padding:0 3px}
   .hud{gap:4px}.hud div{padding:7px 5px;font-size:7px}.hud b{font-size:12px}
-  .arena-shell{padding:4px}.overlay,.upgrade-panel{padding:14px}.overlay span{font-size:8px;margin:8px 0 13px}.overlay button{min-height:42px;font-size:9px}
+  .arena-shell{padding:4px}.overlay,.upgrade-panel{padding:14px}.overlay span{font-size:8px;margin:8px 0 13px}.overlay button{min-height:44px;font-size:9px}
   .upgrade-choices{grid-template-columns:1fr;gap:6px;max-height:68%;overflow:auto}.upgrade-choice{min-height:82px;padding:9px 11px}.upgrade-choice span{margin:4px 0;font-size:9px}
   .controls{grid-template-columns:minmax(0,1fr) 140px;gap:6px}.control-copy{min-height:140px;padding:9px}.control-copy b{font-size:9px}.control-copy span{color:var(--ink);font-size:9px;line-height:1.55}.desktop-hint{display:none}.mobile-hint{display:block}
   .move-pad{width:140px;height:140px;gap:3px}.move-pad button,.move-pad i{min-width:44px;min-height:44px}

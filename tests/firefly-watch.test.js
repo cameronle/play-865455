@@ -113,7 +113,9 @@ test('Firefly Watch keeps mobile movement and utility controls at least 44px tal
   assert.match(html, /class="mobile-hint"[^>]*>HOLD THE ARROWS TO MOVE/);
   assert.match(css, /\.move-pad\{width:140px;height:140px/);
   assert.match(css, /\.move-pad button,.move-pad i\{[^}]*min-width:44px;min-height:44px/);
+  assert.match(css, /\.topbar a,.topbar button\{min-height:44px/);
   assert.match(css, /\.theme-toggle,.clear-data-toggle\{min-height:44px/);
+  assert.match(css, /@media\(max-width:680px\)[\s\S]*\.overlay button\{min-height:44px/);
   assert.match(css, /\.mobile-hint\{display:none\}/);
   assert.match(css, /@media\(max-width:680px\)[\s\S]*\.desktop-hint\{display:none\}[\s\S]*\.mobile-hint\{display:block\}/);
 });
