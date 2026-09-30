@@ -10,6 +10,7 @@
     'connect-four': ['connectFourRecord'],
     crosswalk: ['crosswalk-progress-v2'],
     'endless-runner': ['endlessRunnerBest'],
+    'firefly-watch': ['fireflyWatchBest'],
     flappy: ['flappy-best-v1'],
     flow: ['flow-progress-v1'],
     gomoku: ['gomoku-stats-v3'],
