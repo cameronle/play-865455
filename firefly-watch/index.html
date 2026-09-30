@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#0b1718">
+  <script src="/theme.js?v=firefly-watch-1"></script>
+  <script src="/clear-game-data.js?v=clear-1"></script>
+  <title>Firefly Watch</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=firefly-watch-1">
+  <link rel="stylesheet" href="/theme.css?v=clear-1">
+  <link rel="stylesheet" href="style.css?v=firefly-watch-1">
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <a class="back-link" href="/" aria-label="Back to games">← PLAY</a>
+      <div class="brand">
+        <h1>FIREFLY WATCH</h1>
+        <span>KEEP THE NIGHT GARDEN GLOWING</span>
+      </div>
+      <button id="pauseButton" type="button">PAUSE</button>
+    </header>
+
+    <section class="hud" aria-label="Night watch status">
+      <div><span>TIME</span><b id="time">06:00</b></div>
+      <div><span>SCORE</span><b id="score">000000</b></div>
+      <div><span>BEST</span><b id="best">000000</b></div>
+      <div><span>LEVEL</span><b id="level">01</b></div>
+    </section>
+
+    <section class="arena-shell">
+      <div class="arena">
+        <canvas id="game" width="720" height="720" aria-label="Firefly Watch survival playfield"></canvas>
+        <div id="overlay" class="overlay">
+          <div class="firefly-mark" aria-hidden="true">✦</div>
+          <b id="message">FIREFLY WATCH</b>
+          <span id="detail">MOVE · AUTO-FIRE · CHOOSE UPGRADES · SURVIVE 6 MINUTES</span>
+          <button id="startButton" type="button">BEGIN NIGHT WATCH</button>
+        </div>
+        <section id="upgradePanel" class="upgrade-panel" aria-label="Choose an upgrade" hidden>
+          <span class="eyebrow">LEVEL UP</span>
+          <h2>CHOOSE ONE LIGHT</h2>
+          <div id="upgradeChoices" class="upgrade-choices"></div>
+        </section>
+      </div>
+      <div class="xp-track" aria-label="Experience progress"><i id="xpFill"></i></div>
+    </section>
+
+    <section class="controls" aria-label="Controls">
+      <div class="control-copy">
+        <b>AUTO-FIRE IS ALWAYS ON</b>
+        <span class="desktop-hint">MOVE WITH WASD / ARROWS · COLLECT GLOW · P TO PAUSE</span>
+        <span class="desktop-hint">UPGRADES PAUSE THE NIGHT — PICK YOUR BUILD CAREFULLY</span>
+        <span class="mobile-hint">HOLD THE ARROWS TO MOVE · COLLECT GLOW</span>
+        <span class="mobile-hint">AUTO-FIRE TRACKS THE NEAREST MOTH · TAP PAUSE TO REST</span>
+      </div>
+      <div class="move-pad" aria-label="Touch movement pad">
+        <button id="moveUp" data-direction="up" type="button" aria-label="Move up">▲</button>
+        <button id="moveLeft" data-direction="left" type="button" aria-label="Move left">◀</button>
+        <i aria-hidden="true">✦</i>
+        <button id="moveRight" data-direction="right" type="button" aria-label="Move right">▶</button>
+        <button id="moveDown" data-direction="down" type="button" aria-label="Move down">▼</button>
+      </div>
+    </section>
+
+    <footer>SURVIVE 6 MINUTES · BOSS MOTHS ARRIVE EACH QUARTER · EVERY RUN STARTS FRESH</footer>
+  </main>
+  <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
+  <script src="rules.js?v=firefly-watch-1"></script>
+  <script src="game.js?v=firefly-watch-1"></script>
+</body>
+</html>

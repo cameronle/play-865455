@@ -505,5 +505,23 @@ module.exports = [
       "title": "Melon Lab",
       "description": "自维护的原创半流体水果合成街机，支持碰撞合并、半流体/平稳模式、搅动能量、危险线、合成路线、本地最高分和移动端触控。"
     }
+  },
+  {
+    "id": "firefly-watch",
+    "path": "firefly-watch",
+    "order": 29,
+    "category": "arcade",
+    "name": {
+      "zh": "萤火守夜",
+      "en": "FIREFLY WATCH"
+    },
+    "description": {
+      "zh": "移动躲避夜行虫群，让萤火虫自动迎击，并在升级中搭配自己的守夜流派。",
+      "en": "Dodge the night swarm, auto-fire, and shape a new build with every upgrade."
+    },
+    "readme": {
+      "title": "Firefly Watch",
+      "description": "自维护的原创六分钟弹幕生存街机，支持自动攻击、九种升级、章节 Boss、键盘与移动端方向控制、本地最高分和浅深主题。"
+    }
   }
 ];
