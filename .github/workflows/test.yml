@@ -33,3 +33,6 @@ jobs:
 
       - name: Run tests
         run: npm test
+
+      - name: Verify six Bubble Frontier builds
+        run: npm run test:balance

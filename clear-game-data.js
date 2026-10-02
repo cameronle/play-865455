@@ -6,6 +6,7 @@
     '2048': ['play-2048-best'],
     breakout: ['breakout-high'],
     'bubble-shooter': ['bubble-shooter-best'],
+    'bubble-tanks': ['bubble_frontier_save', 'bubble_frontier_records', 'bubble_frontier_settings'],
     'color-bounce': ['color-bounce-best-v1'],
     'connect-four': ['connectFourRecord'],
     crosswalk: ['crosswalk-progress-v2'],

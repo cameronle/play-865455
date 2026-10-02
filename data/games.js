@@ -523,5 +523,11 @@ module.exports = [
       "title": "Firefly Watch",
       "description": "自维护的原创六分钟弹幕生存街机，支持自动攻击、九种升级、章节 Boss、键盘与移动端方向控制、本地最高分和浅深主题。"
     }
+  },
+  {
+    "id": "bubble-tanks", "path": "bubble-tanks", "order": 30, "category": "arcade",
+    "name": {"zh": "泡泡远征", "en": "BUBBLE FRONTIER"},
+    "description": {"zh": "穿越泡泡房间，吸收成长，组装武器与遗物，挑战四大区域首领。", "en": "Explore bubble rooms, absorb growth, assemble a build, and defeat four sector bosses."},
+    "readme": {"title": "Bubble Frontier", "description": "自维护的原创泡泡坦克肉鸽远征，包含六种机体、十二种武器、八种主动技能、二十四种被动、十二种遗物和十八种联动，支持房间探索、模块组装、四区域 Boss、双摇杆触控、本地存档与中英双语。"}
   }
 ];

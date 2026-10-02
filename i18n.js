@@ -9,7 +9,7 @@
       htmlLang: 'zh-CN',
       title: 'PLAY — 小游戏集合',
       kicker: '无需登录 · 纯粹单机 · 随开随玩',
-      stats: '29 款游戏',
+      stats: '30 款游戏',
       langBtn: 'EN',
       langBtnLabel: '切换为英文 (Switch to English)',
       footer: '更多游戏持续更新中 · 为 Web 纯粹体验而生',
@@ -50,14 +50,15 @@
         "flappy": {"name":"小鸟邮差","desc":"操控背着邮包的小鸟穿过云朵，安全送出每一封信。"},
         "mushroom-trail": {"name":"蘑菇勇者","desc":"奔跑、跳跃、踩扁弹跳虫，穿过三段原创平台关卡。"},
         "melon-lab": {"name":"瓜体实验室","desc":"把水果丢进半流体果池，碰撞合成更大的样本，守住危险线。"},
-        "firefly-watch": {"name":"萤火守夜","desc":"移动躲避夜行虫群，让萤火虫自动迎击，并在升级中搭配自己的守夜流派。"}
+        "firefly-watch": {"name":"萤火守夜","desc":"移动躲避夜行虫群，让萤火虫自动迎击，并在升级中搭配自己的守夜流派。"},
+        "bubble-tanks": {"name":"泡泡远征","desc":"穿越泡泡房间，吸收成长，组装武器与遗物，挑战四大区域首领。"}
       }
     },
     en: {
       htmlLang: 'en',
       title: 'PLAY — Arcade',
       kicker: 'SMALL GAMES / NO ACCOUNTS',
-      stats: '29 GAMES',
+      stats: '30 GAMES',
       langBtn: '中文',
       langBtnLabel: 'Switch to Chinese (切换为中文)',
       footer: 'MORE GAMES COMING SOON · BUILT FOR THE WEB',
@@ -98,7 +99,8 @@
         "flappy": {"name":"BIRDIE POST","desc":"Guide a tiny mail bird through cloud gaps and deliver every letter."},
         "mushroom-trail": {"name":"MUSHROOM TRAIL","desc":"Run, jump, stomp bugs, and cross three original platforming worlds."},
         "melon-lab": {"name":"MELON LAB","desc":"Drop fruit into a semi-fluid pool, merge matching samples, and beat the danger line."},
-        "firefly-watch": {"name":"FIREFLY WATCH","desc":"Dodge the night swarm, auto-fire, and shape a new build with every upgrade."}
+        "firefly-watch": {"name":"FIREFLY WATCH","desc":"Dodge the night swarm, auto-fire, and shape a new build with every upgrade."},
+        "bubble-tanks": {"name":"BUBBLE FRONTIER","desc":"Explore bubble rooms, absorb growth, assemble a build, and defeat four sector bosses."}
       }
     }
   };

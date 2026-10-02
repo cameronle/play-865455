@@ -68,6 +68,8 @@ test('clear-data utility removes only the current game data and preserves shared
   assert.equal(app.reloaded(), true);
 });
 
+test('Bubble Frontier clear preserves neighboring game scores and shared preferences', async()=>{const app=boot('bubble-tanks',['bubble_frontier_save','bubble_frontier_records','bubble_frontier_settings','fireflyWatchBest','play-lang','play-theme']);assert.equal(app.buttons.length,1);await app.buttons[0].clickHandler();for(const key of ['bubble_frontier_save','bubble_frontier_records','bubble_frontier_settings'])assert.equal(app.storage[key],undefined);for(const key of ['fireflyWatchBest','play-lang','play-theme'])assert.equal(app.storage[key],'saved');});
+
 test('staged public root includes the clear-data utility', () => {
   const stage = fs.readFileSync('scripts/stage-pages.js', 'utf8');
   assert.match(stage, /clear-game-data\.js/);

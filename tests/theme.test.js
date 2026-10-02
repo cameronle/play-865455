@@ -4,7 +4,7 @@ const fs=require('node:fs');
 const vm=require('node:vm');
 
 const lightRoutes=['2048','tetris','snake','minesweeper','sudoku','gomoku'];
-const canvasRoutes=['breakout','bubble-shooter','color-bounce','crosswalk','endless-runner','firefly-watch','flappy','flow','helicopter-cave','lunar-lander','maze','melon-lab','mushroom-trail','pong','shooter','sky-hopper','snake','sokoban','space-invaders','tetris'];
+const canvasRoutes=require('../data/games.js').map(g=>g.path).filter(route=>fs.existsSync(`${route}/game.js`)&&/<canvas\b/.test(fs.readFileSync(`${route}/index.html`,'utf8')));
 
 function bootTheme(saved=null,dark=false){
   const listeners={};
@@ -98,7 +98,7 @@ test('Crosswalk overlay title has no duplicate text shadow',()=>{
 
 test('every canvas game has a live theme path for its playfield',()=>{
   for(const route of canvasRoutes){
-    const js=fs.readFileSync(`${route}/game.js`,'utf8');
+    const js=fs.readFileSync(`${route}/game.js`,'utf8')+(route==='bubble-tanks'?fs.readFileSync(`${route}/render.js`,'utf8'):'');
     const css=fs.readFileSync(`${route}/style.css`,'utf8');
     const jsTheme=/dataset\.theme|getComputedStyle\(document\.documentElement\)|\bisLight\b|\bisDark\b/.test(js);
     const cssTheme=/\[data-theme="(?:light|dark)"\][\s\S]*canvas|canvas[\s\S]*var\(--/.test(css);
