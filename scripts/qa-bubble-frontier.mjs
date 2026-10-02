@@ -36,6 +36,17 @@ async function click(selector) {
 }
 async function key(type, key, code, virtualKey) {await call('Input.dispatchKeyEvent', {type, key, code, windowsVirtualKeyCode: virtualKey, nativeVirtualKeyCode: virtualKey});}
 async function screenshot(name) {const r = await call('Page.captureScreenshot', {format: 'png', captureBeyondViewport: false}); const path = OUT + '/' + name + '.png'; fs.writeFileSync(path, Buffer.from(r.data, 'base64')); return path;}
+async function checkPanelFrame(selector) {
+  const frame = await evaluate(`(() => {
+    const arena = document.querySelector('.arena').getBoundingClientRect();
+    const panel = document.querySelector(${JSON.stringify(selector)});
+    const box = panel.getBoundingClientRect(), style = getComputedStyle(panel);
+    return {selector:${JSON.stringify(selector)}, gaps:[box.left-arena.left,box.top-arena.top,arena.right-box.right,arena.bottom-box.bottom], border:[style.borderTopWidth,style.borderRightWidth,style.borderBottomWidth,style.borderLeftWidth].map(parseFloat), arena:{width:arena.width,height:arena.height}, panel:{width:box.width,height:box.height}};
+  })()`);
+  assert.ok(frame.gaps.every(gap => gap >= 1 && gap <= 3.1), 'panel must have a slim blue surround, not a thick frame: ' + JSON.stringify(frame));
+  assert.ok(frame.border.every(width => width === 1), 'panel outline stays one CSS pixel: ' + JSON.stringify(frame));
+  return frame;
+}
 try {
   await call('Runtime.enable'); await call('Page.enable');
   await call('Network.enable'); await call('Network.setCacheDisabled',{cacheDisabled:true});
@@ -52,6 +63,8 @@ try {
     assert.equal((await evaluate('BubbleFrontier.snapshot()')).mode, 'title');
     await click('#startButton');
     await waitFor('BubbleFrontier.snapshot().mode === "upgrade"');
+    const desktopUpgradeFrame = await checkPanelFrame('#upgradePanel');
+    await screenshot('desktop-upgrade');
     const offer = await evaluate('BubbleFrontier.snapshot().offers');
     assert.equal(new Set(offer).size, 3);
     const frozen = await evaluate('BubbleFrontier.snapshot().time'); await delay(200);
@@ -76,6 +89,13 @@ try {
     await call('Page.navigate', {url: origin + '/bubble-tanks/?qa=mobile'});
     await waitFor('!!window.BubbleFrontier?.snapshot');
     await click('#startButton'); await waitFor('BubbleFrontier.snapshot().mode === "upgrade"');
+    const mobileUpgradeFrame = await checkPanelFrame('#upgradePanel');
+    const upgradeActions = await evaluate(`(() => {
+      const p=document.querySelector('#upgradePanel').getBoundingClientRect();
+      return ['rerollButton','skipButton'].map(id => {const r=document.getElementById(id).getBoundingClientRect();return {id,bottom:r.bottom,panelBottom:p.bottom,height:r.height};});
+    })()`);
+    assert.ok(upgradeActions.every(r => r.bottom <= r.panelBottom - 1 && r.height >= 44), 'phone upgrade actions must not be cropped: ' + JSON.stringify(upgradeActions));
+    await screenshot('mobile-upgrade');
     const mobileOffer = await evaluate('BubbleFrontier.snapshot().offers');
     await click(`[data-upgrade="${mobileOffer.includes('scatter') ? 'scatter' : mobileOffer[0]}"]`);
     const joystick = await evaluate('(() => {const r = document.querySelector("#joystick").getBoundingClientRect(); return {x:r.x+r.width/2,y:r.y+r.height/2};})()');
@@ -102,6 +122,8 @@ try {
     const beforeTheme = await evaluate('document.documentElement.dataset.theme');
     await click('.theme-toggle'); await click('.theme-toggle'); await delay(100);
     assert.equal(await evaluate('document.documentElement.dataset.theme'),'dark');
+    await checkPanelFrame('#pausePanel');
+    await screenshot('mobile-dark-panel');
     assert.equal(await evaluate('BubbleFrontier.snapshot().mass'),pauseMobile.mass);
     await click('#resumeButton');
     const darkScreenshot = await screenshot('mobile-dark');
@@ -109,6 +131,7 @@ try {
     await call('Emulation.setDeviceMetricsOverride',{width:844,height:390,deviceScaleFactor:1,mobile:true});
     await delay(80);
     const landscape = await evaluate(`(() => ({width:innerWidth,height:innerHeight,scrollWidth:document.documentElement.scrollWidth,controlBottom:document.querySelector('.control-strip').getBoundingClientRect().bottom,canvasWidth:document.querySelector('#game').getBoundingClientRect().width,footerBottom:document.querySelector('footer').getBoundingClientRect().bottom,panelScroll:document.querySelector('#pausePanel').scrollHeight,panelHeight:document.querySelector('#pausePanel').clientHeight}))()`);
+    await checkPanelFrame('#pausePanel');
     assert.equal(landscape.width,landscape.scrollWidth);
     assert.ok(landscape.controlBottom <= landscape.height,JSON.stringify(landscape));
     assert.ok(landscape.canvasWidth >= 260 && landscape.footerBottom <= landscape.height,'landscape battlefield must remain legible within the viewport: '+JSON.stringify(landscape));
@@ -117,10 +140,12 @@ try {
     await call('Emulation.setDeviceMetricsOverride',{width:320,height:568,deviceScaleFactor:1,mobile:true});
     await delay(80);
     const narrow = await evaluate('({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,controlBottom:document.querySelector(".control-strip").getBoundingClientRect().bottom})');
+    await click('#pauseButton');
+    await checkPanelFrame('#pausePanel');
     assert.equal(narrow.width,narrow.scrollWidth);
     assert.ok(narrow.controlBottom <= 568,'small-phone action controls must fit: '+JSON.stringify(narrow));
     assert.equal(errors.length, 0, JSON.stringify(errors));
-    const result = {desktop:initialCombat,desktopGeometry,mobile:mobileSnapshot,geometry,landscape,narrow,errors,screenshots:[desktopScreenshot,mobileScreenshot,darkScreenshot,landscapeScreenshot]};
+    const result = {desktop:initialCombat,desktopGeometry,desktopUpgradeFrame,mobile:mobileSnapshot,mobileUpgradeFrame,geometry,landscape,narrow,errors,screenshots:[desktopScreenshot,mobileScreenshot,darkScreenshot,landscapeScreenshot]};
     fs.writeFileSync(OUT + '/report.json', JSON.stringify(result, null, 2));
     console.log(JSON.stringify(result, null, 2));
   }
