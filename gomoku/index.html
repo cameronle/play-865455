@@ -2,36 +2,38 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#070b12">
   <script src="/theme.js?v=theme-2"></script><script src="/clear-game-data.js?v=clear-1"></script>
   <title>Gomoku</title>
-  <link rel="stylesheet" href="app.css?v=style-2">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="app.css?v=gomoku-3">
   <link rel="stylesheet" href="/theme.css?v=clear-1">
 </head>
 <body>
   <main class="page">
     <header class="topbar"><a href="/">← PLAY</a><h1>GOMOKU</h1><button id="restart" type="button">NEW GAME</button></header>
-    <section class="settings">
-      <label>DIFFICULTY<select id="level"><option value="easy">EASY</option><option value="normal" selected>NORMAL</option><option value="hard">HARD</option></select></label>
-      <div><span>STATUS</span><b id="statusText">PRESS START</b></div>
-      <div class="record"><span>RECORD</span><b><i id="winCount">0</i>W · <i id="lossCount">0</i>L · <i id="drawCount">0</i>D</b></div>
+    <section class="settings" aria-label="Game settings and record">
+      <label>DIFFICULTY<select id="level" aria-label="Computer difficulty"><option value="easy">EASY</option><option value="normal" selected>NORMAL</option><option value="hard">HARD</option></select></label>
+      <div><span>STATUS</span><b id="statusText" aria-live="polite">PRESS START</b></div>
+      <div class="record"><span>RECORD</span><b id="recordSummary"><i id="winCount">0</i>W · <i id="lossCount">0</i>L · <i id="drawCount">0</i>D</b></div>
     </section>
-    <section class="game-shell">
-      <div class="turn"><i id="turnStone" class="black"></i><span>YOU PLAY BLACK</span><button id="undo" type="button" disabled>UNDO</button></div>
+    <section class="game-shell" aria-label="Gomoku game">
+      <div class="turn"><i id="turnStone" class="black" aria-hidden="true"></i><span>YOU PLAY BLACK</span><span class="moves">MOVES <b id="moveCount">0</b></span><button id="undo" type="button" title="Undo the whole turn (U or Ctrl+Z)" disabled>UNDO</button></div>
       <div class="board-box">
-        <canvas id="board" width="750" height="750" aria-label="15 by 15 Gomoku board"></canvas>
-        <div id="curtain" class="curtain">
+        <canvas id="board" width="750" height="750" tabindex="0" aria-label="15 by 15 Gomoku board" aria-describedby="boardHelp"></canvas>
+        <div id="curtain" class="curtain" role="region" aria-label="Game result or start">
           <b id="curtainTitle">BLACK MOVES FIRST</b>
-          <span id="curtainText">Connect five stones before the computer.</span>
-          <button id="start" type="button">START</button>
+          <span id="curtainText">Connect five or more stones before the computer.</span>
+          <div class="result-actions"><button id="start" type="button">START</button><button id="review" type="button" hidden>VIEW BOARD</button></div>
         </div>
       </div>
     </section>
-    <footer>TAP AN INTERSECTION · CONNECT FIVE · RED DOT MARKS THE LAST MOVE</footer>
+    <div id="utilityDock" class="utility-dock" aria-label="Theme and saved-record controls"></div>
+    <footer id="boardHelp"><span>TAP AN INTERSECTION · FIVE OR MORE WINS</span><span class="keyboard-help">ARROWS SELECT · ENTER / SPACE PLACE · U UNDO</span><span>RED DOT MARKS THE LAST MOVE</span></footer>
   </main>
-  <script src="rules.js?v=style-2"></script>
-  <script src="app.js?v=style-2"></script>
+  <script src="rules.js?v=gomoku-3"></script>
+  <script src="app.js?v=gomoku-3"></script>
   <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
 </body>
 </html>

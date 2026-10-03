@@ -16,7 +16,7 @@
   }
 
   function play(board, row, col, stone) {
-    if (!valid(board, row, col) || board[row][col] !== 0) return false;
+    if ((stone !== 1 && stone !== 2) || !valid(board, row, col) || board[row][col] !== 0) return false;
     board[row][col] = stone;
     return true;
   }
@@ -35,7 +35,16 @@
   }
 
   function hasFive(board, row, col, stone) {
-    return valid(board, row, col) && board[row][col] === stone && LINES.some(([dr, dc]) => runLength(board, row, col, dr, dc, stone) >= 5);
+    return (stone === 1 || stone === 2) && valid(board, row, col) && board[row][col] === stone && LINES.some(([dr, dc]) => runLength(board, row, col, dr, dc, stone) >= 5);
+  }
+
+  function winningLine(board, row, col, stone) {
+    if ((stone !== 1 && stone !== 2) || !valid(board, row, col) || board[row][col] !== stone) return [];
+    for (const [dr, dc] of LINES) {
+      const before = count(board, row, col, -dr, -dc, stone), after = count(board, row, col, dr, dc, stone);
+      if (1 + before + after >= 5) return Array.from({ length: 1 + before + after }, (_, i) => ({ row: row + (i - before) * dr, col: col + (i - before) * dc }));
+    }
+    return [];
   }
 
   function outcome(board, row, col, stone) {
@@ -87,6 +96,7 @@
       const bRow = row - dr * (backward + 1), bCol = col - dc * (backward + 1);
       const openings = Number(valid(board, aRow, aCol) && board[aRow][aCol] === 0) + Number(valid(board, bRow, bCol) && board[bRow][bCol] === 0);
       if (length >= 5) score += 1000000;
+      else if (openings === 0) score += 0;
       else if (length === 4 && openings === 2) score += 100000;
       else if (length === 4) score += 20000;
       else if (length === 3 && openings === 2) score += 9000;
@@ -116,5 +126,5 @@
     return { row: ranked[0].row, col: ranked[0].col };
   }
 
-  return { newBoard, play, hasFive, outcome, pickMove };
+  return { newBoard, play, hasFive, winningLine, outcome, pickMove };
 });

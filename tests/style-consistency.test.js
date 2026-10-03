@@ -8,12 +8,13 @@ test('Gomoku uses the collection compact header and flat panel language',()=>{
   const html=read('gomoku/index.html');
   const css=read('gomoku/app.css');
   assert.match(html,/<header class="topbar">/);
-  assert.match(html,/<section class="settings">/);
+  assert.match(html,/<section class="settings"[^>]*>/);
   assert.doesNotMatch(html,/<header><div><span>GOMOKU/);
   assert.doesNotMatch(css,/ui-serif|repeating-linear-gradient|body:before/);
   assert.match(css,/font-family:ui-monospace/);
   assert.match(css,/\.game-shell\{[^}]*border:1px solid var\(--line\)/);
-  assert.match(css,/\.board-box\{[^}]*box-shadow:0 15px 50px/);
+  assert.match(css,/\.board-box\{[^}]*border:1px solid var\(--wood-line\)/);
+  assert.doesNotMatch(css,/box-shadow:(?!none)/);
 });
 
 test('Gomoku board keeps readable wood but drops ornamental frame effects',()=>{
