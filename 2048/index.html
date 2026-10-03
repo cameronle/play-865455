@@ -1,34 +1,78 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-  <meta name="theme-color" content="#faf8ef">
-  <script src="/theme.js?v=theme-1"></script><script src="/clear-game-data.js?v=clear-1"></script>
-  <title>2048</title>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=classic-1">
-  <link rel="stylesheet" href="style.css?v=theme-1">
-  <link rel="stylesheet" href="/theme.css?v=clear-1">
-</head>
-<body>
-  <main class="page">
-    <header class="topbar">
-      <a href="/" class="back">← PLAY</a>
-      <h1>2048</h1>
-      <button id="newGame" class="quiet" type="button">NEW GAME</button>
-    </header>
-    <section class="scorebar">
-      <div class="score"><span>SCORE</span><strong id="score">000000</strong></div>
-      <div class="score"><span>BEST</span><strong id="best">000000</strong></div>
-    </section>
-    <section class="board-wrap">
-      <div id="board" class="board" aria-label="2048 board"></div>
-      <div id="overlay" class="overlay hidden"><strong id="overlayTitle">GAME OVER</strong><button id="tryAgain" type="button">TRY AGAIN</button></div>
-    </section>
-    <div class="controls" aria-label="Touch controls"><span></span><button data-dir="up" aria-label="Move up">↑</button><span></span><button data-dir="left" aria-label="Move left">←</button><button data-dir="down" aria-label="Move down">↓</button><button data-dir="right" aria-label="Move right">→</button></div>
-    <footer>JOIN THE TILES · REACH 2048</footer>
-  </main>
-  <script src="game.js?v=bffa164"></script>
-  <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no"
+    />
+    <meta name="theme-color" content="#faf8ef" />
+    <script src="/theme.js?v=theme-1"></script>
+    <script src="/clear-game-data.js?v=2048-save-1"></script>
+    <title>2048</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg?v=classic-1" />
+    <link rel="stylesheet" href="style.css?v=2048-audit-1" />
+    <link rel="stylesheet" href="/theme.css?v=clear-1" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="topbar">
+        <a href="/" class="back">← PLAY</a>
+        <h1>2048</h1>
+        <button id="newGame" class="quiet" type="button">NEW GAME</button>
+      </header>
+      <section class="scorebar" aria-label="Score and actions">
+        <button
+          id="undo"
+          class="undo"
+          type="button"
+          aria-label="Undo the last move"
+          aria-keyshortcuts="z Control+z Meta+z"
+          disabled
+        >
+          UNDO
+        </button>
+        <div class="score">
+          <span>SCORE</span><strong id="score">000000</strong>
+        </div>
+        <div class="score">
+          <span>BEST</span><strong id="best">000000</strong>
+        </div>
+      </section>
+      <section class="board-wrap">
+        <div
+          id="board"
+          class="board"
+          role="img"
+          tabindex="0"
+          aria-label="2048 board"
+        ></div>
+        <div
+          id="overlay"
+          class="overlay hidden"
+          role="dialog"
+          aria-labelledby="overlayTitle"
+        >
+          <strong id="overlayTitle">GAME OVER</strong
+          ><button id="tryAgain" type="button">TRY AGAIN</button>
+        </div>
+      </section>
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+      <div class="controls" aria-label="Touch controls">
+        <span></span><button data-dir="up" aria-label="Move up">↑</button
+        ><span></span><button data-dir="left" aria-label="Move left">←</button
+        ><button data-dir="down" aria-label="Move down">↓</button
+        ><button data-dir="right" aria-label="Move right">→</button>
+      </div>
+      <footer>
+        <span class="keyboard-hint">ARROWS / WASD · Z TO UNDO</span
+        ><span class="touch-hint">SWIPE OR TAP ARROWS · UNDO ONE MOVE</span
+        ><br />JOIN THE TILES · REACH 2048
+      </footer>
+    </main>
+    <script src="game.js?v=2048-audit-1"></script>
+    <button class="theme-toggle" type="button" aria-label="Theme: system">
+      AUTO
+    </button>
+  </body>
 </html>

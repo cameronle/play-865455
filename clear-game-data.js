@@ -3,7 +3,7 @@
 
   const route = location.pathname.split('/').filter(Boolean)[0] || '';
   const rules = {
-    '2048': ['play-2048-best'],
+    '2048': ['play-2048-best', 'play-2048-save-v1'],
     breakout: ['breakout-high'],
     'bubble-shooter': ['bubble-shooter-best'],
     'bubble-tanks': ['bubble_frontier_save', 'bubble_frontier_records', 'bubble_frontier_settings'],

@@ -50,7 +50,7 @@ test('every game page loads the shared clear-data utility', () => {
   assert.equal(games.length, catalog.length);
   for (const game of games) {
     const html = fs.readFileSync(`${game}/index.html`, 'utf8');
-    assert.match(html, /src="\/clear-game-data\.js\?v=clear-1"/, `${game} clear-data script`);
+    assert.match(html, /src="\/clear-game-data\.js\?v=[a-zA-Z0-9-]+"/, `${game} clear-data script`);
   }
 });
 
@@ -69,6 +69,14 @@ test('clear-data utility removes only the current game data and preserves shared
 });
 
 test('Bubble Frontier clear preserves neighboring game scores and shared preferences', async()=>{const app=boot('bubble-tanks',['bubble_frontier_save','bubble_frontier_records','bubble_frontier_settings','fireflyWatchBest','play-lang','play-theme']);assert.equal(app.buttons.length,1);await app.buttons[0].clickHandler();for(const key of ['bubble_frontier_save','bubble_frontier_records','bubble_frontier_settings'])assert.equal(app.storage[key],undefined);for(const key of ['fireflyWatchBest','play-lang','play-theme'])assert.equal(app.storage[key],'saved');});
+
+test('2048 clear removes its saved turn and best without erasing other games', async () => {
+  const app = boot('2048', ['play-2048-best', 'play-2048-save-v1', 'play-theme', 'play-lang', 'sky-patrol-best']);
+  await app.buttons[0].clickHandler();
+  assert.equal(app.storage['play-2048-best'], undefined);
+  assert.equal(app.storage['play-2048-save-v1'], undefined);
+  for (const key of ['play-theme','play-lang','sky-patrol-best']) assert.equal(app.storage[key], 'saved');
+});
 
 test('staged public root includes the clear-data utility', () => {
   const stage = fs.readFileSync('scripts/stage-pages.js', 'utf8');

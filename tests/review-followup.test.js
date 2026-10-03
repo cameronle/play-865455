@@ -5,10 +5,15 @@ const fs = require('node:fs');
 const read = path => fs.readFileSync(path, 'utf8');
 
 test('2048 acknowledges reaching 2048 exactly once and allows continuing', () => {
-  const source = read('2048/game.js');
-  assert.match(source, /won=false/);
-  assert.match(source, /grid\.some\(row=>row\.some\(value=>value>=2048\)\)/);
-  assert.match(source, /YOU WIN/);
+  const { loadGame, board } = require('./helpers/2048-runtime.js');
+  const game = loadGame(); game.api.fixture(board([1024, 1024, 0, 0]));
+  game.api.move('ArrowLeft');
+  assert.equal(game.ids.overlayTitle.textContent, 'YOU WIN');
+  assert.equal(game.ids.overlay.classList.contains('hidden'), false);
+  game.ids.tryAgain.dispatch('click');
+  game.api.move('ArrowRight');
+  assert.equal(game.state().won, true);
+  assert.equal(game.ids.overlay.classList.contains('hidden'), true);
 });
 
 test('Tetris drop scoring updates current high score and held drop awards successful rows', () => {
