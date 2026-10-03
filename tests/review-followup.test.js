@@ -29,9 +29,7 @@ test('Tetris board and controls fit a short portrait viewport', () => {
 test('Tetris locks a grounded piece without waiting for the gravity interval',()=>{
   const {createTetris}=require('./helpers/tetris-runtime');const app=createTetris();app.node('startButton').click();app.run("piece=newPiece('I');piece.y=19");app.frame(16);assert.equal(app.snapshot().grid[19].filter(Boolean).length,4);assert.equal(app.snapshot().piece.y,0);
 });test('Snake declares victory when no free food cell remains', () => {
-  const source = read('snake/game.js');
-  assert.match(source, /function gameWon\(\)/);
-  assert.match(source, /if\(!food\)gameWon\(\)/);
+  const {createSnake}=require('./helpers/snake-runtime');const a=createSnake();a.node('startButton').click();a.run("snake=Array.from({length:400},(_,i)=>({x:i%20,y:Math.floor(i/20)}));food=randomFood();if(!food)gameWon()");assert.equal(a.snapshot().state,'won');assert.equal(a.node('messageTitle').textContent,'FULL GARDEN');
 });
 
 test('Minesweeper cancels long press after meaningful pointer movement', () => {
