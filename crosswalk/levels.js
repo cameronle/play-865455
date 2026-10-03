@@ -38,7 +38,7 @@
     { id: 1, name: 'FIRST CROSSING', chapter: 1, subtitle: 'LEARN THE STREET', speedScale: 0.85, lanes: makeLanes({}), safeRows: safeRows() },
     { id: 2, name: 'OPPOSITE FLOW', chapter: 1, subtitle: 'LEARN THE STREET', speedScale: 0.90, lanes: makeLanes({ 3: { speed: 0.92 }, 6: { speed: 1.04 } }), safeRows: safeRows() },
     { id: 3, name: 'LONG VEHICLES', chapter: 1, subtitle: 'LEARN THE STREET', speedScale: 0.95, lanes: makeLanes({ 2: { vehicles: standardVehicles('bus') }, 7: { vehicles: standardVehicles('bus'), speed: 0.92 } }), safeRows: safeRows() },
-    { id: 4, name: 'MEDIAN DETOUR', chapter: 1, subtitle: 'LEARN THE STREET', speedScale: 1.00, lanes: makeLanes({ 4: { speed: 0.94 } }), safeRows: safeRows({ 5: { blocks: [3] }, 8: { blocks: [5] } }) },
+    { id: 4, name: 'MEDIAN DETOUR', chapter: 1, subtitle: 'LEARN THE STREET', speedScale: 1.00, lanes: makeLanes({ 4: { speed: 0.94 } }), safeRows: safeRows({ 5: { blocks: [3] }, 8: { blocks: [5] } }), checkpoint: true },
 
     { id: 5, name: 'RED LIGHT', chapter: 2, subtitle: 'READ THE SIGNALS', speedScale: 1.05, lanes: makeLanes({ 3: { signal: { cycle: 6, go: 3.5, phase: 0.4 } } }), safeRows: safeRows() },
     { id: 6, name: 'DOUBLE CYCLE', chapter: 2, subtitle: 'READ THE SIGNALS', speedScale: 1.10, lanes: makeLanes({ 3: { signal: { cycle: 6, go: 3.2, phase: 0.2 } }, 6: { signal: { cycle: 6, go: 3.2, phase: 3.2 } } }), safeRows: safeRows() },

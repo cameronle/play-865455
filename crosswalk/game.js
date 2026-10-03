@@ -36,15 +36,18 @@
   };
 
   let lanes = [];
+  let paletteCache = null;
   let activeLevel = LEVELS[0];
   let player;
   let score = 0;
+  let levelStartScore = 0, levelDeaths = 0, furthestRow = 11;
   let level = 1;
   let levelIndex = 0;
   let lives = 3;
   let state = 'title';
   let overlayAction = 'start';
-  let last = 0;
+  const FIXED_STEP = 1 / 120;
+  let last = 0, accumulator = 0, frameId = 0, dirty = false, pageSuspended = false;
   let worldTime = 0;
   let levelTime = 0;
   let moveLock = 0;
@@ -53,7 +56,7 @@
   let movingExposure = 0;
   let checkpointIndex = 0;
   let autoNextTimer = 0;
-  let levelsReturnState = null;
+  let levelsReturnState = null, levelsReturnFocus = null;
   let progress = loadProgress();
 
   const rowY = row => row * CELL_H;
@@ -61,16 +64,21 @@
   const pad = value => String(value).padStart(2, '0');
 
   function loadProgress() {
-    const empty = { completed: Array(MAX_LEVEL).fill(false), bestScores: {}, bestTimes: {}, flawless: {} };
+    const empty = { completed: Array(MAX_LEVEL).fill(false), bestScores: {}, levelScores: {}, bestTimes: {}, flawless: {} };
     try {
       const parsed = JSON.parse(localStorage.getItem(PROGRESS_KEY) || 'null');
       if (!parsed || typeof parsed !== 'object') return empty;
-      return {
-        completed: Array.from({ length: MAX_LEVEL }, (_, index) => Boolean(parsed.completed?.[index])),
-        bestScores: parsed.bestScores && typeof parsed.bestScores === 'object' ? parsed.bestScores : {},
-        bestTimes: parsed.bestTimes && typeof parsed.bestTimes === 'object' ? parsed.bestTimes : {},
-        flawless: parsed.flawless && typeof parsed.flawless === 'object' ? parsed.flawless : {},
-      };
+      for (let index = 0; index < MAX_LEVEL; index++) {
+        const key = String(index + 1);
+        empty.completed[index] = parsed.completed?.[index] === true;
+        const score = parsed.bestScores?.[key], time = parsed.bestTimes?.[key];
+        if (typeof score === 'number' && Number.isSafeInteger(score) && score >= 0 && score <= 10000000) empty.bestScores[key] = score;
+        if (typeof time === 'number' && Number.isFinite(time) && time > 0 && time <= 86400) empty.bestTimes[key] = time;
+        const levelScore = parsed.levelScores?.[key];
+        if (typeof levelScore === 'number' && Number.isSafeInteger(levelScore) && levelScore >= 0 && levelScore <= (ROWS - 1) * 10) empty.levelScores[key] = levelScore;
+        if (parsed.flawless?.[key] === true) empty.flawless[key] = true;
+      }
+      return empty;
     } catch (_) {
       return empty;
     }
@@ -108,8 +116,14 @@
     ui.lives.textContent = Array(Math.max(0, lives)).fill('♥').join(' ') || '—';
   }
 
+  function resetClock() { last = performance.now(); accumulator = 0; }
+  function requestRender() {
+    dirty = true;
+    if (!frameId && !document.hidden) frameId = requestAnimationFrame(loop);
+  }
   function setState(nextState) {
-    state = nextState;
+    clearGesture(); state = nextState; resetClock(); requestRender();
+    ui.pause.disabled = !['playing', 'paused'].includes(state);
     ui.pause.textContent = state === 'paused' ? 'RESUME' : 'PAUSE';
   }
 
@@ -126,12 +140,14 @@
   }
 
   function startLevel(index) {
-    autoNextTimer = 0;
+    if (!Number.isInteger(index)) return;
+    autoNextTimer = 0; clearGesture(); resetClock();
     levelIndex = clamp(index, 0, MAX_LEVEL - 1);
     level = levelIndex + 1;
     activeLevel = LEVELS[levelIndex];
     worldTime = 0;
     levelTime = 0;
+    levelStartScore = score; levelDeaths = 0; furthestRow = ROWS - 1;
     deathTimer = 0;
     goalFlash = 0;
     makeLanes();
@@ -165,6 +181,7 @@
   }
 
   function action() {
+    if (ui.levelsOverlay.classList.contains('show') || (state === 'playing' && ui.overlay.classList.contains('hide'))) return;
     if (overlayAction === 'start' || overlayAction === 'restart') resetRun(0);
     else if (overlayAction === 'retry') retryCheckpoint();
     else if (overlayAction === 'next') nextLevel();
@@ -172,13 +189,14 @@
   }
 
   function togglePause() {
+    if (ui.levelsOverlay.classList.contains('show')) return;
     if (state === 'playing') {
       setState('paused');
       show('PAUSED', 'TRAFFIC HELD', 'RESUME', 'resume');
     } else if (state === 'paused') {
       setState('playing');
       hideOverlay();
-      last = performance.now();
+      resetClock(); requestRender();
     }
   }
 
@@ -187,6 +205,7 @@
   }
 
   function move(direction) {
+    if (ui.levelsOverlay.classList.contains('show')) return;
     if (state === 'title' || state === 'over' || state === 'won' || state === 'level-clear') {
       action();
       return;
@@ -198,36 +217,42 @@
     const nextRow = clamp(player.row + delta[1], 0, ROWS - 1);
     if (nextCol === player.col && nextRow === player.row) return;
     if (destinationBlocked(nextRow, nextCol)) {
-      player.blockedFlash = 0.25;
+      player.blockedFlash = 0.25; requestRender();
       return;
     }
     player.col = nextCol;
     player.row = nextRow;
     player.x = nextCol * CELL + CELL / 2;
     player.y = rowY(nextRow) + CELL_H / 2;
-    moveLock = 0.075;
-    if (direction === 'up') score += 10;
-    if (player.row === 0) finishLevel();
+    moveLock = 0.075; requestRender();
+    if (nextRow < furthestRow) { score += (furthestRow - nextRow) * 10; furthestRow = nextRow; }
+    const lane = lanes.find(item => item.row === player.row);
+    const safe = R.safeRowConfig(activeLevel, player.row);
+    if (lane || !safe.moving || R.isMovingSafe(safe.moving, COLS, player.col, worldTime)) movingExposure = 0;
+    if (lane && lane.cars.some(car => R.collides(player, car, W))) hit();
+    if (player.row === 0 && player.alive) finishLevel();
     updateHud();
   }
 
   function hit() {
     if (!player.alive) return;
-    player.alive = false;
+    clearGesture(); player.alive = false;
     deathTimer = 0.65;
     lives--;
+    levelDeaths++;
     updateHud();
     if (navigator.vibrate) navigator.vibrate(80);
   }
 
   function finishLevel() {
+    if (state !== 'playing' || !player.alive || player.row !== 0) return;
     goalFlash = 0.8;
     const key = String(level);
     const elapsed = Math.max(1, Math.ceil(levelTime));
     progress.completed[levelIndex] = true;
-    progress.bestScores[key] = Math.max(Number(progress.bestScores[key]) || 0, score);
+    progress.levelScores[key] = Math.max(progress.levelScores[key] || 0, score - levelStartScore);
     progress.bestTimes[key] = Math.min(Number(progress.bestTimes[key]) || Infinity, elapsed);
-    if (lives === 3) progress.flawless[key] = true;
+    if (levelDeaths === 0) progress.flawless[key] = true;
     saveProgress();
 
     if (activeLevel.checkpoint) {
@@ -243,7 +268,6 @@
       return;
     }
 
-    level++;
     setState('level-clear');
     autoNextTimer = 3.0;
     show('LEVEL CLEAR', `${activeLevel.name} · ${elapsed}S · AUTO NEXT IN 3S`, 'NEXT LEVEL (3S)', 'next');
@@ -279,6 +303,7 @@
 
     const lane = lanes.find(item => item.row === player.row);
     if (lane) {
+      movingExposure = 0;
       for (const car of lane.cars) {
         if (R.collides(player, car, W)) {
           hit();
@@ -293,126 +318,6 @@
     }
   }
 
-  function drawRoad() {
-    const isLight = document.documentElement?.dataset?.theme === 'light';
-    ctx.fillStyle = isLight ? '#f7f4ec' : '#071017';
-    ctx.fillRect(0, 0, W, H);
-    for (let row = 0; row < ROWS; row++) {
-      const y = rowY(row);
-      const safe = BASE_SAFE_ROWS.includes(row);
-      if (row === 0) {
-        ctx.fillStyle = goalFlash > 0 ? '#e8f0f7' : '#123128';
-        ctx.fillRect(0, y, W, CELL_H);
-      } else if (safe) {
-        ctx.fillStyle = row === 1 || row === 10 || row === 11 ? '#14212a' : '#10251f';
-        ctx.fillRect(0, y, W, CELL_H);
-        const config = R.safeRowConfig(activeLevel, row);
-        if (config.moving) {
-          ctx.fillStyle = '#0c171a';
-          ctx.fillRect(0, y, W, CELL_H);
-          for (const col of R.movingSafeColumns(config.moving, COLS, worldTime)) {
-            ctx.fillStyle = '#1e614e';
-            ctx.fillRect(col * CELL + 2, y + 4, CELL - 4, CELL_H - 8);
-            ctx.fillStyle = '#73f0b0';
-            ctx.fillRect(col * CELL + 10, y + 10, CELL - 20, 4);
-          }
-        }
-      } else {
-        ctx.fillStyle = row % 2 ? '#101722' : '#0d141d';
-        ctx.fillRect(0, y, W, CELL_H);
-        ctx.strokeStyle = '#293542';
-        ctx.setLineDash([19, 16]);
-        ctx.beginPath();
-        ctx.moveTo(0, y + CELL_H / 2);
-        ctx.lineTo(W, y + CELL_H / 2);
-        ctx.stroke();
-        ctx.setLineDash([]);
-      }
-
-      if (row > 0 && row < ROWS - 1) {
-        ctx.strokeStyle = '#162633';
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(W, y);
-        ctx.stroke();
-      }
-    }
-
-    ctx.fillStyle = goalFlash > 0 ? '#e8f0f7' : '#73f0b0';
-    for (let x = 10; x < W; x += 32) ctx.fillRect(x, 8, 16, 5);
-    ctx.fillStyle = '#748394';
-    ctx.font = '10px monospace';
-    ctx.textAlign = 'center';
-    ctx.fillText('EXIT', W / 2, 34);
-    ctx.fillText('START', W / 2, H - 14);
-
-    for (const config of activeLevel.safeRows || []) {
-      for (const col of config.blocks) drawBlocker(col, config.row);
-    }
-    for (const lane of lanes) drawSignal(lane);
-  }
-
-  function drawBlocker(col, row) {
-    const x = col * CELL + CELL / 2;
-    const y = rowY(row) + CELL_H / 2;
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.fillStyle = '#2b1514';
-    ctx.fillRect(-18, -12, 36, 24);
-    ctx.fillStyle = '#ffb45c';
-    ctx.fillRect(-15, -9, 30, 5);
-    ctx.fillRect(-15, 4, 30, 5);
-    ctx.restore();
-  }
-
-  function drawSignal(lane) {
-    if (!lane.signal) return;
-    const active = R.signalState(lane.signal, worldTime) === 'go';
-    const y = rowY(lane.row) + 10;
-    ctx.fillStyle = active ? '#73f0b0' : '#ff7088';
-    ctx.beginPath();
-    ctx.arc(W - 13, y, 4, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  function drawVehicle(car, x, y, lane) {
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.fillStyle = '#020508';
-    ctx.fillRect(-car.w / 2 + 3, -17, car.w, 34);
-    if (car.kind === 'bus' || car.kind === 'truck') {
-      ctx.fillStyle = car.kind === 'bus' ? '#c894ff' : '#ffb45c';
-      ctx.fillRect(-car.w / 2, -15, car.w, 30);
-      ctx.fillStyle = '#172733';
-      ctx.fillRect(-car.w * 0.33, -11, car.w * 0.62, 9);
-      ctx.fillRect(-car.w * 0.33, 3, car.w * 0.62, 7);
-    } else if (car.kind === 'emergency') {
-      ctx.fillStyle = '#f0f3f5';
-      ctx.fillRect(-car.w / 2, -14, car.w, 28);
-      ctx.fillStyle = '#ff5468';
-      ctx.fillRect(-car.w * 0.42, -9, car.w * 0.3, 18);
-      ctx.fillStyle = '#69c6ff';
-      ctx.fillRect(car.w * 0.12, -9, car.w * 0.3, 18);
-      ctx.fillStyle = worldTime % 0.5 < 0.25 ? '#ff5468' : '#69c6ff';
-      ctx.fillRect(-4, -19, 8, 4);
-    } else {
-      ctx.fillStyle = car.color;
-      ctx.fillRect(-car.w / 2, -14, car.w, 28);
-      ctx.fillStyle = '#172733';
-      ctx.fillRect(-car.w * 0.18, -11, car.w * 0.36, 22);
-    }
-    const headX = lane.dir > 0 ? car.w / 2 - 4 : -car.w / 2;
-    const tailX = lane.dir > 0 ? -car.w / 2 : car.w / 2 - 3;
-    ctx.fillStyle = '#ffe9a3';
-    ctx.fillRect(headX, -9, 4, 5);
-    ctx.fillRect(headX, 4, 4, 5);
-    ctx.fillStyle = '#ff5468';
-    ctx.fillRect(tailX, -8, 3, 4);
-    ctx.fillRect(tailX, 4, 3, 4);
-    ctx.restore();
-  }
-
   function drawCars() {
     for (const lane of lanes) {
       for (const car of lane.cars) {
@@ -422,39 +327,6 @@
         if (car.x + car.w / 2 > W) drawVehicle(car, car.x - W, y, lane);
       }
     }
-  }
-
-  function drawPlayer() {
-    if (!player || (!player.alive && Math.floor(deathTimer * 14) % 2 === 0)) return;
-    const safe = R.safeRowConfig(activeLevel, player.row);
-    ctx.save();
-    ctx.translate(player.x, player.y);
-    ctx.fillStyle = '#030708';
-    ctx.beginPath();
-    ctx.arc(3, 3, player.r + 2, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = '#e8f0f7';
-    ctx.beginPath();
-    ctx.arc(0, -5, 7, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = safe.moving && !R.isMovingSafe(safe.moving, COLS, player.col, worldTime) ? '#ff7088' : '#73f0b0';
-    ctx.lineWidth = 5;
-    ctx.lineCap = 'square';
-    ctx.beginPath();
-    ctx.moveTo(0, 3); ctx.lineTo(0, 14);
-    ctx.moveTo(0, 7); ctx.lineTo(-10, 13);
-    ctx.moveTo(0, 7); ctx.lineTo(10, 13);
-    ctx.stroke();
-    ctx.restore();
-  }
-
-  function draw() {
-    drawRoad();
-    drawCars();
-    drawPlayer();
-    ctx.strokeStyle = '#263746';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(1, 1, W - 2, H - 2);
   }
 
   function renderLevelGrid() {
@@ -468,55 +340,73 @@
       card.classList.toggle('completed', progress.completed[index]);
       card.classList.toggle('current', index === levelIndex);
       card.disabled = !unlocked;
-      const best = progress.bestScores[String(item.id)];
+      const best = progress.levelScores[String(item.id)];
       const time = progress.bestTimes[String(item.id)];
-      card.innerHTML = `<span class="level-number">${pad(item.id)}</span><span class="level-name">${item.name}</span><span class="level-detail">${unlocked ? (progress.completed[index] ? 'COMPLETE' : item.subtitle) : 'LOCKED'}${best ? ` · ${best} PTS` : ''}${time ? ` · ${time}S` : ''}</span>`;
+      const labels = [
+        ['level-number', pad(item.id)], ['level-name', item.name],
+        ['level-detail', `${unlocked ? (progress.completed[index] ? 'COMPLETE' : item.subtitle) : 'LOCKED'}${best !== undefined ? ` · ${best} PTS` : ''}${time ? ` · ${time}S` : ''}`]
+      ];
+      for (const [className, text] of labels) {
+        const span = document.createElement('span'); span.className = className; span.textContent = text; card.appendChild(span);
+      }
       if (unlocked) card.addEventListener('click', () => {
+        levelsReturnState = null;
+        closeLevels();
         score = 0;
         lives = 3;
         checkpointIndex = Math.floor(index / 4) * 4;
         startLevel(index);
         setState('playing');
-        closeLevels();
-        hideOverlay();
+        hideOverlay(); canvas.focus?.();
       });
       ui.levelGrid.appendChild(card);
     });
   }
 
   function openLevels() {
+    if (ui.levelsOverlay.classList.contains('show')) return;
+    clearGesture(); levelsReturnFocus = document.activeElement;
     levelsReturnState = state;
     if (state === 'playing') setState('paused');
     renderLevelGrid();
     ui.levelsOverlay.classList.add('show');
     ui.levelsOverlay.setAttribute('aria-hidden', 'false');
+    if ($('gamePage')) $('gamePage').inert = true;
+    ui.closeLevels.focus?.();
   }
 
   function closeLevels() {
     ui.levelsOverlay.classList.remove('show');
     ui.levelsOverlay.setAttribute('aria-hidden', 'true');
+    if ($('gamePage')) $('gamePage').inert = false;
+    levelsReturnFocus?.focus?.(); levelsReturnFocus = null;
     if (levelsReturnState === 'playing' || levelsReturnState === 'level-clear') {
       setState(levelsReturnState);
-      last = performance.now();
+      resetClock(); requestRender();
     }
     levelsReturnState = null;
   }
 
   function loop(time) {
-    const dt = Math.min(0.04, (time - last) / 1000 || 0);
+    frameId = 0;
+    const dt = Math.min(0.25, Math.max(0, (time - last) / 1000));
     last = time;
-    if (state === 'playing') update(dt);
-    else if (state === 'level-clear' && !ui.levelsOverlay.classList.contains('show')) {
+    const running = !document.hidden && !pageSuspended && !ui.levelsOverlay.classList.contains('show');
+    if (running && state === 'playing') {
+      accumulator += dt;
+      while (accumulator + 1e-9 >= FIXED_STEP && state === 'playing') { accumulator -= FIXED_STEP; update(FIXED_STEP); }
+      dirty = true;
+    } else if (running && state === 'level-clear') {
       autoNextTimer = Math.max(0, autoNextTimer - dt);
       const secs = Math.max(1, Math.ceil(autoNextTimer));
-      ui.text.textContent = `${activeLevel.name} · ${Math.max(1, Math.ceil(levelTime))}S · AUTO NEXT IN ${secs}S`;
-      ui.start.textContent = `NEXT LEVEL (${secs}S)`;
-      if (autoNextTimer <= 0) {
-        nextLevel();
-      }
+      const text = `${activeLevel.name} · ${Math.max(1, Math.ceil(levelTime))}S · AUTO NEXT IN ${secs}S`;
+      if (ui.text.textContent !== text) ui.text.textContent = text;
+      const button = `NEXT LEVEL (${secs}S` + ')';
+      if (ui.start.textContent !== button) ui.start.textContent = button;
+      if (autoNextTimer <= 1e-9) nextLevel();
     }
-    draw();
-    requestAnimationFrame(loop);
+    if (dirty) { draw(); dirty = false; }
+    if (running && (state === 'playing' || state === 'level-clear') && !frameId) frameId = requestAnimationFrame(loop);
   }
 
   const codes = {
@@ -530,39 +420,57 @@
       event.preventDefault();
       return;
     }
+    if (ui.levelsOverlay.classList.contains('show')) {
+      if (event.code === 'Tab') {
+        const buttons = [ui.closeLevels, ...ui.levelGrid.children].filter(button => !button.disabled);
+        const index = buttons.indexOf(document.activeElement);
+        const next = (index + (event.shiftKey ? -1 : 1) + buttons.length) % buttons.length;
+        buttons[next]?.focus?.(); event.preventDefault();
+      }
+      return;
+    }
+    const tag = event.target?.tagName;
+    if (event.altKey || event.ctrlKey || event.metaKey || event.target?.isContentEditable || ['INPUT','TEXTAREA','SELECT'].includes(tag)) return;
     if (codes[event.code]) {
       move(codes[event.code]);
       event.preventDefault();
-    } else if (event.code === 'KeyP') {
+    } else if (event.code === 'KeyP' && !event.repeat) {
       togglePause();
       event.preventDefault();
-    } else if (event.code === 'Enter') {
+    } else if ((event.code === 'Enter' || event.code === 'Space') && tag !== 'BUTTON' && tag !== 'A' && !event.repeat) {
       action();
       event.preventDefault();
     }
   });
 
-  document.querySelectorAll('[data-dir]').forEach(button => button.addEventListener('pointerdown', event => {
-    event.preventDefault();
+  document.querySelectorAll('[data-dir]').forEach(button => button.addEventListener('click', event => {
+    if (event.button && event.button !== 0) return;
     move(button.dataset.dir);
   }));
 
   let swipe = null;
+  function clearGesture() {
+    const old = swipe; swipe = null;
+    if (old) { try { canvas.releasePointerCapture(old.pointerId); } catch (_) {} }
+  }
   canvas.addEventListener('pointerdown', event => {
-    event.preventDefault();
+    if (event.button !== 0 || event.isPrimary === false || swipe) return;
+    event.preventDefault(); canvas.focus();
     swipe = { x: event.clientX, y: event.clientY, pointerId: event.pointerId };
-    try { canvas.setPointerCapture(event.pointerId); } catch (_) { /* optional */ }
+    try { canvas.setPointerCapture(event.pointerId); } catch (_) {}
   });
+  canvas.addEventListener('pointermove', event => { if (swipe?.pointerId === event.pointerId) event.preventDefault(); });
   canvas.addEventListener('pointerup', event => {
-    if (!swipe || swipe.pointerId !== event.pointerId) return;
-    const dx = event.clientX - swipe.x;
-    const dy = event.clientY - swipe.y;
-    swipe = null;
+    if (!swipe || swipe.pointerId !== event.pointerId || event.button !== 0) return;
+    event.preventDefault();
+    const dx = event.clientX - swipe.x, dy = event.clientY - swipe.y;
+    clearGesture();
     if (Math.max(Math.abs(dx), Math.abs(dy)) < 16) move('up');
     else move(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up'));
   });
-  canvas.addEventListener('pointercancel', () => { swipe = null; });
-  canvas.addEventListener('lostpointercapture', () => { swipe = null; });
+  for (const type of ['pointercancel', 'lostpointercapture']) canvas.addEventListener(type, event => { if (swipe?.pointerId === event.pointerId) clearGesture(); });
+  for (const type of ['contextmenu', 'selectstart', 'dragstart']) canvas.addEventListener(type, event => event.preventDefault());
+  canvas.addEventListener('touchmove', event => { if (state === 'playing') event.preventDefault(); }, {passive:false});
 
   ui.start.addEventListener('click', action);
   ui.pause.addEventListener('click', () => {
@@ -574,15 +482,27 @@
   ui.levelsOverlay.addEventListener('click', event => {
     if (event.target === ui.levelsOverlay) closeLevels();
   });
+  function suspendPage() {
+    pageSuspended = true; clearGesture();
+    if (levelsReturnState === 'playing') { levelsReturnState = 'paused'; show('PAUSED', 'TRAFFIC HELD', 'RESUME', 'resume'); }
+    if (state === 'playing' && !ui.levelsOverlay.classList.contains('show')) togglePause();
+    resetClock(); requestRender();
+  }
+  addEventListener('blur', suspendPage);
+  addEventListener('focus', () => { pageSuspended = false; resetClock(); requestRender(); });
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden && state === 'playing') togglePause();
+    if (document.hidden) suspendPage();
+    else { pageSuspended = false; resetClock(); requestRender(); }
   });
+  document.addEventListener('themechange', () => { paletteCache = null; requestRender(); });
+  addEventListener('resize', () => { clearGesture(); requestRender(); });
 
   function doodlePalette() {
+    if (paletteCache) return paletteCache;
     if (typeof getComputedStyle !== 'function') return { paper:'#fffaf0', grid:'#b9dfe0', ink:'#3d3832', muted:'#8a7c6e', mint:'#9eddbd', blue:'#8fc9eb', yellow:'#f7d66c', coral:'#f28c78', purple:'#b8a7e8', road:'#fffdf7', roadLine:'#c8bfae', line:'#d9cfc1' };
     const style = getComputedStyle(document.documentElement);
     const get = (name, fallback) => style.getPropertyValue(name).trim() || fallback;
-    return { paper:get('--paper','#fffaf0'), grid:get('--grid','#b9dfe0'), ink:get('--ink','#3d3832'), muted:get('--muted','#8a7c6e'), mint:get('--mint','#9eddbd'), blue:get('--blue','#8fc9eb'), yellow:get('--yellow','#f7d66c'), coral:get('--coral','#f28c78'), purple:get('--purple','#b8a7e8'), road:get('--road','#fffdf7'), roadLine:get('--road-line','#c8bfae'), line:get('--line','#d9cfc1') };
+    return paletteCache = { paper:get('--paper','#fffaf0'), grid:get('--grid','#b9dfe0'), ink:get('--ink','#3d3832'), muted:get('--muted','#8a7c6e'), mint:get('--mint','#9eddbd'), blue:get('--blue','#8fc9eb'), yellow:get('--yellow','#f7d66c'), coral:get('--coral','#f28c78'), purple:get('--purple','#b8a7e8'), road:get('--road','#fffdf7'), roadLine:get('--road-line','#c8bfae'), line:get('--line','#d9cfc1') };
   }
 
   function doodleRect(x, y, width, height, radius, fill, stroke, lineWidth = 2) {
@@ -608,7 +528,13 @@
     doodleCloud(78, 64, .62, p.paper, p); doodleCloud(500, 111, .42, p.paper, p);
     ctx.fillStyle = p.mint; ctx.globalAlpha = .72; ctx.fillRect(0, rowY(0), W, CELL_H); ctx.fillRect(0, rowY(1), W, CELL_H); ctx.fillRect(0, rowY(10), W, CELL_H); ctx.fillRect(0, rowY(11), W, CELL_H); ctx.globalAlpha = 1;
     for (let row = 2; row <= 9; row++) {
-      const y = rowY(row); ctx.fillStyle = row % 2 ? p.road : p.paper; ctx.fillRect(0, y, W, CELL_H);
+      const y = rowY(row);
+      if (BASE_SAFE_ROWS.includes(row)) {
+        const moving = R.safeRowConfig(activeLevel, row).moving;
+        ctx.fillStyle = moving ? p.coral : p.mint; ctx.globalAlpha = moving ? .22 : .55;
+        ctx.fillRect(0, y, W, CELL_H); ctx.globalAlpha = 1; continue;
+      }
+      ctx.fillStyle = row % 2 ? p.road : p.paper; ctx.fillRect(0, y, W, CELL_H);
       ctx.strokeStyle = p.roadLine; ctx.lineWidth = 2; ctx.setLineDash([18, 18]); ctx.beginPath(); ctx.moveTo(0, y + CELL_H / 2); ctx.lineTo(W, y + CELL_H / 2); ctx.stroke(); ctx.setLineDash([]);
       ctx.strokeStyle = p.line; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
     }
@@ -655,10 +581,13 @@
   startLevel(0);
   updateHud();
   show('TINY CROSSING', 'HELP THE LITTLE DUCK REACH HOME', 'START CROSSING', 'start');
-  requestAnimationFrame(loop);
+
+  function dockUtilities() { document.querySelectorAll('.theme-toggle,.clear-data-toggle').forEach(button => $('utilityDock').appendChild(button)); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', dockUtilities, {once:true});
+  else dockUtilities();
 
   window.CrosswalkGame = {
-    getSnapshot: () => ({ state, level, levelIndex, lives, score, laneCount: lanes.length }),
+    getSnapshot: () => JSON.parse(JSON.stringify({ state, level, levelIndex, lives, score, laneCount: lanes.length, player, worldTime, levelTime, checkpointIndex, autoNextTimer, progress })),
     getLaneCars: () => lanes.flatMap(lane => lane.cars.map(car => ({ ...car }))),
     startLevel,
     finishLevel,

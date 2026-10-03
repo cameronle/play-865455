@@ -1,107 +1,33 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const vm = require('node:vm');
-
-function makeNode(id, extra = {}) {
-  const listeners = {};
-  const classes = new Set();
-  return {
-    id,
-    textContent: '',
-    innerHTML: '',
-    dataset: {},
-    children: [],
-    listeners,
-    disabled: false,
-    classList: {
-      add: name => classes.add(name),
-      remove: name => classes.delete(name),
-      contains: name => classes.has(name),
-      toggle: (name, force) => force === undefined ? (classes.has(name) ? classes.delete(name) : classes.add(name)) : (force ? classes.add(name) : classes.delete(name)),
-    },
-    addEventListener(type, fn) { listeners[type] = fn; },
-    setAttribute() {},
-    appendChild(child) { this.children.push(child); },
-    replaceChildren(...children) { this.children = children; },
-    ...extra,
-  };
-}
-
+const {loadCrosswalk} = require('./helpers/crosswalk-runtime.js');
 function loadGame() {
-  const ids = ['game', 'score', 'level', 'chapter', 'lives', 'overlay', 'overlayTitle', 'overlayText', 'startButton', 'pauseButton', 'levelsButton', 'levelsOverlay', 'levelGrid', 'levelsProgress', 'closeLevels'];
-  const nodes = Object.fromEntries(ids.map(id => [id, makeNode(id)]));
-  nodes.game.width = 600;
-  nodes.game.height = 720;
-  const directions = ['up', 'left', 'down', 'right'].map(dir => {
-    const button = makeNode(dir);
-    button.dataset.dir = dir;
-    return button;
-  });
-  const gradients = { addColorStop() {} };
-  const ctx = new Proxy({ createLinearGradient: () => gradients, createRadialGradient: () => gradients }, {
-    get(target, key) {
-      if (!(key in target)) target[key] = () => {};
-      return target[key];
-    },
-    set(target, key, value) { target[key] = value; return true; },
-  });
-  nodes.game.getContext = () => ctx;
-  nodes.game.setPointerCapture = () => {};
-  const storage = new Map();
-  let raf;
-  let now = 0;
-  const documentListeners = {};
-  const sandbox = {
-    console,
-    Math,
-    JSON,
-    Date,
-    navigator: { vibrate() {} },
-    performance: { now: () => now },
-    localStorage: { getItem: key => storage.get(key) || null, setItem: (key, value) => storage.set(key, value) },
-    requestAnimationFrame: fn => { raf = fn; return 1; },
-    document: {
-      hidden: false,
-      getElementById: id => nodes[id],
-      querySelectorAll: selector => selector === '[data-dir]' ? directions : [],
-      createElement: tag => makeNode(tag),
-      addEventListener: (type, fn) => { documentListeners[type] = fn; },
-    },
-    addEventListener: (type, fn) => { sandbox.windowListeners[type] = fn; },
-    windowListeners: {},
-  };
-  sandbox.window = sandbox;
-  sandbox.globalThis = sandbox;
-  vm.createContext(sandbox);
-  for (const file of ['crosswalk/rules.js', 'crosswalk/levels.js', 'crosswalk/game.js']) {
-    vm.runInContext(fs.readFileSync(file, 'utf8'), sandbox, { filename: file });
-  }
-  return { sandbox, nodes, directions, documentListeners, tick: timestamp => { now = timestamp; raf(timestamp); } };
+ const a=loadCrosswalk();let last=0;
+ return Object.assign(a,{tick(timestamp){a.step(timestamp-last);last=timestamp;},clear(){a.setPlayer({row:0,y:30});a.finish();}});
 }
 
 test('Crosswalk runtime starts from the title state and accepts touch movement', () => {
   const runtime = loadGame();
-  runtime.nodes.startButton.listeners.click();
-  const initial = runtime.sandbox.CrosswalkGame.getSnapshot();
+  runtime.nodes.startButton.emit('click');
+  const initial = runtime.window.CrosswalkGame.getSnapshot();
   assert.equal(initial.state, 'playing');
   assert.equal(initial.level, 1);
   assert.equal(initial.levelIndex, 0);
   assert.equal(initial.lives, 3);
   assert.equal(initial.score, 0);
   assert.equal(initial.laneCount, 6);
-  runtime.directions[0].listeners.pointerdown({ preventDefault() {} });
-  assert.equal(runtime.sandbox.CrosswalkGame.getSnapshot().score, 10);
-  runtime.nodes.pauseButton.listeners.click();
-  assert.equal(runtime.sandbox.CrosswalkGame.getSnapshot().state, 'paused');
+  runtime.dirs[0].emit('click');
+  assert.equal(runtime.window.CrosswalkGame.getSnapshot().score, 10);
+  runtime.nodes.pauseButton.emit('click');
+  assert.equal(runtime.window.CrosswalkGame.getSnapshot().state, 'paused');
   assert.equal(runtime.nodes.overlayTitle.textContent, 'PAUSED');
-  runtime.nodes.startButton.listeners.click();
-  assert.equal(runtime.sandbox.CrosswalkGame.getSnapshot().state, 'playing');
+  runtime.nodes.startButton.emit('click');
+  assert.equal(runtime.window.CrosswalkGame.getSnapshot().state, 'playing');
 });
 
 test('Crosswalk renders all level cards and only the first level is initially unlocked', () => {
   const runtime = loadGame();
-  runtime.nodes.levelsButton.listeners.click();
+  runtime.nodes.levelsButton.emit('click');
   assert.equal(runtime.nodes.levelsOverlay.classList.contains('show'), true);
   assert.equal(runtime.nodes.levelGrid.children.length, 20);
   assert.equal(runtime.nodes.levelGrid.children.filter(card => !card.disabled).length, 1);
@@ -110,23 +36,23 @@ test('Crosswalk renders all level cards and only the first level is initially un
 
 test('Crosswalk pause and visibility handlers do not advance the simulation while paused', () => {
   const runtime = loadGame();
-  runtime.nodes.startButton.listeners.click();
+  runtime.nodes.startButton.emit('click');
   runtime.tick(100);
-  const before = runtime.sandbox.CrosswalkGame.getSnapshot();
-  runtime.nodes.pauseButton.listeners.click();
+  const before = runtime.window.CrosswalkGame.getSnapshot();
+  runtime.nodes.pauseButton.emit('click');
   runtime.tick(1000);
-  const after = runtime.sandbox.CrosswalkGame.getSnapshot();
+  const after = runtime.window.CrosswalkGame.getSnapshot();
   assert.equal(after.state, 'paused');
   assert.equal(after.score, before.score);
-  runtime.documentListeners.visibilitychange();
+  runtime.document.emit('visibilitychange');
 });
 
 test('Crosswalk car positions wrap within [0, 600) bounds continuously during movement', () => {
   const runtime = loadGame();
-  runtime.nodes.startButton.listeners.click();
+  runtime.nodes.startButton.emit('click');
   for (let i = 1; i <= 200; i++) {
     runtime.tick(i * 30);
-    const cars = runtime.sandbox.CrosswalkGame.getLaneCars();
+    const cars = runtime.window.CrosswalkGame.getLaneCars();
     for (const car of cars) {
       assert.ok(car.x >= 0 && car.x < 600, `car at x=${car.x} is outside [0, 600)`);
     }
@@ -135,20 +61,20 @@ test('Crosswalk car positions wrap within [0, 600) bounds continuously during mo
 
 test('Crosswalk auto-advances to the next level after 3s on level clear or advances immediately on click', () => {
   const runtime = loadGame();
-  runtime.nodes.startButton.listeners.click();
-  runtime.sandbox.CrosswalkGame.finishLevel();
-  const clearSnapshot = runtime.sandbox.CrosswalkGame.getSnapshot();
+  runtime.nodes.startButton.emit('click');
+  runtime.clear();
+  const clearSnapshot = runtime.window.CrosswalkGame.getSnapshot();
   assert.equal(clearSnapshot.state, 'level-clear');
   assert.match(runtime.nodes.overlayText.textContent, /AUTO NEXT IN 3S/);
   assert.match(runtime.nodes.startButton.textContent, /NEXT LEVEL \(3S\)/);
 
-  // Advance 3.5 seconds in ticks (each tick dt is capped at 0.04s)
+  // Advance a deterministic sequence of 50ms frames.
   let curTime = 0;
   for (let t = 0; t < 90; t++) {
     curTime += 50;
     runtime.tick(curTime);
   }
-  const nextSnapshot = runtime.sandbox.CrosswalkGame.getSnapshot();
+  const nextSnapshot = runtime.window.CrosswalkGame.getSnapshot();
   assert.equal(nextSnapshot.state, 'playing');
   assert.equal(nextSnapshot.level, 2);
   assert.equal(nextSnapshot.levelIndex, 1);

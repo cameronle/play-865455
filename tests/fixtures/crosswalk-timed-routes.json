@@ -1,0 +1,398 @@
+[
+  {
+    "level": 1,
+    "stepMs": 100,
+    "actions": [
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "left",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up"
+    ]
+  },
+  {
+    "level": 2,
+    "stepMs": 100,
+    "actions": [
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "left",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up"
+    ]
+  },
+  {
+    "level": 3,
+    "stepMs": 100,
+    "actions": [
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "left",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up"
+    ]
+  },
+  {
+    "level": 4,
+    "stepMs": 100,
+    "actions": [
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "left",
+      "left",
+      "up",
+      "up",
+      "right",
+      "up",
+      "up",
+      "up",
+      "up"
+    ]
+  },
+  {
+    "level": 5,
+    "stepMs": 100,
+    "actions": [
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "left",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up"
+    ]
+  },
+  {
+    "level": 6,
+    "stepMs": 100,
+    "actions": [
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "left",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up"
+    ]
+  },
+  {
+    "level": 7,
+    "stepMs": 100,
+    "actions": [
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "left",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up"
+    ]
+  },
+  {
+    "level": 8,
+    "stepMs": 100,
+    "actions": [
+      "up",
+      "up",
+      "up",
+      "right",
+      "up",
+      "right",
+      "up",
+      "up",
+      "up",
+      "left",
+      "up",
+      "left",
+      "left",
+      "up",
+      "up",
+      "up"
+    ]
+  },
+  {
+    "level": 9,
+    "stepMs": 100,
+    "actions": [
+      "up",
+      "up",
+      "up",
+      "up",
+      "left",
+      "up",
+      "left",
+      "left",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up"
+    ]
+  },
+  {
+    "level": 10,
+    "stepMs": 100,
+    "actions": [
+      "up",
+      "up",
+      "up",
+      "up",
+      "left",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up"
+    ]
+  },
+  {
+    "level": 11,
+    "stepMs": 100,
+    "actions": [
+      "up",
+      "right",
+      "right",
+      "right",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up"
+    ]
+  },
+  {
+    "level": 12,
+    "stepMs": 100,
+    "actions": [
+      "up",
+      "up",
+      "left",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up"
+    ]
+  },
+  {
+    "level": 13,
+    "stepMs": 100,
+    "actions": [
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "right",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up"
+    ]
+  },
+  {
+    "level": 14,
+    "stepMs": 100,
+    "actions": [
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "left",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up"
+    ]
+  },
+  {
+    "level": 15,
+    "stepMs": 100,
+    "actions": [
+      "up",
+      "up",
+      "up",
+      "up",
+      "left",
+      "up",
+      "up",
+      "up",
+      "up",
+      "right",
+      "up",
+      "up",
+      "up"
+    ]
+  },
+  {
+    "level": 16,
+    "stepMs": 100,
+    "actions": [
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "left",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up"
+    ]
+  },
+  {
+    "level": 17,
+    "stepMs": 100,
+    "actions": [
+      "up",
+      "up",
+      "left",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up"
+    ]
+  },
+  {
+    "level": 18,
+    "stepMs": 100,
+    "actions": [
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "left",
+      "left",
+      "up",
+      "up",
+      "left",
+      "up",
+      "up",
+      "up",
+      "up"
+    ]
+  },
+  {
+    "level": 19,
+    "stepMs": 100,
+    "actions": [
+      "up",
+      "up",
+      "up",
+      "left",
+      "wait",
+      "down",
+      "down",
+      "left",
+      "left",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up"
+    ]
+  },
+  {
+    "level": 20,
+    "stepMs": 100,
+    "actions": [
+      "up",
+      "up",
+      "left",
+      "up",
+      "wait",
+      "wait",
+      "wait",
+      "wait",
+      "wait",
+      "down",
+      "right",
+      "right",
+      "up",
+      "up",
+      "left",
+      "up",
+      "wait",
+      "wait",
+      "wait",
+      "wait",
+      "wait",
+      "up",
+      "left",
+      "up",
+      "up",
+      "up",
+      "up",
+      "up"
+    ]
+  }
+]

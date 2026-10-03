@@ -9,8 +9,7 @@ for (const game of ['sokoban','crosswalk']) {
   test(`${game} has a complete static entrypoint and mobile viewport`, () => {
     const html = read(`${game}/index.html`);
     assert.match(html, /viewport-fit=cover/);
-    if (game === 'crosswalk') assert.match(html, /user-scalable=no/);
-    else assert.doesNotMatch(html, /user-scalable=no/);
+    assert.doesNotMatch(html, /user-scalable=no/);
     assert.match(html, /style\.css\?v=/);
     assert.match(html, /game\.js\?v=/);
     assert.match(read(`${game}/style.css`), /touch-action:none/);
@@ -32,7 +31,7 @@ test('Sokoban rules push boxes, reject walls, and detect completion', () => {
 test('Crosswalk has finite lanes, goal progression, and directional touch controls', () => {
   const js = read('crosswalk/game.js'), html = read('crosswalk/index.html');
   assert.match(js, /makeLanes/);
-  assert.match(js, /level\+\+/);
+  assert.match(js, /startLevel\(levelIndex \+ 1\)/);
   assert.match(js, /lives--/);
   assert.match(html, /TINY CROSSING/);
   assert.match(html, /data-dir="up"/);

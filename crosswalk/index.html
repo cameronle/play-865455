@@ -2,17 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#fffaf0">
-  <script src="/theme.js?v=tiny-crossing-1"></script>
-  <script src="/clear-game-data.js?v=clear-1"></script>
+  <script src="/theme.js?v=crosswalk-audit-1"></script>
+  <script src="/clear-game-data.js?v=retired-pong-2"></script>
   <title>Tiny Crossing</title>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=tiny-crossing-1">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=crosswalk-audit-1">
   <link rel="stylesheet" href="/theme.css?v=clear-1">
-  <link rel="stylesheet" href="style.css?v=tiny-crossing-1">
+  <link rel="stylesheet" href="style.css?v=crosswalk-audit-1">
 </head>
 <body>
-  <main class="page">
+  <main id="gamePage" class="page">
     <header class="topbar">
       <a href="/" aria-label="Back to games">← PLAY</a>
       <div class="brand"><h1>TINY CROSSING</h1><span>GET HOME, LITTLE DUCK.</span></div>
@@ -27,22 +27,26 @@
       <div><span>CHAPTER</span><b id="chapter">01 / 05</b></div>
       <div><span>LIVES</span><b id="lives">♥ ♥ ♥</b></div>
     </section>
+    <div class="game-layout"><div class="play-column">
     <div class="frame">
-      <canvas id="game" width="600" height="720" aria-label="Tiny Crossing animal traffic game"></canvas>
-      <div id="overlay" class="overlay">
-        <div class="overlay-spark" aria-hidden="true">✦</div>
+      <canvas id="game" width="600" height="720" tabindex="0" aria-label="Tiny Crossing animal traffic game"></canvas>
+      <div id="overlay" class="overlay" role="group" aria-labelledby="overlayTitle">
         <b id="overlayTitle">TINY CROSSING</b>
         <span id="overlayText">HELP THE LITTLE DUCK REACH HOME</span>
         <button id="startButton" type="button">START CROSSING</button>
       </div>
     </div>
+    </div><aside class="controls" aria-label="Crossing controls">
     <section class="dpad" aria-label="Directional touch controls">
       <button data-dir="up" type="button" aria-label="Move up">▲</button>
       <button data-dir="left" type="button" aria-label="Move left">◀</button>
       <button data-dir="down" type="button" aria-label="Move down">▼</button>
       <button data-dir="right" type="button" aria-label="Move right">▶</button>
     </section>
-    <footer>ARROW KEYS / WASD · SWIPE OR TAP TO MOVE · P PAUSE · LEVELS TO REPLAY</footer>
+    <p class="help">ARROWS / WASD · SWIPE OR TAP<br>P PAUSE · LEVELS TO REPLAY</p>
+    <p class="help">MINT MEDIANS ARE SAFE.<br>BLUE TILES SHIFT: KEEP MOVING.<br>EMERGENCY VEHICLES IGNORE RED.</p>
+    <div id="utilityDock" class="utility-dock" aria-label="Appearance and local data"></div>
+    </aside></div>
   </main>
   <section id="levelsOverlay" class="levels-overlay" aria-hidden="true">
     <div class="levels-dialog" role="dialog" aria-modal="true" aria-labelledby="levelsTitle">
@@ -50,9 +54,9 @@
       <div id="levelGrid" class="level-grid"></div>
     </div>
   </section>
-  <script src="rules.js?v=tiny-crossing-1"></script>
-  <script src="levels.js?v=tiny-crossing-1"></script>
-  <script src="game.js?v=tiny-crossing-1"></script>
+  <script src="rules.js?v=crosswalk-audit-1"></script>
+  <script src="levels.js?v=crosswalk-audit-1"></script>
+  <script src="game.js?v=crosswalk-audit-1"></script>
   <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
 </body>
 </html>
