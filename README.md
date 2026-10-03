@@ -11,7 +11,6 @@
 - [Worm & Apple](./snake/) — 自维护的卡通涂鸦贪食蛇，支持苹果、浆果和叶子收集、加速、穿墙、键盘与触控操作。
 - [Firelight Garden](./breakout/) — 自维护的卡通涂鸦打砖块，加入萤火虫、花灯、叶片挡板、关卡、生命和移动端拖动操作。
 - [Mole Patrol](./minesweeper/) — 自维护的卡通涂鸦扫雷，包含 20 个逐关解锁关卡、首格保护、长按插旗、计时和每关最佳时间。
-- [Moon Garden Defense](./space-invaders/) — 自维护的卡通涂鸦自动射击游戏，加入月面温室、月光植物、太空害虫、波次、生命和移动端左右瞄准。
 - [Cat & Ghosts](./maze/) — 自维护的卡通涂鸦迷宫游戏，包含小猫、鱼干、床单幽灵、寻路敌人、关卡、生命和移动端触控。
 - [Gomoku](./gomoku/) — 自维护的 15×15 人机五子棋，支持三档难度、撤销、鼠标与触控操作、最后落子标记和本地战绩。
 - [Tidal Tennis](./pong/) — 自维护的卡通涂鸦 Pong 改造版，采用潮汐海面、冲浪板球拍和海泡球，支持人机对战、拖动、键盘、触控和本地胜场。
@@ -64,7 +63,6 @@ npm test
 /snake/
 /breakout/
 /minesweeper/
-/space-invaders/
 /maze/
 /gomoku/
 /pong/

@@ -111,27 +111,9 @@ module.exports = [
     }
   },
   {
-    "id": "space-invaders",
-    "path": "space-invaders",
-    "order": 7,
-    "category": "arcade",
-    "name": {
-      "zh": "月面花园防守",
-      "en": "MOON GARDEN DEFENSE"
-    },
-    "description": {
-      "zh": "守住月面温室，让自动花粉炮击退一波波太空害虫。",
-      "en": "Protect the moon greenhouse as the flower cannon clears waves of space pests."
-    },
-    "readme": {
-      "title": "Moon Garden Defense",
-      "description": "自维护的卡通涂鸦自动射击游戏，加入月面温室、月光植物、太空害虫、波次、生命和移动端左右瞄准。"
-    }
-  },
-  {
     "id": "maze",
     "path": "maze",
-    "order": 8,
+    "order": 7,
     "category": "arcade",
     "name": {
       "zh": "猫咪幽灵",
@@ -149,7 +131,7 @@ module.exports = [
   {
     "id": "gomoku",
     "path": "gomoku",
-    "order": 9,
+    "order": 8,
     "category": "strategy",
     "name": {
       "zh": "五子棋",
@@ -167,7 +149,7 @@ module.exports = [
   {
     "id": "pong",
     "path": "pong",
-    "order": 10,
+    "order": 9,
     "category": "arcade",
     "name": {
       "zh": "潮汐网球",
@@ -185,7 +167,7 @@ module.exports = [
   {
     "id": "sokoban",
     "path": "sokoban",
-    "order": 11,
+    "order": 10,
     "category": "puzzle",
     "name": {
       "zh": "小熊搬果篮",
@@ -203,7 +185,7 @@ module.exports = [
   {
     "id": "crosswalk",
     "path": "crosswalk",
-    "order": 12,
+    "order": 11,
     "category": "arcade",
     "name": {
       "zh": "小鸭过街",
@@ -221,7 +203,7 @@ module.exports = [
   {
     "id": "sudoku",
     "path": "sudoku",
-    "order": 13,
+    "order": 12,
     "category": "puzzle",
     "name": {
       "zh": "便当数字",
@@ -239,7 +221,7 @@ module.exports = [
   {
     "id": "connect-four",
     "path": "connect-four",
-    "order": 14,
+    "order": 13,
     "category": "strategy",
     "name": {
       "zh": "四子棋",
@@ -257,7 +239,7 @@ module.exports = [
   {
     "id": "sky-hopper",
     "path": "sky-hopper",
-    "order": 15,
+    "order": 14,
     "category": "arcade",
     "name": {
       "zh": "涂鸦弹跳",
@@ -275,7 +257,7 @@ module.exports = [
   {
     "id": "helicopter-cave",
     "path": "helicopter-cave",
-    "order": 16,
+    "order": 15,
     "category": "arcade",
     "name": {
       "zh": "萤火洞穴",
@@ -293,7 +275,7 @@ module.exports = [
   {
     "id": "endless-runner",
     "path": "endless-runner",
-    "order": 17,
+    "order": 16,
     "category": "arcade",
     "name": {
       "zh": "桌面冲刺",
@@ -311,7 +293,7 @@ module.exports = [
   {
     "id": "bubble-shooter",
     "path": "bubble-shooter",
-    "order": 18,
+    "order": 17,
     "category": "puzzle",
     "name": {
       "zh": "泡泡花园",
@@ -329,7 +311,7 @@ module.exports = [
   {
     "id": "nonogram",
     "path": "nonogram",
-    "order": 19,
+    "order": 18,
     "category": "puzzle",
     "name": {
       "zh": "数织",
@@ -347,7 +329,7 @@ module.exports = [
   {
     "id": "flow",
     "path": "flow",
-    "order": 20,
+    "order": 19,
     "category": "puzzle",
     "name": {
       "zh": "彩带路线",
@@ -365,7 +347,7 @@ module.exports = [
   {
     "id": "sliding-puzzle",
     "path": "sliding-puzzle",
-    "order": 21,
+    "order": 20,
     "category": "puzzle",
     "name": {
       "zh": "数字华容道",
@@ -383,7 +365,7 @@ module.exports = [
   {
     "id": "flappy",
     "path": "flappy",
-    "order": 22,
+    "order": 21,
     "category": "arcade",
     "name": {
       "zh": "小鸟邮差",
@@ -401,7 +383,7 @@ module.exports = [
   {
     "id": "mushroom-trail",
     "path": "mushroom-trail",
-    "order": 23,
+    "order": 22,
     "category": "arcade",
     "name": {
       "zh": "蘑菇勇者",
@@ -419,7 +401,7 @@ module.exports = [
   {
     "id": "melon-lab",
     "path": "melon-lab",
-    "order": 24,
+    "order": 23,
     "category": "arcade",
     "name": {
       "zh": "瓜体实验室",
@@ -437,7 +419,7 @@ module.exports = [
   {
     "id": "firefly-watch",
     "path": "firefly-watch",
-    "order": 25,
+    "order": 24,
     "category": "arcade",
     "name": {
       "zh": "萤火守夜",
@@ -453,7 +435,7 @@ module.exports = [
     }
   },
   {
-    "id": "bubble-tanks", "path": "bubble-tanks", "order": 26, "category": "arcade",
+    "id": "bubble-tanks", "path": "bubble-tanks", "order": 25, "category": "arcade",
     "name": {"zh": "泡泡远征", "en": "BUBBLE FRONTIER"},
     "description": {"zh": "穿越泡泡房间，吸收成长，组装武器与遗物，挑战四大区域首领。", "en": "Explore bubble rooms, absorb growth, assemble a build, and defeat four sector bosses."},
     "readme": {"title": "Bubble Frontier", "description": "自维护的原创泡泡坦克肉鸽远征，包含六种机体、十二种武器、八种主动技能、二十四种被动、十二种遗物和十八种联动，支持房间探索、模块组装、四区域 Boss、双摇杆触控、本地存档与中英双语。"}

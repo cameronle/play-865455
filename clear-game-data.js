@@ -26,7 +26,6 @@
     'sliding-puzzle': ['sliding-puzzle-best-v1'],
     snake: ['classic-snake-high-score'],
     sokoban: ['sokoban'],
-    'space-invaders': ['invaders-high'],
     sudoku: ['sudokuBest-'],
     tetris: ['classic-tetris-high-score']
   };

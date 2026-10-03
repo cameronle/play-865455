@@ -42,18 +42,6 @@ test('Minesweeper cancels long press after meaningful pointer movement', () => {
   assert.match(source, /Math\.hypot/);
 });
 
-test('Invaders touch directions map to movement keys and keyboard input prevents scrolling', () => {
-  const source = read('space-invaders/game.js');
-  assert.match(source, /key=dir==='left'\?'ArrowLeft':'ArrowRight'/);
-  assert.match(source, /event\.preventDefault\(\)/);
-});
-
-test('Invaders persist a new high score before a manual restart', () => {
-  const source = read('space-invaders/game.js');
-  assert.match(source, /function saveHigh\(\)/);
-  assert.match(source, /function start\(\)\{saveHigh\(\)/);
-});
-
 test('Sky Patrol exposes mobile pause and does not advertise a redundant fire button', () => {
   const html = read('shooter/index.html');
   const css = read('shooter/style.css');
