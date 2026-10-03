@@ -5,7 +5,7 @@ const vm = require('node:vm');
 
 const read = path => fs.readFileSync(path, 'utf8');
 
-for (const game of ['pong','sokoban','crosswalk','simon']) {
+for (const game of ['pong','sokoban','crosswalk']) {
   test(`${game} has a complete static entrypoint and mobile viewport`, () => {
     const html = read(`${game}/index.html`);
     assert.match(html, /viewport-fit=cover/);
@@ -43,17 +43,10 @@ test('Crosswalk has finite lanes, goal progression, and directional touch contro
   assert.match(html, /data-dir="up"/);
 });
 
-test('Simon generates a growing sequence and accepts four touch pads', () => {
-  const js = read('simon/game.js'), html = read('simon/index.html');
-  assert.match(js, /sequence\.push/);
-  assert.match(js, /playSequence/);
-  assert.equal((html.match(/data-pad=/g)||[]).length, 4);
-  assert.match(html, /MONSTER BAND/);
-});
 
-test('launcher and README include the remaining four routes', () => {
+test('launcher and README include the remaining three routes', () => {
   const index = read('index.html'), readme = read('README.md');
-  for (const route of ['pong','sokoban','crosswalk','simon']) {
+  for (const route of ['pong','sokoban','crosswalk']) {
     assert.match(index, new RegExp(`/${route}/`));
     assert.match(readme, new RegExp(`\./${route}/`));
   }

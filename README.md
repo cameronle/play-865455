@@ -17,19 +17,15 @@
 - [Tidal Tennis](./pong/) — 自维护的卡通涂鸦 Pong 改造版，采用潮汐海面、冲浪板球拍和海泡球，支持人机对战、拖动、键盘、触控和本地胜场。
 - [Bear & Boxes](./sokoban/) — 自维护的卡通涂鸦推箱子游戏，包含 20 个原创关卡、撤销、重置、键盘、滑动和触控操作。
 - [Tiny Crossing](./crosswalk/) — 自维护的卡通涂鸦车流躲避街机，包含 20 个逐关解锁关卡、信号节奏、路线选择、移动安全区，支持生命、键盘、滑动和触控操作。
-- [Monster Band](./simon/) — 自维护的卡通涂鸦音序记忆游戏，包含四只小怪兽、音效、严格模式和本地最高分。
 - [Bento Numbers](./sudoku/) — 自维护的卡通涂鸦数独，采用便当盒数字主题，支持唯一解、三档难度、笔记、撤销、提示、错误计数、计时和本地最佳时间。
-- [Moon Bunny](./lunar-lander/) — 自维护的卡通涂鸦月面着陆物理游戏，支持随机地形、有限燃料、递增重力、完整触控和本地最高分。
 - [Connect Four](./connect-four/) — 自维护的人机四子棋，支持三档 AI、先手选择、撤销、触控操作和本地战绩。
 - [Doodle Hop!](./sky-hopper/) — 自维护的卡通涂鸦纵向平台跳跃游戏，支持自动弹跳、星星收集、五种平台、键盘与触控操作和本地最高分。
 - [Firefly Cave](./helicopter-cave/) — 自维护的卡通涂鸦单键洞穴飞行游戏，加入发光萤火虫、水晶障碍、程序生成洞壁、速度递增和移动端长按操作。
 - [Desk Dash](./endless-runner/) — 自维护的卡通涂鸦桌面跑酷，加入文具障碍、贴纸收集、坑洞、高低跳、快速落地和移动端长按操作。
-- [Bunny Tea Time](./solitaire/) — 自维护的卡通涂鸦 Klondike 接龙，支持点选移动、双击自动收牌、撤销、提示和本地战绩。
 - [Bubble Garden](./bubble-shooter/) — 自维护的卡通涂鸦泡泡射手，支持触屏瞄准、墙壁反弹、同色消除、悬空掉落和本地最高分。
 - [Nonogram](./nonogram/) — 自维护的数织像素谜题，包含 5×5、10×10 和 15×15 共 45 关，支持填充、标记、拖动绘制、撤销、提示、计时和本地最佳时间。
 - [Ribbon Route](./flow/) — 自维护的卡通涂鸦连线谜题，采用彩带和纽扣主题，包含 4 种尺寸共 40 关，支持触摸拖线、全盘覆盖、关卡选择与最佳时间。
 - [15-Puzzle](./sliding-puzzle/) — 自维护的数字华容道，支持 3×3、4×4、5×5 三种尺寸、可解性乱序生成、整行整列滑动、键盘操作与本地最佳纪录。
-- [Paint Parade](./color-bounce/) — 自维护的卡通涂鸦颜色匹配街机，加入变色龙、颜料圈、颜色切换、飞溅粒子、暂停和移动端跳跃操作。
 - [Birdie Post](./flappy/) — 自维护的卡通涂鸦飞行街机，支持单键扑翼、云朵障碍、暂停、移动端触控和本地最高分。
 - [Mushroom Trail](./mushroom-trail/) — 自维护的原创经典横版平台跳跃冒险，包含三段手工关卡、金币、问号砖块、绿色管道、弹跳虫、移动平台、强化道具、检查点、终点旗帜和移动端三键操作。
 - [Melon Lab](./melon-lab/) — 自维护的原创半流体水果合成街机，支持碰撞合并、半流体/平稳模式、搅动能量、危险线、合成路线、本地最高分和移动端触控。
@@ -74,19 +70,15 @@ npm test
 /pong/
 /sokoban/
 /crosswalk/
-/simon/
 /sudoku/
-/lunar-lander/
 /connect-four/
 /sky-hopper/
 /helicopter-cave/
 /endless-runner/
-/solitaire/
 /bubble-shooter/
 /nonogram/
 /flow/
 /sliding-puzzle/
-/color-bounce/
 /flappy/
 /mushroom-trail/
 /melon-lab/

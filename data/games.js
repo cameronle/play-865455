@@ -219,27 +219,9 @@ module.exports = [
     }
   },
   {
-    "id": "simon",
-    "path": "simon",
-    "order": 13,
-    "category": "memory",
-    "name": {
-      "zh": "怪兽乐队",
-      "en": "MONSTER BAND"
-    },
-    "description": {
-      "zh": "记住四只小怪兽的节奏，按正确顺序让乐队继续演奏。",
-      "en": "Remember the monster beat and play it back in the right order."
-    },
-    "readme": {
-      "title": "Monster Band",
-      "description": "自维护的卡通涂鸦音序记忆游戏，包含四只小怪兽、音效、严格模式和本地最高分。"
-    }
-  },
-  {
     "id": "sudoku",
     "path": "sudoku",
-    "order": 14,
+    "order": 13,
     "category": "puzzle",
     "name": {
       "zh": "便当数字",
@@ -255,27 +237,9 @@ module.exports = [
     }
   },
   {
-    "id": "lunar-lander",
-    "path": "lunar-lander",
-    "order": 15,
-    "category": "simulation",
-    "name": {
-      "zh": "月兔着陆",
-      "en": "MOON BUNNY"
-    },
-    "description": {
-      "zh": "驾驶小兔子的纸盒飞船，在有限燃料下平稳降落月面。",
-      "en": "Pilot a paper rocket and land the moon bunny softly with limited fuel."
-    },
-    "readme": {
-      "title": "Moon Bunny",
-      "description": "自维护的卡通涂鸦月面着陆物理游戏，支持随机地形、有限燃料、递增重力、完整触控和本地最高分。"
-    }
-  },
-  {
     "id": "connect-four",
     "path": "connect-four",
-    "order": 16,
+    "order": 14,
     "category": "strategy",
     "name": {
       "zh": "四子棋",
@@ -293,7 +257,7 @@ module.exports = [
   {
     "id": "sky-hopper",
     "path": "sky-hopper",
-    "order": 17,
+    "order": 15,
     "category": "arcade",
     "name": {
       "zh": "涂鸦弹跳",
@@ -311,7 +275,7 @@ module.exports = [
   {
     "id": "helicopter-cave",
     "path": "helicopter-cave",
-    "order": 18,
+    "order": 16,
     "category": "arcade",
     "name": {
       "zh": "萤火洞穴",
@@ -329,7 +293,7 @@ module.exports = [
   {
     "id": "endless-runner",
     "path": "endless-runner",
-    "order": 19,
+    "order": 17,
     "category": "arcade",
     "name": {
       "zh": "桌面冲刺",
@@ -345,27 +309,9 @@ module.exports = [
     }
   },
   {
-    "id": "solitaire",
-    "path": "solitaire",
-    "order": 20,
-    "category": "card",
-    "name": {
-      "zh": "兔子茶会",
-      "en": "BUNNY TEA TIME"
-    },
-    "description": {
-      "zh": "整理红黑茶点卡牌，把四种花色送回各自的茶盘。",
-      "en": "Sort the tea cards and send every suit home to its tray."
-    },
-    "readme": {
-      "title": "Bunny Tea Time",
-      "description": "自维护的卡通涂鸦 Klondike 接龙，支持点选移动、双击自动收牌、撤销、提示和本地战绩。"
-    }
-  },
-  {
     "id": "bubble-shooter",
     "path": "bubble-shooter",
-    "order": 21,
+    "order": 18,
     "category": "puzzle",
     "name": {
       "zh": "泡泡花园",
@@ -383,7 +329,7 @@ module.exports = [
   {
     "id": "nonogram",
     "path": "nonogram",
-    "order": 22,
+    "order": 19,
     "category": "puzzle",
     "name": {
       "zh": "数织",
@@ -401,7 +347,7 @@ module.exports = [
   {
     "id": "flow",
     "path": "flow",
-    "order": 23,
+    "order": 20,
     "category": "puzzle",
     "name": {
       "zh": "彩带路线",
@@ -419,7 +365,7 @@ module.exports = [
   {
     "id": "sliding-puzzle",
     "path": "sliding-puzzle",
-    "order": 24,
+    "order": 21,
     "category": "puzzle",
     "name": {
       "zh": "数字华容道",
@@ -435,27 +381,9 @@ module.exports = [
     }
   },
   {
-    "id": "color-bounce",
-    "path": "color-bounce",
-    "order": 25,
-    "category": "arcade",
-    "name": {
-      "zh": "颜料巡游",
-      "en": "PAINT PARADE"
-    },
-    "description": {
-      "zh": "带着小变色龙穿过同色颜料圈，收集飞溅一路向上。",
-      "en": "Guide a tiny chameleon through matching paint hoops and collect splashes."
-    },
-    "readme": {
-      "title": "Paint Parade",
-      "description": "自维护的卡通涂鸦颜色匹配街机，加入变色龙、颜料圈、颜色切换、飞溅粒子、暂停和移动端跳跃操作。"
-    }
-  },
-  {
     "id": "flappy",
     "path": "flappy",
-    "order": 26,
+    "order": 22,
     "category": "arcade",
     "name": {
       "zh": "小鸟邮差",
@@ -473,7 +401,7 @@ module.exports = [
   {
     "id": "mushroom-trail",
     "path": "mushroom-trail",
-    "order": 27,
+    "order": 23,
     "category": "arcade",
     "name": {
       "zh": "蘑菇勇者",
@@ -491,7 +419,7 @@ module.exports = [
   {
     "id": "melon-lab",
     "path": "melon-lab",
-    "order": 28,
+    "order": 24,
     "category": "arcade",
     "name": {
       "zh": "瓜体实验室",
@@ -509,7 +437,7 @@ module.exports = [
   {
     "id": "firefly-watch",
     "path": "firefly-watch",
-    "order": 29,
+    "order": 25,
     "category": "arcade",
     "name": {
       "zh": "萤火守夜",
@@ -525,7 +453,7 @@ module.exports = [
     }
   },
   {
-    "id": "bubble-tanks", "path": "bubble-tanks", "order": 30, "category": "arcade",
+    "id": "bubble-tanks", "path": "bubble-tanks", "order": 26, "category": "arcade",
     "name": {"zh": "泡泡远征", "en": "BUBBLE FRONTIER"},
     "description": {"zh": "穿越泡泡房间，吸收成长，组装武器与遗物，挑战四大区域首领。", "en": "Explore bubble rooms, absorb growth, assemble a build, and defeat four sector bosses."},
     "readme": {"title": "Bubble Frontier", "description": "自维护的原创泡泡坦克肉鸽远征，包含六种机体、十二种武器、八种主动技能、二十四种被动、十二种遗物和十八种联动，支持房间探索、模块组装、四区域 Boss、双摇杆触控、本地存档与中英双语。"}

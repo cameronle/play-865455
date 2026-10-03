@@ -92,7 +92,7 @@ test('Firefly Watch is integrated into the canonical catalog and save-data utili
   const catalog = require('../data/games.js');
   const game = catalog.find(entry => entry.id === 'firefly-watch');
   assert.ok(game);
-  assert.equal(game.order, 29);
+  assert.equal(game.order, catalog.indexOf(game) + 1);
   assert.equal(game.category, 'arcade');
   assert.equal(game.name.zh, '萤火守夜');
   assert.match(fs.readFileSync('clear-game-data.js', 'utf8'), /'firefly-watch': \['fireflyWatchBest'\]/);
