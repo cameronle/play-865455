@@ -39,8 +39,8 @@ function boot(route, initialKeys) {
     async delete(name) { deletedCaches.push(name); return true; }
   };
   const location = {pathname: `/${route}/`, reload() { reloaded = true; }};
-  const window = {confirm: () => true, caches, location};
-  const sandbox = {document, localStorage: storage, sessionStorage, caches, location, window, console};
+  const window = {confirm: () => true, caches, location, dispatchEvent(event) { assert.equal(event.type, "game-data-clearing"); return true; }};
+  const sandbox = {document, localStorage: storage, sessionStorage, caches, location, window, console, Event: class { constructor(type) { this.type = type; } }};
   vm.createContext(sandbox);
   vm.runInContext(source, sandbox);
   return {storage, buttons, sessionCleared: () => sessionCleared, deletedCaches, reloaded: () => reloaded};

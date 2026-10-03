@@ -48,7 +48,7 @@ test('Sudoku page exposes mobile number pad, notes, undo, hint, difficulty and t
   const css=fs.readFileSync('sudoku/style.css','utf8');
   const js=fs.readFileSync('sudoku/game.js','utf8');
   assert.match(html,/viewport-fit=cover/);
-  assert.match(html,/user-scalable=no/);
+  assert.doesNotMatch(html, /user-scalable=no/);
   assert.equal((html.match(/data-number=/g)||[]).length,9);
   for(const id of ['notesButton','eraseButton','undoButton','hintButton','difficulty','timer']) assert.match(html,new RegExp(`id="${id}"`));
   assert.match(css,/touch-action:manipulation/);

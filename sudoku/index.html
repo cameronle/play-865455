@@ -1,6 +1,56 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#fff7e7"><script src="/theme.js?v=bento-1"></script><script src="/clear-game-data.js?v=clear-1"></script><title>Bento Numbers</title><link rel="icon" type="image/svg+xml" href="favicon.svg?v=bento-1"><link rel="stylesheet" href="style.css?v=bento-1"><link rel="stylesheet" href="/theme.css?v=clear-1"></head>
-<body><main class="page"><header><a href="/">← PLAY</a><div class="brand"><h1>BENTO NUMBERS</h1><span>PACK THE GRID · KEEP EVERY BITE UNIQUE</span></div><button id="newButton" type="button">NEW</button></header>
-<section class="toolbar"><label>SHEET <select id="difficulty"><option value="easy">EASY</option><option value="medium" selected>MEDIUM</option><option value="hard">HARD</option></select></label><div>TIME <b id="timer">00:00</b></div><div>MISTAKES <b id="mistakes">0 / 3</b></div><div>BEST <b id="best">--:--</b></div></section>
-<section class="game-layout"><div class="board-wrap"><div class="bento-lid" aria-hidden="true"><span>09 COMPARTMENTS</span><i></i></div><div id="board" class="board" role="grid" aria-label="Bento Numbers board"></div><div id="overlay" class="overlay"><div class="bento-mark" aria-hidden="true">✦</div><b id="overlayTitle">BENTO NUMBERS</b><span id="overlayText">SELECT A CELL AND PACK A NUMBER</span><button id="startButton" type="button">START PACKING</button></div></div><aside><div class="actions"><button id="undoButton" type="button">↶<span>UNDO</span></button><button id="eraseButton" type="button">⌫<span>ERASE</span></button><button id="notesButton" type="button">✎<span>NOTES</span></button><button id="hintButton" type="button">?<span>HINT</span></button></div><div class="bento-note"><b>PACKING RULE</b><p>Every row, column, and 3×3 compartment gets one of each number.</p></div></aside></section>
-<div class="number-pad" aria-label="Number pad"><button data-number="1">1</button><button data-number="2">2</button><button data-number="3">3</button><button data-number="4">4</button><button data-number="5">5</button><button data-number="6">6</button><button data-number="7">7</button><button data-number="8">8</button><button data-number="9">9</button></div><footer>KEYS 1–9 · N NOTES · BACKSPACE ERASE · ARROWS MOVE</footer></main><button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button><script src="rules.js?v=bento-1"></script><script src="game.js?v=bento-1"></script></body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#fff7e7">
+  <script src="/theme.js?v=bento-1"></script>
+  <script src="/clear-game-data.js?v=sudoku-audit-1"></script>
+  <title>Bento Numbers</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=bento-1">
+  <link rel="stylesheet" href="style.css?v=sudoku-audit-1">
+  <link rel="stylesheet" href="/theme.css?v=clear-1">
+</head>
+<body>
+<main class="page" id="gamePage">
+  <header>
+    <a href="/">← PLAY</a>
+    <div class="brand"><h1>BENTO NUMBERS</h1><span>PACK THE GRID · KEEP EVERY BITE UNIQUE</span></div>
+    <div class="header-actions"><button id="pauseButton" type="button">PAUSE</button><button id="newButton" type="button">NEW</button></div>
+  </header>
+  <section class="toolbar" aria-label="Puzzle settings and records">
+    <label><span>SHEET</span><select id="difficulty" aria-label="Puzzle difficulty"><option value="easy">EASY</option><option value="medium" selected>MEDIUM</option><option value="hard">HARD</option></select></label>
+    <div>TIME <b id="timer">00:00</b></div>
+    <div>MISTAKES <b id="mistakes">0 / 3</b></div>
+    <div>BEST · NO HINTS <b id="best">--:--</b></div>
+  </section>
+  <section class="game-layout">
+    <div class="board-wrap">
+      <div class="bento-lid"><span id="statusText" aria-live="polite">09 COMPARTMENTS</span><i aria-hidden="true"></i></div>
+      <div id="board" class="board" role="grid" aria-rowcount="9" aria-colcount="9" aria-label="Bento Numbers board"></div>
+      <div id="overlay" class="overlay" role="region" aria-labelledby="overlayTitle" aria-describedby="overlayText">
+        <div class="bento-mark" aria-hidden="true">✦</div><b id="overlayTitle">BENTO NUMBERS</b>
+        <span id="overlayText">SELECT A CELL AND PACK A NUMBER</span><button id="startButton" type="button">START</button>
+      </div>
+    </div>
+    <aside>
+      <div class="actions" aria-label="Puzzle tools">
+        <button id="undoButton" type="button" aria-label="Undo last board or note change">↶<span>UNDO</span></button>
+        <button id="eraseButton" type="button" aria-label="Erase selected cell">⌫<span>ERASE</span></button>
+        <button id="notesButton" type="button" aria-label="Toggle notes" aria-pressed="false">✎<span>NOTES</span></button>
+        <button id="hintButton" type="button" aria-label="Hint: fill selected empty cell; assisted runs do not set best time">?<span>HINT</span></button>
+      </div>
+      <div class="bento-note"><b>PACKING RULE</b><p>Every row, column, and 3×3 compartment gets one of each number. Three mistakes end the puzzle. Hints exclude a run from best times. Progress saves automatically.</p></div>
+    </aside>
+  </section>
+  <div class="number-pad" aria-label="Number pad">
+    <button type="button" data-number="1">1</button><button type="button" data-number="2">2</button><button type="button" data-number="3">3</button>
+    <button type="button" data-number="4">4</button><button type="button" data-number="5">5</button><button type="button" data-number="6">6</button>
+    <button type="button" data-number="7">7</button><button type="button" data-number="8">8</button><button type="button" data-number="9">9</button>
+  </div>
+  <div class="bottom-bar"><footer>1–9 NUMBERS · N NOTES · DELETE ERASE · ARROWS MOVE · CTRL/CMD+Z UNDO</footer><div id="utilityDock" aria-label="Theme and local data"><button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button></div></div>
+</main>
+<script src="rules.js?v=sudoku-audit-1"></script>
+<script src="game.js?v=sudoku-audit-1"></script>
+</body>
+</html>

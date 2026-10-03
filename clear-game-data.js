@@ -25,7 +25,7 @@
     'sliding-puzzle': ['sliding-puzzle-best-v1'],
     snake: ['classic-snake-high-score'],
     sokoban: ['sokoban'],
-    sudoku: ['sudokuBest-'],
+    sudoku: ['sudokuBest-', 'sudoku-game-v1'],
     tetris: ['classic-tetris-high-score']
   };
 
@@ -41,6 +41,7 @@
   async function clearGameData(button) {
     if (!window.confirm('Clear saved data for this game and reload?')) return;
     button.disabled = true;
+    window.dispatchEvent(new Event('game-data-clearing'));
 
     for (const key of savedKeys()) localStorage.removeItem(key);
     try { sessionStorage.clear(); } catch (_) {}
