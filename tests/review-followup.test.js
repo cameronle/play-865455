@@ -33,10 +33,17 @@ test('Tetris locks a grounded piece without waiting for the gravity interval',()
 });
 
 test('Minesweeper cancels long press after meaningful pointer movement', () => {
-  const source = read('minesweeper/game.js');
-  assert.match(source, /pressStart/);
-  assert.match(source, /onpointermove/);
-  assert.match(source, /Math\.hypot/);
+  const { createMinesweeper } = require('./helpers/minesweeper-runtime');
+  const g = createMinesweeper();
+  g.start();
+  const c = g.cell(0);
+  c.dispatch('pointerdown');
+  c.dispatch('pointermove', { clientX: 60 });
+  g.advance(600);
+  c.dispatch('pointerup', { clientX: 60 });
+  c.dispatch('click', { detail: 1 });
+  assert.equal(g.snapshot().flags, 0);
+  assert.equal(g.snapshot().started, false);
 });
 
 test('Sky Patrol exposes mobile pause and does not advertise a redundant fire button', () => {
