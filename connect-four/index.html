@@ -2,30 +2,35 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#070b12">
-  <script src="/theme.js?v=theme-2"></script><script src="/clear-game-data.js?v=clear-1"></script>
+  <script src="/theme.js?v=theme-2"></script><script src="/clear-game-data.js?v=cf-audit-3"></script>
   <title>Connect Four</title>
-  <link rel="stylesheet" href="style.css?v=style-2">
+  <link rel="stylesheet" href="style.css?v=cf-audit-3">
   <link rel="stylesheet" href="/theme.css?v=clear-1">
 </head>
 <body>
   <main class="page">
-    <header class="topbar"><a href="/">← PLAY</a><h1>CONNECT FOUR</h1><button id="newButton" type="button">NEW</button></header>
-    <section class="settings">
+    <header class="topbar"><a href="/">← PLAY</a><h1>CONNECT FOUR</h1><button id="newButton" type="button" aria-label="Start a new round">NEW</button></header>
+    <section class="settings" aria-label="Round settings and record">
       <label>DIFFICULTY<select id="difficulty"><option value="easy">EASY</option><option value="medium" selected>MEDIUM</option><option value="hard">HARD</option></select></label>
       <label>FIRST MOVE<select id="firstPlayer"><option value="human">YOU</option><option value="computer">COMPUTER</option></select></label>
-      <div class="record"><span>RECORD</span><b><i id="wins">0</i>W · <i id="losses">0</i>L · <i id="draws">0</i>D</b></div>
+      <div class="record"><span>RECORD</span><b><span><i id="wins">0</i>W</span><span><i id="losses">0</i>L</span><span><i id="draws">0</i>D</span></b></div>
     </section>
-    <section class="game-shell">
-      <div class="turn"><span id="turnDot"></span><b id="status">YOUR TURN</b><button id="undoButton" type="button">UNDO</button></div>
-      <div class="column-controls" aria-label="Choose a column"><button type="button" data-column="0" aria-label="Drop in column 1">↓</button><button type="button" data-column="1" aria-label="Drop in column 2">↓</button><button type="button" data-column="2" aria-label="Drop in column 3">↓</button><button type="button" data-column="3" aria-label="Drop in column 4">↓</button><button type="button" data-column="4" aria-label="Drop in column 5">↓</button><button type="button" data-column="5" aria-label="Drop in column 6">↓</button><button type="button" data-column="6" aria-label="Drop in column 7">↓</button></div>
-      <div class="board-wrap"><div id="board" class="board" role="grid" aria-label="Connect Four board"></div><div id="resultOverlay" class="result-overlay"><b id="resultTitle">YOU WIN</b><span id="resultText">FOUR DISCS CONNECTED</span><button id="resultButton" type="button">PLAY AGAIN</button></div></div>
+    <section class="game-shell" aria-label="Four-in-a-row game">
+      <div class="turn"><span id="turnDot" aria-hidden="true"></span><b id="status" role="status" aria-live="polite" aria-atomic="true">YOUR TURN</b><div class="turn-actions"><button id="pauseButton" type="button">PAUSE</button><button id="undoButton" type="button">UNDO</button></div></div>
+      <div class="board-area">
+        <div class="column-controls" role="group" aria-label="Choose a column"><button type="button" data-column="0" aria-label="Drop in column 1">↓</button><button type="button" data-column="1" aria-label="Drop in column 2">↓</button><button type="button" data-column="2" aria-label="Drop in column 3">↓</button><button type="button" data-column="3" aria-label="Drop in column 4">↓</button><button type="button" data-column="4" aria-label="Drop in column 5">↓</button><button type="button" data-column="5" aria-label="Drop in column 6">↓</button><button type="button" data-column="6" aria-label="Drop in column 7">↓</button></div>
+        <div class="board-wrap">
+          <div id="board" class="board" role="grid" aria-label="Connect Four board" aria-rowcount="6" aria-colcount="7" aria-describedby="instructions" tabindex="0"></div>
+          <div id="pauseOverlay" class="pause-overlay" role="dialog" aria-label="Round paused" aria-hidden="true"><b>PAUSED</b><span>YOUR ROUND IS KEPT</span><button id="resumeButton" type="button">RESUME</button></div>
+          <div id="resultOverlay" class="result-overlay" role="dialog" aria-labelledby="resultTitle" aria-describedby="resultText" aria-hidden="true"><b id="resultTitle">YOU WIN</b><span id="resultText">FOUR DISCS CONNECTED</span><div class="result-actions"><button id="viewButton" type="button">VIEW BOARD</button><button id="resultButton" type="button">PLAY AGAIN</button></div></div>
+        </div>
+      </div>
     </section>
-    <section class="legend"><span><i class="human"></i>YOU</span><span><i class="computer"></i>COMPUTER</span><span>CONNECT FOUR TO WIN</span></section>
-    <footer>TAP A COLUMN · KEYS 1–7 · U UNDO · N NEW</footer>
+    <section class="legend" aria-label="Disc colors and goal"><span><i class="human" aria-hidden="true"></i>YOU</span><span><i class="computer" aria-hidden="true"></i>COMPUTER</span><span>CONNECT FOUR TO WIN</span></section>
+    <footer><span id="instructions">TAP A COLUMN · 1–7 DROP<br>← → + ENTER · U UNDO · ESC PAUSE</span><div id="utilityDock" class="utility-dock"><button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button></div></footer>
   </main>
-  <script src="rules.js?v=result-1"></script><script src="game.js?v=result-1"></script>
-  <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
+  <script src="rules.js?v=cf-audit-3"></script><script src="game.js?v=cf-audit-3"></script>
 </body>
 </html>

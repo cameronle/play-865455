@@ -7,7 +7,7 @@
     breakout: ['breakout-high'],
     'bubble-shooter': ['bubble-shooter-best'],
     'bubble-tanks': ['bubble_frontier_save', 'bubble_frontier_records', 'bubble_frontier_settings'],
-    'connect-four': ['connectFourRecord'],
+    'connect-four': ['connectFourRecord', 'connectFourGame-v1'],
     crosswalk: ['crosswalk-progress-v2'],
     'endless-runner': ['endlessRunnerBest'],
     'firefly-watch': ['fireflyWatchBest'],
