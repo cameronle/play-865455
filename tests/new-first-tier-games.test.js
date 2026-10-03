@@ -5,7 +5,7 @@ const vm = require('node:vm');
 
 const read = path => fs.readFileSync(path, 'utf8');
 
-for (const game of ['pong','sokoban','crosswalk']) {
+for (const game of ['sokoban','crosswalk']) {
   test(`${game} has a complete static entrypoint and mobile viewport`, () => {
     const html = read(`${game}/index.html`);
     assert.match(html, /viewport-fit=cover/);
@@ -27,12 +27,6 @@ test('Sokoban rules push boxes, reject walls, and detect completion', () => {
   assert.equal(rules.move(state,1,0), false);
 });
 
-test('Pong exposes drag/touch controls and a playable AI match', () => {
-  const html = read('pong/index.html'), js = read('pong/game.js');
-  assert.match(html, /id="startButton"/);
-  assert.match(js, /pointermove/);
-  assert.match(js, /AI WINS|YOU WIN/);
-});
 
 test('Crosswalk has finite lanes, goal progression, and directional touch controls', () => {
   const js = read('crosswalk/game.js'), html = read('crosswalk/index.html');
@@ -46,7 +40,7 @@ test('Crosswalk has finite lanes, goal progression, and directional touch contro
 
 test('launcher and README include the remaining three routes', () => {
   const index = read('index.html'), readme = read('README.md');
-  for (const route of ['pong','sokoban','crosswalk']) {
+  for (const route of ['sokoban','crosswalk']) {
     assert.match(index, new RegExp(`/${route}/`));
     assert.match(readme, new RegExp(`\./${route}/`));
   }

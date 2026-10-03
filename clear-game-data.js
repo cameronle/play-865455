@@ -18,7 +18,6 @@
     maze: ['maze-high'],
     minesweeper: ['minesweeper-'],
     nonogram: ['nonogram-'],
-    pong: ['pongMatchWins'],
     shooter: ['sky-patrol-best'],
     'sky-hopper': ['doodleHopBest', 'doodleHopBestStars', 'skyHopperBest'],
     'mushroom-trail': ['mushroomTrailBest'],
