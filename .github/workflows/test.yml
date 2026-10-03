@@ -34,5 +34,5 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Verify six Bubble Frontier builds
-        run: npm run test:balance
+      - name: Verify seeded Bubble Frontier build matrix
+        run: npm run test:balance -- --matrix

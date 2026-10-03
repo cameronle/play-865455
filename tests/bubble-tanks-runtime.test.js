@@ -81,7 +81,7 @@ test('language and theme redraws preserve the running build, while restart reset
   assert.equal(h.B.snapshot().lang, 'en');
   assert.equal(h.B.snapshot().mass, before.mass);
   assert.ok(h.labels.every(el => !/[\u3400-\u9fff]/.test(el.textContent)));
-  h.elements.get('pauseButton').click(); h.elements.get('restartButton').click();
+  h.elements.get('pauseButton').click(); h.elements.get('restartButton').click(); h.elements.get('confirmNewButton').click();
   assert.equal(h.B.snapshot().mode, 'title');
   assert.equal(h.B.snapshot().growth, 0);
   assert.equal(h.B.snapshot().mass, 22);

@@ -149,11 +149,6 @@
         circle(drop.x, drop.y, drop.r || 5, ctx.strokeStyle, 0.12, 1.4); ctx.restore();
       }
       for (const e of room.enemies) enemy(e);
-      const boss = room.enemies.find(e => e.kind === 'boss' && e.hp > 0);
-      if (boss) {const def = B.Bosses.definitions[boss.zone]; label(B.Content.text(def.name, state.lang) + (boss.stage === 2 ? ' · II' : ' · I'), 400, 54, 18, palette.hostile, 0.9);
-        ctx.save(); ctx.fillStyle = palette.hostile; ctx.globalAlpha = 0.2; ctx.fillRect(285, 64, 230, 4); ctx.globalAlpha = 0.8; ctx.fillRect(285, 64, 230 * Math.max(0, boss.hp / boss.maxHp), 4); ctx.restore();
-        label(B.Content.text(def.tip, state.lang), 400, 90, 12, '#e5eef8', 0.62);
-      }
       for (const shot of room.shots) {
         if(shot.delay>0)continue;
         const col = shot.owner === 'enemy' ? palette.hostile : palette.player;
@@ -161,7 +156,8 @@
         ctx.globalAlpha = 0.3; ctx.beginPath(); ctx.moveTo(shot.x - shot.vx * 0.022, shot.y - shot.vy * 0.022); ctx.lineTo(shot.x, shot.y); ctx.stroke(); ctx.restore();
         if(shot.weapon==='vortex'){circle(shot.x,shot.y,shot.fieldRadius,col,.03,1.1);for(let i=0;i<3;i++){const a=state.time*2+i*TAU/3;circle(shot.x+Math.cos(a)*shot.fieldRadius*.6,shot.y+Math.sin(a)*shot.fieldRadius*.6,5,col,.05);}}
         if(['mine','hostile_mine'].includes(shot.weapon)){ctx.save();ctx.strokeStyle=col;ctx.setLineDash(shot.arm>0?[3,4]:[]);circle(shot.x,shot.y,shot.r+5,col,.07);ctx.restore();}
-        circle(shot.x, shot.y, shot.r, col, shot.owner === 'enemy' ? 0.22 : 0.38, 1.2);
+        if(shot.owner==='enemy'){ctx.save();ctx.strokeStyle=palette['field-deep'];ctx.lineWidth=5;ctx.beginPath();ctx.arc(shot.x,shot.y,shot.r,0,TAU);ctx.stroke();ctx.restore();}
+        circle(shot.x, shot.y, shot.r, col, shot.owner === 'enemy' ? 0.72 : 0.38, shot.owner==='enemy'?2.3:1.2);
         if (shot.owner === 'enemy') {ctx.save(); ctx.fillStyle = col; ctx.beginPath(); ctx.arc(shot.x, shot.y, Math.max(1.4, shot.r * 0.32), 0, TAU); ctx.fill(); ctx.restore();}
       }
       for (const f of room.effects) if(state.quality!=='low'||!['muzzle','split','burst'].includes(f.kind))fx(f);

@@ -30,6 +30,8 @@ test('damage shrinks the body and suspends costly guns without deleting the acqu
   const hit = R.damage(p, 80);
   assert.equal(hit.after, 0);
   assert.equal(p.mass, 20);
+  assert.equal(R.activeLoadout(p).length, 2, "capacitor bridges the immediate drop");
+  p.powerGrace=0;
   assert.equal(R.activeLoadout(p).length, 1);
   assert.equal(JSON.stringify(p.loadout), acquired);
   assert.equal(R.damage(p, 10).lost, 0, 'overlapping hits must respect hit protection');

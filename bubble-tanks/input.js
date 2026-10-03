@@ -8,10 +8,13 @@
     let pointer = null, touchX = 0, touchY = 0, aim = null, assist = true;
     const movement = new Set(['KeyW','KeyA','KeyS','KeyD','ArrowUp','ArrowLeft','ArrowDown','ArrowRight']);
     function clear() {
-      keys.clear(); touchX = touchY = 0; aim = null;aimVector=null;
+      keys.clear(); clearMovement(); aim = null;aimVector=null;
       if(aimPointer!==null){try{aimStick.releasePointerCapture(aimPointer);}catch(_){}aimPointer=null;}aimThumb.style.transform='translate(-50%,-50%)';
-      if (pointer !== null) {try {stick.releasePointerCapture(pointer);} catch (_) {}}
-      pointer = null; stick.classList.remove('active'); thumb.style.transform = 'translate(-50%,-50%)';
+    }
+    function clearMovement() {
+      const id=pointer; pointer=null; touchX=touchY=0;
+      if(id!==null){try{stick.releasePointerCapture(id);}catch(_){}}
+      stick.classList.remove('active'); thumb.style.transform='translate(-50%,-50%)';
     }
     function sample() {
       return {x: touchX || Number(keys.has('KeyD') || keys.has('ArrowRight')) - Number(keys.has('KeyA') || keys.has('ArrowLeft')),
@@ -44,7 +47,7 @@
     });
     stick.addEventListener('pointermove', move);
     for (const type of ['pointerup','pointercancel','lostpointercapture']) stick.addEventListener(type, e => {
-      if (e.pointerId === pointer) {e.preventDefault(); clear();}
+      if (e.pointerId === pointer) {e.preventDefault(); clearMovement();}
     });
     for (const type of ['contextmenu','selectstart','dragstart']) stick.addEventListener(type, e => e.preventDefault());
     canvas.addEventListener('pointermove', e => {

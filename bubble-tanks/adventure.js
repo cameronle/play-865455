@@ -22,7 +22,7 @@
   if(state.difficulty==='hard'||state.rescueLeft<=0)return false;
   state.rescueLeft--;const [x,y]=(state.safeRoom||'0,0').split(',').map(Number),room=W.roomAt(state.world,x,y);
   state.world.position={x,y};room.visited=true;state.player.x=state.player.y=400;state.player.mass=22;state.player.shield=0;state.player.invulnerable=2.5;
-  state.player.dashTime=0;state.transition=null;state.target=null;state.mode='paused';state.notice='rescue';state.noticeTime=8;state.cooldowns={};return true;
+  state.player.powerGrace=0;state.player.powerReserve=0;state.player.dashTime=0;state.transition=null;state.target=null;state.mode='paused';state.notice='rescue';state.noticeTime=8;state.cooldowns={};return true;
  }
  function open(state,kind){
   if(!['running','paused'].includes(state.mode))return false;
@@ -52,7 +52,7 @@
   close(state);return true;
  }
  function validDraft(state,draft){
-  if(!draft.length||draft.length>10||draft[0].id!=='pulse')return false;
+  if(!draft.length||draft.length>R.MAX_MOUNTS||draft[0].id!=='pulse')return false;
   const slots=new Set();for(const g of draft){
    if(slots.has(g.slot)||!Number.isInteger(g.slot)||g.slot<0||!(state.player.blueprints?.[g.id]||state.player.loadout.some(old=>old.id===g.id))||!D.guns.some(d=>d.id===g.id&&d.cost===g.cost)||!Number.isFinite(g.angle||0))return false;
    slots.add(g.slot);const m=R.mount(g);if(!Number.isFinite(m.x)||!Number.isFinite(m.y)||Math.hypot(m.x,m.y)>80)return false;

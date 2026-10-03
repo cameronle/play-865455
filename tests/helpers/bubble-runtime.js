@@ -61,7 +61,7 @@ function environment(files = [], initialStored = {}) {
     requestAnimationFrame: fn => {queue.push(fn); return queue.length;}, cancelAnimationFrame: () => {},
     location: {search: ''}, navigator: {maxTouchPoints: 0}});
   context.globalThis = window;
-  for (const file of ['content.js', 'rules.js', 'bosses.js', 'world.js', 'adventure.js', 'weapons.js', 'skills.js', 'enemies.js', 'modifiers.js', 'combat.js', 'storage.js', 'visuals.js', 'detail-ui.js', ...files]) {
+  for (const file of ['content.js', 'rules.js', 'bosses.js', 'world.js', 'adventure.js', 'weapons.js', 'skills.js', 'enemies.js', 'modifiers.js', 'combat.js', 'storage.js', 'visuals.js', 'insight.js', 'detail-ui.js', ...files]) {
     const path = 'bubble-tanks/' + file;
     assert.ok(fs.existsSync(path), `runtime module ${file} must exist`);
     vm.runInContext(fs.readFileSync(path, 'utf8'), context, {filename: path});

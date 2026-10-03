@@ -12,14 +12,10 @@ test('every seeded region has a reachable boss and workshop, with eight distinct
     const w=W.create(seed), types=new Set();
     assert.equal(w.bosses,0);
     for(let zone=0;zone<4;zone++) {
-      const boss=W.roomAt(w,3+zone*3,0), workshop=W.roomAt(w,1+zone*3,-1);
+      const special=W.landmarks(w,zone),shop=special.find(p=>p.type==='workshop'),boss=W.roomAt(w,3+zone*3,0), workshop=W.roomAt(w,shop.x,shop.y);
       assert.equal(boss.type,'boss'); assert.equal(boss.zone,zone);
       assert.equal(workshop.type,'workshop'); assert.equal(workshop.zone,zone);
-      assert.equal(W.roomAt(w,1+zone*3,1).type,'event');
-      assert.equal(W.roomAt(w,2+zone*3,-1).type,'challenge');
-      assert.equal(W.roomAt(w,2+zone*3,1).type,'elite');
-      assert.equal(W.roomAt(w,1+zone*3,2).type,'hive');
-      assert.equal(W.roomAt(w,zone*3,2).type,'cache');
+      for(const point of special)assert.equal(W.roomAt(w,point.x,point.y).type,point.type);
       w.bosses=zone;
       const queue=[[zone*3,0]], seen=new Set();
       while(queue.length) {const [x,y]=queue.shift(),id=W.key(x,y); if(seen.has(id)||!W.canEnter(w,x,y)) continue; seen.add(id);
@@ -57,7 +53,7 @@ test('normal difficulty rescues once to a safe room without deleting learned mod
   const hard=C.create('hard','balanced','hard');C.start(hard);C.hurtPlayer(hard,W.current(hard.world),1000);assert.equal(hard.mode,'over');
 });
 test('workshop repairs do not farm growth; seeded stock purchases are unique and affordable',()=>{
-  const A=adventure(),s=fresh();s.world.position={x:1,y:-1};s.salvage=20;s.player.mass=40;
+  const A=adventure(),s=fresh();s.world.position=W.landmarks(s.world,0).find(p=>p.type==='workshop');s.salvage=20;s.player.mass=40;
   const before=s.player.growth;assert.equal(A.open(s,'workshop'),true);assert.equal(s.mode,'workshop');
   assert.equal(A.buy(s,'repair'),true);assert.equal(s.player.growth,before);assert.equal(s.salvage,17);assert.equal(s.player.mass,58);
   const room=W.current(s.world),id=room.stock.find(id=>R.canUpgrade(s.player,require('../bubble-tanks/content.js').upgrades.find(u=>u.id===id)));
@@ -65,9 +61,9 @@ test('workshop repairs do not farm growth; seeded stock purchases are unique and
   s.salvage=0;assert.equal(A.buy(s,'repair'),false);assert.equal(s.player.growth,before);
 });
 test('events and challenges cannot reroll or repeatedly grant rewards',()=>{
-  const A=adventure(),s=fresh();s.world.position={x:1,y:1};const room=W.current(s.world);assert.ok(A.open(s,'event'));
+  const A=adventure(),s=fresh();s.world.position=W.landmarks(s.world,0).find(p=>p.type==='event');const room=W.current(s.world);assert.ok(A.open(s,'event'));
   const growth=s.player.growth;assert.ok(A.resolve(s,'leave'));assert.equal(s.player.growth,growth);assert.equal(A.resolve(s,'salvage'),false);
-  const challenge=W.roomAt(s.world,2,-1);challenge.challengeHits=1;s.world.position={x:2,y:-1};const cash=s.salvage;
+  const point=W.landmarks(s.world,0).find(p=>p.type==='challenge'),challenge=W.roomAt(s.world,point.x,point.y);challenge.challengeHits=1;s.world.position=point;const cash=s.salvage;
   for(const e of challenge.enemies)e.hp=0;A.clear(s,challenge);assert.equal(challenge.challengeWon,false);assert.equal(s.salvage,cash+2);
   const cash2=s.salvage;A.clear(s,challenge);assert.equal(s.salvage,cash2);assert.equal(room.eventResolved,true);
 });

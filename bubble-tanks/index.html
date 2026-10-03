@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#eaf3f8">
   <title>Bubble Frontier — 泡泡远征</title>
-  <script src="/theme.js?v=bubble-release-2"></script>
-  <link rel="icon" href="favicon.svg?v=bubble-release-2" type="image/svg+xml">
-  <link rel="stylesheet" href="/theme.css?v=bubble-release-2">
-  <link rel="stylesheet" href="style.css?v=bubble-release-3">
+  <script src="/theme.js?v=bubble-polish-1"></script>
+  <link rel="icon" href="favicon.svg?v=bubble-polish-1" type="image/svg+xml">
+  <link rel="stylesheet" href="/theme.css?v=bubble-polish-1">
+  <link rel="stylesheet" href="style.css?v=bubble-polish-1">
 </head>
 <body>
   <main class="page">
@@ -29,6 +29,7 @@
     <section class="arena-shell">
       <div class="arena">
         <canvas id="game" width="800" height="800" aria-label="Bubble tank exploration playfield"></canvas>
+        <div class="battle-hud" id="battleHud" hidden><span id="bossHint"></span><div id="bossHealth" class="boss-health" role="progressbar" aria-label="Boss health" aria-valuemin="0" aria-valuemax="100" hidden><i id="bossHealthFill"></i></div><span id="combatNotice" role="status"></span></div>
         <div id="titlePanel" class="panel title-panel">
           <span class="eyebrow" data-i18n="preview">EXPLORE · EVOLVE · ASSEMBLE</span>
           <svg class="hero-mark" viewBox="0 0 92 74" aria-hidden="true"><g fill="currentColor" fill-opacity=".08" stroke="currentColor" stroke-width="1.8"><circle cx="41" cy="38" r="18"/><circle cx="25" cy="50" r="10"/><circle cx="54" cy="53" r="10"/><circle cx="63" cy="27" r="8"/><circle cx="72" cy="18" r="5"/></g></svg>
@@ -42,19 +43,15 @@
           <p id="saveStatus" class="save-status" role="status"></p>
 
         </div>
-        <div id="pausePanel" class="panel" hidden>
-          <span class="eyebrow">BUBBLE FRONTIER</span>
-          <h2 data-i18n="paused">探索已暂停</h2>
-          <p id="pauseDetail" data-i18n="pausedDetail">你的泡泡世界正在等你。暂停时敌人、弹体和冷却均停止。</p>
-          <button id="resumeButton" class="primary" type="button" data-i18n="resume">继续探索</button>
-          <button id="restartButton" type="button" data-i18n="restart">重新开始</button>
-          <button id="soundButton" type="button">音效：开</button>
-          <button id="aimButton" type="button">瞄准：自动辅助</button>
-          <button id="assemblyButton" type="button" data-i18n="assembly">安全组装</button>
-          <select id="skillSelect" aria-label="Equip owned skill"></select>
-          <button id="dualStickButton" type="button">单摇杆</button><button id="handButton" type="button">左手移动</button><button id="qualityButton" type="button">画质：标准</button>
-          <button id="codexButton" type="button" data-i18n="codex">构筑图鉴</button>
-          <p id="storageStatus" class="save-status" role="status"></p>
+        <div id="pausePanel" class="panel detail-panel pause-panel" hidden>
+          <div class="workshop-heading"><h2 data-i18n="paused">探索已暂停</h2><button id="resumeButton" class="primary" type="button" data-i18n="resume">继续探索</button></div>
+          <p id="pauseDetail" data-i18n="pausedDetail">暂停时敌人、弹体和冷却均停止。</p>
+          <div class="panel-button-row"><button id="assemblyButton" type="button" data-i18n="assembly">安全组装</button><button id="codexButton" type="button" data-i18n="codex">构筑图鉴</button></div>
+          <details id="controlSettings" class="settings-group" open><summary data-i18n="controlsTitle">操作与技能</summary><div class="settings-grid">
+            <button id="dualStickButton" type="button">单摇杆</button><button id="handButton" type="button">左手移动</button><button id="aimButton" type="button">瞄准：自动辅助</button><select id="skillSelect" aria-label="Equip owned skill"></select>
+          </div></details>
+          <details id="displaySettings" class="settings-group"><summary data-i18n="displayTitle">画面与声音</summary><div class="settings-grid"><button id="qualityButton" type="button">画质：标准</button><button id="soundButton" type="button">音效：开</button></div></details>
+          <p id="storageStatus" class="save-status" role="status"></p><button id="restartButton" class="restart-action" type="button" data-i18n="restart">重新开始</button>
         </div>
         <div id="upgradePanel" class="panel upgrade-panel" hidden>
           <span class="eyebrow" data-i18n="evolution">泡泡进化</span>
@@ -62,6 +59,10 @@
           <p class="upgrade-note" data-i18n="upgradeNote">战斗已暂停。模块会改变你的真实攻击与泡泡结构。</p>
           <div id="upgradeChoices" class="upgrade-choices"></div>
           <div class="panel-button-row"><button id="rerollButton" type="button">重掷</button><button id="skipButton" type="button">弃选 · 回收 +1</button></div>
+        </div>
+        <div id="confirmPanel" class="panel confirm-panel" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" hidden>
+          <h2 id="confirmTitle" data-i18n="confirmTitle">开始新的远征？</h2><p data-i18n="confirmDetail">新远征会覆盖当前进度，图鉴和纪录会保留。</p>
+          <button id="cancelNewButton" class="primary" type="button" data-i18n="keepRun">保留当前远征</button><button id="confirmNewButton" type="button" data-i18n="confirmNew">确认重新开始</button>
         </div>
         <div id="resultPanel" class="panel" hidden>
           <span class="eyebrow" data-i18n="endLabel">本次探索结束</span>
@@ -82,7 +83,7 @@
           <button id="eventSalvageButton" type="button" data-i18n="eventSalvage">回收碎片 · +5</button><button id="eventGrowthButton" type="button" data-i18n="eventGrowth">交换进化 · 质量 -8 / 进化 +18</button><button id="eventLeaveButton" type="button" data-i18n="eventLeave">保持机体 · 不交换</button>
         </div>
         <div id="assemblyPanel" class="panel detail-panel assembly-panel" hidden>
-          <h2 data-i18n="assembly">安全组装</h2><p id="assemblyPower"></p><canvas id="assemblyPreview" class="assembly-preview" width="280" height="180" aria-label="Drag a module to a connected bubble mount"></canvas>
+          <h2 data-i18n="assembly">安全组装</h2><p id="assemblyPower"></p><p id="assemblyForecast"></p><canvas id="assemblyPreview" class="assembly-preview" width="280" height="180" aria-label="Drag a module to a connected bubble mount"></canvas>
           <select id="assemblySelect" aria-label="Select module"></select><div class="panel-button-row"><select id="assemblyBlueprintSelect" aria-label="Select owned blueprint"></select><button id="assemblyAddButton" type="button" data-i18n="install">安装</button></div><p data-i18n="assemblyNote">拖动炮口连接泡泡，或选择模块再调整。超预算模块休眠；镜像消耗独立功率。</p>
           <div class="assembly-tools"><button id="assemblyMirrorButton" type="button" data-i18n="mirror">镜像</button><button id="assemblyRotateButton" type="button" data-i18n="rotate">转向</button><button id="assemblyPriorityButton" type="button" data-i18n="priority">优先</button><button id="assemblyRemoveButton" type="button" data-i18n="remove">拆下</button><button id="assemblyUndoButton" type="button" data-i18n="undo">撤销</button><button id="assemblyAutoButton" type="button" data-i18n="auto">自动</button></div>
           <div class="assembly-movement"><button id="assemblyLeftButton" type="button" aria-label="Move mount left">←</button><button id="assemblyUpButton" type="button" aria-label="Move mount up">↑</button><button id="assemblyDownButton" type="button" aria-label="Move mount down">↓</button><button id="assemblyRightButton" type="button" aria-label="Move mount right">→</button></div>
@@ -103,23 +104,24 @@
     <footer data-i18n="footer">泡泡远征 · 原创代码与矢量图形 · 玩法灵感来自 Bubble Tanks · 非官方作品</footer>
   </main>
   <script src="/clear-game-data.js?v=clear-1"></script>
-  <script src="content.js?v=bubble-release-2"></script>
-  <script src="rules.js?v=bubble-release-2"></script>
-  <script src="bosses.js?v=bubble-release-2"></script>
-  <script src="world.js?v=bubble-release-2"></script>
-  <script src="adventure.js?v=bubble-release-2"></script>
-  <script src="weapons.js?v=bubble-release-2"></script>
-  <script src="skills.js?v=bubble-release-2"></script>
-  <script src="enemies.js?v=bubble-release-2"></script>
-  <script src="modifiers.js?v=bubble-release-2"></script>
-  <script src="combat.js?v=bubble-release-2"></script>
-  <script src="storage.js?v=bubble-release-2"></script>
-  <script src="visuals.js?v=bubble-release-2"></script>
-  <script src="render.js?v=bubble-release-2"></script>
-  <script src="input.js?v=bubble-release-2"></script>
-  <script src="sound.js?v=bubble-release-2"></script>
-  <script src="ui.js?v=bubble-release-2"></script>
-  <script src="detail-ui.js?v=bubble-release-2"></script>
-  <script src="game.js?v=bubble-release-2"></script>
+  <script src="content.js?v=bubble-polish-1"></script>
+  <script src="rules.js?v=bubble-polish-1"></script>
+  <script src="bosses.js?v=bubble-polish-1"></script>
+  <script src="world.js?v=bubble-polish-1"></script>
+  <script src="adventure.js?v=bubble-polish-1"></script>
+  <script src="weapons.js?v=bubble-polish-1"></script>
+  <script src="skills.js?v=bubble-polish-1"></script>
+  <script src="enemies.js?v=bubble-polish-1"></script>
+  <script src="modifiers.js?v=bubble-polish-1"></script>
+  <script src="combat.js?v=bubble-polish-1"></script>
+  <script src="storage.js?v=bubble-polish-1"></script>
+  <script src="visuals.js?v=bubble-polish-1"></script>
+  <script src="insight.js?v=bubble-polish-1"></script>
+  <script src="render.js?v=bubble-polish-1"></script>
+  <script src="input.js?v=bubble-polish-1"></script>
+  <script src="sound.js?v=bubble-polish-1"></script>
+  <script src="ui.js?v=bubble-polish-1"></script>
+  <script src="detail-ui.js?v=bubble-polish-1"></script>
+  <script src="game.js?v=bubble-polish-1"></script>
 </body>
 </html>

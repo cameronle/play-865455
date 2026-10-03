@@ -50,11 +50,12 @@
   function effect(room, kind, x, y, extra = {}) {
     room.effects.push({kind, x, y, ttl: 0.45, duration: 0.45, ...extra});
   }
+  function targetable(room,e){return e.hp>0&&!(e.kind==='boss'&&[1,3].includes(e.zone)&&room.enemies.some(n=>n.parent===e.id&&n.hp>0));}
   function nearest(room, player) {
-    return room.enemies.filter(e => e.hp > 0).sort((a, b) => distance(a, player) - distance(b, player))[0] || null;
+    return room.enemies.filter(e => targetable(room,e)).sort((a, b) => distance(a, player) - distance(b, player))[0] || null;
   }
   function selectTarget(state, room, dt) {
-    const closest = nearest(room, state.player), current = room.enemies.find(e => e.id === state.target && e.hp > 0);
+    const closest = nearest(room, state.player), current = room.enemies.find(e => e.id === state.target && targetable(room,e));
     state.targetClock = Math.max(0, state.targetClock - dt);
     if (!current || state.targetClock <= 0 && closest && distance(closest, state.player) < distance(current, state.player) * 0.85) {
       state.target = closest?.id || null; state.targetClock = 0.3;
@@ -74,7 +75,7 @@
     Modifiers.beforeVolley(state,gun);
     if(Weapons.fire(state,room,gun,target,{shot:spawnShot,hurt:hurtEnemy,effect}))return;
     const p = state.player, angle = p.angle + (gun.angle || 0);
-    const damage = 5 + (gun.level - 1) * 2;
+    const damage = R.baseDamage(gun);
     const mount = R.mount(gun);
     const x = p.x + Math.cos(p.angle) * mount.x - Math.sin(p.angle) * mount.y;
     const y = p.y + Math.sin(p.angle) * mount.x + Math.cos(p.angle) * mount.y;
@@ -86,7 +87,7 @@
         const hit = next;
         hitIds.add(hit.id);
         effect(room, 'arc', at.x, at.y, {toX: hit.x, toY: hit.y, targetId: hit.id, ttl: 0.2, duration: 0.2});
-        hurtEnemy(state, room, hit, (damage + 2) * (1 - jump * 0.15 + (p.passives.conductive || 0) * jump * 0.1),{weapon:'arc',x:at.x,y:at.y});
+        hurtEnemy(state, room, hit, damage * (1 - jump * 0.15 + (p.passives.conductive || 0) * jump * 0.1),{weapon:'arc',x:at.x,y:at.y});
         at = hit;
         next = room.enemies.filter(e => e.hp > 0 && !hitIds.has(e.id)).sort((a, b) => distance(a, at) - distance(b, at))[0];
       }
@@ -94,7 +95,7 @@
     }
     const count = gun.id === 'scatter' ? 5 : 1;
     for (let i = 0; i < count; i++) spawnShot(state, room, x, y, angle + (i - (count - 1) / 2) * 0.16,
-      {weapon: gun.id,mount:gun.slot, damage: gun.id === 'scatter' ? damage * 0.7 : damage, r: gun.id === 'scatter' ? 4.5 : 4,
+      {weapon: gun.id,mount:gun.slot, damage, r: gun.id === 'scatter' ? 4.5 : 4,
         speed: gun.id === 'scatter' ? 330 : 380, canSplit: gun.id === 'scatter' && !!p.passives.split, generation: 0});
     effect(room, 'muzzle', x, y, {r: 9, ttl: 0.14, duration: 0.14});
   }
@@ -103,6 +104,7 @@
     amount=Modifiers.damage(state,room,enemy,amount,hit);
     amount*=Enemies.damageMultiplier(enemy,room,{x:state.player.x,y:state.player.y,...hit});
     if (enemy.kind === 'boss') amount *= Bosses.damageMultiplier(enemy, room, {x: state.player.x, y: state.player.y, ...hit});
+    if(enemy.kind==='boss'&&enemy.stage===1)amount=Math.min(amount,Math.max(0,enemy.hp-enemy.maxHp*.55));
     const actual=Math.min(enemy.hp,Math.max(0,amount));
     enemy.hp -= amount;
     Modifiers.afterDamage(state,room,enemy,actual,hit,{effect,shot:spawnShot,hurt:hurtEnemy});
@@ -191,6 +193,7 @@
     let room = W.current(state.world);
     const p = state.player;
     state.time += dt; room.time += dt;
+    p.powerGrace=Math.max(0,(p.powerGrace||0)-dt);
     if(p.passives.sonar&&!room.claims.sonar){room.claims.sonar=true;for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]])if(W.canEnter(state.world,room.x+dx,room.y+dy))W.roomAt(state.world,room.x+dx,room.y+dy).scanned=true;}
     Modifiers.tick(state,room,dt,{effect,shot:spawnShot,hurt:hurtEnemy});
     Skills.tick(state,room,dt,{shot:spawnShot,hurt:hurtEnemy,effect});

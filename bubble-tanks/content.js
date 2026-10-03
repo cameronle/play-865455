@@ -3,11 +3,11 @@
  const record=(id,zh,en,cz,ce,extra={})=>({id,name:[zh,en],description:[cz,ce],icon:id,...extra});
  const chassis=[
   record('balanced','均衡体','Balanced','对称泡泡结构，火力与机动均衡。','Symmetric bubbles. Flexible and dependable.',{speed:1,armor:1}),
-  record('scout','游猎者','Scout','细长机体，移动更快，承受伤害略高。','A slender, faster body with a fragile core.',{speed:1.16,armor:1.12}),
-  record('bulwark','堡垒体','Bulwark','宽厚外壳，伤害降低，但移动较慢。','A broad shell trades speed for protection.',{speed:.86,armor:.8}),
-  record('gunship','火力体','Gunship','并列侧舱多两点功率，但宽大、移动较慢。','Parallel side pods add two power but reduce mobility.',{speed:.92,armor:1.06,power:2}),
-  record('swarmbody','蜂群体','Hivebody','外置巢泡，蜂群技能多一枚临时无人机。','Outer nest bubbles launch an extra temporary drone.',{speed:1,armor:1.05}),
-  record('phase','相位体','Phase','分离泡泡，冲刺保护延长，外壳较脆。','Separated bubbles extend dash immunity with a fragile shell.',{speed:1.08,armor:1.15})
+  record('scout','游猎者','Scout','高速脆壳，初始诱饵分身；侧移引开火力。','Fast fragile scout; starts with Decoy to redirect fire.',{speed:1.16,armor:1.12}),
+  record('bulwark','堡垒体','Bulwark','厚甲低速，初始屏障环；贴近敌人拦截弹幕。','Slow armored body; starts with Barrier for close defense.',{speed:.86,armor:.8}),
+  record('gunship','火力体','Gunship','初始双联炮与两点额外功率，机体宽大低速。','Starts with Twin Burst and two extra power; broad and slower.',{speed:.92,armor:1.06,power:2}),
+  record('swarmbody','蜂群体','Hivebody','初始蜂群集结，多一枚限时无人机围攻目标。','Starts with Swarm Rally and one extra temporary drone.',{speed:1,armor:1.05}),
+  record('phase','相位体','Phase','初始短距跃迁，冲刺保护延长，外壳较脆。','Starts with Blink; extended dash protection, fragile shell.',{speed:1.08,armor:1.15})
  ];
  const gun=(id,zh,en,cz,ce,cost,cooldown,cap=3)=>record(id,zh,en,cz,ce,{type:'gun',cost,cooldown,cap});
  const guns=[
@@ -134,7 +134,16 @@
   ['escort','护航编队核心','Escort Core',3,28,'生成两枚可击破护航泡，核心减伤依赖护航存活。','Two destructible escorts protect the central core.']
  ];
  const enemies=enemyRows.map(([id,zh,en,zone,r,cz,ce])=>record(id,zh,en,cz,ce,{zone,r}));
+ const encounters=[
+  {id:'pursuit',zone:0,name:['追逐夹击','Pursuit'],members:['chaser','shooter']},
+  {id:'crossfire',zone:0,name:['交叉火力','Crossfire'],members:['shooter','sniper','grazer']},
+  {id:'shield-line',zone:1,name:['护盾阵列','Shield line'],members:['guardian','shooter','scatterer']},
+  {id:'split-screen',zone:1,name:['分裂封锁','Split screen'],members:['splitter','miner','shooter']},
+  {id:'repair-line',zone:2,name:['修复阵列','Repair line'],members:['guardian','healer','shooter']},
+  {id:'pressure',zone:2,name:['落点压制','Landing pressure'],members:['lobber','chaser','teleporter']},
+  {id:'escort-wing',zone:3,name:['护航突击','Escort wing'],members:['escort','breaker','grazer']}
+ ];
  const upgrades=[...guns,...passives,...skills,...relics,...branches];
  function text(value,lang='zh'){return Array.isArray(value)?value[lang==='en'?1:0]:value;}
- return{chassis,guns,skills,passives,relics,branches,synergies,enemies,upgrades,ballistic,text};
+ return{encounters,chassis,guns,skills,passives,relics,branches,synergies,enemies,upgrades,ballistic,text};
 });

@@ -4,8 +4,8 @@
  const canvas=document.querySelector('#game'),renderer=B.Render.create(canvas),sound=B.Sound.create();
  const store=B.Storage.create({getItem:key=>localStorage.getItem(key),setItem:(key,value)=>localStorage.setItem(key,value)}),loaded=store.load(),settings=store.settings();
  let lang='zh';try{if(localStorage.getItem('play-lang')==='en')lang='en';}catch(_){}
- let state=C.create('title'),input,ui,last=performance.now(),accumulator=0,renderedFrames=0;
- let hasSave=!!loaded.state,savedWarning=loaded.error||'';
+ let state=C.create('title'),input,ui,last=performance.now(),accumulator=0,renderedFrames=0,lastHud=0;
+ let hasSave=!!loaded.state,savedWarning=loaded.error||'',overwriteApproved=false;
  sound.setEnabled(settings.sound);
  function observe(){store.observe(state);state.records=store.records();}
  function persist(){if(state.mode==='title')return;const result=store.save(state);hasSave=result.ok||hasSave;savedWarning=result.ok?'':result.error;
@@ -16,7 +16,12 @@
  function changed(){input.clear();accumulator=0;persist();observe();sync();}
  function action(name){
   sound.unlock();
-  if(name==='start'||name==='again'){newState(document.querySelector('#chassisSelect').value||'balanced',document.querySelector('#difficultySelect').value||'normal');C.start(state);observe();persist();}
+  if(state.confirmNew&&name==='pause')name='cancelNew';
+  if(name==='cancelNew'){delete state.confirmNew;sync();return;}
+  if(name==='confirmNew'){name=state.confirmNew;delete state.confirmNew;if(!['restart','start'].includes(name))return;overwriteApproved=true;}
+  else if(state.confirmNew)return;
+  else if(name==='restart'||name==='start'&&hasSave&&!overwriteApproved){state.confirmNew=name;input.clear();sync();return;}
+  if(name==='start'||name==='again'){newState(document.querySelector('#chassisSelect').value||'balanced',document.querySelector('#difficultySelect').value||'normal');C.start(state);overwriteApproved=false;observe();persist();}
   else if(name==='continueSaved'){const saved=store.load();if(saved.state){state=saved.state;C.resume(state);input.clear();accumulator=0;persist();observe();}else savedWarning=saved.error||'save-unavailable';}
   else if(name==='restart'){persist();newState(state.player.chassis,state.difficulty);}
   else if(name==='pause'){if(state.mode==='paused')C.resume(state);else C.pause(state);input.clear();persist();}
@@ -41,22 +46,28 @@
  ui=B.UI.create({action,choose(id){if(C.choose(state,id)){sound.unlock();sound.play('upgrade');changed();}},buy(id){if(A.buy(state,id))changed();},edit(command){const ok=A.edit(state,command);if(ok){if(command.type==='commit'||command.type==='cancel')changed();else sync();}return ok;}});
  document.addEventListener('DOMContentLoaded',()=>{const clear=document.querySelector('.clear-data-toggle');if(clear)document.querySelector('.topbar').append(clear);});
  document.addEventListener('themechange',()=>{renderer.refresh();renderer.draw(state);});
+ window.addEventListener('resize',()=>sync());
  function suspend(){C.pause(state);input.clear();accumulator=0;persist();sync();last=performance.now();}
  document.addEventListener('visibilitychange',()=>{if(document.hidden)suspend();last=performance.now();});window.addEventListener('blur',suspend);window.addEventListener('pagehide',suspend);
  function frame(now){
   const elapsed=Math.min(.12,Math.max(0,(now-last)/1000));last=now;
-  if(state.mode==='running'&&!document.hidden){accumulator+=elapsed;
+  const active=state.mode==='running'&&!document.hidden;
+  if(active){accumulator+=elapsed;
    while(accumulator>=1/60&&state.mode==='running'){
     const mode=state.mode,roomId=W.current(state.world).id,bosses=state.world.bosses,score=state.score,mass=state.player.mass,growth=state.player.growth;
     C.step(state,input.sample(),1/60);accumulator-=1/60;
     if(state.score>score)sound.play('kill');else if(state.player.mass<mass)sound.play('hit');else if(state.player.growth>growth)sound.play('pickup');
     if(W.current(state.world).effects.some(f=>f.kind==='muzzle'&&f.ttl===f.duration))sound.play('shot');
     if(state.mode!==mode){input.clear();accumulator=0;persist();observe();}
-    else if(W.current(state.world).id!==roomId||state.world.bosses!==bosses){input.clear();persist();observe();}
+    else if(W.current(state.world).id!==roomId||state.world.bosses!==bosses){persist();observe();}
    }
 
   }else accumulator=0;
-  state.lang=lang;state.hasSave=hasSave;state.quality=settings.quality;state.storageWarning=savedWarning||store.status();ui.update(state,settings);renderer.draw(state);renderedFrames++;requestAnimationFrame(frame);
+  if(active){state.lang=lang;state.hasSave=hasSave;state.quality=settings.quality;state.storageWarning=savedWarning||store.status();
+   if(now-lastHud>=100||state.mode!=='running'){ui.update(state,settings);lastHud=now;}
+   renderer.draw(state);renderedFrames++;
+  }
+  requestAnimationFrame(frame);
  }
  B.snapshot=()=>{
   const p=state.player,room=W.current(state.world);

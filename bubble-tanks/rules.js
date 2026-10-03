@@ -4,14 +4,17 @@
   else (root.BubbleFrontier ||= {}).Rules = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this, function (C) {
   'use strict';
-  const SIZE = 800, CENTER = 400, ROOM_RADIUS = 350;
+  const SIZE = 800, CENTER = 400, ROOM_RADIUS = 350, MAX_MOUNTS = 10;
   const THRESHOLDS = [0, 30, 65, 115, 185, 285];
   const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
   const tier = mass => THRESHOLDS.reduce((n, t, i) => mass >= t ? i : n, 0);
   function createPlayer(chassis = 'balanced') {
-    return {x: CENTER, y: CENTER, angle: -Math.PI / 2, mass: 22, growth: 0, chassis,
-      invulnerable: 0, shield: 0, passives: {}, blueprints: {pulse: 1}, skill:'overload',skills:['overload'],relics:{},branches:{},heat:{},
+    const starter={balanced:'overload',scout:'decoy',bulwark:'barrier',gunship:'overload',swarmbody:'swarm',phase:'blink'}[chassis]||'overload';
+    const player={x: CENTER, y: CENTER, angle: -Math.PI / 2, mass: 22, growth: 0, chassis,
+      invulnerable: 0, shield: 0, passives: {}, blueprints: {pulse: 1}, skill:starter,skills:[starter],relics:{},branches:{},heat:{},
       loadout: [{id: 'pulse', level: 1, cost: 1, slot: 0, angle: 0}]};
+    if(chassis==='gunship'){player.blueprints.twin=1;player.loadout.push({id:'twin',cost:2,level:1,slot:1,angle:0});}
+    return player;
   }
   function absorb(player, bubble) {
     player.mass = clamp(player.mass + bubble.value, 0, 400);
@@ -51,8 +54,9 @@
     return body;
   }
   function power(player) { return 4 + tier(player.mass) * 3+(C.chassis.find(c=>c.id===player.chassis)?.power||0)+(player.relics?.efficiency?2:0)-(player.relics?.flow_core?2:0); }
+  function effectivePower(player) {return Math.max(power(player),player.powerGrace>0?player.powerReserve||0:0);}
   function activeLoadout(player) {
-    let left = power(player);
+    let left = effectivePower(player);
     return player.loadout.filter(gun => {
       if (gun.cost > left) return false;
       left -= gun.cost;
@@ -60,16 +64,18 @@
     });
   }
   function damage(player, amount) {
-    const before = tier(player.mass);
+    const before = tier(player.mass), supply=power(player);
     if (player.invulnerable > 0) return {lost: 0, before, after: before, dead: false};
     amount *= (C.chassis.find(c => c.id === player.chassis)?.armor || 1)*Math.pow(.9,player.passives.shell||0)*(player.relics?.heavy_core?.75:1)*(player.relics?.glass_core?1.4:1)*(player.relics?.conductive_sea?1.15:1);
     const shieldLoss = Math.min(player.shield, amount);
     player.shield -= shieldLoss;
     const lost = Math.min(player.mass, Math.max(0, amount - shieldLoss)*Math.pow(.92,player.passives.conserve||0));
     player.mass -= lost;
+    if(tier(player.mass)<before&&!(player.powerGrace>0)&&player.mass>0){player.powerReserve=supply;player.powerGrace=1.8;}
     player.invulnerable = 0.95+(player.passives.protection||0)*.15;
     return {lost, absorbed: shieldLoss, before, after: tier(player.mass), dead: player.mass <= 0};
   }
+  function baseDamage(gun){const [base,step]=({scatter:[3.5,1.4],stream:[2.6,2.4],needle:[20,8],pierce:[11,4],missile:[12,5],beam:[2.7,1.2],arc:[7,2],mine:[16,7],orbit:[3.5,1.5],vortex:[2.5,1]})[gun.id]||[5,2];return base+(gun.level-1)*step;}
   function rank(player, id) {return player.blueprints?.[id] || player.loadout.find(g => g.id === id)?.level || player.passives[id] || player.relics?.[id] || (player.skills?.includes(id)?1:0) || (id.endsWith('_branch')&&player.branches?.[id.slice(0,-7)]?1:0);}
   function canUpgrade(player, item) {
     if(!item)return false;
@@ -77,6 +83,7 @@
     if (item.needs && !activeLoadout(player).some(g => (Array.isArray(item.needs)?item.needs:[item.needs]).includes(g.id))) return false;
     if(item.needsSkill&&player.skill!==item.needsSkill)return false;
     if (item.type === 'gun' && !player.loadout.some(g => g.id === item.id)) {
+      if(player.loadout.length>=MAX_MOUNTS)return false;
       return activeLoadout(player).reduce((s, g) => s + g.cost, 0) + item.cost <= power(player);
     }
     return true;
@@ -104,5 +111,5 @@
     }
     return true;
   }
-  return {SIZE, CENTER, ROOM_RADIUS, THRESHOLDS, clamp, tier, createPlayer, absorb, bodyShape, bodyCircles, mount, power, activeLoadout, damage, rank, canUpgrade, offers, applyUpgrade};
+  return {SIZE, CENTER, ROOM_RADIUS, MAX_MOUNTS, THRESHOLDS, clamp, tier, createPlayer, absorb, bodyShape, bodyCircles, mount, power, effectivePower, activeLoadout, damage, baseDamage, rank, canUpgrade, offers, applyUpgrade};
 });

@@ -5,7 +5,7 @@
  const roomTypes=['start','combat','cache','elite','hive','workshop','event','challenge','boss'];
  const failure=message=>({state:null,error:message});
  function serialize(state){
-  const s=JSON.parse(JSON.stringify(state));s.randomState=state.rng.state();delete s.rng;delete s.transition;delete s.draft;delete s.draftHistory;delete s.records;delete s.storageWarning;
+  const s=JSON.parse(JSON.stringify(state));s.randomState=state.rng.state();delete s.rng;delete s.confirmNew;delete s.transition;delete s.draft;delete s.draftHistory;delete s.records;delete s.storageWarning;
   s.offerIds=(state.offers||[]).map(u=>u.id);delete s.offers;
   if(!['upgrade','won','over','title'].includes(s.mode))s.mode='paused';
   return JSON.stringify(s);
@@ -20,7 +20,7 @@
   const p=s.player,w=s.world;
   if(!p||!w||!modes.includes(s.mode)||!['normal','hard'].includes(s.difficulty)||typeof s.runId!=='string'||typeof w.seed!=='string')return failure('invalid-header');
   if(!number(p.mass,0,400)||!number(p.growth)||!number(p.x,0,800)||!number(p.y,0,800)||!number(p.angle,-1e6,1e6)||!number(p.shield,0,500)||!D.chassis.some(c=>c.id===p.chassis))return failure('invalid-player');
-  if(!Array.isArray(p.loadout)||!p.loadout.length||p.loadout.length>10||p.loadout[0].id!=='pulse'||!p.passives||typeof p.passives!=='object')return failure('invalid-loadout');
+  if(!Array.isArray(p.loadout)||!p.loadout.length||p.loadout.length>R.MAX_MOUNTS||p.loadout[0].id!=='pulse'||!p.passives||typeof p.passives!=='object')return failure('invalid-loadout');
   p.blueprints||=Object.fromEntries(p.loadout.map(g=>[g.id,g.level]));
   if(typeof p.blueprints!=='object'||Array.isArray(p.blueprints))return failure('invalid-blueprints');
   for(const[id,rank]of Object.entries(p.blueprints)){const def=D.guns.find(g=>g.id===id);if(!def||!Number.isInteger(rank)||rank<1||rank>def.cap)return failure('invalid-blueprint');}
@@ -32,6 +32,7 @@
   for(const [id,value]of Object.entries(p.branches||{}))if(!D.guns.some(d=>d.id===id)||typeof value!=='boolean')return failure('invalid-branch');
   for(const value of Object.values(p.heat||{}))if(!number(value,0,2))return failure('invalid-heat');
   for(const key of ['dashClock','dashTime','skillClock','invulnerable','barrierTime','overdriveTime'])if(p[key]!==undefined&&!number(p[key],0,60))return failure('invalid-timer');
+  if(p.powerGrace!==undefined&&!number(p.powerGrace,0,1.8)||p.powerReserve!==undefined&&!number(p.powerReserve,0,23))return failure('invalid-power-buffer');
   s.rerolls??=2;if(!Number.isInteger(s.rerolls)||s.rerolls<0||s.rerolls>2)return failure('invalid-rerolls');
   for(const [id,rank]of Object.entries(p.passives)){const def=D.passives.find(d=>d.id===id);if(!def||!Number.isInteger(rank)||rank<1||rank>def.cap)return failure('invalid-passive');}
   for(const k of ['time','nextId','score','level','nextGrowth','pending','salvage','rescueLeft'])if(!number(s[k]))return failure('invalid-counter');
@@ -47,6 +48,7 @@
    for(const d of room.drops)if(!number(d.value,0,400)||!number(d.r,0,150))return failure('invalid-drop');
    room.claims||={};if(typeof room.claims!=='object'||Array.isArray(room.claims))return failure('invalid-room-claims');
   }
+  if(w.layoutVersion!==undefined&&w.layoutVersion!==1)return failure('invalid-layout');
   if(!w.rooms[s.safeRoom]?.cleared)return failure('invalid-checkpoint');
   if(!Array.isArray(s.offerIds)||new Set(s.offerIds).size!==s.offerIds.length||s.offerIds.length>3)return failure('invalid-cards');
   s.offers=s.offerIds.map(id=>D.upgrades.find(u=>u.id===id));if(s.offers.some(u=>!u)||s.mode==='upgrade'&&(!s.offers.length||s.pending<1||s.offers.some(u=>!R.canUpgrade(p,u))))return failure('invalid-upgrade');

@@ -30,7 +30,7 @@ async function waitFor(expression, timeout = 6000) {
   throw Error('wait failed: ' + expression);
 }
 async function click(selector) {
-  const p = await evaluate(`(() => {const r = document.querySelector(${JSON.stringify(selector)}).getBoundingClientRect(); return {x:r.x+r.width/2,y:r.y+r.height/2};})()`);
+  const p = await evaluate(`(() => {const e=document.querySelector(${JSON.stringify(selector)});e.scrollIntoView({block:'nearest'});const r = e.getBoundingClientRect(); return {x:r.x+r.width/2,y:r.y+r.height/2};})()`);
   await call('Input.dispatchMouseEvent', {type: 'mousePressed', button: 'left', buttons: 1, clickCount: 1, ...p});
   await call('Input.dispatchMouseEvent', {type: 'mouseReleased', button: 'left', buttons: 0, clickCount: 1, ...p});
 }
@@ -50,7 +50,7 @@ async function checkPanelFrame(selector) {
 try {
   await call('Runtime.enable'); await call('Page.enable');
   await call('Network.enable'); await call('Network.setCacheDisabled',{cacheDisabled:true});
-  await call('Page.addScriptToEvaluateOnNewDocument',{source:"if(location.host==='127.0.0.1:8765'){localStorage.setItem('play-lang','zh');localStorage.setItem('play-theme','system');}"});
+  await call('Page.addScriptToEvaluateOnNewDocument',{source:"localStorage.setItem('play-lang','zh');localStorage.setItem('play-theme','system');localStorage.setItem('bubble_frontier_settings',JSON.stringify({sound:false,assist:true,quality:'normal',dualStick:false,leftHand:false}));"});
   await call('Emulation.setDeviceMetricsOverride', {width: 1280, height: 800, deviceScaleFactor: 1, mobile: false});
   await call('Emulation.setFocusEmulationEnabled', {enabled: true});
   await call('Page.bringToFront');
@@ -62,6 +62,7 @@ try {
     await waitFor('!!window.BubbleFrontier?.snapshot');
     assert.equal((await evaluate('BubbleFrontier.snapshot()')).mode, 'title');
     await click('#startButton');
+    if(await evaluate('!document.querySelector("#confirmPanel").hidden'))await click('#confirmNewButton');
     await waitFor('BubbleFrontier.snapshot().mode === "upgrade"');
     const desktopUpgradeFrame = await checkPanelFrame('#upgradePanel');
     await screenshot('desktop-upgrade');
@@ -81,14 +82,15 @@ try {
     assert.ok(desktopGeometry.scrollHeight <= desktopGeometry.height, 'desktop must fit without page scrolling: ' + JSON.stringify(desktopGeometry));
     const desktopScreenshot = await screenshot('desktop-combat');
     await click('#pauseButton'); await waitFor('BubbleFrontier.snapshot().mode === "paused"');
-    const pauseTime = await evaluate('BubbleFrontier.snapshot().time'); await delay(200);
-    assert.equal(await evaluate('BubbleFrontier.snapshot().time'), pauseTime);
+    const pauseTime = await evaluate('BubbleFrontier.snapshot().time'),pauseFrames=await evaluate('BubbleFrontier.snapshot().frames');
+    await evaluate('window.__qaMutations=0;window.__qaObserver=new MutationObserver(r=>window.__qaMutations+=r.length);window.__qaObserver.observe(document.querySelector(".page"),{childList:true,subtree:true,characterData:true,attributes:true})');await delay(200);
+    assert.equal(await evaluate('BubbleFrontier.snapshot().time'), pauseTime);assert.equal(await evaluate('BubbleFrontier.snapshot().frames'),pauseFrames);assert.equal(await evaluate('window.__qaObserver.disconnect();window.__qaMutations'),0,'paused HUD must be idle');
     await click('#resumeButton'); await waitFor('BubbleFrontier.snapshot().mode === "running"');
     await call('Emulation.setDeviceMetricsOverride', {width: 390, height: 844, deviceScaleFactor: 1, mobile: true});
     await call('Emulation.setTouchEmulationEnabled', {enabled: true, maxTouchPoints: 2});
     await call('Page.navigate', {url: origin + '/bubble-tanks/?qa=mobile'});
     await waitFor('!!window.BubbleFrontier?.snapshot');
-    await click('#startButton'); await waitFor('BubbleFrontier.snapshot().mode === "upgrade"');
+    await click('#startButton');if(await evaluate('!document.querySelector("#confirmPanel").hidden'))await click('#confirmNewButton'); await waitFor('BubbleFrontier.snapshot().mode === "upgrade"');
     const mobileUpgradeFrame = await checkPanelFrame('#upgradePanel');
     const upgradeActions = await evaluate(`(() => {
       const p=document.querySelector('#upgradePanel').getBoundingClientRect();
@@ -98,10 +100,16 @@ try {
     await screenshot('mobile-upgrade');
     const mobileOffer = await evaluate('BubbleFrontier.snapshot().offers');
     await click(`[data-upgrade="${mobileOffer.includes('scatter') ? 'scatter' : mobileOffer[0]}"]`);
+    await click('#pauseButton');await click('#dualStickButton');await click('#resumeButton');
     const joystick = await evaluate('(() => {const r = document.querySelector("#joystick").getBoundingClientRect(); return {x:r.x+r.width/2,y:r.y+r.height/2};})()');
     await call('Input.dispatchTouchEvent', {type: 'touchStart', touchPoints: [{x: joystick.x, y: joystick.y, id: 1}]});
     await call('Input.dispatchTouchEvent', {type: 'touchMove', touchPoints: [{x: joystick.x + 37, y: joystick.y, id: 1}]});
     await waitFor('BubbleFrontier.snapshot().room.x === 1', 5500);
+    const crossed=await evaluate('BubbleFrontier.snapshot()');await delay(120);const held=await evaluate('BubbleFrontier.snapshot()');assert.ok(held.input.x>.8&&held.playerX>crossed.playerX,'held touch must persist after room crossing');
+    const aimStick=await evaluate('(()=>{const r=document.querySelector("#aimJoystick").getBoundingClientRect();return{x:r.x+r.width/2,y:r.y+r.height/2+22,id:2};})()');
+    await call('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:joystick.x+37,y:joystick.y,id:1},aimStick]});
+    await call('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[{x:joystick.x+37,y:joystick.y,id:1}]});
+    const independent=await evaluate('BubbleFrontier.snapshot().input');assert.equal(independent.x,0);assert.ok(independent.aim,'lifting move must preserve aim');
     await call('Input.dispatchTouchEvent', {type: 'touchEnd', touchPoints: []});
     await delay(500);
     const mobileSnapshot = await evaluate('BubbleFrontier.snapshot()');
@@ -149,5 +157,5 @@ try {
     fs.writeFileSync(OUT + '/report.json', JSON.stringify(result, null, 2));
     console.log(JSON.stringify(result, null, 2));
   }
-} catch (error) {console.error(error.stack); console.error('runtimeErrors', errors); process.exitCode = 1;}
+} catch (error) {console.error(error.stack);console.error('layout',await evaluate('({settings:JSON.parse(localStorage.getItem("bubble_frontier_settings")||"{}"),rects:[...document.querySelectorAll(".topbar,.hud,.field-meta,.arena-shell,.build-row,.control-strip,.joystick,.control-copy,.mobile-copy,.action-buttons,footer")].map(e=>({class:e.className,height:e.getBoundingClientRect().height,bottom:e.getBoundingClientRect().bottom,text:e.textContent.slice(0,100)}))})'));await screenshot('failed'); console.error('runtimeErrors', errors); process.exitCode = 1;}
 finally {ws.close(); await fetch(endpoint + '/json/close/' + target.id).catch(() => {});}

@@ -2,6 +2,8 @@
   'use strict';
   const B = window.BubbleFrontier, D = B.Content, R = B.Rules, W = B.World;
   const dictionary = {
+    controlsTitle:['操作与技能','Controls & skills'],displayTitle:['画面与声音','Display & sound'],
+    confirmTitle:['开始新的远征？','Start a new expedition?'],confirmDetail:['新远征会覆盖当前进度，图鉴和纪录会保留。','The new expedition replaces this run. Discoveries and records remain.'],keepRun:['保留当前远征','Keep this expedition'],confirmNew:['确认重新开始','Confirm new expedition'],
     title:['泡泡远征','Bubble Frontier'],pause:['暂停','Pause'],mass:['泡泡质量','Bubble mass'],body:['体量','Body'],cleared:['已清空','Cleared'],coordinate:['坐标','Position'],
     preview:['四区肉鸽远征 · 原创泡泡世界','FOUR-REGION ROGUELITE EXPEDITION'],
     intro:['穿越泡泡世界，击破、吸收，让小小泡泡进化成你的战争机器。','Cross the bubble world. Shoot, absorb and evolve a tiny bubble into your own war machine.'],
@@ -30,17 +32,19 @@
   };
   function create(handlers) {
     const el = id => document.querySelector('#' + id);
+
+    function text(id,value){const node=el(id),next=String(value);if(node.textContent!==next)node.textContent=next;}
     let language = '', cardKey = '', buildKey = '';
     const txt = (key, lang) => D.text(dictionary[key] || B.DetailUI.dictionary[key], lang);
     const detail = B.DetailUI.create(handlers);
-    for (const [id, action] of Object.entries({startButton:'start',pauseButton:'pause',resumeButton:'resume',restartButton:'restart',newRunButton:'again',languageButton:'language',soundButton:'sound',aimButton:'aim',dualStickButton:'dualStick',handButton:'hand',qualityButton:'quality',rerollButton:'reroll',skipButton:'skip'})) {
+    for (const [id, action] of Object.entries({confirmNewButton:'confirmNew',cancelNewButton:'cancelNew',startButton:'start',pauseButton:'pause',resumeButton:'resume',restartButton:'restart',newRunButton:'again',languageButton:'language',soundButton:'sound',aimButton:'aim',dualStickButton:'dualStick',handButton:'hand',qualityButton:'quality',rerollButton:'reroll',skipButton:'skip'})) {
       el(id).addEventListener('click', () => handlers.action(action));
     }
     el('skillSelect').addEventListener('change',()=>handlers.action('equip:'+el('skillSelect').value));
     function translate(lang) {
       for (const label of document.querySelectorAll('[data-i18n]')) label.textContent = txt(label.dataset.i18n, lang);
       document.documentElement.lang = lang === 'en' ? 'en' : 'zh-CN';
-      el('languageButton').textContent = lang === 'en' ? '中文' : 'EN';
+      text('languageButton',lang === 'en' ? '中文' : 'EN');
       el('languageButton').setAttribute('aria-label', lang === 'en' ? 'Switch to Chinese' : '切换英语');
       const select = el('chassisSelect'), previous = select.value;
       select.replaceChildren();
@@ -60,7 +64,8 @@
         const copy = document.createElement('span'), heading = document.createElement('b'), description = document.createElement('span');
         heading.textContent = D.text(item.name, state.lang) + (R.rank(state.player, item.id) ? ` +${R.rank(state.player, item.id) + 1}` : '');
         description.textContent = D.text(item.description, state.lang);
-        copy.append(heading, description); card.append(mark, copy);
+        const insight=document.createElement('small');insight.className='upgrade-insight';insight.textContent=B.Insight.preview(state.player,item,state.lang).lines.join(' · ');
+        copy.append(heading, description,insight); card.append(mark, copy);
         card.addEventListener('click', () => handlers.choose(item.id));
         el('upgradeChoices').append(card);
       }
@@ -82,38 +87,43 @@
       if (language !== lang) {language = lang; translate(lang); cardKey = buildKey = '';}
       for (const [id, mode] of Object.entries({titlePanel:'title',pausePanel:'paused',upgradePanel:'upgrade',resultPanel:'over'})) el(id).hidden = state.mode !== mode;
       el('pauseButton').disabled = !['running','paused'].includes(state.mode);
-      el('massValue').textContent = String(Math.round(p.mass));
-      el('tierValue').textContent = ['I','II','III','IV','V','VI'][R.tier(p.mass)] + (R.tier(p.mass)<5 ? ` → ${R.THRESHOLDS[R.tier(p.mass)+1]}` : '');
-      el('clearValue').textContent = String(state.world.cleared);
-      el('roomValue').textContent = `${room.x}, ${room.y}`;
-      el('roomLabel').textContent = txt({start:'startRoom',combat:'combatRoom',cache:'cacheRoom'}[room.type], lang);
-      el('powerValue').textContent = `${txt('power',lang)} ${R.activeLoadout(p).reduce((s,g) => s + g.cost, 0)} / ${R.power(p)}`;
-      el('growthLabel').textContent = `${txt('growth',lang)} ${Math.floor(p.growth)} / ${state.nextGrowth}`;
-      el('growthFill').style.width = `${Math.min(100, p.growth / state.nextGrowth * 100)}%`;
-      el('shieldValue').textContent = `${txt('shield',lang)} ${Math.ceil(p.shield)}`;
+      text('massValue',String(Math.round(p.mass)));
+      text('tierValue',['I','II','III','IV','V','VI'][R.tier(p.mass)] + (R.tier(p.mass)<5 ? ` → ${R.THRESHOLDS[R.tier(p.mass)+1]}` : ''));
+      text('clearValue',String(state.world.cleared));
+      text('roomValue',`${room.x}, ${room.y}`);
+      text('roomLabel',`${room.zone+1}/4 · `+txt({start:'startRoom',combat:'combatRoom',cache:'cacheRoom'}[room.type]||room.type, lang));
+      const active=R.activeLoadout(p),sleeping=p.loadout.filter(g=>!active.includes(g));
+      el('battleHud').hidden=state.mode!=='running';
+      text('combatNotice',p.powerGrace>0&&R.effectivePower(p)>R.power(p)?`${lang==='en'?'Power buffer':'供能缓冲'} ${p.powerGrace.toFixed(1)}s`:sleeping.length?sleeping.map(g=>D.text(D.guns.find(d=>d.id===g.id).name,lang)).join(' / ')+(lang==='en'?' sleeping · restore mass':'休眠 · 吸收质量恢复供能'):'');
+      const boss=room.enemies.find(e=>e.kind==='boss'&&e.hp>0);text('bossHint',boss?D.text(B.Bosses.definitions[boss.zone].name,lang)+` · ${lang==='en'?'Phase':'阶段'} ${boss.stage} · `+D.text(B.Bosses.definitions[boss.zone].tip,lang):'');
+      el('bossHealth').hidden=!boss;if(boss){const health=Math.max(0,boss.hp/boss.maxHp)*100;el('bossHealthFill').style.width=health+'%';el('bossHealth').setAttribute('aria-valuenow',String(Math.round(health)));}
+      text('powerValue',`${txt('power',lang)} ${R.activeLoadout(p).reduce((s,g) => s + g.cost, 0)} / ${R.effectivePower(p)}`);
+      const growthSpan=12+6*(state.level+state.pending-1),growthStart=state.nextGrowth-growthSpan,progress=R.clamp(p.growth-growthStart,0,growthSpan);
+      text('growthLabel',`${lang==='en'?'Level progress':'本级进化'} ${Math.floor(progress)} / ${growthSpan}`);
+      el('growthFill').style.width = `${progress/growthSpan*100}%`;
+      text('shieldValue',`${txt('shield',lang)} ${Math.ceil(p.shield)} · ${txt('salvage',lang)} ${state.salvage} · ${lang==='en'?'Rescue':'救援'} ${state.rescueLeft}`);
       el('dashButton').disabled = state.mode !== 'running' || p.dashClock > 0;
       el('skillButton').disabled = state.mode !== 'running' || p.skillClock > 0;
-      el('dashClock').textContent = p.dashClock > 0 ? `${p.dashClock.toFixed(1)}s` : 'SPACE';
-      el('skillName').textContent=D.text(D.skills.find(s=>s.id===p.skill).name,lang);
-      el('rerollButton').disabled=state.rerolls<=0;el('rerollButton').textContent=(lang==='en'?'Reroll · ':'重掷 · ')+state.rerolls;
-      el('skipButton').textContent=lang==='en'?'Skip · salvage +1':'弃选 · 回收 +1';
-      el('dualStickButton').textContent=lang==='en'?(settings.dualStick?'Dual sticks':'Single stick'):(settings.dualStick?'双摇杆':'单摇杆');
-      el('handButton').textContent=lang==='en'?(settings.leftHand?'Right-hand move':'Left-hand move'):(settings.leftHand?'右手移动':'左手移动');
-      el('qualityButton').textContent=lang==='en'?(settings.quality==='low'?'Quality: low':'Quality: normal'):(settings.quality==='low'?'画质：低':'画质：标准');
+      text('dashClock',p.dashClock > 0 ? `${p.dashClock.toFixed(1)}s` : 'SPACE');
+      text('skillName',D.text(D.skills.find(s=>s.id===p.skill).name,lang));
+      el('rerollButton').disabled=state.rerolls<=0;text('rerollButton',(lang==='en'?'Reroll · ':'重掷 · ')+state.rerolls);
+      text('skipButton',lang==='en'?'Skip · salvage +1':'弃选 · 回收 +1');
+      text('dualStickButton',lang==='en'?(settings.dualStick?'Dual sticks':'Single stick'):(settings.dualStick?'双摇杆':'单摇杆'));
+      text('handButton',lang==='en'?(settings.leftHand?'Right-hand move':'Left-hand move'):(settings.leftHand?'右手移动':'左手移动'));
+      text('qualityButton',lang==='en'?(settings.quality==='low'?'Quality: low':'Quality: normal'):(settings.quality==='low'?'画质：低':'画质：标准'));
       const skillKey=lang+':'+p.skills.join(',');if(el('skillSelect').dataset.key!==skillKey){el('skillSelect').replaceChildren();for(const id of p.skills){const option=document.createElement('option');option.value=id;option.textContent=D.text(D.skills.find(s=>s.id===id).name,lang);el('skillSelect').append(option);}el('skillSelect').dataset.key=skillKey;}el('skillSelect').value=p.skill;
-      el('skillClock').textContent = p.skillClock > 0 ? `${p.skillClock.toFixed(1)}s` : 'E';
+      text('skillClock',p.skillClock > 0 ? `${p.skillClock.toFixed(1)}s` : 'E');
       el('dashClock').dataset.ready = String(p.dashClock <= 0);
       el('skillClock').dataset.ready = String(p.skillClock <= 0);
-      el('soundButton').textContent = txt(settings.sound ? 'soundOn' : 'soundOff',lang);
-      el('aimButton').textContent = txt(settings.assist ? 'assistOn' : 'assistOff',lang);
+      text('soundButton',txt(settings.sound ? 'soundOn' : 'soundOff',lang));
+      text('aimButton',txt(settings.assist ? 'assistOn' : 'assistOff',lang));
       const nextCard = `${lang}:${state.mode}:${(state.offers || []).map(u => u.id + R.rank(p,u.id)).join(',')}`;
       if (nextCard !== cardKey) {cardKey = nextCard; if (state.mode === 'upgrade') choices(state);}
-      const nextBuild = `${lang}:${R.tier(p.mass)}:${JSON.stringify(p.loadout)}:${JSON.stringify(p.passives)}:${p.skill}:${JSON.stringify(p.relics)}:${JSON.stringify(p.branches)}`;
+      const nextBuild = `${lang}:${R.effectivePower(p)}:${JSON.stringify(p.loadout)}:${JSON.stringify(p.passives)}:${p.skill}:${JSON.stringify(p.relics)}:${JSON.stringify(p.branches)}`;
       if (nextBuild !== buildKey) {buildKey = nextBuild; build(state);}
-      if (state.mode === 'over') el('resultDetail').textContent = lang === 'en'
-        ? `${state.world.cleared} bubbles cleared · ${state.score} points · Evolution ${state.level}`
-        : `清空 ${state.world.cleared} 个泡泡 · ${state.score} 分 · 进化等级 ${state.level}`;
       detail.update(state, settings);
+      el('confirmPanel').hidden=!state.confirmNew;
+      if(state.confirmNew){el('titlePanel').hidden=true;el('pausePanel').hidden=true;}
     }
     return {update};
   }
