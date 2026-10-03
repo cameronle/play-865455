@@ -1,65 +1,64 @@
-const test = require('node:test');
-const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const vm = require('node:vm');
-
-function element(id) { return { id, textContent:'', classList:{add(){},remove(){}}, dataset:{}, listeners:{}, addEventListener(type,fn){this.listeners[type]=fn;} }; }
-function boot() {
-  const ids=['board','next','score','highScore','level','lines','message','messageTitle','messageHint','startButton','newGameButton','pauseButton'];
-  const nodes=Object.fromEntries(ids.map(id=>[id,element(id)]));
-  const makeContext=()=>new Proxy({fills:[],fillStyle:''}, {get(o,k){if(k==='fillRect')return (x,y,w,h)=>o.fills.push({x,y,w,h,color:o.fillStyle});if(!(k in o))o[k]=()=>{};return o[k]},set(o,k,v){o[k]=v;return true}});
-  const boardContext=makeContext(), nextContext=makeContext();
-  nodes.board.getContext=()=>boardContext; nodes.next.getContext=()=>nextContext;
-  const controls=['left','rotate','right','down','drop'].map(action=>{const e=element(action);e.dataset.action=action;return e});
-  let raf;
-  const fixedMath=Object.create(Math);fixedMath.random=()=>0;
-  const sandbox={console,Math:fixedMath,localStorage:{getItem:()=>null,setItem(){}},document:{getElementById:id=>nodes[id],querySelectorAll:()=>controls},window:{listeners:{},addEventListener(type,fn){this.listeners[type]=fn;}},requestAnimationFrame:fn=>{raf=fn}};
-  vm.createContext(sandbox); vm.runInContext(fs.readFileSync('tetris/game.js','utf8'),sandbox);
-  return {nodes,controls,window:sandbox.window,boardContext,frame(t){boardContext.fills=[];raf(t);}};
-}
-
-test('soft-drop input on the title screen does not crash', () => {
-  const app=boot();
-  const down=app.controls.find(x=>x.dataset.action==='down');
-  assert.doesNotThrow(()=>down.listeners.pointerdown({preventDefault(){}}));
+"use strict";
+const test = require("node:test"),
+  assert = require("node:assert/strict"),
+  fs = require("node:fs");
+const { createTetris } = require("./helpers/tetris-runtime");
+test("soft-drop input on the title screen does not crash", () => {
+  const app = createTetris();
+  assert.doesNotThrow(() => app.node("down").dispatch("pointerdown"));
+  assert.equal(app.snapshot().state, "title");
 });
-
-test('soft drop never carries over to the next piece while the key remains held', () => {
-  const app=boot();
-  app.nodes.startButton.listeners.click();
-  app.window.listeners.keydown({key:'ArrowDown',preventDefault(){}});
-  for(let i=0;i<25;i++) app.frame((i+1)*16);
-  app.frame(1000);
-  const activeCells=app.boardContext.fills.filter(x=>x.color==='#55b7c8'&&x.y<120);
-  assert.ok(activeCells.length>=4,'the next piece should still be at its spawn height');
+test("soft drop never carries over to the next piece while the key remains held", () => {
+  const app = createTetris();
+  app.node("startButton").click();
+  app.run("piece=newPiece('I');piece.y=19");
+  app.event("keydown", { key: "ArrowDown" });
+  app.frames(0.3);
+  app.event("keydown", { key: "ArrowDown", repeat: true });
+  assert.equal(app.snapshot().piece.y, 0);
+  app.event("keyup", { key: "ArrowDown" });
+  app.event("keydown", { key: "ArrowDown" });
+  assert.equal(app.snapshot().piece.y, 1);
 });
-
-test('touch soft drop stops when the button is released', () => {
-  const source=fs.readFileSync('tetris/game.js','utf8');
-  assert.match(source,/const stop=e=>\{e\.preventDefault\(\);softDropRequested=false;softDropHeld=false\}/);
-  assert.match(source,/addEventListener\('pointerup',stop\)/);
-  assert.match(source,/addEventListener\('pointercancel',stop\)/);
+test("touch soft drop stops when the button is released or cancelled", () => {
+  for (const type of ["pointerup", "pointercancel", "lostpointercapture"]) {
+    const app = createTetris();
+    app.node("startButton").click();
+    app.node("down").dispatch("pointerdown");
+    app.node("down").dispatch(type);
+    const y = app.snapshot().piece.y;
+    app.frames(0.2);
+    assert.equal(app.snapshot().piece.y, y);
+  }
 });
-
-test('mobile layout stacks board and HUD instead of squeezing them side by side', () => {
-  const css=fs.readFileSync('tetris/style.css','utf8');
-  assert.match(css,/@media\(max-width:560px\)[\s\S]*\.game-layout\{flex-direction:column/);
-  assert.match(css,/@media\(max-width:560px\)[\s\S]*\.board-wrap\{[^}]*width:min\(100%,300px,calc\(\(100svh - 190px\)\/2\)\)/);
+test("mobile layout stacks the compact HUD and board instead of squeezing them side by side", () => {
+  const css = fs.readFileSync("tetris/style.css", "utf8");
+  assert.match(css, /flex-direction:\s*column/);
+  assert.match(css, /order:\s*-1/);
+  assert.match(css, /100svh - 292px/);
+  assert.match(css, /aspect-ratio:\s*1\s*\/\s*2/);
 });
-
-test('touch controls suppress long-press text selection and callout menus', () => {
-  const css=fs.readFileSync('tetris/style.css','utf8');
-  assert.match(css,/\.touch-controls(?:,|\{)[\s\S]*user-select:none/);
-  assert.match(css,/\.touch-controls button\{[^}]*-webkit-touch-callout:none/);
-  assert.match(css,/\.touch-controls button\{[^}]*touch-action:none/);
+test("touch controls suppress long-press text selection and callout menus", () => {
+  const css = fs.readFileSync("tetris/style.css", "utf8");
+  assert.match(
+    css,
+    /\.touch-controls button\s*\{[^}]*-webkit-touch-callout:\s*none/,
+  );
+  assert.match(css, /\.touch-controls button\s*\{[^}]*user-select:\s*none/);
+  assert.match(css, /\.touch-controls button\s*\{[^}]*touch-action:\s*none/);
 });
-
-test('mobile touch controls leave clearance for the fixed theme utilities', () => {
-  const css=fs.readFileSync('tetris/style.css','utf8');
-  assert.match(css, /@media\(max-width:560px\)[\s\S]*\.touch-controls\{[^}]*margin:6px auto 0/);
+test("mobile touch controls leave clearance for fixed utility buttons", () => {
+  const css = fs.readFileSync("tetris/style.css", "utf8");
+  assert.match(css, /64px \+ env\(safe-area-inset-bottom\)/);
+  assert.match(css, /body \.theme-toggle/);
+  assert.match(css, /bottom:\s*max\(10px,\s*env\(safe-area-inset-bottom\)\)/);
 });
-
-test('very narrow mobile screens keep the utility buttons below the controls', () => {
-  const css=fs.readFileSync('tetris/style.css','utf8');
-  assert.match(css, /@media\(max-width:360px\)\{[^}]*[\s\S]*?\.touch-controls\{margin-top:-4px\}/);
+test("pointer capture failure is harmless and release outside stops the old hold", () => {
+  const app = createTetris({ captureThrows: true });
+  app.node("startButton").click();
+  assert.doesNotThrow(() => app.node("down").dispatch("pointerdown"));
+  app.event("pointerup", { pointerId: 1 });
+  const y = app.snapshot().piece.y;
+  app.frames(0.2);
+  assert.equal(app.snapshot().piece.y, y);
 });

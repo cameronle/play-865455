@@ -74,7 +74,7 @@ test('New Game controls use each game\'s theme accent in both modes',()=>{
     snake:{light:{color:'#25433d',hover:'#ccebd7'},dark:{color:'#25433d',hover:'#b6e3c2'}},
   };
   for(const [route,modes] of Object.entries(expected)){
-    const css=fs.readFileSync(`${route}/style.css`,'utf8');
+    const css=fs.readFileSync(`${route}/style.css`,'utf8').replace(/\s*([{};:])\s*/g,'$1');
     assert.match(css,new RegExp(`\\.secondary\\{[^}]*color:${modes.light.color}`),`${route} light accent`);
     assert.match(css,new RegExp(`\\.secondary:hover\\{background:${modes.light.hover}`),`${route} light hover`);
     assert.match(css,new RegExp(`\\[data-theme="dark"\\] \\.secondary\\{[^}]*color:${modes.dark.color}`),`${route} dark accent`);

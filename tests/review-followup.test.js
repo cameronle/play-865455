@@ -17,23 +17,17 @@ test('2048 acknowledges reaching 2048 exactly once and allows continuing', () =>
 });
 
 test('Tetris drop scoring updates current high score and held drop awards successful rows', () => {
-  const source = read('tetris/game.js');
-  assert.match(source, /function addScore\(points\)/);
-  assert.match(source, /if\(!locked&&softDropRequested&&stepDown\(\)\)addScore\(1\)/);
-  assert.match(source, /softDropRequested=false/);
-  assert.match(source, /addScore\(distance\*2\)/);
+  const {createTetris}=require('./helpers/tetris-runtime');const app=createTetris();app.node('startButton').click();app.event('keydown',{key:'ArrowDown'});app.frames(.15);assert.equal(app.snapshot().score,4);assert.equal(app.snapshot().highScore,4);
 });
 
 test('Tetris board and controls fit a short portrait viewport', () => {
   const css = read('tetris/style.css');
   assert.match(css, /100svh/);
-  assert.match(css, /calc\(\(100svh[^)]*\)\/2\)/);
+  assert.match(css, /calc\(\(100svh[\s\S]*?\)\s*\/\s*2\)/);
 });
 
 test('Tetris locks a grounded piece without waiting for the gravity interval',()=>{
-  const source=fs.readFileSync('tetris/game.js','utf8');
-  assert.match(source,/if\(collides\(piece,0,1\)\)\{lock\(\);dropTimer=0;locked=true\}/);
-  assert.match(source,/function lock\(\)[\s\S]*clearLines\(\)/);
+  const {createTetris}=require('./helpers/tetris-runtime');const app=createTetris();app.node('startButton').click();app.run("piece=newPiece('I');piece.y=19");app.frame(16);assert.equal(app.snapshot().grid[19].filter(Boolean).length,4);assert.equal(app.snapshot().piece.y,0);
 });test('Snake declares victory when no free food cell remains', () => {
   const source = read('snake/game.js');
   assert.match(source, /function gameWon\(\)/);
