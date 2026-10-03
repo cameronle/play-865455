@@ -347,3 +347,40 @@ footer {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+body .theme-toggle, body .clear-data-toggle { min-height: 44px; min-width: 44px; }
+
+@media (max-width: 600px) { footer { display: none; } }
+@media (min-width: 601px) and (min-height: 601px) {
+  .screen { width: min(100%, 480px, calc((100svh - 322px) * 2 / 3 + 16px)); }
+}
+
+/* Keep the complete playfield and touch controls on short phones. */
+@media (max-width: 600px) and (max-height: 720px) {
+  .screen { width: min(100%, calc((100svh - 315px) * 2 / 3 + 14px)); transform: none; }
+  .tips { margin-top: 8px; gap: 4px 8px; }
+  footer { margin-top: 6px; font-size: 8px; }
+}
+
+@media (min-aspect-ratio: 4/3) and (max-height: 600px) {
+  .page { width: min(740px, 100%); padding: 8px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(180px, 220px); gap: 8px 16px; }
+  .topbar { grid-column: 1 / -1; min-height: 44px; margin-bottom: 0; }
+  .brand span { display: none; }
+  .screen { grid-column: 1; grid-row: 2 / 6; width: min(100%, calc((100svh - 100px) * 2 / 3 + 16px)); transform: none; align-self: start; }
+  .hud { grid-column: 2; grid-row: 2; grid-template-columns: repeat(2, 1fr); margin: 0; }
+  .controls { grid-column: 2; grid-row: 3; margin: 0; }
+  .controls button { font-size: 9px; }
+  .tips { grid-column: 2; grid-row: 4; margin: 0; gap: 5px; }
+  footer { grid-column: 2; grid-row: 5; margin: 0; font-size: 8px; }
+  body .theme-toggle, body .clear-data-toggle { top: auto; bottom: 10px; transform: none; }
+  body .theme-toggle { left: 10px; right: auto; top: 50%; bottom: auto; transform: translateY(-50%); }
+  body .clear-data-toggle { left: 10px; right: auto; }
+}
+
+@media (max-height: 720px) {
+  .overlay { padding: 12px; gap: 8px; }
+  .overlay-scribble { font-size: 20px; }
+  .overlay b { font-size: 20px; }
+  .overlay span { font-size: 7px; }
+  .overlay button { padding: 10px 8px; font-size: 10px; }
+}

@@ -11,3 +11,5 @@ test('stars are generated, collected, scored and persisted',()=>{const js=read('
 test('falling below the screen ends the run once and stores the best score',()=>{const js=read('sky-hopper/game.js');assert.match(js,/function gameOver/);assert.match(js,/localStorage\.setItem/);assert.match(js,/state='over'/);});
 test('touch buttons and canvas halves provide state-aware movement',()=>{const js=read('sky-hopper/game.js');assert.match(js,/bindHold\(['"]leftButton/);assert.match(js,/bindHold\(['"]rightButton/);assert.match(js,/canvas\.addEventListener\(['"]pointerdown/);assert.match(js,/if\(state!==['"]playing['"]\)start/);});
 test('launcher and README include the doodle hopper route',()=>{assert.match(read('index.html'),/\/sky-hopper\//);assert.match(read('README.md'),/\.\/sky-hopper\//);});
+
+test('platform instructions explicitly identify the spring boost',()=>{assert.match(read('sky-hopper/index.html'),/SPRING BOOST/)});
