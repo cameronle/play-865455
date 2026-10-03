@@ -35,7 +35,7 @@ module.exports = [
     },
     "readme": {
       "title": "Sky Patrol",
-      "description": "自维护的 HTML5 Canvas 街机飞行射击游戏，支持自动发射、关卡、生命、道具、音效和移动端触控。"
+      "description": "自维护的 HTML5 Canvas 街机飞行射击游戏，支持自动发射、四向移动、相对拖动、关卡、生命、道具、音效、本地最高分、后台自动暂停和手机横屏。"
     }
   },
   {

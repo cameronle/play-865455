@@ -1,58 +1,100 @@
-const test=require('node:test');
-const assert=require('node:assert/strict');
-const fs=require('node:fs');
-const vm=require('node:vm');
-
-function element(id){return{id,textContent:'',innerHTML:'',classList:{add(){},remove(){},toggle(){}},listeners:{},addEventListener(type,fn){this.listeners[type]=fn;},click(){this.listeners.click?.({preventDefault(){}})}}}
-function boot(){
-  const ids=['game','score','level','lives','best','overlay','startButton','soundButton','mobilePauseButton','leftButton','rightButton','upButton','downButton'];
-  const nodes=Object.fromEntries(ids.map(id=>[id,element(id)]));
-  const ctx=new Proxy({}, {get(o,k){if(!(k in o))o[k]=()=>{};return o[k]},set(o,k,v){o[k]=v;return true}});
-  nodes.game.width=480;nodes.game.height=720;nodes.game.getContext=()=>ctx;nodes.game.getBoundingClientRect=()=>({left:0,top:0,width:480,height:720});
-  let raf;
-  const document={getElementById:id=>nodes[id],querySelector:()=>element('query')};
-  const window={listeners:{},addEventListener(type,fn){this.listeners[type]=fn;}};
-  const sandbox={console,document,window,localStorage:{getItem:()=>null,setItem(){}},requestAnimationFrame:fn=>{raf=fn},setTimeout:fn=>fn(),Math};
-  vm.createContext(sandbox);vm.runInContext(fs.readFileSync('shooter/game.js','utf8'),sandbox);
-  return{nodes,window,frame(t){raf(t)}};
-}
-
-test('Sky Patrol movement reaches true horizontal and lower playfield bounds',()=>{
-  const source=fs.readFileSync('shooter/game.js','utf8');
-  assert.match(source,/player\.x=clamp\([^;]+player\.w\/2,W-player\.w\/2\)/);
-  assert.match(source,/player\.y=clamp\([^;]+player\.h\/2,H-player\.h\/2\)/);
-  assert.match(source,/player=\{x:W\/2,y:H-24,w:28,h:44/);
+"use strict";
+const test = require("node:test"),
+  assert = require("node:assert/strict"),
+  fs = require("node:fs");
+const { createShooter } = require("./helpers/shooter-runtime");
+test("Sky Patrol movement reaches true horizontal and lower playfield bounds", () => {
+  const app = createShooter();
+  app.element("startButton").click();
+  app.event("keydown", { key: "ArrowLeft" });
+  app.frames(1);
+  let p = app.snapshot().player;
+  assert.equal(p.x, p.w / 2);
+  app.event("keyup", { key: "ArrowLeft" });
+  app.event("keydown", { key: "ArrowRight" });
+  app.frames(2);
+  p = app.snapshot().player;
+  assert.equal(p.x, 480 - p.w / 2);
+  app.event("keyup", { key: "ArrowRight" });
+  app.event("keydown", { key: "ArrowDown" });
+  app.frames(1);
+  p = app.snapshot().player;
+  assert.equal(p.y, 648 - p.h / 2);
 });
-
-test('Sky Patrol supports up and down controls on keyboard and mobile',()=>{
-  const html=fs.readFileSync('shooter/index.html','utf8'),source=fs.readFileSync('shooter/game.js','utf8'),css=fs.readFileSync('shooter/style.css','utf8');
-  assert.match(html,/id="upButton"/);assert.match(html,/id="downButton"/);
-  assert.match(html,/ARROWS \/ WASD TO MOVE/);
-  assert.match(source,/pointer = \{left:false,right:false,up:false,down:false\}/);
-  assert.match(source,/bindHold\('upButton','up'\)/);assert.match(source,/bindHold\('downButton','down'\)/);
-  assert.match(source,/ArrowUp/);assert.match(source,/ArrowDown/);
-  assert.match(css,/-webkit-touch-callout:none/);assert.match(css,/touch-action:none/);
+test("Sky Patrol supports every direction on keyboard and mobile", () => {
+  for (const [name, key, axis, sign] of [
+    ["left", "ArrowLeft", "x", -1],
+    ["right", "ArrowRight", "x", 1],
+    ["up", "ArrowUp", "y", -1],
+    ["down", "ArrowDown", "y", 1],
+  ]) {
+    for (const mode of ["key", "touch"]) {
+      const app = createShooter();
+      app.element("startButton").click();
+      app.run("player.x=240;player.y=324");
+      mode === "key"
+        ? app.event("keydown", { key })
+        : app.element(name + "Button").dispatch("pointerdown");
+      app.frames(0.1);
+      assert.ok(
+        (app.snapshot().player[axis] - (axis === "x" ? 240 : 324)) * sign > 0,
+      );
+    }
+  }
 });
-
-test('Sky Patrol pointer dragging moves in both axes rather than x only',()=>{
-  const source=fs.readFileSync('shooter/game.js','utf8');
-  assert.match(source,/player\.x=clamp/);
-  assert.match(source,/player\.y=clamp/);
+test("Sky Patrol pointer dragging maps scaled canvas coordinates in both axes", () => {
+  const app = createShooter();
+  app.element("startButton").click();
+  app.run("player.x=240;player.y=324");
+  const canvas = app.element("game");
+  canvas.getBoundingClientRect = () => ({
+    left: 20,
+    top: 30,
+    width: 240,
+    height: 324,
+  });
+  canvas.dispatch("pointerdown", { clientX: 60, clientY: 80 });
+  canvas.dispatch("pointermove", { clientX: 80, clientY: 95 });
+  assert.equal(app.snapshot().player.x, 280);
+  assert.equal(app.snapshot().player.y, 354);
 });
-
-test('Sky Patrol uses a slightly shorter 2:2.7 playfield',()=>{
-  const html=fs.readFileSync('shooter/index.html','utf8'),css=fs.readFileSync('shooter/style.css','utf8');
-  assert.match(html,/canvas id="game" width="480" height="648"/);
-  assert.match(css,/aspect-ratio:20\/27/);
-  assert.match(css,/calc\(\(100svh - 190px\)\*20\/27\)/);
+test("Sky Patrol preserves the 480 by 648 logical flight area", () => {
+  assert.match(
+    fs.readFileSync("shooter/index.html", "utf8"),
+    /<canvas\b(?=[^>]*\bid="game")(?=[^>]*\bwidth="480")(?=[^>]*\bheight="648")/,
+  );
+  assert.match(
+    fs.readFileSync("shooter/style.css", "utf8"),
+    /aspect-ratio:\s*20\s*\/\s*27/,
+  );
 });
-
-test('Sky Patrol locks touch gestures while the player is controlling the ship',()=>{
-  const source=fs.readFileSync('shooter/game.js','utf8'),css=fs.readFileSync('shooter/style.css','utf8');
-  assert.match(css,/html,body\{[^}]*overscroll-behavior:none/);
-  assert.match(css,/\.screen-frame(?:,|\{)[\s\S]*touch-action:none/);
-  assert.match(source,/function preventGameTouch\(e\)\{if\(state==='playing'\)e\.preventDefault\(\)\}/);
-  assert.match(source,/document\.addEventListener\('touchmove',preventGameTouch,\{passive:false\}\)/);
-  assert.match(source,/canvas\.addEventListener\('pointerdown'/);
-  assert.match(source,/canvas\.setPointerCapture/);
+test("Sky Patrol locks touch gestures only while the flight is active", () => {
+  const app = createShooter();
+  let e = {
+    preventDefault() {
+      e.prevented = true;
+    },
+  };
+  app.event("doc:touchmove", e);
+  assert.equal(e.prevented, undefined);
+  app.element("startButton").click();
+  e = {
+    preventDefault() {
+      e.prevented = true;
+    },
+  };
+  app.event("doc:touchmove", e);
+  assert.equal(e.prevented, true);
+  app.element("mobilePauseButton").click();
+  e = {
+    preventDefault() {
+      e.prevented = true;
+    },
+  };
+  app.event("doc:touchmove", e);
+  assert.equal(e.prevented, undefined);
+  assert.match(
+    fs.readFileSync("shooter/style.css", "utf8"),
+    /-webkit-touch-callout:\s*none/,
+  );
 });
