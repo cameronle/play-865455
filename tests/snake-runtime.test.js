@@ -3,6 +3,14 @@ const test = require("node:test"),
   assert = require("node:assert/strict");
 const { createSnake } = require("./helpers/snake-runtime");
 const KEY = "classic-snake-high-score";
+test("garden background contains only a clear and grid, not decorative chevrons or leaves", () => {
+  const a = createSnake();
+  a.stats.commands.length = 0;
+  a.run("drawGarden()");
+  assert.equal(a.stats.commands.filter((c) => c[0] === "stroke").length, 38);
+  assert.equal(a.stats.commands.filter((c) => c[0] === "ellipse").length, 0);
+  assert.equal(a.stats.commands.filter((c) => c[0] === "fillRect").length, 1);
+});
 test("new garden from pause draws an undimmed board immediately", () => {
   const a = start();
   a.node("pauseButton").click();

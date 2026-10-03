@@ -231,28 +231,6 @@
       ctx.lineTo(canvas.width, i * CELL + 0.5);
       ctx.stroke();
     }
-    ctx.strokeStyle = color("--coral", "#f28c78");
-    ctx.lineWidth = 2;
-    ctx.lineCap = "round";
-    for (let i = 0; i < 7; i++) {
-      const x = 16 + i * 59,
-        y = 10 + (i % 4) * 18;
-      ctx.beginPath();
-      ctx.moveTo(x, y + 6);
-      ctx.lineTo(x + 5, y);
-      ctx.lineTo(x + 11, y + 6);
-      ctx.stroke();
-    }
-    ctx.fillStyle = color("--mint", "#9eddbd");
-    ctx.globalAlpha = 0.55;
-    for (let i = 0; i < 10; i++) {
-      const x = (i * 47 + 13) % 400,
-        y = 387 - (i % 3) * 4;
-      ctx.beginPath();
-      ctx.ellipse(x, y, 5, 10, (i % 2 ? -1 : 1) * 0.5, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    ctx.globalAlpha = 1;
   }
   function drawApple(item) {
     if (!item) return;

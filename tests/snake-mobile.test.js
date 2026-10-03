@@ -17,7 +17,7 @@ test("Worm & Apple preserves its garden artwork and refreshed theme path", () =>
   const html = fs.readFileSync("snake/index.html", "utf8"),
     js = fs.readFileSync("snake/game.js", "utf8");
   assert.match(html, /WORM &amp; APPLE/);
-  assert.match(html, /worm-apple-2/);
+  assert.match(html, /worm-apple-3/);
   assert.match(js, /function drawApple/);
   assert.match(js, /function drawWorm/);
 });
