@@ -10,9 +10,16 @@
     up: { x: 0, y: -1 }, down: { x: 0, y: 1 },
     left: { x: -1, y: 0 }, right: { x: 1, y: 0 },
   };
-  let state = 'title', score = 0, high = Number(localStorage.getItem('maze-high')) || 0;
+  let state = 'title', score = 0, high = readHigh();
   let level = 1, lives = 3, player, enemies, dots;
-  let direction = { x: 0, y: 0 }, queued = { x: 0, y: 0 }, last = 0, timer = 0, swipe = null;
+  let direction = { x: 0, y: 0 }, queued = { x: 0, y: 0 }, last = 0, timer = 0, swipe = null, rafId = null;
+
+  function readHigh() {
+    try { const value = Number(localStorage.getItem('maze-high')); return Number.isSafeInteger(value) && value >= 0 ? value : 0; } catch { return 0; }
+  }
+  function saveHigh() {
+    try { localStorage.setItem('maze-high', String(high)); } catch { /* Gameplay works without storage. */ }
+  }
 
   const openCells = [];
   for (let row = 1; row < SIZE - 1; row++) for (let col = 1; col < SIZE - 1; col++) if (!maze.isWall(row, col)) openCells.push({ row, col });
@@ -21,6 +28,7 @@
     $('score').textContent = String(score).padStart(6, '0');
     $('high').textContent = String(high).padStart(6, '0');
     $('level').textContent = String(level).padStart(2, '0');
+    $('remaining').textContent = String(dots.size).padStart(3, '0');
     $('lives').textContent = '♥'.repeat(lives) + '·'.repeat(3 - lives);
   }
   function message(title, hint, button) {
@@ -36,19 +44,32 @@
   function resetPositions() {
     player = { row: 1, col: 1 };
     enemies = makeEnemies();
-    direction = { x: 0, y: 0 }; queued = { x: 0, y: 0 };
+    direction = { x: 0, y: 0 }; queued = { x: 0, y: 0 }; timer = 0; clearSwipe();
   }
   function setup() {
     score = 0; level = 1; lives = 3; resetPositions();
     dots = new Set(openCells.map(point => `${point.row},${point.col}`));
     dots.delete('1,1'); updateHud(); draw();
   }
+  function updatePause() {
+    $('pause').textContent = state === 'pause' ? 'RESUME' : 'PAUSE';
+    $('pause').disabled = state !== 'play' && state !== 'pause';
+    $('pause').setAttribute('aria-pressed', String(state === 'pause'));
+  }
+  function stopLoop() {
+    if (rafId != null) cancelAnimationFrame(rafId);
+    rafId = null; last = 0; timer = 0; clearSwipe();
+  }
+  function ensureLoop() {
+    if (state === 'play' && rafId == null) { last = performance.now(); rafId = requestAnimationFrame(loop); }
+  }
   function start() {
-    setup(); state = 'play'; $('overlay').classList.add('hide');
+    stopLoop(); setup(); state = 'play'; $('overlay').classList.add('hide'); updatePause(); draw(); ensureLoop();
   }
   function pause() {
-    if (state === 'play') { state = 'pause'; message('PAUSED', 'TAP RESUME OR PRESS P', 'RESUME'); }
-    else if (state === 'pause') { state = 'play'; $('overlay').classList.add('hide'); }
+    if (state === 'play') { state = 'pause'; stopLoop(); message('PAUSED', 'TAP RESUME OR PRESS P', 'RESUME'); }
+    else if (state === 'pause') { state = 'play'; $('overlay').classList.add('hide'); ensureLoop(); }
+    updatePause(); draw();
   }
   function canMove(point, nextDirection) {
     return !maze.isWall(point.row + nextDirection.y, point.col + nextDirection.x);
@@ -60,8 +81,8 @@
   function loseLife() {
     lives--; updateHud();
     if (lives <= 0) {
-      state = 'over';
-      if (score > high) { high = score; localStorage.setItem('maze-high', String(high)); }
+      state = 'over'; stopLoop(); updatePause();
+      if (score > high) { high = score; saveHigh(); }
       updateHud(); message('GAME OVER', `FINAL SCORE ${String(score).padStart(6, '0')}`, 'PLAY AGAIN');
     } else resetPositions();
   }
@@ -69,8 +90,10 @@
     if (canMove(player, queued)) direction = queued;
     player = move(player, direction);
     const key = `${player.row},${player.col}`;
-    if (dots.delete(key)) { score += 10; if (score > high) high = score; updateHud(); }
+    if (dots.delete(key)) { score += 10; if (score > high) { high = score; saveHigh(); } updateHud(); }
 
+    // Catch entry into an occupied tile before ghosts move out of it.
+    if (enemies.some(enemy => enemy.row === player.row && enemy.col === player.col)) return loseLife();
     enemies.forEach(enemy => {
       const old = { row: enemy.row, col: enemy.col };
       const next = chooseEnemyStep(maze, enemy, player, Math.random, enemy.personality);
@@ -79,32 +102,10 @@
 
     if (enemies.some(enemy => enemy.row === player.row && enemy.col === player.col)) return loseLife();
     if (!dots.size) {
-      level++;
+      level++; resetPositions();
       dots = new Set(openCells.map(point => `${point.row},${point.col}`));
       dots.delete(`${player.row},${player.col}`); updateHud();
     }
-  }
-  function draw() {
-    const isLight = document.documentElement?.dataset?.theme === 'light';
-    ctx.fillStyle = isLight ? '#f7f4ec' : '#080d15'; ctx.fillRect(0, 0, WIDTH, WIDTH);
-    for (let row = 0; row < SIZE; row++) for (let col = 0; col < SIZE; col++) {
-      if (!maze.isWall(row, col)) continue;
-      const px = col * CELL, py = row * CELL;
-      ctx.fillStyle = isLight ? '#eae4d8' : '#132331'; ctx.fillRect(px + 3, py + 3, CELL - 6, CELL - 6);
-      ctx.strokeStyle = isLight ? '#d8d0c5' : '#64e6e633'; ctx.strokeRect(px + 5, py + 5, CELL - 10, CELL - 10);
-    }
-    dots.forEach(key => {
-      const [row, col] = key.split(',').map(Number);
-      ctx.fillStyle = isLight ? '#8b8177' : '#e8f0f7'; ctx.fillRect(col * CELL + 15, row * CELL + 15, 3, 3);
-    });
-    enemies.forEach(enemy => {
-      const x = enemy.col * CELL + 16, y = enemy.row * CELL + 16;
-      ctx.fillStyle = enemy.color; ctx.beginPath(); ctx.arc(x, y, 10, Math.PI, 0);
-      ctx.lineTo(x + 10, y + 8); ctx.lineTo(x + 5, y + 3); ctx.lineTo(x, y + 8);
-      ctx.lineTo(x - 5, y + 3); ctx.lineTo(x - 10, y + 8); ctx.lineTo(x - 10, y); ctx.fill();
-    });
-    ctx.fillStyle = isLight ? '#0288d1' : '#64e6e0'; ctx.beginPath(); ctx.arc(player.col * CELL + 16, player.row * CELL + 16, 11, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = isLight ? '#f7f4ec' : '#080d15'; ctx.beginPath(); ctx.arc(player.col * CELL + 20, player.row * CELL + 12, 2, 0, Math.PI * 2); ctx.fill();
   }
   function mazePalette() {
     if (typeof getComputedStyle !== 'function') return { paper:'#fffaf0', grid:'rgba(75,156,149,.13)', wall:'#b8a7e8', wallBorder:'#3d3832', ink:'#3d3832', mint:'#9eddbd', yellow:'#f7d66c', coral:'#f28c78', purple:'#b8a7e8', ghost:'#b8a7e8', ghostAlt:'#8fc9eb', fish:'#f28c78' };
@@ -125,43 +126,84 @@
     if (player) { const x = player.col * CELL + 16, y = player.row * CELL + 16; ctx.save(); ctx.translate(x, y); ctx.fillStyle = p.yellow; ctx.strokeStyle = p.ink; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(-10, -5); ctx.lineTo(-9, -14); ctx.lineTo(-2, -9); ctx.arc(0, -3, 11, Math.PI, 0); ctx.lineTo(9, -9); ctx.lineTo(10, -14); ctx.lineTo(11, 6); ctx.quadraticCurveTo(0, 16, -11, 6); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.fillStyle = p.ink; ctx.beginPath(); ctx.arc(-4, -4, 2, 0, Math.PI * 2); ctx.arc(4, -4, 2, 0, Math.PI * 2); ctx.fill(); ctx.strokeStyle = p.ink; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(-4, 3); ctx.lineTo(0, 6); ctx.lineTo(4, 3); ctx.moveTo(-7, 3); ctx.lineTo(-14, 1); ctx.moveTo(-7, 6); ctx.lineTo(-14, 7); ctx.moveTo(7, 3); ctx.lineTo(14, 1); ctx.moveTo(7, 6); ctx.lineTo(14, 7); ctx.stroke(); ctx.restore(); }
   }
 
-  function setDirection(name) { queued = directions[name]; }
+  function setDirection(name) {
+    if (document.hidden || !directions[name]) return;
+    if (state === 'title' || state === 'over') start();
+    else if (state === 'pause') pause();
+    queued = directions[name];
+  }
   function bindButton(name) {
     const button = document.querySelector(`[data-dir="${name}"]`);
-    button.addEventListener('pointerdown', event => { event.preventDefault(); setDirection(name); });
+    button.addEventListener('pointerdown', event => {
+      if (event.button !== 0 || event.isPrimary === false) return;
+      event.preventDefault(); setDirection(name);
+    });
+    button.addEventListener('click', event => { if (event.detail === 0) setDirection(name); });
   }
   function loop(time) {
-    const elapsed = Math.min(100, time - last || 0); last = time;
+    rafId = null;
+    const elapsed = Math.min(250, Math.max(0, time - last)); last = time;
     if (state === 'play') {
       timer += elapsed;
-      if (timer > Math.max(100, 185 - (level - 1) * 9)) { timer = 0; update(); draw(); }
+      const step = Math.max(100, 185 - (level - 1) * 9);
+      while (state === 'play' && timer + 1e-6 >= step) { timer -= step; update(); draw(); }
     }
-    requestAnimationFrame(loop);
+    if (state === 'play') rafId = requestAnimationFrame(loop);
   }
 
   $('start').onclick = () => state === 'pause' ? pause() : start();
   $('new').onclick = start; $('pause').onclick = pause;
   Object.keys(directions).forEach(bindButton);
+  function clearSwipe() {
+    if (!swipe) return;
+    const id = swipe.id; swipe = null;
+    try { if (canvas.hasPointerCapture?.(id)) canvas.releasePointerCapture(id); } catch { /* Capture may already be released. */ }
+  }
   canvas.addEventListener('pointerdown', event => {
+    if (event.button !== 0 || event.isPrimary === false || swipe) return;
     event.preventDefault();
-    swipe = { x: event.clientX, y: event.clientY };
-    if (canvas.setPointerCapture) canvas.setPointerCapture(event.pointerId);
+    swipe = { id: event.pointerId, x: event.clientX, y: event.clientY };
+    try { canvas.setPointerCapture?.(event.pointerId); } catch { /* Native/synthetic touch may reject capture. */ }
   });
   canvas.addEventListener('pointerup', event => {
-    event.preventDefault(); if (!swipe) return;
-    const dx = event.clientX - swipe.x, dy = event.clientY - swipe.y; swipe = null;
+    if (!swipe || event.pointerId !== swipe.id) return;
+    event.preventDefault(); const gesture = swipe; clearSwipe();
+    const dx = event.clientX - gesture.x, dy = event.clientY - gesture.y;
     if (Math.max(Math.abs(dx), Math.abs(dy)) < 12) {
       const rect = canvas.getBoundingClientRect();
-      const x = event.clientX - rect.left - rect.width / 2, y = event.clientY - rect.top - rect.height / 2;
-      setDirection(Math.abs(x) > Math.abs(y) ? (x > 0 ? 'right' : 'left') : (y > 0 ? 'down' : 'up'));
+      const x = (event.clientX - rect.left) * WIDTH / rect.width - (player.col * CELL + 16);
+      const y = (event.clientY - rect.top) * WIDTH / rect.height - (player.row * CELL + 16);
+      if (Math.max(Math.abs(x), Math.abs(y)) >= 6) setDirection(Math.abs(x) > Math.abs(y) ? (x > 0 ? 'right' : 'left') : (y > 0 ? 'down' : 'up'));
     } else setDirection(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up'));
   });
-  canvas.addEventListener('pointercancel', () => { swipe = null; });
+  const cancelSwipe = event => { if (swipe && event.pointerId === swipe.id) { event.preventDefault(); clearSwipe(); } };
+  canvas.addEventListener('pointercancel', cancelSwipe);
+  canvas.addEventListener('lostpointercapture', cancelSwipe);
+  ['contextmenu', 'selectstart', 'dragstart'].forEach(type => canvas.addEventListener(type, event => event.preventDefault()));
+  canvas.addEventListener('touchmove', event => { if (state === 'play') event.preventDefault(); }, { passive: false });
   window.onkeydown = event => {
-    const name = { ArrowUp: 'up', w: 'up', ArrowDown: 'down', s: 'down', ArrowLeft: 'left', a: 'left', ArrowRight: 'right', d: 'right' }[event.key];
+    if (document.hidden || event.ctrlKey || event.metaKey || event.altKey || event.target?.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(event.target?.tagName || '')) return;
+    const key = event.key.length === 1 ? event.key.toLowerCase() : event.key;
+    const name = { ArrowUp: 'up', w: 'up', ArrowDown: 'down', s: 'down', ArrowLeft: 'left', a: 'left', ArrowRight: 'right', d: 'right' }[key];
     if (name) { event.preventDefault(); setDirection(name); }
-    if (event.key === 'p' || event.key === 'P') pause();
+    else if (key === 'p' && !event.repeat) { event.preventDefault(); pause(); }
+    else if ((key === 'Enter' || key === ' ') && !event.repeat && !/^(BUTTON|A)$/.test(event.target?.tagName || '') && state !== 'play') {
+      event.preventDefault(); state === 'pause' ? pause() : start();
+    }
   };
 
-  setup(); message('CAT & GHOSTS', 'HELP THE CAT FIND EVERY FISH TREAT', 'START HUNTING'); requestAnimationFrame(loop);
+  const suspend = () => { if (state === 'play') pause(); else clearSwipe(); };
+  function dockUtilities() {
+    const dock = document.querySelector('.utility-dock'), clear = document.querySelector('.clear-data-toggle');
+    if (dock && clear) dock.appendChild(clear);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', dockUtilities, { once: true });
+  else dockUtilities();
+  document.addEventListener('themechange', draw);
+  window.addEventListener('resize', draw);
+  window.addEventListener('blur', suspend);
+  window.addEventListener('pagehide', suspend);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) suspend(); });
+
+  setup(); message('CAT & GHOSTS', 'HELP THE CAT FIND EVERY FISH TREAT', 'START HUNTING'); updatePause();
 })();
