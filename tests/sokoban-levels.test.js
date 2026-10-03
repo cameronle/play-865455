@@ -13,7 +13,7 @@ function solve(rows,R,maxStates=1000000){
     for(const point of queue){
       for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){
         const next={x:point.x+dx,y:point.y+dy},nextKey=key(next.x,next.y);
-        if(next.x<0||next.y<0||next.x>=start.width||next.y>=start.height||start.walls[nextKey]||boxes.has(nextKey)||seen.has(nextKey))continue;
+        if(next.x<0||next.y<0||next.x>=start.width||next.y>=start.height||!start.floor[nextKey]||start.walls[nextKey]||boxes.has(nextKey)||seen.has(nextKey))continue;
         seen.add(nextKey);queue.push(next);
       }
     }
@@ -29,7 +29,7 @@ function solve(rows,R,maxStates=1000000){
       const [bx,by]=box.split(',').map(Number);
       for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){
         const behind=key(bx-dx,by-dy),destination=key(bx+dx,by+dy);
-        if(!walkable.has(behind)||start.walls[destination]||current.boxes.has(destination))continue;
+        if(!walkable.has(behind)||!start.floor[destination]||start.walls[destination]||current.boxes.has(destination))continue;
         const boxes=new Set(current.boxes);boxes.delete(box);boxes.add(destination);
         const player={x:bx,y:by},id=encode(boxes,player);
         if(!seen.has(id)){seen.add(id);queue.push({boxes,player,pushes:current.pushes+1});}

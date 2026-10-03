@@ -9,7 +9,8 @@ for (const game of ['sokoban','crosswalk']) {
   test(`${game} has a complete static entrypoint and mobile viewport`, () => {
     const html = read(`${game}/index.html`);
     assert.match(html, /viewport-fit=cover/);
-    assert.match(html, /user-scalable=no/);
+    if (game === 'crosswalk') assert.match(html, /user-scalable=no/);
+    else assert.doesNotMatch(html, /user-scalable=no/);
     assert.match(html, /style\.css\?v=/);
     assert.match(html, /game\.js\?v=/);
     assert.match(read(`${game}/style.css`), /touch-action:none/);
@@ -38,7 +39,7 @@ test('Crosswalk has finite lanes, goal progression, and directional touch contro
 });
 
 
-test('launcher and README include the remaining three routes', () => {
+test('launcher and README include the remaining puzzle and crossing routes', () => {
   const index = read('index.html'), readme = read('README.md');
   for (const route of ['sokoban','crosswalk']) {
     assert.match(index, new RegExp(`/${route}/`));

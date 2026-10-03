@@ -34,7 +34,7 @@ test('Sokoban uses the collection flat palette and shared theme support',()=>{
   assert.match(css,/--orange:/);
   assert.match(css,/--red:/);
   assert.match(css,/\.frame\{[^}]*border:1px solid var\(--line\)/);
-  assert.doesNotMatch(css,/box-shadow:|radial-gradient|linear-gradient/);
+  assert.doesNotMatch(css,/box-shadow:(?!none)|radial-gradient|linear-gradient/);
   assert.match(js,/function palette\(/);
   assert.doesNotMatch(js,/ctx\.arc\(/);
   assert.doesNotMatch(js,/ctx\.ellipse\(/);
