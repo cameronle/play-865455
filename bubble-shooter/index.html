@@ -1,43 +1,87 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-  <meta name="theme-color" content="#fffaf0">
-  <script src="/theme.js?v=bubble-garden-1"></script>
-  <script src="/clear-game-data.js?v=clear-1"></script>
-  <title>Bubble Garden</title>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=bubble-garden-1">
-  <link rel="stylesheet" href="style.css?v=bubble-garden-1">
-  <link rel="stylesheet" href="/theme.css?v=clear-1">
-</head>
-<body>
-  <main class="page">
-    <header class="topbar">
-      <a href="/" aria-label="Back to games">← PLAY</a>
-      <div class="brand"><h1>BUBBLE GARDEN</h1><span>BLOOM, MATCH, AND POP.</span></div>
-      <button id="newButton" type="button">NEW</button>
-    </header>
-    <section class="stats" aria-label="Game status">
-      <div class="stat stat-score"><span>SCORE</span><b id="score">000000</b></div>
-      <div class="stat stat-best"><span>BEST</span><b id="best">000000</b></div>
-      <div class="stat stat-misses"><span>SHOTS LEFT</span><b id="misses">05</b></div>
-      <div class="stat stat-next"><span>NEXT</span><i id="nextBubble" aria-label="Next bubble"></i></div>
-    </section>
-    <section class="game-shell">
-      <canvas id="game" width="480" height="720" aria-label="Bubble Garden board"></canvas>
-      <div id="resultOverlay" class="result-overlay">
-        <div class="result-sparkle" aria-hidden="true">✿</div>
-        <b id="resultTitle">GARDEN CLEAR</b>
-        <span id="resultText">NO BUBBLES REMAIN</span>
-        <button id="resultButton" type="button">PLAY AGAIN</button>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#fffaf0" />
+    <script src="/theme.js?v=bubble-garden-1"></script>
+    <script src="/clear-game-data.js?v=clear-1"></script>
+    <title>Bubble Garden</title>
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="favicon.svg?v=bubble-garden-1"
+    />
+    <link rel="stylesheet" href="style.css?v=bubble-audit-2" />
+    <link rel="stylesheet" href="/theme.css?v=clear-1" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="topbar">
+        <a href="/" aria-label="Back to games">← PLAY</a>
+        <div class="brand">
+          <h1>BUBBLE GARDEN</h1>
+          <span>BLOOM, MATCH, AND POP.</span>
+        </div>
+        <button id="newButton" type="button">NEW</button>
+      </header>
+      <section class="stats" aria-label="Game status">
+        <div class="stat stat-score">
+          <span>SCORE</span><b id="score">000000</b>
+        </div>
+        <div class="stat stat-best">
+          <span>BEST</span><b id="best">000000</b>
+        </div>
+        <div class="stat stat-misses">
+          <span>SHOTS LEFT</span><b id="misses">05</b>
+        </div>
+        <div class="stat stat-next">
+          <span>NEXT</span><i id="nextBubble" aria-label="Next bubble"></i>
+        </div>
+      </section>
+      <div class="arena">
+        <section class="game-shell">
+          <canvas
+            id="game"
+            width="480"
+            height="720"
+            tabindex="0"
+            aria-describedby="controlsHelp"
+            aria-label="Bubble Garden board. Arrow keys aim; Space fires."
+          ></canvas>
+          <div
+            id="resultOverlay"
+            class="result-overlay"
+            role="status"
+            aria-live="polite"
+          >
+            <div class="result-sparkle" aria-hidden="true">✿</div>
+            <b id="resultTitle">GARDEN CLEAR</b>
+            <span id="resultText">NO BUBBLES REMAIN</span>
+            <button id="resultButton" type="button">PLAY AGAIN</button>
+          </div>
+        </section>
       </div>
-    </section>
-    <div class="tips"><span>AIM WITH A DRAG</span><span>MATCH THREE TO BLOOM</span><span>BANK SHOTS OFF THE WALLS</span></div>
-    <footer>DRAG TO AIM · RELEASE TO SHOOT · CLEAR THE GARDEN</footer>
-  </main>
-  <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
-  <script src="rules.js?v=bubble-garden-1"></script>
-  <script src="game.js?v=bubble-garden-1"></script>
-</body>
+      <div class="controls" aria-label="Game controls">
+        <button id="pauseButton" type="button" aria-pressed="false">
+          PAUSE</button
+        ><button id="fireButton" type="button">FIRE</button>
+      </div>
+      <div class="tips">
+        <span>AIM WITH A DRAG</span><span>MATCH THREE TO BLOOM</span
+        ><span>BANK SHOTS OFF THE WALLS</span>
+      </div>
+      <footer id="controlsHelp">← → AIM · SPACE FIRE · P PAUSE</footer>
+      <div id="utilityDock" class="utility-dock" aria-label="Game tools">
+        <button class="theme-toggle" type="button" aria-label="Theme: system">
+          AUTO
+        </button>
+      </div>
+    </main>
+    <script src="rules.js?v=bubble-audit-2"></script>
+    <script src="game.js?v=bubble-audit-2"></script>
+  </body>
 </html>
