@@ -83,7 +83,7 @@ a {
 }
 header {
   min-height: 58px;
-  border-bottom: 2px dashed var(--line);
+  border-bottom: 1px dashed var(--line);
   display: grid;
   grid-template-columns: 1fr auto auto auto;
   gap: 8px;
@@ -143,10 +143,10 @@ header > button {
   position: relative;
   width: min(470px, 100%);
   padding: 7px;
-  border: 3px solid var(--ink);
+  border: 1px solid var(--ink);
   border-radius: 21px 17px 24px 18px;
   background: var(--paper);
-  box-shadow: 7px 8px var(--shadow);
+  box-shadow: 1px 2px var(--shadow);
   min-width: 0;
   flex: 0 1 470px;
 }
@@ -156,7 +156,7 @@ header > button {
   gap: 5px;
   padding: 9px 8px;
   margin-bottom: 7px;
-  border: 2px solid var(--ink);
+  border: 1px solid var(--ink);
   border-radius: 12px 10px 14px 11px;
   background: var(--mint);
   color: #25433d;
@@ -182,13 +182,13 @@ header > button {
   grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
   gap: 2px;
   padding: 2px;
-  border: 2px solid var(--ink);
+  border: 1px solid var(--ink);
   border-radius: 13px 10px 15px 11px;
   background: var(--soil-dark);
   width: 100%;
   --cell-min: 32px;
   min-width: calc(
-    var(--cols) * var(--cell-min) + (var(--cols) - 1) * 2px + 8px
+    var(--cols) * var(--cell-min) + (var(--cols) - 1) * 2px + 6px
   );
 }
 .cell {
@@ -197,7 +197,7 @@ header > button {
   display: grid;
   place-items: center;
   padding: 0;
-  border: 2px solid var(--ink);
+  border: 1px solid var(--ink);
   border-radius: 7px 5px 8px 6px;
   background: var(--soil);
   color: var(--ink);
@@ -214,30 +214,6 @@ header > button {
 .cell.closed {
   background: var(--soil);
   border-color: var(--soil-dark);
-}
-.cell.closed:before {
-  content: "";
-  position: absolute;
-  left: 22%;
-  top: 23%;
-  width: 18%;
-  height: 12%;
-  border: 1.5px solid currentColor;
-  border-radius: 50%;
-  opacity: 0.3;
-  transform: rotate(-24deg);
-}
-.cell.closed:after {
-  content: "";
-  position: absolute;
-  right: 19%;
-  bottom: 22%;
-  width: 24%;
-  height: 11%;
-  border-top: 1.5px solid currentColor;
-  border-radius: 50%;
-  opacity: 0.25;
-  transform: rotate(18deg);
 }
 .cell.open {
   background: var(--open);
@@ -315,11 +291,11 @@ header > button {
 .levels-head button {
   min-height: 48px;
   padding: 12px 18px;
-  border: 2px solid var(--ink);
+  border: 1px solid var(--ink);
   border-radius: 14px 10px 16px 11px;
   background: var(--yellow);
   color: #3d3832;
-  box-shadow: 3px 4px var(--ink);
+  box-shadow: 1px 2px var(--shadow);
   cursor: pointer;
   font:
     900 10px ui-rounded,
@@ -340,10 +316,10 @@ aside {
 }
 .stat {
   padding: 10px;
-  border: 2px solid var(--ink);
+  border: 1px solid var(--ink);
   border-radius: 12px 10px 14px 11px;
   background: var(--panel);
-  box-shadow: 2px 3px var(--shadow);
+  box-shadow: 1px 2px var(--shadow);
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -389,7 +365,7 @@ aside p b {
   overflow: auto;
   margin-top: 0;
   padding: 14px;
-  border: 3px solid var(--ink);
+  border: 1px solid var(--ink);
   border-radius: 18px 14px 20px 15px;
   background: var(--paper);
 }
@@ -407,7 +383,7 @@ aside p b {
   justify-content: space-between;
   gap: 10px;
   padding-bottom: 10px;
-  border-bottom: 2px dashed var(--line);
+  border-bottom: 1px dashed var(--line);
 }
 .levels-head b {
   font-size: 14px;
@@ -424,7 +400,7 @@ aside p b {
 .levels-head button {
   min-height: 44px;
   padding: 9px 12px;
-  box-shadow: 2px 3px var(--ink);
+  box-shadow: 1px 2px var(--shadow);
 }
 .level-list {
   display: grid;
@@ -442,7 +418,7 @@ aside p b {
 .level-button {
   min-height: 56px;
   padding: 7px;
-  border: 2px solid var(--ink);
+  border: 1px solid var(--ink);
   border-radius: 10px 8px 12px 9px;
   background: var(--panel);
   color: var(--ink);
@@ -513,9 +489,9 @@ footer {
     width: 100%;
     flex: none;
     padding: 5px;
-    border-width: 2px;
+    border-width: 1px;
     border-radius: 18px 14px 21px 15px;
-    box-shadow: 5px 6px var(--shadow);
+    box-shadow: 2px 2px var(--shadow);
   }
   .message {
     inset: 5px;
@@ -523,7 +499,7 @@ footer {
   }
   .top {
     padding: 8px 5px;
-    border-width: 1.5px;
+    border-width: 1px;
   }
   .top span {
     font-size: 7px;
@@ -531,10 +507,10 @@ footer {
   .grid {
     gap: 2px;
     padding: 2px;
-    border-width: 2px;
+    border-width: 1px;
   }
   .cell {
-    border-width: 1.5px;
+    border-width: 1px;
   }
   aside {
     width: 100%;
@@ -547,7 +523,7 @@ footer {
   .stat {
     margin: 0;
     padding: 8px 6px;
-    border-width: 1.5px;
+    border-width: 1px;
     box-shadow: 1px 2px var(--shadow);
   }
   aside p {
@@ -579,13 +555,9 @@ footer {
   --cell-min: 44px;
 }
 .cell:focus-visible {
-  outline: 3px solid var(--number1);
-  outline-offset: -3px;
+  outline: 2px solid var(--number1);
+  outline-offset: -2px;
   z-index: 1;
-}
-.cell.flag::before,
-.cell.flag::after {
-  display: none;
 }
 .board-actions {
   display: flex;
@@ -596,7 +568,7 @@ footer {
   min-height: 44px;
   flex: 1;
   padding: 8px 5px;
-  border: 2px solid var(--ink);
+  border: 1px solid var(--ink);
   border-radius: 9px;
   background: var(--panel);
   color: var(--ink);
