@@ -7,7 +7,7 @@ test("the game exposes complete labelled controls and status with fresh assets",
   assert.match(html, /role="status"/);
   assert.match(html, /tabindex="0"/);
   assert.match(html, /game\.js\?v=paper-blocks-3/);
-  assert.match(html, /style\.css\?v=paper-blocks-3/);
+  assert.match(html, /style\.css\?v=thin-ui-1/);
   for (const action of ["left", "rotate", "right", "down", "drop"])
     assert.match(
       html,

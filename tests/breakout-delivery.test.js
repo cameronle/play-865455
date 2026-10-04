@@ -41,5 +41,5 @@ test("Firelight ships an accessible playfield, live result and mobile restart", 
   assert.match(h, /id="game"[^>]*tabindex="0"/);
   assert.match(h, /id="overlay"[^>]*role="status"/);
   assert.match(h, /game\.js\?v=firelight-2/);
-  assert.match(h, /style\.css\?v=firelight-2/);
+  assert.match(h, /style\.css\?v=thin-ui-1/);
 });

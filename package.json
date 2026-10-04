@@ -5,6 +5,7 @@
     "generate:catalog": "node scripts/generate-catalog.js",
     "test:balance": "node scripts/verify-bubble-builds.js",
     "qa:hopper": "node scripts/qa-sky-hopper.js",
+    "qa:borders": "node scripts/qa-ui-borders.mjs",
     "qa:bubble": "node scripts/qa-bubble-frontier.mjs && node scripts/qa-bubble-expedition.mjs && node scripts/qa-bubble-content.mjs && node scripts/qa-bubble-audit.mjs",
     "check:catalog": "node scripts/generate-catalog.js --check",
     "stage:pages": "node scripts/stage-pages.js .pages-deploy",

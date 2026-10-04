@@ -8,7 +8,8 @@ const js = fs.readFileSync('maze/game.js','utf8');
 test('Maze ships one renderer and cache-busted audited assets without QA hooks', () => {
   assert.equal((js.match(/function draw\(\)/g)||[]).length,1);
   assert.doesNotMatch(js,/__maze(?:Observe|QA|\s*=)/);
-  for(const file of ['style.css','game.js']) assert.ok(html.includes(`${file}?v=cat-ghosts-audit-2`));
+  assert.ok(html.includes('style.css?v=thin-ui-1'));
+  assert.ok(html.includes('game.js?v=cat-ghosts-audit-2'));
   assert.ok(html.indexOf('logic.js?')<html.indexOf('game.js?'));
 });
 test('Maze short landscape has visible direction controls and in-flow utilities', () => {

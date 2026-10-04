@@ -64,7 +64,7 @@ a {
 }
 .topbar {
   min-height: 64px;
-  border-bottom: 2px dashed var(--line);
+  border-bottom: 1px dashed var(--line);
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   gap: 12px;
@@ -126,17 +126,17 @@ a {
   width: min(100%, 480px, calc((100svh - 178px) * 0.75));
   min-width: 0;
   padding: 7px;
-  border: 3px solid var(--ink);
+  border: 1px solid var(--ink);
   border-radius: 23px 18px 25px 19px;
   background: var(--paper);
-  box-shadow: 7px 8px var(--shadow);
+  box-shadow: none;
   transform: none;
 }
 .frame canvas {
   display: block;
   width: 100%;
   height: auto;
-  border: 2px solid var(--ink);
+  border: 1px solid var(--ink);
   border-radius: 16px 12px 18px 13px;
   background: var(--night);
   touch-action: none;
@@ -185,11 +185,11 @@ a {
 .new {
   min-height: 46px;
   padding: 12px 18px;
-  border: 2px solid var(--ink);
+  border: 1px solid var(--ink);
   border-radius: 14px 10px 16px 11px;
   background: var(--yellow);
   color: #29333c;
-  box-shadow: 3px 4px var(--ink);
+  box-shadow: none;
   cursor: pointer;
   font: inherit;
   font-size: 10px;
@@ -212,10 +212,10 @@ aside {
 }
 .stat {
   padding: 11px;
-  border: 2px solid var(--ink);
+  border: 1px solid var(--ink);
   border-radius: 13px 10px 15px 11px;
   background: var(--panel);
-  box-shadow: 2px 3px var(--shadow);
+  box-shadow: none;
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -247,12 +247,12 @@ aside {
   width: 100%;
   background: var(--coral);
   color: #29333c;
-  box-shadow: 3px 4px #8e5145;
+  box-shadow: none;
 }
 [data-theme="light"] .new {
   background: #ef8b70;
   color: #29333c;
-  box-shadow: 3px 4px #8e5145;
+  box-shadow: none;
 }
 [data-theme="light"] .new:hover {
   background: #e77966;
@@ -267,7 +267,7 @@ aside p {
 footer {
   margin-top: 14px;
   padding-top: 11px;
-  border-top: 2px dashed var(--line);
+  border-top: 1px dashed var(--line);
   color: var(--muted);
   font-size: 9px;
   font-weight: 850;
@@ -283,11 +283,11 @@ footer {
   width: 100%;
   min-height: 48px;
   margin-top: 0;
-  border: 2px solid var(--ink);
+  border: 1px solid var(--ink);
   border-radius: 14px 10px 16px 11px;
   background: var(--yellow);
   color: var(--ink);
-  box-shadow: 3px 4px var(--ink);
+  box-shadow: none;
   font: inherit;
   font-size: 10px;
   font-weight: 950;
@@ -370,12 +370,12 @@ body .clear-data-toggle {
   .frame {
     width: min(100%, 480px, calc((100svh - 304px) * 0.75));
     padding: 5px;
-    border-width: 2px;
+    border-width: 1px;
     border-radius: 18px 14px 21px 15px;
-    box-shadow: 5px 6px var(--shadow);
+    box-shadow: none;
   }
   .frame canvas {
-    border-width: 1.5px;
+    border-width: 1px;
     border-radius: 13px 10px 15px 11px;
   }
   .overlay {
@@ -411,8 +411,8 @@ body .clear-data-toggle {
   }
   .stat {
     padding: 8px 5px;
-    border-width: 1.5px;
-    box-shadow: 1px 2px var(--shadow);
+    border-width: 1px;
+    box-shadow: none;
   }
   .stat span {
     font-size: 7px;
@@ -455,7 +455,7 @@ body .clear-data-toggle {
     width: 100%;
     align-self: start;
     padding: 5px;
-    border-width: 2px;
+    border-width: 1px;
   }
   aside {
     display: grid;
@@ -464,7 +464,7 @@ body .clear-data-toggle {
   }
   .stat {
     padding: 8px 6px;
-    border-width: 1.5px;
+    border-width: 1px;
   }
   .stat b {
     font-size: 14px;

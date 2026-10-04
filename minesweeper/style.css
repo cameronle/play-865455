@@ -146,7 +146,7 @@ header > button {
   border: 1px solid var(--ink);
   border-radius: 21px 17px 24px 18px;
   background: var(--paper);
-  box-shadow: 1px 2px var(--shadow);
+  box-shadow: none;
   min-width: 0;
   flex: 0 1 470px;
 }
@@ -295,7 +295,7 @@ header > button {
   border-radius: 14px 10px 16px 11px;
   background: var(--yellow);
   color: #3d3832;
-  box-shadow: 1px 2px var(--shadow);
+  box-shadow: none;
   cursor: pointer;
   font:
     900 10px ui-rounded,
@@ -319,7 +319,7 @@ aside {
   border: 1px solid var(--ink);
   border-radius: 12px 10px 14px 11px;
   background: var(--panel);
-  box-shadow: 1px 2px var(--shadow);
+  box-shadow: none;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -400,7 +400,7 @@ aside p b {
 .levels-head button {
   min-height: 44px;
   padding: 9px 12px;
-  box-shadow: 1px 2px var(--shadow);
+  box-shadow: none;
 }
 .level-list {
   display: grid;
@@ -491,7 +491,7 @@ footer {
     padding: 5px;
     border-width: 1px;
     border-radius: 18px 14px 21px 15px;
-    box-shadow: 2px 2px var(--shadow);
+    box-shadow: none;
   }
   .message {
     inset: 5px;
@@ -524,7 +524,7 @@ footer {
     margin: 0;
     padding: 8px 6px;
     border-width: 1px;
-    box-shadow: 1px 2px var(--shadow);
+    box-shadow: none;
   }
   aside p {
     text-align: center;

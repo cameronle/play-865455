@@ -85,7 +85,7 @@ body {
   background: var(--board);
   padding: 10px;
   border: 1px solid #a89e90;
-  box-shadow: 5px 5px #d9d1c5;
+  box-shadow: none;
 }
 .board {
   display: grid;
@@ -172,7 +172,7 @@ body {
   font: 700 10px inherit;
   letter-spacing: 0.1em;
   cursor: pointer;
-  box-shadow: 3px 3px #514b45;
+  box-shadow: none;
 }
 .controls {
   display: none;
@@ -247,7 +247,7 @@ footer {
 }
 [data-theme="dark"] .board-wrap {
   border-color: #303b48;
-  box-shadow: 5px 5px #05080c;
+  box-shadow: none;
 }
 [data-theme="dark"] .cell {
   color: #d9dee5;

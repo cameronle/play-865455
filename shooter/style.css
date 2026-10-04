@@ -138,7 +138,7 @@ header button {
   margin: 0 auto;
   border: 1px solid var(--line);
   background: #111b26;
-  box-shadow: 5px 5px #030609;
+  box-shadow: none;
   line-height: 0;
   touch-action: none;
   user-select: none;
@@ -148,7 +148,7 @@ header button {
 
 [data-theme="light"] .screen-frame {
   background: #e6dfd3;
-  box-shadow: 5px 5px #d3cab8;
+  box-shadow: none;
 }
 
 .screen-frame canvas {
@@ -224,14 +224,14 @@ header button {
   letter-spacing: 0.12em;
   min-height: 44px;
   padding: 12px 24px;
-  box-shadow: 3px 3px #185a75;
+  box-shadow: none;
   cursor: pointer;
 }
 
 [data-theme="light"] .intro .start {
   background: #0288d1;
   color: #fff;
-  box-shadow: 3px 3px #01579b;
+  box-shadow: none;
 }
 
 .intro .best {

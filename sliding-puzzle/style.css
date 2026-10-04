@@ -139,11 +139,11 @@ header button {
   border: 1px solid var(--line);
   padding: 8px;
   background: #111b26;
-  box-shadow: 5px 5px #030609;
+  box-shadow: none;
 }
 [data-theme="light"] .frame {
   background: #e6dfd3;
-  box-shadow: 5px 5px #d3cab8;
+  box-shadow: none;
 }
 
 .board {
@@ -220,7 +220,7 @@ header button {
   letter-spacing: 0.12em;
   min-height: 44px;
   padding: 12px 20px;
-  box-shadow: 3px 3px #2a8158;
+  box-shadow: none;
   cursor: pointer;
 }
 

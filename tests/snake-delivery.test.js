@@ -7,7 +7,7 @@ test("garden has keyboard-focusable board and live result status with refreshed 
   assert.match(html, /id="board"[^>]*tabindex="0"/);
   assert.match(html, /id="message"[^>]*role="status"/);
   assert.match(html, /game\.js\?v=worm-apple-3/);
-  assert.match(html, /style\.css\?v=worm-apple-3/);
+  assert.match(html, /style\.css\?v=thin-ui-1/);
   assert.match(html, /SWIPE/);
 });
 test("board box model scales square canvas inside the border and budgets short screens", () => {

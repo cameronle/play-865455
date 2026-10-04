@@ -69,7 +69,7 @@ select {
 }
 .topbar {
   min-height: 60px;
-  border-bottom: 2px dashed var(--line);
+  border-bottom: 1px dashed var(--line);
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
@@ -122,10 +122,10 @@ select {
 .stat-pill {
   min-width: 0;
   padding: 8px;
-  border: 2px solid var(--ink);
+  border: 1px solid var(--ink);
   border-radius: 11px 8px 13px 9px;
   background: var(--panel);
-  box-shadow: 2px 3px var(--shadow);
+  box-shadow: none;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -161,10 +161,10 @@ select {
   aspect-ratio: 1;
   margin: auto;
   padding: 7px;
-  border: 3px solid var(--ink);
+  border: 1px solid var(--ink);
   border-radius: 22px 17px 24px 18px;
   background: var(--paper);
-  box-shadow: 7px 8px var(--shadow);
+  box-shadow: none;
   transform: none;
 }
 .frame:before {
@@ -174,7 +174,7 @@ select {
   right: 15px;
   top: -10px;
   padding: 3px 7px;
-  border: 2px solid var(--ink);
+  border: 1px solid var(--ink);
   border-radius: 4px;
   background: var(--yellow);
   font-size: 7px;
@@ -225,11 +225,11 @@ select {
 .overlay button {
   min-height: 46px;
   padding: 12px 18px;
-  border: 2px solid var(--ink);
+  border: 1px solid var(--ink);
   border-radius: 13px 10px 15px 11px;
   background: var(--yellow);
   color: var(--button-ink);
-  box-shadow: 3px 4px var(--ink);
+  box-shadow: none;
   font: 950 10px inherit;
   letter-spacing: 0.08em;
   cursor: pointer;
@@ -240,7 +240,7 @@ select {
 footer {
   margin-top: 13px;
   padding-top: 11px;
-  border-top: 2px dashed var(--line);
+  border-top: 1px dashed var(--line);
   color: var(--muted);
   font-size: 9px;
   font-weight: 850;
@@ -266,17 +266,17 @@ footer {
   width: min(580px, 100%);
   margin: auto;
   padding: 14px;
-  border: 3px solid var(--ink);
+  border: 1px solid var(--ink);
   border-radius: 18px;
   background: var(--paper);
-  box-shadow: 7px 8px var(--shadow);
+  box-shadow: none;
 }
 .levels-header {
   min-height: 44px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 2px dashed var(--line);
+  border-bottom: 1px dashed var(--line);
   margin-bottom: 12px;
 }
 .levels-header b {
@@ -303,7 +303,7 @@ footer {
 }
 .level-card {
   min-height: 72px;
-  border: 2px solid var(--line);
+  border: 1px solid var(--line);
   border-radius: 9px;
   background: var(--panel);
   color: var(--ink);
@@ -354,7 +354,7 @@ footer {
   }
   .frame {
     padding: 5px;
-    border-width: 2px;
+    border-width: 1px;
     border-radius: 18px 14px 21px 15px;
   }
   .overlay {
@@ -476,7 +476,7 @@ footer {
     grid-row: 1/5;
     margin: auto;
     padding: 5px;
-    border-width: 2px;
+    border-width: 1px;
   }
   .utility-dock {
     grid-column: 1;

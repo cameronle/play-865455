@@ -87,7 +87,7 @@ a:focus-visible,
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 8px;
-  border-bottom: 2px dashed var(--line);
+  border-bottom: 1px dashed var(--line);
   margin-bottom: 11px;
 }
 .back,
@@ -150,10 +150,10 @@ a:focus-visible,
   flex-shrink: 0;
   min-width: 0;
   padding: 5px;
-  border: 2px solid var(--ink);
+  border: 1px solid var(--ink);
   border-radius: 18px 14px 21px 15px;
   background: var(--paper);
-  box-shadow: 5px 6px var(--shadow);
+  box-shadow: none;
   transform: rotate(-0.15deg);
 }
 #board {
@@ -207,11 +207,11 @@ a:focus-visible,
   max-width: 100%;
   min-height: 48px;
   padding: 12px 18px;
-  border: 2px solid var(--ink);
+  border: 1px solid var(--ink);
   border-radius: 14px 10px 16px 11px;
   background: var(--yellow);
   color: var(--ink);
-  box-shadow: 3px 4px var(--ink);
+  box-shadow: none;
   cursor: pointer;
   font-size: 10px;
   font-weight: 950;
@@ -232,10 +232,10 @@ a:focus-visible,
 .next-box {
   min-width: 0;
   padding: 10px 11px;
-  border: 2px solid var(--ink);
+  border: 1px solid var(--ink);
   border-radius: 12px 10px 14px 11px;
   background: var(--panel);
-  box-shadow: 2px 3px var(--shadow);
+  box-shadow: none;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -319,11 +319,11 @@ a:focus-visible,
   justify-content: center;
   align-items: center;
   gap: 4px;
-  border: 2px solid var(--ink);
+  border: 1px solid var(--ink);
   border-radius: 14px 10px 16px 11px;
   background: var(--panel);
   color: var(--ink);
-  box-shadow: 2px 3px var(--shadow);
+  box-shadow: none;
   cursor: pointer;
   touch-action: none;
   user-select: none;
@@ -409,9 +409,9 @@ body .clear-data-toggle {
   .sidebar .stat {
     min-height: 40px;
     padding: 5px;
-    border-width: 1.5px;
+    border-width: 1px;
     gap: 2px;
-    box-shadow: 1px 2px var(--shadow);
+    box-shadow: none;
   }
   .stat strong {
     font-size: 14px;
@@ -420,7 +420,7 @@ body .clear-data-toggle {
     grid-column: span 2;
     min-height: 52px;
     padding: 3px;
-    border-width: 1.5px;
+    border-width: 1px;
     flex-direction: row;
     justify-content: center;
     gap: 6px;
@@ -509,7 +509,7 @@ body .clear-data-toggle {
   .sidebar .stat {
     min-height: 36px;
     padding: 4px 6px;
-    border-width: 1.5px;
+    border-width: 1px;
     gap: 2px;
   }
   .stat strong {
@@ -519,7 +519,7 @@ body .clear-data-toggle {
     grid-column: auto;
     min-height: 52px;
     padding: 3px;
-    border-width: 1.5px;
+    border-width: 1px;
     flex-direction: row;
     justify-content: center;
     gap: 4px;

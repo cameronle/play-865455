@@ -83,7 +83,7 @@ a {
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 8px;
-  border-bottom: 2px dashed var(--line);
+  border-bottom: 1px dashed var(--line);
   margin-bottom: 11px;
 }
 .topbar > a,
@@ -143,10 +143,10 @@ a {
   min-width: 0;
   min-height: 51px;
   padding: 8px 9px;
-  border: 2px solid var(--ink);
+  border: 1px solid var(--ink);
   border-radius: 12px 10px 14px 11px;
   background: var(--panel);
-  box-shadow: 2px 3px var(--shadow);
+  box-shadow: none;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -176,20 +176,20 @@ a {
 .stats i {
   width: 20px;
   height: 20px;
-  border: 2px solid var(--ink);
+  border: 1px solid var(--ink);
   border-radius: 50%;
   background: var(--yellow);
-  box-shadow: 2px 2px var(--shadow);
+  box-shadow: none;
 }
 .game-shell {
   position: relative;
   width: min(100%, 480px);
   margin: auto;
   padding: 5px;
-  border: 3px solid var(--ink);
+  border: 1px solid var(--ink);
   border-radius: 23px 19px 26px 20px;
   background: var(--paper);
-  box-shadow: 7px 8px var(--shadow);
+  box-shadow: none;
   transform: rotate(-0.2deg);
 }
 .game-shell canvas {
@@ -241,11 +241,11 @@ a {
 .result-overlay button {
   min-height: 48px;
   padding: 12px 20px;
-  border: 2px solid var(--ink);
+  border: 1px solid var(--ink);
   border-radius: 15px 11px 17px 12px;
   background: var(--yellow);
   color: var(--ink);
-  box-shadow: 3px 4px var(--ink);
+  box-shadow: none;
   cursor: pointer;
   font: 950 11px inherit;
   letter-spacing: 0.08em;
@@ -306,8 +306,8 @@ footer {
   .stats > div {
     min-height: 48px;
     padding: 7px 4px;
-    border-width: 1.5px;
-    box-shadow: 1px 2px var(--shadow);
+    border-width: 1px;
+    box-shadow: none;
   }
   .stats span {
     font-size: 6px;
@@ -320,9 +320,9 @@ footer {
     height: 17px;
   }
   .game-shell {
-    border-width: 2px;
+    border-width: 1px;
     border-radius: 18px 15px 21px 16px;
-    box-shadow: 5px 6px var(--shadow);
+    box-shadow: none;
   }
   .game-shell canvas,
   .result-overlay {
@@ -456,7 +456,7 @@ body {
   min-width: 0;
   min-height: 44px;
   padding: 4px;
-  border: 2px solid var(--ink);
+  border: 1px solid var(--ink);
   border-radius: 9px;
   background: var(--panel);
   color: var(--ink);

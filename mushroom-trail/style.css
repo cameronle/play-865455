@@ -23,17 +23,17 @@ button { font-family: inherit; }
 .brand h1 { margin: 0; font-size: clamp(16px, 3vw, 23px); font-weight: 800; line-height: 1.1; letter-spacing: .03em; white-space: nowrap; }
 .brand span { display: block; margin-top: 6px; color: var(--muted); font-size: 8px; letter-spacing: .06em; white-space: nowrap; }
 .hud { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; width: 100%; margin: 0 auto 10px; }
-.stat { min-width: 0; padding: 8px 10px; border-left: 2px solid var(--line); }
+.stat { min-width: 0; padding: 8px 10px; border-left: 1px solid var(--line); }
 .stat span { display: block; color: var(--muted); font-size: 8px; letter-spacing: .08em; }
 .stat b { display: block; margin-top: 4px; font-size: clamp(12px, 2.8vw, 17px); line-height: 1.1; }
-.screen { position: relative; width: 100%; margin: 0 auto; overflow: hidden; border: 2px solid var(--line); background: var(--paper); }
+.screen { position: relative; width: 100%; margin: 0 auto; overflow: hidden; border: 1px solid var(--line); background: var(--paper); }
 .screen canvas { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; image-rendering: pixelated; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
 .overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 20px; overflow: auto; background: color-mix(in srgb, var(--paper) 94%, transparent); text-align: center; }
 .overlay.hidden { display: none; }
 .overlay-mark { display: none; }
 .overlay b { font-size: clamp(22px, 4.5vw, 36px); font-weight: 800; line-height: 1.1; letter-spacing: .02em; }
 .overlay span { max-width: 320px; color: var(--muted); font-size: 10px; line-height: 1.5; }
-.overlay button { min-height: 48px; padding: 12px 20px; border: 0; border-bottom: 3px solid #ba8932; background: var(--yellow); color: #273245; font-size: 11px; font-weight: 800; cursor: pointer; }
+.overlay button { min-height: 48px; padding: 12px 20px; border: 0; border-bottom: 1px solid #ba8932; background: var(--yellow); color: #273245; font-size: 11px; font-weight: 800; cursor: pointer; }
 .overlay button:hover { background: #f8d26b; }
 .overlay button:active { border-bottom-color: transparent; }
 .controls { touch-action: none; display: grid; grid-template-columns: 1fr 1fr 1fr 1.2fr; gap: 10px; width: 100%; margin: 12px auto 0; }
