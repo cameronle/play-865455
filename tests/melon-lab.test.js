@@ -8,15 +8,15 @@ test('Melon Lab has a self-contained mobile fruit-synthesis entrypoint', () => {
   const html = read('melon-lab/index.html');
   const css = read('melon-lab/style.css');
   assert.match(html, /viewport-fit=cover/);
-  assert.match(html, /user-scalable=no/);
+  assert.doesNotMatch(html, /user-scalable=no|maximum-scale=1/);
   for (const id of ['game', 'overlay', 'unlockToast', 'startButton', 'pauseButton', 'stirButton', 'mobileStirButton', 'dropButton', 'modeButton', 'score', 'best', 'energy', 'fruitCount', 'nextFruit', 'route']) {
     assert.match(html, new RegExp(`id="${id}"`));
   }
   assert.match(html, /MELON LAB/);
   assert.match(html, /SEMI-FLUID/);
-  assert.match(html, /rules\.js\?v=melon-lab-8/);
-  assert.match(html, /game\.js\?v=melon-lab-11/);
-  assert.match(html, /style\.css\?v=melon-lab-5/);
+  assert.match(html, /rules\.js\?v=melon-audit-1/);
+  assert.match(html, /game\.js\?v=melon-audit-1/);
+  assert.match(html, /style\.css\?v=melon-audit-1/);
   assert.match(css, /touch-action:\s*none/);
   assert.match(css, /user-select:\s*none/);
   assert.doesNotMatch(html, /fonts\.googleapis\.com|unpkg\.com|jsdelivr\.net/);
@@ -48,9 +48,8 @@ test('Melon Lab keeps the aim arrow aligned with the actual drop center at pool 
   assert.match(js, /function aimBounds\(level=nextLevel\)/);
   assert.match(js, /function clampAimX\(value,level=nextLevel\)/);
   assert.match(js, /const type=FRUITS\[level\],safeX=clampAimX\(x,level\),collisionR=RULES\.collisionRadius\(type\),boundaryR=RULES\.boundaryRadius\(type\);aimX=safeX/);
-  assert.match(js, /return clampAimX\(BIN\.x\+/);
-  assert.match(js, /aimX=clampAimX\(aimX-34\)/);
-  assert.match(js, /aimX=clampAimX\(aimX\+34\)/);
+  const {boot}=require('./helpers/melon-runtime');
+  for(const level of [0,1,2])for(const x of [0,360,720]){const b=boot();b.test.start();b.test.set({nextLevel:level});b.nodes.game.dispatch('pointermove',{clientX:x,pointerType:'mouse'});const aim=b.test.get().aimX;b.nodes.dropButton.click();assert.equal(b.test.get().fruits[0].x,aim);}
 });
 
 test('Melon Lab stir uses a visible rolling vortex and tangent fruit impulse', () => {

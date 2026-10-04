@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#fff8ec">
   <script src="/theme.js?v=melon-lab-1"></script>
   <script src="/clear-game-data.js?v=clear-1"></script>
   <title>Melon Lab</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg?v=melon-lab-1">
   <link rel="stylesheet" href="/theme.css?v=clear-1">
-  <link rel="stylesheet" href="style.css?v=melon-lab-5">
+  <link rel="stylesheet" href="style.css?v=melon-audit-1">
 </head>
 <body>
   <main class="page">
@@ -29,6 +29,7 @@
       <div class="stat stat-fruit"><span>FRUIT</span><b id="fruitCount">00</b></div>
     </section>
 
+    <p id="profileStatus" class="profile-status" aria-label="Sample unlock progress">CLASSIC 7</p>
     <section class="workbench">
       <div class="arena">
         <canvas id="game" width="720" height="720" aria-label="Melon Lab fruit synthesis playfield"></canvas>
@@ -57,22 +58,24 @@
           <span class="eyebrow">LAB NOTE</span>
           <p>Match two identical samples to synthesize the next fruit. New samples need the score gate plus 3 watermelon clears per stage. Keep the stack below the pink line.</p>
         </div>
+        <section class="mobile-actions" aria-label="Mobile game actions">
+          <button id="dropButton" type="button">DROP FRUIT</button>
+          <button id="mobileStirButton" type="button">STIR · 30 ⚡</button>
+        </section>
+        <div id="utilityDock" class="utility-dock" aria-label="Page utilities">
+          <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
+        </div>
       </aside>
     </section>
 
-    <section class="mobile-actions" aria-label="Mobile game actions">
-      <button id="dropButton" type="button">DROP FRUIT</button>
-      <button id="mobileStirButton" type="button">STIR · 30 ⚡</button>
-    </section>
 
     <section class="synthesis" aria-label="Synthesis route">
-      <div class="synthesis-head"><span>MERGE ROUTE</span><small>KIWI → LEMON → CHERRY → PEACH → ORANGE → PEAR → PINEAPPLE → MELON → DRAGONFRUIT → PAPAYA → WATERMELON</small></div>
+      <div class="synthesis-head"><span>MERGE ROUTE</span><small id="routeSummary">KIWI → LEMON → CHERRY → PEACH → ORANGE → PEAR → PINEAPPLE → MELON → DRAGONFRUIT → PAPAYA → WATERMELON</small><span class="route-hint">SWIPE →</span></div>
       <div class="route" id="route"></div>
     </section>
-    <footer>TAP TO AIM · SPACE / ENTER DROP · P PAUSE · KEEP THE FRUIT BELOW THE LINE</footer>
+    <footer>TAP POOL / DROP FRUIT · KEEP THE STACK BELOW THE LINE <span class="keyboard-hint"> · ←/→ OR A/D AIM · SPACE / ENTER DROP · P PAUSE</span></footer>
   </main>
-  <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
-  <script src="rules.js?v=melon-lab-8"></script>
-  <script src="game.js?v=melon-lab-11"></script>
+  <script src="rules.js?v=melon-audit-1"></script>
+  <script src="game.js?v=melon-audit-1"></script>
 </body>
 </html>
