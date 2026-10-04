@@ -3,8 +3,11 @@ const {boot}=require('./helpers/melon-runtime');
 test('keyboard first action drops exactly once and repeat/modifier/focused-button input is ignored',()=>{
  const b=boot();b.key(' ');assert.equal(b.test.get().dropCount,1);b.advance(.6);for(const extra of [{repeat:true},{ctrlKey:true},{metaKey:true},{target:b.nodes.modeButton}])b.key(' ',extra);assert.equal(b.test.get().dropCount,1);b.key('Enter');assert.equal(b.test.get().dropCount,2);
 });
-test('primary canvas gesture owns aim and drop until release or cancellation',()=>{
- const b=boot();b.nodes.game.dispatch('pointerdown',{pointerId:1,clientX:200});assert.equal(b.test.get().dropCount,1);b.advance(.6);const aim=b.test.get().aimX;b.nodes.game.dispatch('pointerdown',{pointerId:2,isPrimary:false,clientX:500});b.nodes.game.dispatch('pointermove',{pointerId:2,isPrimary:false,clientX:600});assert.equal(b.test.get().dropCount,1);assert.equal(b.test.get().aimX,aim);b.nodes.game.dispatch('pointermove',{pointerId:1,clientX:300});assert.equal(b.test.get().aimX,300);b.nodes.game.dispatch('pointercancel',{pointerId:1});b.nodes.game.dispatch('pointerdown',{pointerId:3,clientX:450});assert.equal(b.test.get().dropCount,2);
+test('primary canvas gesture previews and drags before committing once on release',()=>{
+ const b=boot();b.nodes.game.dispatch('pointerdown',{pointerId:1,clientX:200});assert.equal(b.test.get().dropCount,0);assert.equal(b.test.get().aimX,200);
+ b.nodes.game.dispatch('pointerdown',{pointerId:2,isPrimary:false,clientX:500});b.nodes.game.dispatch('pointermove',{pointerId:2,isPrimary:false,clientX:600});assert.equal(b.test.get().aimX,200);
+ b.nodes.game.dispatch('pointermove',{pointerId:1,clientX:300});assert.equal(b.test.get().aimX,300);assert.equal(b.test.get().fruits.length,0);
+ b.nodes.game.dispatch('pointerup',{pointerId:1,clientX:300});assert.equal(b.test.get().dropCount,1);assert.equal(b.test.get().fruits[0].x,300);b.nodes.game.dispatch('pointerup',{pointerId:1,clientX:300});assert.equal(b.test.get().dropCount,1);
 });
 test('paused world rejects aim/drop/stir/mode and held keys do not leak through resume',()=>{
  const b=boot();b.test.start();b.key('ArrowRight');b.advance(.1);b.test.togglePause();const before=b.snapshot();b.nodes.game.dispatch('pointermove',{clientX:600});b.key('ArrowLeft');b.nodes.dropButton.click();b.nodes.mobileStirButton.click();b.nodes.modeButton.click();assert.deepEqual(b.snapshot(),before);b.test.togglePause();const x=b.test.get().aimX;b.advance(.4);assert.equal(b.test.get().aimX,x);

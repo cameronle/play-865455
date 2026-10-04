@@ -9,7 +9,7 @@
   <title>Melon Lab</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg?v=melon-lab-1">
   <link rel="stylesheet" href="/theme.css?v=clear-1">
-  <link rel="stylesheet" href="style.css?v=melon-audit-1">
+  <link rel="stylesheet" href="style.css?v=melon-feel-1">
 </head>
 <body>
   <main class="page">
@@ -49,9 +49,11 @@
           <p>Fruits slide, settle and push each other inside the pool.</p>
         </div>
         <div class="next-card">
-          <span class="eyebrow">NEXT SAMPLE</span>
-          <div class="next-fruit"><i id="nextDot" aria-hidden="true"></i><b id="nextFruit">KIWI</b></div>
-          <small>TAP THE POOL TO DROP</small>
+          <div class="sample-pair">
+            <div class="sample-cell"><span class="eyebrow">NOW</span><div class="next-fruit"><i id="currentDot" class="route-fruit" aria-hidden="true"></i><b id="currentFruit">KIWI</b></div></div>
+            <div class="sample-cell"><span class="eyebrow">NEXT</span><div class="next-fruit"><i id="nextDot" class="route-fruit" aria-hidden="true"></i><b id="nextFruit">KIWI</b></div></div>
+          </div>
+          <small>DRAG TO AIM · RELEASE TO DROP</small>
         </div>
         <button id="stirButton" class="stir-button" type="button"><span>STIR POOL</span><b>30 ⚡</b></button>
         <div class="lab-readout">
@@ -73,9 +75,9 @@
       <div class="synthesis-head"><span>MERGE ROUTE</span><small id="routeSummary">KIWI → LEMON → CHERRY → PEACH → ORANGE → PEAR → PINEAPPLE → MELON → DRAGONFRUIT → PAPAYA → WATERMELON</small><span class="route-hint">SWIPE →</span></div>
       <div class="route" id="route"></div>
     </section>
-    <footer>TAP POOL / DROP FRUIT · KEEP THE STACK BELOW THE LINE <span class="keyboard-hint"> · ←/→ OR A/D AIM · SPACE / ENTER DROP · P PAUSE</span></footer>
+    <footer>DRAG &amp; RELEASE / DROP FRUIT · KEEP THE STACK BELOW THE LINE <span class="keyboard-hint"> · ←/→ OR A/D AIM · SPACE / ENTER DROP · P PAUSE</span></footer>
   </main>
-  <script src="rules.js?v=melon-audit-1"></script>
-  <script src="game.js?v=melon-audit-1"></script>
+  <script src="rules.js?v=melon-feel-1"></script>
+  <script src="game.js?v=melon-feel-1"></script>
 </body>
 </html>

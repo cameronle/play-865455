@@ -9,14 +9,14 @@ test('Melon Lab has a self-contained mobile fruit-synthesis entrypoint', () => {
   const css = read('melon-lab/style.css');
   assert.match(html, /viewport-fit=cover/);
   assert.doesNotMatch(html, /user-scalable=no|maximum-scale=1/);
-  for (const id of ['game', 'overlay', 'unlockToast', 'startButton', 'pauseButton', 'stirButton', 'mobileStirButton', 'dropButton', 'modeButton', 'score', 'best', 'energy', 'fruitCount', 'nextFruit', 'route']) {
+  for (const id of ['game', 'overlay', 'unlockToast', 'startButton', 'pauseButton', 'stirButton', 'mobileStirButton', 'dropButton', 'modeButton', 'score', 'best', 'energy', 'fruitCount', 'currentFruit', 'currentDot', 'nextFruit', 'nextDot', 'route']) {
     assert.match(html, new RegExp(`id="${id}"`));
   }
   assert.match(html, /MELON LAB/);
   assert.match(html, /SEMI-FLUID/);
-  assert.match(html, /rules\.js\?v=melon-audit-1/);
-  assert.match(html, /game\.js\?v=melon-audit-1/);
-  assert.match(html, /style\.css\?v=melon-audit-1/);
+  assert.match(html, /rules\.js\?v=melon-feel-1/);
+  assert.match(html, /game\.js\?v=melon-feel-1/);
+  assert.match(html, /style\.css\?v=melon-feel-1/);
   assert.match(css, /touch-action:\s*none/);
   assert.match(css, /user-select:\s*none/);
   assert.doesNotMatch(html, /fonts\.googleapis\.com|unpkg\.com|jsdelivr\.net/);
@@ -123,7 +123,7 @@ test('Melon Lab routes the pear geometry parameters through aiming, boundaries, 
   assert.match(js, /collisionR=RULES\.collisionRadius\(type\),boundaryR=RULES\.boundaryRadius\(type\)/);
   assert.match(js, /y:BIN\.y\+boundaryR\+8/);
   assert.match(js, /RULES\.boundaryRadius\(f\)/);
-  assert.match(js, /min=RULES\.collisionRadius\(a\)\+RULES\.collisionRadius\(b\)/);
+  assert.match(js, /min=radiusAlong\(a,nx,ny\)\+radiusAlong\(b,nx,ny\)/);
   assert.match(js, /collisionR=RULES\.collisionRadius\(next\),boundaryR=RULES\.boundaryRadius\(next\)/);
 });
 
