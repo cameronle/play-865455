@@ -22,3 +22,33 @@ body{display:flex;justify-content:center}button,a{-webkit-tap-highlight-color:tr
 .tips{display:flex;justify-content:center;flex-wrap:wrap;gap:8px 16px;margin:14px auto 0;color:var(--muted);font-size:8px;font-weight:900;letter-spacing:.08em}.tips span:before{content:"✦";color:var(--coral);margin-right:4px}footer{margin-top:11px;color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.08em;line-height:1.5;text-align:center}
 @media(max-width:480px){.page{padding:10px 10px max(18px,env(safe-area-inset-bottom))}.topbar{min-height:54px;gap:4px}.brand h1{font-size:17px}.brand span{font-size:6px;letter-spacing:.07em}.back,.topbar>button{font-size:8px}.frame{border-width:2px;border-radius:18px 15px 21px 16px;box-shadow:5px 6px var(--shadow)}.frame canvas,.overlay{border-radius:11px 9px 14px 10px}.overlay{inset:4px}.overlay b{font-size:25px}.overlay span{font-size:8px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+/* Keep the original mail-and-cloud artwork; fit the full shell, not only its canvas. */
+:root{--muted:#726456;--score-ink:#a84435;--record-ink:#70519c}
+[data-theme="dark"]{--muted:#a8b8b2;--score-ink:#f5aa9a;--record-ink:#d1c2fa}
+.page{padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+.frame{width:min(100%,400px,var(--arena-width,400px));transform:none}
+.toolbar,.stat-pill{min-width:0}
+.stat-pill{flex-wrap:wrap;gap:4px 8px}
+.stat-pill b{min-width:0;max-width:100%;font-size:clamp(12px,3.5vw,18px);overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.stat-score b{color:var(--score-ink)}.stat-best b{color:var(--record-ink)}
+.overlay button{color:#3d3832}
+.back:hover,.back:focus-visible,.topbar>button:hover,.topbar>button:focus-visible{color:var(--ink)}
+button:focus-visible,a:focus-visible,#game:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.topbar>button{min-width:52px}.topbar>button:disabled{opacity:.65;cursor:default}
+.frame,.overlay{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.page~.theme-toggle,.page~.clear-data-toggle{top:auto;bottom:max(10px,env(safe-area-inset-bottom));transform:none;min-height:44px;min-width:72px;font-size:9px;background:var(--panel);color:var(--muted);box-shadow:none}
+.page~.theme-toggle{right:max(12px,env(safe-area-inset-right))}
+.page~.clear-data-toggle{right:calc(max(12px,env(safe-area-inset-right)) + 82px)}
+@media(max-height:700px){.tips{display:none}footer{margin-top:8px}.overlay{gap:9px;padding:12px}.stamp{font-size:28px}.overlay b{font-size:21px}.overlay span{font-size:9px}}
+@media(max-height:540px) and (min-aspect-ratio:1/1){
+  .page{width:min(720px,100%);min-height:100dvh;padding:10px 14px;display:grid;grid-template-columns:minmax(190px,1fr) minmax(0,1fr);grid-template-rows:auto auto auto auto 1fr;gap:8px 16px}
+  .topbar{grid-column:1;grid-row:1;min-height:54px;margin-bottom:0;gap:4px}
+  .brand h1{font-size:17px}.brand span{font-size:6px;letter-spacing:.04em}
+  .toolbar{grid-column:1;grid-row:2;margin:0;width:100%}
+  .tips{grid-column:1;grid-row:3;margin:0}
+  footer{grid-column:1;grid-row:4;margin:0;align-self:start}
+  .frame{grid-column:2;grid-row:1 / 6;align-self:center}
+  .page~.theme-toggle{right:auto;left:max(14px,calc((100vw - 720px)/2 + 14px))}
+  .page~.clear-data-toggle{right:auto;left:max(96px,calc((100vw - 720px)/2 + 96px))}
+}

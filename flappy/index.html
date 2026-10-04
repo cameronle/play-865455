@@ -2,17 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#fffaf0">
-  <script src="/theme.js?v=birdie-post-1"></script>
+  <script src="/theme.js?v=birdie-post-audit-2"></script>
   <script src="/clear-game-data.js?v=clear-1"></script>
   <title>Birdie Post</title>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=birdie-post-1">
-  <link rel="stylesheet" href="style.css?v=birdie-post-1">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=birdie-post-audit-2">
+  <link rel="stylesheet" href="style.css?v=birdie-post-audit-2">
   <link rel="stylesheet" href="/theme.css?v=clear-1">
 </head>
 <body>
-  <main class="page">
+  <main id="gamePage" class="page">
     <header class="topbar">
       <a class="back" href="/" aria-label="Back to games">← PLAY</a>
       <div class="brand"><h1>BIRDIE POST</h1><span>DELIVER JOY. DODGE CLOUDS.</span></div>
@@ -22,9 +22,9 @@
       <div class="stat-pill stat-score"><span>SCORE</span><b id="scoreStat">0</b></div>
       <div class="stat-pill stat-best"><span>BEST</span><b id="bestStat">0</b></div>
     </section>
-    <div class="frame">
-      <canvas id="game" width="400" height="600" aria-label="Birdie Post flying game"></canvas>
-      <div id="overlay" class="overlay">
+    <div id="gameFrame" class="frame">
+      <canvas id="game" width="400" height="600" tabindex="0" aria-label="Birdie Post. Tap, Space, Up or W to flap. P or Escape to pause."></canvas>
+      <div id="overlay" class="overlay" role="dialog" aria-labelledby="overlayTitle" aria-describedby="overlayText">
         <div class="stamp" aria-hidden="true">✉</div>
         <b id="overlayTitle">BIRDIE POST</b>
         <span id="overlayText">TAP TO FLAP · DELIVER THE MAIL</span>
@@ -32,10 +32,10 @@
       </div>
     </div>
     <div class="tips"><span>ONE TAP, ONE FLAP</span><span>FIND THE CLOUD GAP</span></div>
-    <footer>TAP ANYWHERE OR PRESS SPACE · FLY THROUGH THE CLOUD GAPS</footer>
+    <footer>TAP THE SKY OR PRESS SPACE · P / ESC TO PAUSE</footer>
   </main>
   <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
-  <script src="rules.js?v=birdie-post-1"></script>
-  <script src="game.js?v=birdie-post-1"></script>
+  <script src="rules.js?v=birdie-post-audit-2"></script>
+  <script src="game.js?v=birdie-post-audit-2"></script>
 </body>
 </html>

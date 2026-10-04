@@ -37,7 +37,7 @@ test('Flappy Wings collision accurately checks pipe bounds and gap clearance', (
 test('Flappy Wings page is a complete themed mobile static entrypoint', () => {
   const html = fs.readFileSync('flappy/index.html', 'utf8');
   assert.match(html, /viewport-fit=cover/);
-  assert.match(html, /user-scalable=no/);
+  assert.doesNotMatch(html, /user-scalable=no/);
   assert.match(html, /id="game"/);
   assert.match(html, /BIRDIE POST/);
   assert.match(html, /rules\.js\?v=/);
