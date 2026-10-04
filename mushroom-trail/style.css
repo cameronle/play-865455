@@ -3,7 +3,7 @@
   --panel: #fffdf7;
   --paper: #fff7e7;
   --ink: #3c302a;
-  --muted: #8d7868;
+  --muted: #6f5a4b;
   --line: #dfcbb4;
   --accent: #d86d4d;
   --mint: #8fcfa9;
@@ -115,5 +115,42 @@ footer { margin-top: 12px; color: var(--muted); font-size: 9px; font-weight: 800
   .controls { margin-top: 12px; gap: 7px; }
   .controls button { min-height: 52px; font-size: 10px; box-shadow: 2px 3px 0 var(--shadow); }
   footer { font-size: 8px; }
+}
+/* Keep the original drawing language, but bound the shell to short screens. */
+.topbar { grid-template-columns: 56px minmax(0, 1fr) 56px; }
+.back-link, .topbar > button { justify-content: center; min-width: 44px; }
+.screen { transform: none; }
+.overlay { gap: 10px; padding: 12px; overflow: auto; }
+.overlay b { transform: none; }
+.overlay button, #jumpButton, #jumpButton:hover, #jumpButton:focus-visible, #jumpButton.active { color: #3c302a; }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--accent) !important; outline-offset: 3px; }
+.utility-dock { display: flex; justify-content: flex-end; gap: 8px; width: min(100%, 720px); margin: 12px auto 0; }
+.utility-dock .theme-toggle, .utility-dock .clear-data-toggle { position: static !important; inset: auto !important; transform: none !important; min-width: 52px; min-height: 44px; padding: 8px; font-size: 10px; color: var(--ink); background: var(--panel); }
+@media (max-width: 520px) {
+  .overlay { padding: 10px; gap: 7px; }
+  .overlay-mark { display: none; }
+  .overlay b { font-size: 20px; }
+  .overlay button { min-height: 44px; padding: 8px 12px; }
+  footer { display: none; }
+  .stat b { letter-spacing: 0; }
+}
+@media (max-height: 480px) and (min-width: 540px) {
+  .page { width: min(1100px, 100%); padding: 6px 10px; display: grid; grid-template-columns: minmax(0, 1fr) 164px; grid-template-rows: 44px auto 1fr auto; gap: 8px 12px; }
+  .topbar { grid-column: 1 / -1; min-height: 44px; margin: 0; }
+  .brand h1 { font-size: 18px; }
+  .brand span, .tips, footer, .overlay-mark { display: none; }
+  .hud { grid-column: 2; grid-row: 2; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0; gap: 6px; }
+  .stat { padding: 6px; }
+  .stat b { font-size: 12px; letter-spacing: 0; }
+  .screen { grid-column: 1; grid-row: 2 / span 3; align-self: center; width: min(100%, calc((100dvh - 86px) * 16 / 9)); padding: 3px; border-width: 2px; box-shadow: 3px 4px 0 var(--shadow); }
+  .overlay { inset: 3px; gap: 8px; padding: 10px; }
+  .overlay b { font-size: 21px; }
+  .overlay button { min-height: 44px; padding: 8px 12px; }
+  .controls { grid-column: 2; grid-row: 3; margin: 0; align-self: center; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .controls button { min-height: 44px; }
+  #leftButton { grid-column: 1; grid-row: 1; }
+  #rightButton { grid-column: 2; grid-row: 1; }
+  #jumpButton { grid-column: 1 / -1; grid-row: 2; }
+  .utility-dock { grid-column: 2; grid-row: 4; margin: 0; justify-content: center; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }

@@ -8,7 +8,7 @@ test('Mushroom Trail has a self-contained mobile platformer entrypoint', () => {
   const html = read('mushroom-trail/index.html');
   const css = read('mushroom-trail/style.css');
   assert.match(html, /viewport-fit=cover/);
-  assert.match(html, /user-scalable=no/);
+  assert.doesNotMatch(html, /user-scalable=no/);
   for (const id of ['game', 'overlay', 'startButton', 'pauseButton', 'leftButton', 'jumpButton', 'rightButton', 'world', 'coins', 'lives', 'score']) {
     assert.match(html, new RegExp(`id="${id}"`));
   }
