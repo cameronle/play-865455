@@ -570,7 +570,7 @@
     const packLevels = LEVELS[currentPack];
     packLevels.forEach((_, i) => {
       const unlocked = isLevelUnlocked(currentPack, i);
-      const isDone = progress.completed[getLevelKey(currentPack, i)];
+      const isDone = progress.completed[getLevelKey(currentPack, i)] === true;
       const best = progress.bestTimes[getLevelKey(currentPack, i)];
       const card = document.createElement("button");
       card.type = "button";

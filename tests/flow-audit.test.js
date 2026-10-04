@@ -304,3 +304,35 @@ test("Flow clearing data cannot resurrect the deleted save during pagehide", () 
   h.emit("window", "pagehide");
   assert.equal(h.storage.has("flow-progress-v1"), false);
 });
+
+test("Flow album marks only explicitly completed cards", () => {
+  const h = boot();
+  h.nodes.levelsButton.click();
+  assert.equal(
+    h.nodes.levelGrid.children.filter((c) => c.classList.contains("completed"))
+      .length,
+    0,
+  );
+  const h2 = boot({
+    storage: {
+      "flow-progress-v1": JSON.stringify({
+        completed: { "5x5:0": true },
+        bestTimes: { "5x5:0": 1 },
+      }),
+    },
+  });
+  h2.nodes.levelsButton.click();
+  assert.equal(
+    h2.nodes.levelGrid.children.filter((c) => c.classList.contains("completed"))
+      .length,
+    1,
+  );
+  assert.equal(
+    h2.nodes.levelGrid.children[0].classList.contains("completed"),
+    true,
+  );
+  assert.equal(
+    h2.nodes.levelGrid.children[1].classList.contains("completed"),
+    false,
+  );
+});
