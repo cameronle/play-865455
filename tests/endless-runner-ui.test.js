@@ -13,10 +13,10 @@ test("playfield is keyboard focusable and controls are named", () => {
   assert.match(html, /aria-label="Runner controls"/);
 });
 
-test("normal action labels keep dark foreground on warm colored surfaces", () => {
+test("pixel action labels share a dark foreground on colored surfaces", () => {
   const css = fs.readFileSync("endless-runner/style.css", "utf8");
-  assert.match(css, /\.controls button:last-child\s*\{\s*color:\s*#132633/);
-  assert.match(css, /\.overlay button\s*\{\s*color:\s*#132633/);
+  assert.match(css, /\.controls button:last-child\s*\{\s*color:\s*var\(--action-ink\)/);
+  assert.match(css, /\.overlay button\s*\{\s*color:\s*var\(--action-ink\)/);
 });
 
 test("dark distance text has normal-text AA contrast against its HUD panel", () => {

@@ -529,247 +529,168 @@
         color,
       });
   }
-  function drawDeskDecor(light) {
-    ctx.save();
-    ctx.globalAlpha = 0.86;
-    ctx.fillStyle = light ? "#f2ca62" : "#f2ce68";
-    ctx.fillRect(560, 58, 132, 82);
-    ctx.fillStyle = light ? "#fff7e7" : "#fff0c9";
-    ctx.fillRect(570, 69, 112, 61);
-    ctx.strokeStyle = light ? "#80bdd8" : "#80c7df";
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(585, 87);
-    ctx.lineTo(663, 87);
-    ctx.moveTo(585, 104);
-    ctx.lineTo(645, 104);
-    ctx.stroke();
-    ctx.fillStyle = light ? "#e98575" : "#ed927e";
-    ctx.fillRect(520, 74, 14, 76);
-    ctx.fillStyle = light ? "#3f3a34" : "#fff0c9";
-    ctx.fillRect(517, 68, 20, 9);
-    ctx.strokeStyle = light ? "#80bdd8" : "#80c7df";
-    ctx.lineWidth = 7;
-    ctx.beginPath();
-    ctx.moveTo(420, 195);
-    ctx.lineTo(545, 218);
-    ctx.stroke();
-    ctx.fillStyle = light ? "#e98575" : "#ed927e";
-    ctx.beginPath();
-    ctx.moveTo(414, 194);
-    ctx.lineTo(426, 191);
-    ctx.lineTo(426, 201);
-    ctx.closePath();
-    ctx.fill();
-    ctx.fillStyle = light ? "#8abf93" : "#8fd2a4";
-    ctx.fillRect(690, 180, 38, 25);
-    ctx.fillStyle = light ? "#3f3a34" : "#fff0c9";
-    for (let i = 0; i < 4; i++) ctx.fillRect(695 + i * 8, 185, 3, 15);
-    ctx.restore();
+  // Original Desk Dash pixel art: two logical pixels per cell, no vector smoothing.
+  const PIXEL = 2;
+  const PIXEL_PALETTES = {
+    light: {
+      bg: "#faf3e0", paper: "#fff8e7", ink: "#292c3b", quiet: "#c7bca4",
+      desk: "#ded2b4", grain: "#b7a98b", blue: "#467fa6", coral: "#c85a54",
+      yellow: "#e8b85b", mint: "#82aa80", purple: "#816588", outline: "#202738",
+    },
+    dark: {
+      bg: "#182130", paper: "#f4e8ca", ink: "#f4e8ca", quiet: "#344354",
+      desk: "#273340", grain: "#3d4d5b", blue: "#7bb0c8", coral: "#f18c7e",
+      yellow: "#efc56b", mint: "#8ec39a", purple: "#b09acb", outline: "#111827",
+    },
+  };
+  function pixelRect(color, x, y, w, h) {
+    ctx.fillStyle = color;
+    ctx.fillRect(
+      Math.round(x / PIXEL) * PIXEL, Math.round(y / PIXEL) * PIXEL,
+      Math.max(PIXEL, Math.round(w / PIXEL) * PIXEL),
+      Math.max(PIXEL, Math.round(h / PIXEL) * PIXEL),
+    );
+  }
+  // Rasterize the existing collision geometry instead of rotating a smooth sprite.
+  // Adjacent same-color cells are batched per row; physics coordinates stay untouched.
+  function pixelMask(x0, y0, x1, y1, colorAt) {
+    x0 = Math.floor(x0 / PIXEL) * PIXEL;
+    y0 = Math.floor(y0 / PIXEL) * PIXEL;
+    for (let y = y0; y < y1; y += PIXEL) {
+      let start = x0, previous = null;
+      for (let x = x0; x <= x1 + PIXEL; x += PIXEL) {
+        const color = x < x1 ? colorAt(x + PIXEL / 2, y + PIXEL / 2) : null;
+        if (color !== previous) {
+          if (previous) pixelRect(previous, start, y, x - start, PIXEL);
+          start = x;
+          previous = color;
+        }
+      }
+    }
+  }
+  function pixelPolygon(points, colorAt) {
+    const xs = points.map(p => p[0]), ys = points.map(p => p[1]);
+    pixelMask(Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys), (x, y) => {
+      let inside = false;
+      for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
+        const a = points[i], b = points[j];
+        if ((a[1] > y) !== (b[1] > y) && x < (b[0] - a[0]) * (y - a[1]) / (b[1] - a[1]) + a[0])
+          inside = !inside;
+      }
+      return inside ? colorAt(x, y) : null;
+    });
+  }
+  function drawDeskDecor(p) {
+    // A quiet graph-paper backdrop and one memo: decoration never resembles hazards.
+    const offset = Math.round((distance * 0.8) % 64 / PIXEL) * PIXEL;
+    for (let x = -offset; x < W; x += 64)
+      for (let y = 48; y < GROUND - 100; y += 48) pixelRect(p.quiet, x, y, 2, 2);
+    pixelRect(p.quiet, 612, 70, 116, 80);
+    pixelRect(p.bg, 616, 74, 108, 72);
+    pixelRect(p.quiet, 632, 94, 70, 2);
+    pixelRect(p.quiet, 632, 108, 52, 2);
+    pixelRect(p.quiet, 632, 122, 60, 2);
+    pixelRect(p.quiet, 604, 64, 18, 8);
+  }
+  function drawSticker(c, p) {
+    const x = c.x - 7, y = c.y - 7;
+    pixelRect(p.outline, x + 4, y, 6, 14);
+    pixelRect(p.outline, x, y + 4, 14, 6);
+    pixelRect(p.yellow, x + 4, y + 2, 6, 10);
+    pixelRect(p.yellow, x + 2, y + 4, 10, 6);
+    pixelRect(p.paper, x + 4, y + 4, 2, 2);
   }
   function draw() {
-    const light = document.documentElement?.dataset?.theme === "light";
-    ctx.fillStyle = light ? "#fff0c9" : "#1a2e3d";
-    ctx.fillRect(0, 0, W, H);
-    drawDeskDecor(light);
-    for (let i = 0; i < 35; i++) {
-      ctx.fillStyle =
-        i % 5
-          ? light
-            ? "#8b806d22"
-            : "#fff0c922"
-          : light
-            ? "#80bdd855"
-            : "#80c7df55";
-      ctx.fillRect(
-        (i * 137 - ((distance * 4) % (W + 80))) % (W + 80),
-        40 + ((i * 59) % 245),
-        2,
-        2,
-      );
-    }
-    drawGround(light);
-    hazards.forEach((h) => drawHazard(h, light));
-    coins.forEach((c) => {
-      ctx.fillStyle = "#f2ca62";
-      ctx.beginPath();
-      ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = "#fff7e7";
-      ctx.beginPath();
-      ctx.arc(c.x - 2, c.y - 2, 2, 0, Math.PI * 2);
-      ctx.fill();
-    });
-    particles.forEach((p) => {
-      ctx.globalAlpha = Math.max(0, p.life * 3);
-      ctx.fillStyle = p.color;
-      ctx.fillRect(p.x - 2, p.y - 2, 4, 4);
-    });
+    const light = document.documentElement?.dataset?.theme === "light",
+      p = PIXEL_PALETTES[light ? "light" : "dark"];
+    ctx.imageSmoothingEnabled = false;
     ctx.globalAlpha = 1;
-    if (state !== "over") drawPlayer(light);
+    ctx.fillStyle = p.bg;
+    ctx.fillRect(0, 0, W, H);
+    drawDeskDecor(p);
+    drawGround(p);
+    hazards.forEach(h => drawHazard(h, p));
+    coins.forEach(c => drawSticker(c, p));
+    particles.forEach(q => {
+      // Discrete pixel flecks, never translucent blur; preserve the effect lifetime.
+      if (q.life > 0) pixelRect(q.color === "#f2ca62" ? p.yellow : p.coral, q.x - 2, q.y - 2, 4, 4);
+    });
+    if (state !== "over") drawPlayer(p);
   }
-  function drawGround(light) {
-    ctx.fillStyle = light ? "#e7d9b9" : "#263f4d";
-    ctx.fillRect(0, GROUND, W, H - GROUND);
-    ctx.fillStyle = light ? "#e98575" : "#f2ca62";
-    ctx.fillRect(0, GROUND, W, 4);
-    ctx.strokeStyle = light ? "#b99b6a" : "#52717b";
-    ctx.lineWidth = 2;
-    for (let x = -((distance * 3) % 60); x < W; x += 60) {
-      ctx.beginPath();
-      ctx.moveTo(x, GROUND + 20);
-      ctx.lineTo(x + 28, GROUND + 20);
-      ctx.stroke();
+  function drawGround(p) {
+    pixelRect(p.desk, 0, GROUND, W, H - GROUND);
+    pixelRect(p.grain, 0, GROUND, W, 2);
+    const offset = Math.round((distance * 3) % 64 / PIXEL) * PIXEL;
+    for (let x = -offset; x < W; x += 64) {
+      pixelRect(p.grain, x, GROUND + 22, 22, 2);
+      pixelRect(p.grain, x + 30, GROUND + 54, 14, 2);
     }
-    hazards
-      .filter((h) => h.type === "gap")
-      .forEach((h) => {
-        ctx.fillStyle = light ? "#fff0c9" : "#1a2e3d";
-        ctx.fillRect(h.x, GROUND - 1, h.w, H - GROUND + 2);
-        ctx.fillStyle = light ? "#e98575" : "#f2ca62";
-        ctx.fillRect(h.x - 3, GROUND, 3, H - GROUND);
-        ctx.fillRect(h.x + h.w, GROUND, 3, H - GROUND);
-      });
+    hazards.filter(h => h.type === "gap").forEach(h => {
+      pixelRect(p.outline, h.x, GROUND, h.w, H - GROUND);
+      pixelRect(p.yellow, h.x - 4, GROUND, 4, 12);
+      pixelRect(p.yellow, h.x + h.w, GROUND, 4, 12);
+      pixelRect(p.grain, h.x - 4, GROUND + 12, 4, H - GROUND - 12);
+      pixelRect(p.grain, h.x + h.w, GROUND + 12, 4, H - GROUND - 12);
+    });
   }
-  function drawHazard(h, light) {
+  function drawHazard(h, p) {
     if (h.type === "spike") {
-      ctx.fillStyle = light ? "#e98575" : "#ed927e";
-      ctx.beginPath();
-      ctx.moveTo(h.x, h.y + h.h);
-      ctx.lineTo(h.x + h.w / 2, h.y);
-      ctx.lineTo(h.x + h.w, h.y + h.h);
-      ctx.fill();
-      ctx.fillStyle = "#fff0c966";
-      ctx.fillRect(h.x + 8, h.y + 13, 3, 7);
+      pixelPolygon(hazardPolygon(h), (x, y) => x < h.x + h.w / 2 && y > h.y + 10 ? p.yellow : p.coral);
     } else if (h.type === "crate") {
-      ctx.fillStyle = light ? "#c98d5d" : "#b87555";
-      ctx.beginPath();
-      ctx.roundRect(h.x, h.y, h.w, h.h, 5);
-      ctx.fill();
-      ctx.strokeStyle = light ? "#3f3a34" : "#fff0c9";
-      ctx.lineWidth = 3;
-      ctx.stroke();
-      ctx.fillStyle = light ? "#f2ca62" : "#f2ce68";
-      ctx.fillRect(h.x + h.w * 0.42, h.y + 2, h.w * 0.16, h.h - 4);
-      ctx.fillRect(h.x + 2, h.y + h.h * 0.42, h.w - 4, h.h * 0.16);
-      ctx.fillStyle = light ? "#fff7e7" : "#fff0c9";
-      ctx.beginPath();
-      ctx.roundRect(h.x + 9, h.y + 13, h.w - 18, 14, 3);
-      ctx.fill();
-      ctx.strokeStyle = light ? "#8b806d" : "#52717b";
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-      ctx.fillStyle = light ? "#80bdd8" : "#80c7df";
-      ctx.fillRect(h.x + 14, h.y + 17, 10, 4);
-      ctx.fillRect(h.x + 29, h.y + 17, 7, 4);
+      // The tall obstacle is a standing eraser: pink rubber, paper sleeve, blue label.
+      pixelRect(p.outline, h.x, h.y, h.w, h.h);
+      pixelRect(p.coral, h.x + 2, h.y + 2, h.w - 4, h.h - 4);
+      pixelRect(p.paper, h.x + 2, h.y + 16, h.w - 4, 22);
+      pixelRect(p.blue, h.x + 2, h.y + 16, h.w - 4, 4);
+      pixelRect(p.blue, h.x + 10, h.y + 26, 16, 4);
+      pixelRect(p.paper, h.x + 6, h.y + 6, 12, 2);
     } else if (h.type === "pencil") {
-      ctx.save();
-      ctx.translate(h.x, h.y + h.h / 2);
-      ctx.rotate(PENCIL_TILT);
-      ctx.fillStyle = light ? "#f2ca62" : "#f2ce68";
-      ctx.fillRect(0, -7, h.w - 13, 14);
-      ctx.fillStyle = light ? "#e98575" : "#ed927e";
-      ctx.fillRect(h.w - 13, -7, 13, 14);
-      ctx.fillStyle = light ? "#3f3a34" : "#fff0c9";
-      ctx.beginPath();
-      ctx.moveTo(0, -7);
-      ctx.lineTo(-12, 0);
-      ctx.lineTo(0, 7);
-      ctx.closePath();
-      ctx.fill();
-      ctx.restore();
+      const c = Math.cos(PENCIL_TILT), s = Math.sin(PENCIL_TILT);
+      pixelPolygon(hazardPolygon(h), (x, y) => {
+        const dx = x - h.x, dy = y - h.y - h.h / 2,
+          localX = dx * c + dy * s, localY = -dx * s + dy * c;
+        if (localX < -6) return p.outline;
+        if (localX < 0) return p.paper;
+        if (localX > h.w - 12) return p.coral;
+        if (localX > h.w - 16) return p.paper;
+        return localY < -3 ? p.paper : p.yellow;
+      });
     } else if (h.type === "ruler") {
-      ctx.fillStyle = light ? "#80bdd8" : "#80c7df";
-      ctx.fillRect(h.x, h.y, h.w, h.h);
-      ctx.strokeStyle = light ? "#3f3a34" : "#fff0c9";
-      ctx.lineWidth = 2;
-      for (let i = 8; i < h.w; i += 12) {
-        ctx.beginPath();
-        ctx.moveTo(h.x + i, h.y + 3);
-        ctx.lineTo(h.x + i, h.y + (i % 24 ? 10 : 17));
-        ctx.stroke();
-      }
+      pixelRect(p.outline, h.x, h.y, h.w, h.h);
+      pixelRect(p.blue, h.x + 2, h.y + 2, h.w - 4, h.h - 4);
+      for (let i = 8; i < h.w - 4; i += 12)
+        pixelRect(p.outline, h.x + i, h.y + 2, 2, i % 24 ? 6 : 12);
     } else if (h.type === "ink") {
-      ctx.fillStyle = light ? "#aa78b8" : "#b8a7e8";
-      ctx.beginPath();
-      for (const [x, y, rx, ry] of inkShapes(h))
-        ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
-      ctx.fill();
+      const shapes = inkShapes(h);
+      pixelMask(h.x - 2, h.y + 2, h.x + h.w, h.y + 22, (x, y) =>
+        shapes.some(([cx, cy, rx, ry]) => ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2 < 1) ? p.purple : null,
+      );
+      pixelRect(p.paper, h.x + 12, h.y + 8, 8, 2);
     }
   }
-  function drawPlayer(light) {
-    const grounded = player.onGround,
-      stride = grounded ? Math.sin(player.run) * 3 : 0,
-      lean = clamp(player.vy / 900, -0.12, 0.12);
-    ctx.save();
-    ctx.translate(player.x + 17, player.y + 24);
-    ctx.rotate(lean);
-    const ink = light ? "#3f3a34" : "#fff0c9",
-      paper = light ? "#fffdf5" : "#fff0c9",
-      blue = light ? "#80bdd8" : "#80c7df",
-      accent = light ? "#e98575" : "#ed927e",
-      yellow = light ? "#f2ca62" : "#f2ce68";
-    ctx.strokeStyle = ink;
-    ctx.lineWidth = 2.5;
-    ctx.lineJoin = "round";
-    ctx.lineCap = "round";
-    ctx.fillStyle = accent;
-    ctx.beginPath();
-    ctx.moveTo(-12, 0);
-    ctx.lineTo(-27, 7);
-    ctx.lineTo(-12, 10);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-    ctx.fillStyle = blue;
-    ctx.beginPath();
-    ctx.roundRect(-13, -5, 26, 24, 7);
-    ctx.fill();
-    ctx.stroke();
-    ctx.fillStyle = paper;
-    ctx.beginPath();
-    ctx.arc(0, -14, 13, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
-    ctx.fillStyle = yellow;
-    ctx.beginPath();
-    ctx.moveTo(-15, -18);
-    ctx.quadraticCurveTo(0, -31, 15, -18);
-    ctx.lineTo(12, -13);
-    ctx.quadraticCurveTo(0, -20, -12, -13);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-    ctx.fillStyle = ink;
-    ctx.beginPath();
-    ctx.arc(-5, -14, 2, 0, Math.PI * 2);
-    ctx.arc(5, -14, 2, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = paper;
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(-8, -3);
-    ctx.lineTo(-5, 10);
-    ctx.moveTo(8, -3);
-    ctx.lineTo(5, 10);
-    ctx.stroke();
-    ctx.strokeStyle = ink;
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    ctx.moveTo(-8, 18);
-    ctx.lineTo(-8, 25 + stride);
-    ctx.moveTo(8, 18);
-    ctx.lineTo(8, 25 - stride);
-    ctx.stroke();
-    ctx.strokeStyle = accent;
-    ctx.lineWidth = 5;
-    ctx.beginPath();
-    ctx.moveTo(-13, 27 + stride);
-    ctx.lineTo(-3, 27 + stride);
-    ctx.moveTo(3, 27 - stride);
-    ctx.lineTo(13, 27 - stride);
-    ctx.stroke();
-    ctx.restore();
+  function drawPlayer(p) {
+    // Original pixel bean: one softly stepped body, two eyes and short stride feet.
+    // There is no separate head/neck, costume, outline or ornamental detail.
+    const x = player.x, y = player.y,
+      airborne = !player.onGround,
+      frame = Math.floor(player.run / 2) % 2;
+    pixelRect(p.blue, x + 12, y, 12, 2);
+    pixelRect(p.blue, x + 8, y + 2, 20, 4);
+    pixelRect(p.blue, x + 6, y + 6, 24, 28);
+    pixelRect(p.blue, x + 8, y + 34, 20, 4);
+    pixelRect(p.blue, x + 12, y + 38, 12, 2);
+    pixelRect(p.outline, x + 18, y + 12, 2, 4);
+    pixelRect(p.outline, x + 24, y + 12, 2, 4);
+    if (airborne) {
+      pixelRect(p.blue, x + 4, y + 36, 8, 6);
+      pixelRect(p.blue, x + 24, y + 36, 8, 6);
+    } else if (frame) {
+      pixelRect(p.blue, x + 4, y + 38, 10, 6);
+      pixelRect(p.blue, x + 22, y + 38, 6, 10);
+    } else {
+      pixelRect(p.blue, x + 8, y + 38, 6, 10);
+      pixelRect(p.blue, x + 22, y + 38, 10, 6);
+    }
   }
   const FIXED_STEP = 1 / 120;
   let accumulator = 0,
