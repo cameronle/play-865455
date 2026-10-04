@@ -36,7 +36,7 @@ test('full jump remains buffered when jump button starts the title state',()=>{
  const b=boot();b.nodes.jumpButton.dispatch('pointerdown',{pointerId:1});assert.equal(b.test.get().state,'playing');for(let i=0;i<4;i++)b.frame();assert.ok(b.test.get().player.vy<0);
 });
 test('zoom remains available and route assets use a fresh version',()=>{
- const html=require('node:fs').readFileSync('mushroom-trail/index.html','utf8');assert.doesNotMatch(html,/user-scalable=no/);assert.match(html,/game\.js\?v=mushroom-audit-3/);
+ const html=require('node:fs').readFileSync('mushroom-trail/index.html','utf8');assert.doesNotMatch(html,/user-scalable=no/);assert.match(html,/game\.js\?v=mushroom-classic-5/);
 });
 test('clear-data freezes gameplay and cannot resurrect a deleted record',()=>{
  const b=boot({storage:{mushroomTrailBest:'9000'}});b.test.startGame();b.emit('window','game-data-clearing');b.storage.delete('mushroomTrailBest');b.test.levelClear();b.test.hurtPlayer();b.nodes.startButton.click();b.key('ArrowRight');for(let i=0;i<60;i++)b.frame();assert.equal(b.storage.has('mushroomTrailBest'),false);assert.ok(Object.values(b.test.get().input).every(v=>!v));

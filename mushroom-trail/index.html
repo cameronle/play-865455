@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#fff5df">
-  <script src="/theme.js?v=mushroom-audit-3"></script>
+  <meta name="theme-color" content="#f4f1e7">
+  <script src="/theme.js?v=mushroom-classic-5"></script>
   <script src="/clear-game-data.js?v=clear-1"></script>
   <title>Mushroom Trail</title>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=mushroom-audit-3">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=mushroom-classic-5">
   <link rel="stylesheet" href="/theme.css?v=clear-1">
-  <link rel="stylesheet" href="style.css?v=mushroom-audit-3">
+  <link rel="stylesheet" href="style.css?v=mushroom-classic-5">
 </head>
 <body>
   <main class="page">
@@ -34,7 +34,7 @@
       <div id="overlay" class="overlay">
         <div class="overlay-mark" aria-hidden="true">✦</div>
         <b id="message">MUSHROOM TRAIL</b>
-        <span id="detail">RUN · JUMP · STOMP · FIND THE BEACON</span>
+        <span id="detail">RUN · JUMP · STOMP · REACH THE GOAL FLAG</span>
         <button id="startButton" type="button">START ADVENTURE</button>
       </div>
     </div>
@@ -43,16 +43,19 @@
       <button id="leftButton" type="button" aria-label="Move left">←</button>
       <button id="jumpButton" type="button" aria-label="Jump">JUMP</button>
       <button id="rightButton" type="button" aria-label="Move right">→</button>
+      <button id="runButton" type="button" aria-label="Toggle running" aria-pressed="false">RUN</button>
     </section>
     <div class="tips" aria-label="How to play">
       <span>COLLECT COINS</span>
       <span>STOMP BOUNCE BUGS</span>
-      <span>REACH THE SUN BEACON</span>
+      <span>SEED: SHIELD + BREAK BRICKS</span>
+      <span>REACH THE GOAL FLAG</span>
     </div>
     <div id="utilityDock" class="utility-dock" aria-label="Game settings"></div>
-    <footer>ARROWS / A D MOVE · SPACE / W / ↑ JUMP · P PAUSE</footer>
+    <footer>ARROWS / A D MOVE · SPACE / W / ↑ JUMP · HOLD SHIFT / TAP RUN · P PAUSE</footer>
   </main>
   <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
-  <script src="game.js?v=mushroom-audit-3"></script>
+  <script src="pixel-renderer.js?v=mushroom-classic-5"></script>
+  <script src="game.js?v=mushroom-classic-5"></script>
 </body>
 </html>
