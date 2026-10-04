@@ -34,5 +34,5 @@ test('goal flag is grounded on physical terrain, not the old beacon offset',()=>
 });
 test('pixel renderer is locally wired before the game and CSS disables interpolation',()=>{
  const html=fs.readFileSync('mushroom-trail/index.html','utf8'),css=fs.readFileSync('mushroom-trail/style.css','utf8');
- assert.ok(html.indexOf('pixel-renderer.js')<html.indexOf('src="game.js'));assert.match(css,/image-rendering:\s*pixelated/);assert.match(html,/mushroom-classic-5/);
+ assert.ok(html.indexOf('pixel-renderer.js')<html.indexOf('src="game.js'));assert.match(css,/image-rendering:\s*pixelated/);assert.match(html,/mushroom-touch-6/);
 });

@@ -181,11 +181,12 @@ function syncInput(){
   for(const action of ['left','right','jump','run'])$(action+'Button').classList.toggle('active',input[action]);
   updateRunButton();if(input.jump&&!previousJump)pressJump();else if(!input.jump&&previousJump)releaseJump();
 }
+function clearTextSelection(){const selection=window.getSelection?.();if(selection&&!selection.isCollapsed)selection.removeAllRanges();}
 function bindControl(id,action){
   const button=$(id);
   button.addEventListener('pointerdown',event=>{
     if(clearing||document.hidden||event.button!==0||pointers.has(event.pointerId))return;
-    event.preventDefault();if(state==='title'||state==='over')startGame();
+    event.preventDefault();clearTextSelection();if(state==='title'||state==='over')startGame();
     if(state!=='playing'||paused)return;
     pointers.set(event.pointerId,{action,button});try{button.setPointerCapture(event.pointerId);}catch(_){}syncInput();
   });
@@ -196,6 +197,8 @@ function bindControl(id,action){
 function bindHold(id,action){bindControl(id,action);}
 function bindJump(id){bindControl(id,'jump');}
 bindHold('leftButton','left');bindHold('rightButton','right');bindJump('jumpButton');
+const gamePage=document.querySelector('.page');
+for(const type of ['selectstart','contextmenu','dragstart'])gamePage?.addEventListener(type,event=>event.preventDefault(),{capture:true});
 addEventListener('keydown',event=>{
   const key=event.key.toLowerCase(),action=keyAction(key);
   if(clearing||document.hidden||event.ctrlKey||event.metaKey||event.altKey||event.target?.isContentEditable||event.target?.closest('input,textarea,select'))return;
@@ -206,7 +209,7 @@ addEventListener('keydown',event=>{
   heldKeys.add(keyOwner(event));syncInput();
 });
 addEventListener('keyup',event=>{heldKeys.delete(keyOwner(event));syncInput();});
-ui.run.addEventListener('click',()=>{if(clearing||document.hidden||paused||state==='clear')return;if(state==='title'||state==='over')startGame();runLatched=!runLatched;syncInput();ui.run.blur?.();});
+ui.run.addEventListener('click',()=>{if(clearing||document.hidden||paused||state==='clear')return;clearTextSelection();if(state==='title'||state==='over')startGame();runLatched=!runLatched;syncInput();ui.run.blur?.();});
 ui.start.addEventListener('click',()=>{if(state==='clear')nextLevel();else if(paused)togglePause();else startGame();ui.start.blur?.();});
 ui.pause.addEventListener('click',togglePause);
 function suspend(){resetInput();if(state==='playing'&&!paused){paused=true;resetTiming();ui.pause.textContent='RESUME';showOverlay('PAUSED','THE TRAIL WILL WAIT · TAKE A BREATH','RESUME');}}

@@ -18,7 +18,7 @@ function boot(options={}){
  }
  for(const id of ['game','world','coins','lives','score','overlay','message','detail','startButton','pauseButton','leftButton','rightButton','jumpButton','runButton','gamePage','gameFrame','utilityDock'])nodes[id]=make(id,id==='game'?'canvas':id.endsWith('Button')?'button':'div');
  nodes.overlay.appendChild(nodes.startButton);nodes.gameFrame.appendChild(nodes.game);nodes.gameFrame.appendChild(nodes.overlay);
- doc={hidden:false,readyState:'complete',activeElement:null,documentElement:make('html'),body:make('body'),getElementById:id=>nodes[id]||null,querySelector:()=>null,createElement:tag=>make('',tag),addEventListener(t,f){(events.document[t]||=[]).push(f)}};
+ doc={hidden:false,readyState:'complete',activeElement:null,documentElement:make('html'),body:make('body'),getElementById:id=>nodes[id]||null,querySelector:selector=>selector==='.page'?nodes.gamePage:null,createElement:tag=>make('',tag),addEventListener(t,f){(events.document[t]||=[]).push(f)}};
  const win={innerWidth:1280,innerHeight:800,addEventListener(t,f){(events.window[t]||=[]).push(f)}};
  const sandbox={window:win,document:doc,navigator:{vibrate(){}},getComputedStyle:()=>{styles++;return{getPropertyValue:()=>'',paddingLeft:'0',paddingRight:'0',paddingTop:'0',paddingBottom:'0'}},performance:{now:()=>now},Math:options.rng?Object.assign(Object.create(Math),{random:options.rng}):Math,JSON,console,addEventListener:win.addEventListener,
  localStorage:{getItem(k){if(options.storageThrows)throw Error('blocked');return storage.get(k)??null},setItem(k,v){if(options.storageThrows)throw Error('quota');storage.set(k,String(v))}},
