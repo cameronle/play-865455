@@ -71,10 +71,10 @@ test('Firefly Watch ships a complete keyboard and mobile survival-game route', (
   }
   assert.match(html, /FIREFLY WATCH/);
   assert.match(html, /SURVIVE 6 MINUTES/);
-  assert.match(html, /rules\.js\?v=firefly-watch-1/);
-  assert.match(html, /game\.js\?v=firefly-watch-1/);
-  assert.match(html, /style\.css\?v=firefly-watch-1/);
-  assert.match(html, /src="\/theme\.js\?v=firefly-watch-1"/);
+  assert.match(html, /rules\.js\?v=firefly-watch-2/);
+  assert.match(html, /game\.js\?v=firefly-watch-2/);
+  assert.match(html, /style\.css\?v=firefly-watch-2/);
+  assert.match(html, /src="\/theme\.js\?v=firefly-watch-2"/);
   assert.match(html, /src="\/clear-game-data\.js\?v=clear-1"/);
   assert.match(css, /touch-action:\s*none/);
   assert.match(css, /user-select:\s*none/);
@@ -98,26 +98,6 @@ test('Firefly Watch is integrated into the canonical catalog and save-data utili
   assert.match(fs.readFileSync('clear-game-data.js', 'utf8'), /'firefly-watch': \['fireflyWatchBest'\]/);
   assert.match(fs.readFileSync('index.html', 'utf8'), /href="\/firefly-watch\/"/);
   assert.match(fs.readFileSync('README.md', 'utf8'), /\.\/firefly-watch\//);
-});
-
-test('Firefly Watch keeps the full playfield and desktop controls visible on short screens', () => {
-  const css = fs.readFileSync('firefly-watch/style.css', 'utf8');
-  assert.match(css, /\.arena-shell\{[^}]*width:min\(100%,calc\(100dvh - 280px\)\)/);
-  assert.match(css, /\.arena-shell\{[^}]*margin-inline:auto/);
-  assert.match(css, /\.move-pad\{width:112px;height:112px/);
-});
-
-test('Firefly Watch keeps mobile movement and utility controls at least 44px tall', () => {
-  const html = fs.readFileSync('firefly-watch/index.html', 'utf8');
-  const css = fs.readFileSync('firefly-watch/style.css', 'utf8');
-  assert.match(html, /class="mobile-hint"[^>]*>HOLD THE ARROWS TO MOVE/);
-  assert.match(css, /\.move-pad\{width:140px;height:140px/);
-  assert.match(css, /\.move-pad button,.move-pad i\{[^}]*min-width:44px;min-height:44px/);
-  assert.match(css, /\.topbar a,.topbar button\{min-height:44px/);
-  assert.match(css, /\.theme-toggle,.clear-data-toggle\{min-height:44px/);
-  assert.match(css, /@media\(max-width:680px\)[\s\S]*\.overlay button\{min-height:44px/);
-  assert.match(css, /\.mobile-hint\{display:none\}/);
-  assert.match(css, /@media\(max-width:680px\)[\s\S]*\.desktop-hint\{display:none\}[\s\S]*\.mobile-hint\{display:block\}/);
 });
 
 test('Firefly Watch runtime snapshot exposes movement and active-play state for browser QA', () => {

@@ -6,7 +6,7 @@
   'use strict';
 
   const UPGRADES = [
-    {id: 'quick-glow', label: 'QUICK GLOW', description: 'Fire 12% faster.', maxRank: 5},
+    {id: 'quick-glow', label: 'QUICK GLOW', description: 'Shot interval -0.07s (minimum 0.22s).', maxRank: 5},
     {id: 'split-spark', label: 'SPLIT SPARK', description: 'Add another spark to every volley.', maxRank: 3},
     {id: 'bright-core', label: 'BRIGHT CORE', description: 'Sparks deal 35% more damage.', maxRank: 5},
     {id: 'piercing-light', label: 'PIERCING LIGHT', description: 'Sparks pass through another enemy.', maxRank: 3},
@@ -104,7 +104,7 @@
       spawnInterval: mix('spawnInterval'),
       healthScale: mix('healthScale'),
       speedScale: mix('speedScale'),
-      tier: start.tier
+      tier: time >= end.at ? end.tier : start.tier
     };
   }
 
@@ -116,6 +116,23 @@
   function circlesOverlap(a, b) {
     const radius = a.r + b.r;
     return (a.x - b.x) ** 2 + (a.y - b.y) ** 2 < radius ** 2;
+  }
+
+  // First contact along two moving circles; null means no contact this step.
+  function sweptHit(from, shot, enemy, fraction = 1) {
+    const ex = enemy.previousX ?? enemy.x, ey = enemy.previousY ?? enemy.y;
+    const x = from.x - ex, y = from.y - ey;
+    const dx = shot.x - from.x - (enemy.x - ex) * fraction;
+    const dy = shot.y - from.y - (enemy.y - ey) * fraction;
+    const radius = shot.radius + enemy.radius;
+    const c = x * x + y * y - radius * radius;
+    if (c <= 0) return 0;
+    const a = dx * dx + dy * dy;
+    if (a < 1e-12) return null;
+    const b = 2 * (x * dx + y * dy), discriminant = b * b - 4 * a * c;
+    if (discriminant < 0) return null;
+    const t = (-b - Math.sqrt(discriminant)) / (2 * a);
+    return t >= 0 && t <= 1 ? t : null;
   }
 
   function xpNeeded(level) {
@@ -131,6 +148,7 @@
     difficultyAt,
     normalizeVector,
     circlesOverlap,
+    sweptHit,
     xpNeeded
   };
 });

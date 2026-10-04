@@ -16,6 +16,7 @@
   const timeElement = document.getElementById('time');
   const levelElement = document.getElementById('level');
   const xpFill = document.getElementById('xpFill');
+  const vitals = document.getElementById('vitals');
 
   const WIDTH = canvas.width;
   const HEIGHT = canvas.height;
@@ -23,6 +24,8 @@
   const BEST_KEY = 'fireflyWatchBest';
   const bossMilestones = [90, 180, 270];
   const input = {left: false, right: false, up: false, down: false, pointerX: 0, pointerY: 0};
+  const heldKeys = new Set();
+  const heldPointers = new Map();
   const gardenMarks = Array.from({length: 32}, (_, index) => ({
     x: 34 + ((index * 137) % 650),
     y: 42 + ((index * 223) % 630),
@@ -54,19 +57,26 @@
   let nextBossIndex = 0;
   let enemySequence = 0;
   let dragPointer = null;
+  const STEP = 1 / 120;
+  let frameId = null;
+  let accumulator = 0;
   let lastTime = performance.now();
   let best = readBest();
+  let clearing = false;
+  let offerVersion = 0;
+  let offeredIds = new Set();
 
   function readBest() {
     try {
-      return Math.max(0, Number(localStorage.getItem(BEST_KEY)) || 0);
+      const value = Number(localStorage.getItem(BEST_KEY));
+      return Number.isSafeInteger(value) && value >= 0 ? value : 0;
     } catch (_) {
       return 0;
     }
   }
 
   function saveBest() {
-    if (score <= best) return;
+    if (clearing || score <= best) return;
     best = score;
     try {
       localStorage.setItem(BEST_KEY, String(best));
@@ -95,7 +105,24 @@
     return {x: WIDTH / 2, y: HEIGHT / 2, radius: 13, invulnerable: 0, orbitAngle: 0};
   }
 
+  function syncInput() {
+    for (const direction of ['left', 'right', 'up', 'down']) {
+      input[direction] = [...heldKeys].some(code => keyDirection(code) === direction) || [...heldPointers.values()].some(owner => owner.direction === direction);
+    }
+    document.querySelectorAll('.move-pad button').forEach(button => {
+      button.classList.toggle('active', [...heldPointers.values()].some(owner => owner.button === button));
+    });
+  }
+
   function resetInput() {
+    const captures = [...heldPointers].map(([id, owner]) => [id, owner.button]);
+    if (dragPointer) captures.push([dragPointer.id, canvas]);
+    heldKeys.clear();
+    heldPointers.clear();
+    dragPointer = null;
+    for (const [id, element] of captures) {
+      try { element.releasePointerCapture(id); } catch (_) {}
+    }
     for (const key of ['left', 'right', 'up', 'down']) input[key] = false;
     input.pointerX = 0;
     input.pointerY = 0;
@@ -104,6 +131,7 @@
   }
 
   function startGame() {
+    if (clearing || document.hidden || !['title', 'over', 'won'].includes(state)) return;
     stats = RULES.createPlayerStats();
     player = createPlayer();
     enemies = [];
@@ -125,7 +153,7 @@
     pauseButton.textContent = 'PAUSE';
     pauseButton.disabled = false;
     updateHud();
-    lastTime = performance.now();
+    wake();
   }
 
   function showOverlay(title, text, buttonText) {
@@ -141,16 +169,20 @@
       resetInput();
       pauseButton.textContent = 'RESUME';
       showOverlay('NIGHT PAUSED', 'THE GARDEN IS WAITING.', 'RESUME WATCH');
-    } else if (state === 'paused') {
+      rest();
+      draw();
+    } else if (state === 'paused' && !document.hidden) {
+      resetInput();
       state = 'playing';
       pauseButton.textContent = 'PAUSE';
       overlay.classList.add('hidden');
-      lastTime = performance.now();
+      wake();
     }
   }
 
   function finishGame(won) {
     state = won ? 'won' : 'over';
+    rest();
     resetInput();
     saveBest();
     pauseButton.textContent = 'PAUSE';
@@ -161,6 +193,7 @@
       : `SCORE ${formatScore(score)} · LEVEL ${String(level).padStart(2, '0')} · TRY A NEW BUILD`;
     showOverlay(title, text, won ? 'WATCH ANOTHER NIGHT' : 'TRY AGAIN');
     updateHud();
+    draw();
   }
 
   function randomEdgePosition(radius) {
@@ -259,6 +292,7 @@
 
   function resolveEnemyDeath(enemy) {
     score += enemy.type.score;
+    saveBest();
     const pieces = enemy.type.boss ? 8 : 1;
     const value = Math.max(1, Math.ceil(enemy.type.xp / pieces));
     for (let index = 0; index < pieces; index += 1) {
@@ -294,50 +328,59 @@
   }
 
   function triggerLevelUp() {
-    const needed = RULES.xpNeeded(level);
-    if (xp < needed) return;
-    xp -= needed;
-    level += 1;
-    state = 'upgrade';
-    resetInput();
-    const offer = RULES.chooseUpgradeOffer(stats);
-    if (!offer.length) {
-      state = 'playing';
+    while (xp >= RULES.xpNeeded(level)) {
+      xp -= RULES.xpNeeded(level);
+      level += 1;
+      const offer = RULES.chooseUpgradeOffer(stats);
+      if (!offer.length) continue;
+      state = 'upgrade';
+      rest();
+      resetInput();
+      pauseButton.disabled = true;
+      const version = ++offerVersion;
+      offeredIds = new Set(offer.map(upgrade => upgrade.id));
+      upgradeChoices.replaceChildren();
+      for (const upgrade of offer) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'upgrade-choice';
+        const rank = stats.upgradeRanks[upgrade.id] || 0;
+        button.innerHTML = `<b>${upgrade.label}</b><span>${upgrade.description}</span><small>RANK ${rank + 1} / ${upgrade.maxRank}</small>`;
+        button.addEventListener('click', () => chooseUpgrade(upgrade.id, version));
+        upgradeChoices.appendChild(button);
+      }
+      upgradePanel.hidden = false;
+      upgradeChoices.children[0].focus();
+      updateHud();
+      draw();
       return;
     }
-    upgradeChoices.replaceChildren();
-    for (const upgrade of offer) {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'upgrade-choice';
-      const rank = stats.upgradeRanks[upgrade.id] || 0;
-      button.innerHTML = `<b>${upgrade.label}</b><span>${upgrade.description}</span><small>RANK ${rank + 1} / ${upgrade.maxRank}</small>`;
-      button.addEventListener('click', () => chooseUpgrade(upgrade.id), {once: true});
-      upgradeChoices.appendChild(button);
-    }
-    upgradePanel.hidden = false;
     updateHud();
   }
 
-  function chooseUpgrade(upgradeId) {
+  function chooseUpgrade(upgradeId, version = offerVersion) {
+    if (state !== 'upgrade' || document.hidden || version !== offerVersion || !offeredIds.has(upgradeId)) return;
+    offeredIds.clear();
     stats = RULES.applyUpgrade(stats, upgradeId);
     upgradePanel.hidden = true;
-    if (xp >= RULES.xpNeeded(level)) {
-      state = 'playing';
-      triggerLevelUp();
-    } else {
-      state = 'playing';
-      lastTime = performance.now();
+    state = 'playing';
+    pauseButton.disabled = false;
+    resetInput();
+    triggerLevelUp();
+    if (state === 'playing') {
+      canvas.focus({preventScroll: true});
+      wake();
     }
     updateHud();
+    draw();
   }
 
   function updatePlayer(dt) {
     const horizontal = (input.right ? 1 : 0) - (input.left ? 1 : 0) + input.pointerX;
     const vertical = (input.down ? 1 : 0) - (input.up ? 1 : 0) + input.pointerY;
     const direction = RULES.normalizeVector(horizontal, vertical);
-    player.x = Math.max(player.radius, Math.min(WIDTH - player.radius, player.x + direction.x * stats.speed * dt));
-    player.y = Math.max(player.radius, Math.min(HEIGHT - player.radius, player.y + direction.y * stats.speed * dt));
+    player.x = Math.max(30, Math.min(WIDTH - 30, player.x + direction.x * stats.speed * dt));
+    player.y = Math.max(30, Math.min(HEIGHT - 30, player.y + direction.y * stats.speed * dt));
     player.invulnerable = Math.max(0, player.invulnerable - dt);
     player.orbitAngle = (player.orbitAngle + dt * 1.75) % TAU;
   }
@@ -346,6 +389,8 @@
     for (const enemy of enemies) {
       if (enemy.dead) continue;
       enemy.orbiterCooldown = Math.max(0, enemy.orbiterCooldown - dt);
+      enemy.previousX = enemy.x;
+      enemy.previousY = enemy.y;
       enemy.phase += dt * (enemy.type.boss ? 1.2 : 2.1);
       const direction = RULES.normalizeVector(player.x - enemy.x, player.y - enemy.y);
       const wobble = enemy.type === enemyTypes.gnat ? Math.sin(enemy.phase * 3) * 0.42 : enemy.type === enemyTypes.shade ? Math.sin(enemy.phase) * 0.24 : 0;
@@ -366,8 +411,10 @@
         }
       }
 
+      if (enemy.dead) continue;
       if (RULES.circlesOverlap({x: player.x, y: player.y, r: player.radius}, {x: enemy.x, y: enemy.y, r: enemy.radius})) {
         damagePlayer();
+        if (state !== 'playing') return;
         if (!enemy.type.boss) {
           enemy.dead = true;
           enemy.escaped = true;
@@ -382,24 +429,28 @@
   function updateShots(dt) {
     for (let shotIndex = shots.length - 1; shotIndex >= 0; shotIndex -= 1) {
       const shot = shots[shotIndex];
-      shot.x += shot.vx * dt;
-      shot.y += shot.vy * dt;
+      const from = {x: shot.x, y: shot.y};
+      const travel = Math.min(dt, Math.max(0, shot.life));
+      shot.x += shot.vx * travel;
+      shot.y += shot.vy * travel;
       shot.life -= dt;
-      let removeShot = shot.life <= 0 || shot.x < -20 || shot.y < -20 || shot.x > WIDTH + 20 || shot.y > HEIGHT + 20;
-      if (!removeShot) {
-        for (const enemy of enemies) {
-          if (enemy.dead || shot.hitIds.has(enemy.id)) continue;
-          if (!RULES.circlesOverlap({x: shot.x, y: shot.y, r: shot.radius}, {x: enemy.x, y: enemy.y, r: enemy.radius})) continue;
-          shot.hitIds.add(enemy.id);
-          enemy.hp -= shot.damage;
-          addBurst(shot.x, shot.y, palette.yellow, 3, 45);
-          if (enemy.hp <= 0) enemy.dead = true;
-          if (shot.pierceLeft > 0) shot.pierceLeft -= 1;
-          else removeShot = true;
-          break;
-        }
+      const hits = [];
+      if (travel > 0) for (const enemy of enemies) {
+        if (enemy.dead || shot.hitIds.has(enemy.id)) continue;
+        const t = RULES.sweptHit(from, shot, enemy, travel / dt);
+        if (t !== null) hits.push({enemy, t});
       }
-      if (removeShot) shots.splice(shotIndex, 1);
+      hits.sort((a, b) => a.t - b.t || a.enemy.id - b.enemy.id);
+      let spent = false;
+      for (const {enemy, t} of hits) {
+        shot.hitIds.add(enemy.id);
+        enemy.hp -= shot.damage;
+        addBurst(from.x + (shot.x - from.x) * t, from.y + (shot.y - from.y) * t, palette.yellow, 3, 45);
+        if (enemy.hp <= 0) enemy.dead = true;
+        if (shot.pierceLeft > 0) shot.pierceLeft -= 1;
+        else { spent = true; break; }
+      }
+      if (spent || shot.life <= 0 || shot.x < -20 || shot.y < -20 || shot.x > WIDTH + 20 || shot.y > HEIGHT + 20) shots.splice(shotIndex, 1);
     }
   }
 
@@ -418,6 +469,7 @@
       if (distance < player.radius + drop.radius + 4) {
         gainXp(drop.value);
         score += drop.value * 5;
+        saveBest();
         addBurst(drop.x, drop.y, palette.yellow, 4, 50);
         glowDrops.splice(index, 1);
       }
@@ -438,7 +490,8 @@
 
   function update(dt) {
     elapsed = Math.min(RULES.survivalDuration, elapsed + dt);
-    if (elapsed >= RULES.survivalDuration) {
+    if (elapsed + 1e-9 >= RULES.survivalDuration) {
+      elapsed = RULES.survivalDuration;
       finishGame(true);
       return;
     }
@@ -446,7 +499,7 @@
     const difficulty = RULES.difficultyAt(elapsed);
     updatePlayer(dt);
 
-    spawnTimer -= dt;
+    spawnTimer = enemies.length >= 100 ? Math.max(0, spawnTimer) : spawnTimer - dt;
     while (spawnTimer <= 0 && enemies.length < 100) {
       spawnEnemy(false);
       spawnTimer += difficulty.spawnInterval * (0.82 + Math.random() * 0.36);
@@ -456,8 +509,8 @@
       nextBossIndex += 1;
     }
 
-    fireTimer -= dt;
-    if (fireTimer <= 0 && enemies.length) {
+    fireTimer = Math.max(-STEP, fireTimer - dt);
+    if (fireTimer <= 0 && enemies.some(enemy => !enemy.dead)) {
       fireVolley();
       fireTimer += stats.fireCooldown;
     }
@@ -490,12 +543,19 @@
   }
 
   function updateHud() {
-    scoreElement.textContent = formatScore(score);
-    bestElement.textContent = formatScore(Math.max(best, score));
-    timeElement.textContent = formatTime(elapsed);
-    levelElement.textContent = String(level).padStart(2, '0');
+    const text = (element, value) => { if (element.textContent !== value) element.textContent = value; };
+    text(scoreElement, formatScore(score));
+    text(bestElement, formatScore(Math.max(best, score)));
+    text(timeElement, formatTime(elapsed));
+    text(levelElement, String(level).padStart(2, '0'));
+    text(vitals, `HEARTS\u00a0${stats.hp}/${stats.maxHp} · SHIELD\u00a0${stats.shields}/${stats.maxShields}`);
+    const pauseDisabled = !['playing', 'paused'].includes(state) || document.hidden;
+    const startDisabled = document.hidden || clearing;
+    if (pauseButton.disabled !== pauseDisabled) pauseButton.disabled = pauseDisabled;
+    if (startButton.disabled !== startDisabled) startButton.disabled = startDisabled;
     const needed = RULES.xpNeeded(level);
-    xpFill.style.width = `${Math.max(0, Math.min(100, xp / needed * 100))}%`;
+    const width = `${Math.max(0, Math.min(100, xp / needed * 100))}%`;
+    if (xpFill.style.width !== width) xpFill.style.width = width;
   }
 
   function drawBackground() {
@@ -692,32 +752,6 @@
     ctx.globalAlpha = 1;
   }
 
-  function drawStatus() {
-    ctx.fillStyle = palette.paper;
-    ctx.globalAlpha = 0.86;
-    ctx.fillRect(12, 12, 150, 34);
-    ctx.globalAlpha = 1;
-    ctx.fillStyle = palette.muted;
-    ctx.font = '700 10px ui-monospace, monospace';
-    ctx.fillText('HEARTS', 22, 33);
-    for (let index = 0; index < stats.maxHp; index += 1) {
-      ctx.fillStyle = index < stats.hp ? palette.coral : palette.line;
-      ctx.fillRect(70 + index * 13, 23, 9, 9);
-    }
-    if (stats.maxShields > 0) {
-      ctx.fillStyle = palette.paper;
-      ctx.globalAlpha = 0.86;
-      ctx.fillRect(WIDTH - 142, 12, 130, 34);
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = palette.muted;
-      ctx.fillText('SHIELD', WIDTH - 132, 33);
-      for (let index = 0; index < stats.maxShields; index += 1) {
-        ctx.strokeStyle = index < stats.shields ? palette.cyan : palette.line;
-        ctx.strokeRect(WIDTH - 70 + index * 15, 23, 9, 9);
-      }
-    }
-  }
-
   function draw() {
     drawBackground();
     drawGlowDrops();
@@ -726,16 +760,32 @@
     drawOrbiters();
     drawPlayer();
     drawBursts();
-    drawStatus();
+  }
+
+  function rest() {
+    if (frameId !== null) cancelAnimationFrame(frameId);
+    frameId = null;
+    accumulator = 0;
+  }
+
+  function wake() {
+    rest();
+    lastTime = performance.now();
+    if (state === 'playing' && !document.hidden) frameId = requestAnimationFrame(loop);
   }
 
   function loop(now) {
-    const dt = Math.min(0.033, Math.max(0, (now - lastTime) / 1000));
+    frameId = null;
+    if (state !== 'playing' || document.hidden) return;
+    accumulator += Math.min(0.25, Math.max(0, (now - lastTime) / 1000));
     lastTime = now;
-    if (state === 'playing') update(dt);
-    else if (state !== 'upgrade') updateBursts(dt);
+    while (accumulator + 1e-9 >= STEP && state === 'playing') {
+      accumulator -= STEP;
+      update(STEP);
+    }
     draw();
-    requestAnimationFrame(loop);
+    if (state === 'playing') frameId = requestAnimationFrame(loop);
+    else accumulator = 0;
   }
 
   function keyDirection(code) {
@@ -747,9 +797,20 @@
   }
 
   window.addEventListener('keydown', event => {
+    if (event.ctrlKey || event.metaKey || event.altKey || event.target?.isContentEditable || event.target?.closest?.('input,textarea,select')) return;
     const direction = keyDirection(event.code);
     if (direction) {
-      input[direction] = true;
+      if (state !== 'playing' || document.hidden || event.repeat) return;
+      heldKeys.add(event.code);
+      syncInput();
+      event.preventDefault();
+      return;
+    }
+    if (event.repeat) return;
+    if (event.code === 'Tab' && state === 'upgrade') {
+      const choices = [...upgradeChoices.children];
+      const index = choices.indexOf(document.activeElement);
+      choices[(index + (event.shiftKey ? -1 : 1) + choices.length) % choices.length]?.focus();
       event.preventDefault();
       return;
     }
@@ -758,6 +819,7 @@
       event.preventDefault();
       return;
     }
+    if (event.target?.closest?.('button,a')) return;
     if ((event.code === 'Enter' || event.code === 'Space') && ['title', 'over', 'won'].includes(state)) {
       startGame();
       event.preventDefault();
@@ -770,23 +832,25 @@
   window.addEventListener('keyup', event => {
     const direction = keyDirection(event.code);
     if (direction) {
-      input[direction] = false;
-      event.preventDefault();
+      heldKeys.delete(event.code);
+      syncInput();
     }
   });
 
   function bindDirectionButton(button) {
     const direction = button.dataset.direction;
     const press = event => {
+      if (state !== 'playing' || document.hidden || event.button !== 0 || heldPointers.has(event.pointerId)) return;
       event.preventDefault();
-      input[direction] = true;
-      button.classList.add('active');
+      heldPointers.set(event.pointerId, {direction, button});
+      syncInput();
       try { button.setPointerCapture(event.pointerId); } catch (_) {}
     };
     const release = event => {
+      if (heldPointers.get(event.pointerId)?.button !== button) return;
       event.preventDefault();
-      input[direction] = false;
-      button.classList.remove('active');
+      heldPointers.delete(event.pointerId);
+      syncInput();
       try { button.releasePointerCapture(event.pointerId); } catch (_) {}
     };
     button.addEventListener('pointerdown', press);
@@ -798,7 +862,7 @@
   document.querySelectorAll('.move-pad button').forEach(bindDirectionButton);
 
   canvas.addEventListener('pointerdown', event => {
-    if (state !== 'playing') return;
+    if (state !== 'playing' || document.hidden || dragPointer || event.button !== 0) return;
     event.preventDefault();
     dragPointer = {id: event.pointerId, x: event.clientX, y: event.clientY};
     try { canvas.setPointerCapture(event.pointerId); } catch (_) {}
@@ -809,7 +873,7 @@
     event.preventDefault();
     const dx = event.clientX - dragPointer.x;
     const dy = event.clientY - dragPointer.y;
-    const vector = RULES.normalizeVector(dx, dy);
+    const vector = Math.hypot(dx, dy) < 7 ? {x: 0, y: 0} : RULES.normalizeVector(dx, dy);
     input.pointerX = vector.x;
     input.pointerY = vector.y;
   });
@@ -834,9 +898,25 @@
     else startGame();
   });
   pauseButton.addEventListener('click', togglePause);
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden && state === 'playing') togglePause();
+  function suspend() {
+    resetInput();
+    if (state === 'playing') togglePause();
+  }
+  window.addEventListener('game-data-clearing', () => {
+    clearing = true;
+    resetInput();
+    rest();
+    state = 'clearing';
+    pauseButton.disabled = true;
+    startButton.disabled = true;
   });
+  window.addEventListener('blur', suspend);
+  window.addEventListener('pagehide', suspend);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) suspend();
+    updateHud();
+  });
+  window.addEventListener('resize', draw);
   document.addEventListener('themechange', () => {
     palette = readPalette();
     draw();
@@ -860,8 +940,14 @@
     timeText: timeElement.textContent
   });
 
+  function mountUtilities() {
+    const button = document.querySelector('.clear-data-toggle');
+    if (button) document.getElementById('utilityDock').appendChild(button);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mountUtilities, {once: true});
+  else mountUtilities();
+
   bestElement.textContent = formatScore(best);
   updateHud();
   draw();
-  requestAnimationFrame(loop);
 })();
