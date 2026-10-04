@@ -2,13 +2,13 @@
   --bg: #070b12;
   --panel: #0b121b;
   --ink: #e8f0f7;
-  --muted: #748394;
+  --muted: #9aa7b5;
   --line: #263746;
   --mint: #73f0b0;
   --rose: #ff7088;
   --orange: #ffb45c;
   --tile-bg: #142230;
-  --tile-border: #32475c;
+  --tile-border: #5b738a;
   --tile-ink: #f0f6fc;
   --tile-correct-bg: #112d22;
   --tile-correct-border: #2e7d5a;
@@ -19,30 +19,47 @@
   --bg: #faf8ef;
   --panel: #f1eee7;
   --ink: #3e3934;
-  --muted: #8b8177;
+  --muted: #6a6056;
   --line: #d8d0c5;
-  --mint: #38b000;
+  --mint: #247a35;
   --rose: #e63946;
   --orange: #f77f00;
   --tile-bg: #eae4d8;
-  --tile-border: #c8bead;
+  --tile-border: #8e8272;
   --tile-ink: #3e3934;
   --tile-correct-bg: #d1e7dd;
   --tile-correct-border: #8ec3ad;
-  --tile-correct-ink: #198754;
+  --tile-correct-ink: #19683d;
 }
 
-* { box-sizing: border-box; }
-html, body {
+* {
+  box-sizing: border-box;
+}
+html,
+body {
   margin: 0;
   min-height: 100%;
   background: var(--bg);
   color: var(--ink);
-  font: 12px ui-monospace, SFMono-Regular, Consolas, monospace;
+  font:
+    12px ui-monospace,
+    SFMono-Regular,
+    Consolas,
+    monospace;
 }
-body { display: flex; justify-content: center; }
-button, a, select { -webkit-tap-highlight-color: transparent; }
-.page { width: min(540px, 100%); padding: 18px 15px calc(20px + env(safe-area-inset-bottom)); }
+body {
+  display: flex;
+  justify-content: center;
+}
+button,
+a,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+.page {
+  width: min(540px, 100%);
+  padding: 18px 15px calc(20px + env(safe-area-inset-bottom));
+}
 
 header.topbar {
   min-height: 45px;
@@ -53,18 +70,29 @@ header.topbar {
   gap: 8px;
   margin-bottom: 10px;
 }
-header h1 { font-size: 19px; letter-spacing: .14em; margin: 0; white-space: nowrap; }
-header a, header button {
+header h1 {
+  font-size: 19px;
+  letter-spacing: 0.14em;
+  margin: 0;
+  white-space: nowrap;
+}
+header a,
+header button {
   border: 0;
   background: none;
   color: var(--muted);
-  font: 10px inherit;
-  letter-spacing: .1em;
+  font: inherit;
+  font-size: 10px;
+  letter-spacing: 0.1em;
   text-decoration: none;
   min-height: 44px;
   cursor: pointer;
 }
-.header-actions { display: flex; justify-content: flex-end; gap: 11px; }
+.header-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 11px;
+}
 
 .toolbar {
   display: grid;
@@ -72,7 +100,8 @@ header a, header button {
   gap: 7px;
   margin-bottom: 10px;
 }
-.tool-select, .stat-pill {
+.tool-select,
+.stat-pill {
   border: 1px solid var(--line);
   background: var(--panel);
   padding: 6px 8px;
@@ -81,22 +110,25 @@ header a, header button {
   gap: 3px;
   font-size: 9px;
   color: var(--muted);
-  letter-spacing: .08em;
+  letter-spacing: 0.08em;
   min-width: 0;
 }
 .tool-select select {
   border: 0;
   background: none;
   color: var(--mint);
-  font: 700 11px inherit;
+  font: inherit;
+  font-weight: 700;
+  font-size: 11px;
   outline: none;
   cursor: pointer;
+  min-height: 36px;
   padding: 0;
 }
 .stat-pill b {
   font-size: 11px;
   color: var(--mint);
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 
 .frame {
@@ -135,7 +167,9 @@ header a, header button {
   align-items: center;
   border-radius: 4px;
   cursor: pointer;
-  transition: transform 0.08s ease, background-color 0.12s ease;
+  transition:
+    transform 0.08s ease,
+    background-color 0.12s ease;
 }
 .tile:active {
   transform: scale(0.96);
@@ -164,15 +198,26 @@ header a, header button {
 [data-theme="light"] .overlay {
   background: #f5f1e8f2;
 }
-.overlay.hide { display: none; }
-.overlay b { font-size: clamp(22px, 6vw, 36px); letter-spacing: .12em; text-shadow: 2px 2px #18372b; }
-.overlay span { font-size: 10px; color: var(--muted); letter-spacing: .1em; }
+.overlay.hide {
+  display: none;
+}
+.overlay b {
+  font-size: clamp(22px, 6vw, 36px);
+  letter-spacing: 0.12em;
+}
+.overlay span {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
 .overlay button {
   border: 0;
   background: var(--mint);
   color: #06110c;
-  font: 700 11px inherit;
-  letter-spacing: .12em;
+  font: inherit;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.12em;
   min-height: 44px;
   padding: 12px 20px;
   box-shadow: 3px 3px #2a8158;
@@ -184,14 +229,206 @@ footer {
   text-align: center;
   color: var(--muted);
   font-size: 9px;
-  letter-spacing: .08em;
+  letter-spacing: 0.08em;
   line-height: 1.5;
 }
 
 @media (max-width: 520px) {
-  .page { padding: 12px 10px max(18px, env(safe-area-inset-bottom)); }
-  header.topbar { min-height: 40px; margin-bottom: 10px; }
-  header h1 { font-size: 16px; }
-  .toolbar { grid-template-columns: repeat(2, 1fr); gap: 6px; }
-  .board { gap: 4px; }
+  .page {
+    padding: 12px 10px max(18px, env(safe-area-inset-bottom));
+  }
+  header.topbar {
+    min-height: 40px;
+    margin-bottom: 10px;
+  }
+  header h1 {
+    font-size: 16px;
+  }
+  .toolbar {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+  .board {
+    gap: 4px;
+  }
+}
+
+/* Fit the square arena to real available height, not viewport width alone. */
+.page {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: max(14px, env(safe-area-inset-bottom));
+}
+.game-info {
+  display: contents;
+}
+.topbar {
+  order: 0;
+}
+.toolbar {
+  order: 1;
+}
+.frame {
+  order: 2;
+  flex: none;
+  margin: 0 auto;
+}
+footer {
+  order: 3;
+  margin: 10px 0 0;
+}
+.utility-dock {
+  order: 4;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 10px;
+}
+.utility-dock .theme-toggle,
+.utility-dock .clear-data-toggle {
+  position: static;
+  transform: none;
+  min-width: 60px;
+  min-height: 36px;
+  margin: 0;
+  font: inherit;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+.header-actions {
+  gap: 5px;
+}
+header h1 {
+  font-size: 18px;
+  letter-spacing: 0.08em;
+}
+header a,
+header button {
+  padding: 0 4px;
+  min-width: 36px;
+}
+button:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+.tile {
+  min-width: 0;
+  min-height: 0;
+  font-family: inherit;
+  -webkit-touch-callout: none;
+}
+.board {
+  -webkit-touch-callout: none;
+}
+.board:focus-visible,
+button:focus-visible,
+a:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+.overlay {
+  padding: 12px;
+  z-index: 2;
+}
+.overlay b {
+  font-size: clamp(18px, 4vw, 30px);
+  letter-spacing: 0.06em;
+}
+.overlay span {
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.overlay button {
+  color: #06110c;
+}
+[data-theme="light"] .overlay button {
+  color: #fff;
+}
+@media (max-width: 520px) {
+  .page {
+    padding-top: 8px;
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
+  }
+  header.topbar {
+    grid-template-columns: 1fr auto;
+    gap: 0 6px;
+    margin-bottom: 8px;
+  }
+  header h1 {
+    grid-column: 1/-1;
+    grid-row: 1;
+    text-align: center;
+    line-height: 26px;
+  }
+  header a,
+  .header-actions {
+    grid-row: 2;
+  }
+  header a {
+    justify-self: start;
+  }
+  .toolbar {
+    margin-bottom: 8px;
+  }
+  .tool-select,
+  .stat-pill {
+    padding: 5px 7px;
+  }
+  footer {
+    font-size: 8px;
+    margin-top: 8px;
+  }
+  .utility-dock {
+    margin-top: 8px;
+  }
+}
+@media (max-height: 500px) and (min-width: 560px) {
+  .page {
+    width: min(900px, 100%);
+    flex-direction: row;
+    gap: 12px;
+    align-items: center;
+    padding: 8px;
+  }
+  .game-info {
+    display: block;
+    width: 220px;
+    flex: none;
+  }
+  header.topbar {
+    grid-template-columns: 1fr auto;
+    gap: 0;
+  }
+  header h1 {
+    grid-column: 1/-1;
+    grid-row: 1;
+    text-align: center;
+    line-height: 28px;
+  }
+  header a,
+  .header-actions {
+    grid-row: 2;
+  }
+  .toolbar {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .frame {
+    margin: 0;
+  }
+  .board {
+    gap: 4px;
+  }
+  footer {
+    font-size: 8px;
+    margin-top: 8px;
+  }
+  .utility-dock {
+    margin-top: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tile {
+    transition: none;
+  }
 }

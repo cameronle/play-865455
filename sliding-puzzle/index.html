@@ -1,50 +1,92 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-  <meta name="theme-color" content="#070b12">
-  <script src="/theme.js?v=puzzle15-1"></script><script src="/clear-game-data.js?v=clear-1"></script>
-  <title>15-Puzzle</title>
-  <link rel="stylesheet" href="/theme.css?v=clear-1">
-  <link rel="stylesheet" href="style.css?v=puzzle15-1">
-</head>
-<body>
-  <main class="page">
-    <header class="topbar">
-      <a href="/">← PLAY</a>
-      <h1>15-PUZZLE</h1>
-      <div class="header-actions">
-        <button id="undoButton" type="button">UNDO</button>
-        <button id="newButton" type="button">SHUFFLE</button>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#070b12" />
+    <script src="/theme.js?v=puzzle15-1"></script>
+    <script src="/clear-game-data.js?v=sliding-audit-1"></script>
+    <title>15-Puzzle</title>
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="favicon.svg?v=sliding-audit-1"
+    />
+    <link rel="stylesheet" href="/theme.css?v=clear-1" />
+    <link rel="stylesheet" href="style.css?v=sliding-audit-1" />
+  </head>
+  <body>
+    <main id="gamePage" class="page">
+      <div class="game-info">
+        <header class="topbar">
+          <a href="/">← PLAY</a>
+          <h1>15-PUZZLE</h1>
+          <div class="header-actions">
+            <button
+              id="undoButton"
+              type="button"
+              title="Undo last move; up to 200 moves retained after reload"
+            >
+              UNDO
+            </button>
+            <button id="pauseButton" type="button">PAUSE</button>
+            <button id="newButton" type="button">SHUFFLE</button>
+          </div>
+        </header>
+        <section class="toolbar" aria-label="Grid and records">
+          <label class="tool-select"
+            >GRID
+            <select id="sizeSelect">
+              <option value="3">3 × 3 (8)</option>
+              <option value="4" selected>4 × 4 (15)</option>
+              <option value="5">5 × 5 (24)</option>
+            </select>
+          </label>
+          <div class="stat-pill"><span>MOVES</span><b id="moveStat">0</b></div>
+          <div class="stat-pill">
+            <span>TIME</span><b id="timeStat">00:00</b>
+          </div>
+          <div class="stat-pill"><span>BEST</span><b id="bestStat">--</b></div>
+        </section>
+        <footer id="boardHelp">
+          TAP A TILE IN THE EMPTY ROW / COLUMN<br />SWIPE OR ARROWS / WASD · P
+          TO PAUSE
+        </footer>
+        <div id="utilityDock" class="utility-dock">
+          <button class="theme-toggle" type="button" aria-label="Theme: system">
+            AUTO
+          </button>
+        </div>
       </div>
-    </header>
-    <section class="toolbar">
-      <label class="tool-select">
-        GRID
-        <select id="sizeSelect">
-          <option value="3">3 × 3 (8)</option>
-          <option value="4" selected>4 × 4 (15)</option>
-          <option value="5">5 × 5 (24)</option>
-        </select>
-      </label>
-      <div class="stat-pill"><span class="stat-label">MOVES</span><b id="moveStat">0</b></div>
-      <div class="stat-pill"><span class="stat-label">TIME</span><b id="timeStat">00:00</b></div>
-      <div class="stat-pill"><span class="stat-label">BEST</span><b id="bestStat">--</b></div>
-    </section>
-    <div class="frame">
-      <div id="board" class="board" aria-label="15-Puzzle grid board"></div>
-      <div id="winOverlay" class="overlay hide">
-        <b id="winTitle">PUZZLE SOLVED</b>
-        <span id="winDetail">15 TILES ORDERED</span>
-        <button id="restartButton" type="button">PLAY AGAIN</button>
+      <div id="boardFrame" class="frame">
+        <div
+          id="board"
+          class="board"
+          tabindex="0"
+          role="group"
+          aria-label="Sliding puzzle"
+          aria-describedby="boardHelp"
+        ></div>
+        <div
+          id="winOverlay"
+          class="overlay hide"
+          role="status"
+          aria-live="polite"
+        >
+          <b id="winTitle">PUZZLE SOLVED</b
+          ><span id="winDetail">15 TILES ORDERED</span
+          ><button id="restartButton" type="button">PLAY AGAIN</button>
+        </div>
+        <div id="pauseOverlay" class="overlay hide" role="status">
+          <b>PAUSED</b><span>YOUR PUZZLE IS SAVED</span
+          ><button id="resumeButton" type="button">RESUME</button>
+        </div>
       </div>
-    </div>
-    <footer>CLICK OR SWIPE TILES INTO THE EMPTY SPACE · ARROW KEYS / WASD</footer>
-  </main>
-
-  <script src="rules.js?v=puzzle15-1"></script>
-  <script src="game.js?v=puzzle15-1"></script>
-  <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
-</body>
+    </main>
+    <script src="rules.js?v=sliding-audit-1"></script>
+    <script src="game.js?v=sliding-audit-1"></script>
+  </body>
 </html>

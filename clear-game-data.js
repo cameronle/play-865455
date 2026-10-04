@@ -22,7 +22,7 @@
     'sky-hopper': ['doodleHopBest', 'doodleHopBestStars', 'skyHopperBest'],
     'mushroom-trail': ['mushroomTrailBest'],
     'melon-lab': ['melonLabBest'],
-    'sliding-puzzle': ['sliding-puzzle-best-v1'],
+    'sliding-puzzle': ['sliding-puzzle-best-v1', 'sliding-puzzle-game-v1'],
     snake: ['classic-snake-high-score'],
     sokoban: ['sokoban'],
     sudoku: ['sudokuBest-', 'sudoku-game-v1'],
