@@ -1,0 +1,37 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {createRequire} from 'node:module';
+const require=createRequire(import.meta.url),C=require('../bubble-tanks/combat'),W=require('../bubble-tanks/world'),A=require('../bubble-tanks/adventure'),S=require('../bubble-tanks/storage');
+const origin=process.argv[2]||process.env.BUBBLE_QA_ORIGIN||'http://127.0.0.1:8765',phase=process.argv[3]||'local',OUT=(process.env.TMPDIR||process.cwd()+'/.hermes/qa')+'/bubble-audit';
+fs.mkdirSync(OUT,{recursive:true});
+const endpoint=process.env.BUBBLE_CDP_URL||'http://127.0.0.1:9222',target=await(await fetch(endpoint+'/json/new?about:blank',{method:'PUT'})).json(),ws=new WebSocket(target.webSocketDebuggerUrl);
+await new Promise(r=>ws.addEventListener('open',r,{once:true}));let id=0;const pending=new Map(),errors=[],rows=[];
+ws.addEventListener('message',e=>{const m=JSON.parse(e.data);if(m.id){const p=pending.get(m.id);if(p){clearTimeout(p.timer);pending.delete(m.id);m.error?p.reject(Error(JSON.stringify(m.error))):p.resolve(m.result);}}if(m.method==='Runtime.exceptionThrown')errors.push(m.params.exceptionDetails);if(m.method==='Network.responseReceived'&&m.params.response.status>=400)errors.push(m.params.response.url);});
+function call(method,params={}){return new Promise((resolve,reject)=>{const n=++id,timer=setTimeout(()=>reject(Error('timeout '+method)),10000);pending.set(n,{resolve,reject,timer});ws.send(JSON.stringify({id:n,method,params}));});}
+async function ev(expression){const r=await call('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));return r.result.value;}
+const delay=ms=>new Promise(r=>setTimeout(r,ms)),snap=()=>ev('BubbleFrontier.snapshot()');
+async function ready(){for(let i=0;i<150;i++){if(await ev('document.readyState==="complete"&&!!window.BubbleFrontier?.snapshot'))return;await delay(40);}throw Error('not ready');}
+async function pt(sel,dx=0,id=1){return ev(`(()=>{const e=document.querySelector(${JSON.stringify(sel)});e.scrollIntoView({block:'nearest'});const r=e.getBoundingClientRect(),x=r.x+r.width/2+${dx},y=r.y+r.height/2;if(!e.contains(document.elementFromPoint(x,y)))throw Error('blocked '+${JSON.stringify(sel)});return{x,y,id:${id}}})()`);}
+async function mouse(sel){const{x,y}=await pt(sel);for(const type of ['mousePressed','mouseReleased'])await call('Input.dispatchMouseEvent',{type,x,y,button:'left',clickCount:1});}
+const touch=(type,touchPoints)=>call('Input.dispatchTouchEvent',{type,touchPoints});
+async function tap(sel){await touch('touchStart',[await pt(sel,0,9)]);await touch('touchEnd',[]);}
+function fixture(){const s=C.create('viewport-audit');C.start(s);s.player.mass=285;A.open(s,'assembly');while(A.edit(s,{type:'add',id:'pulse'})){}A.edit(s,{type:'commit'});s.world.rooms['0,0'].drops=[];C.pause(s);const raw=S.serialize(s);assert.equal(S.restore(raw).error,null);return raw;}
+try{
+ await call('Runtime.enable');await call('Page.enable');await call('Network.enable');await call('Network.setCacheDisabled',{cacheDisabled:true});await call('Emulation.setFocusEmulationEnabled',{enabled:true});await call('Page.bringToFront');
+ for(const[w,h]of[[320,568],[360,640],[390,844],[412,915],[568,320],[844,390],[768,1024],[1024,768],[1440,900]]){
+  const mobile=w<900;await call('Emulation.setDeviceMetricsOverride',{width:w,height:h,deviceScaleFactor:1,mobile});await call('Emulation.setTouchEmulationEnabled',{enabled:mobile,maxTouchPoints:5});
+  const hook=await call('Page.addScriptToEvaluateOnNewDocument',{source:`(()=>{localStorage.setItem(${JSON.stringify(S.SAVE_KEY)},${JSON.stringify(fixture())});localStorage.setItem('bubble_frontier_settings',JSON.stringify({dualStick:true,assist:true}));localStorage.setItem('play-lang','zh');localStorage.setItem('play-theme','system');})()`});
+  await call('Page.navigate',{url:origin+'/bubble-tanks/?audit='+phase});await ready();await call('Page.removeScriptToEvaluateOnNewDocument',{identifier:hook.identifier});
+  const click=mobile?tap:mouse;await click('#continueButton');assert.equal((await snap()).loadout.length,10);
+  if(mobile){const m=await pt('#joystick',20),a=await pt('#aimJoystick',20,2),d=await pt('#dashButton',0,3);await touch('touchStart',[m]);await touch('touchStart',[m,a]);assert.ok((await snap()).input.aim,JSON.stringify({w,h,m,a,d,s:await snap(),rects:await ev("[...document.querySelectorAll('#joystick,#aimJoystick,#dashButton')].map(e=>({id:e.id,r:e.getBoundingClientRect().toJSON()}))")}));await touch('touchStart',[m,a,d]);let s=await snap();assert.ok(s.dashClock>0&&s.input.x>0&&s.input.aim);await touch('touchEnd',[d]);const skill=await pt('#skillButton',0,4);await touch('touchStart',[m,a,skill]);assert.ok((await snap()).skillClock>0);await touch('touchEnd',[skill]);await touch('touchEnd',[m]);s=await snap();assert.equal(s.input.x,0);assert.ok(s.input.aim);const neutral=await pt('#aimJoystick',0,2);await touch('touchMove',[neutral]);assert.equal((await snap()).input.aim,null);await touch('touchEnd',[]);}
+  else{await mouse('h1');const before=await snap();await call('Input.dispatchKeyEvent',{type:'keyDown',key:'ArrowRight',code:'ArrowRight',windowsVirtualKeyCode:39});await delay(140);await call('Input.dispatchKeyEvent',{type:'keyUp',key:'ArrowRight',code:'ArrowRight',windowsVirtualKeyCode:39});assert.ok((await snap()).playerX>before.playerX);}
+  for(const theme of ['light','dark']){
+   for(let i=0;i<3&&(await ev('document.documentElement.dataset.themeMode'))!==theme;i++)await click('.theme-toggle');
+   const geometry=await ev(`(()=>{const selectors=['#game','#pauseButton','#dashButton','#skillButton','.theme-toggle','.clear-data-toggle'${mobile?",'#joystick','#aimJoystick'":''}];return{width:innerWidth,scroll:document.documentElement.scrollWidth,client:document.documentElement.clientWidth,rects:selectors.map(s=>{const e=document.querySelector(s),r=e.getBoundingClientRect();return{s,x:r.x,y:r.y,w:r.width,h:r.height,b:r.bottom,right:r.right,hit:e.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2))}})}})()`);
+   assert.equal(geometry.client,geometry.scroll);for(const r of geometry.rects){assert.ok(r.x>=0&&r.y>=0&&r.right<=w+.5&&r.b<=h+.5,JSON.stringify({w,h,r}));assert.ok(r.w>=44&&r.h>=44&&r.hit,JSON.stringify(r));}
+   const name=`${phase}-${theme}-${w}x${h}`,shot=await call('Page.captureScreenshot',{format:'png'});fs.writeFileSync(OUT+'/'+name+'.png',Buffer.from(shot.data,'base64'));rows.push({viewport:[w,h],theme,geometry,checks:'native movement, held dual-stick dash+skill, independent release, neutral aim, full loadout, bounds',screenshot:OUT+'/'+name+'.png'});fs.writeFileSync(OUT+'/'+phase+'-matrix.json',JSON.stringify({rows,errors},null,2));
+  }
+  await click('#pauseButton');const before=await snap();await ev('window.__mutations=0;window.__observer=new MutationObserver(r=>__mutations+=r.length);__observer.observe(document.querySelector(".page"),{attributes:true,childList:true,subtree:true,characterData:true})');await delay(180);assert.equal((await snap()).time,before.time);assert.equal((await snap()).frames,before.frames);assert.equal(await ev('__observer.disconnect();__mutations'),0);console.log(JSON.stringify({phase,viewport:[w,h],themes:2,status:'PASS'}));
+ }
+ assert.equal(rows.length,18);assert.deepEqual(errors,[]);
+}catch(e){console.error(e.stack);console.error(errors);process.exitCode=1;}finally{ws.close();await fetch(endpoint+'/json/close/'+target.id);}

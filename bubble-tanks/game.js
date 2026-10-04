@@ -5,16 +5,17 @@
  const store=B.Storage.create({getItem:key=>localStorage.getItem(key),setItem:(key,value)=>localStorage.setItem(key,value)}),loaded=store.load(),settings=store.settings();
  let lang='zh';try{if(localStorage.getItem('play-lang')==='en')lang='en';}catch(_){}
  let state=C.create('title'),input,ui,last=performance.now(),accumulator=0,renderedFrames=0,lastHud=0;
- let hasSave=!!loaded.state,savedWarning=loaded.error||'',overwriteApproved=false;
+ let hasSave=!!loaded.state,savedWarning=loaded.error||'',overwriteApproved=false,clearing=false;
  sound.setEnabled(settings.sound);
- function observe(){store.observe(state);state.records=store.records();}
- function persist(){if(state.mode==='title')return;const result=store.save(state);hasSave=result.ok||hasSave;savedWarning=result.ok?'':result.error;
+ function observe(){if(clearing)return;store.observe(state);state.records=store.records();}
+ function persist(){if(clearing||state.mode==='title')return;const result=store.save(state);hasSave=result.ok||hasSave;savedWarning=result.ok?'':result.error;
   if(['won','over'].includes(state.mode))store.finish(state);
  }
  function sync(){state.lang=lang;state.hasSave=hasSave;state.storageWarning=savedWarning||store.status();ui.update(state,settings);renderer.draw(state);}
  function newState(chassis,difficulty){state=C.create(`${Date.now()}:${Math.random()}`,chassis,difficulty);state.lang=lang;accumulator=0;input.clear();}
  function changed(){input.clear();accumulator=0;persist();observe();sync();}
  function action(name){
+  if(clearing||document.hidden)return;
   sound.unlock();
   if(state.confirmNew&&name==='pause')name='cancelNew';
   if(name==='cancelNew'){delete state.confirmNew;sync();return;}
@@ -43,15 +44,16 @@
   sync();
  }
  input=B.Input.create(canvas,{isRunning:()=>state.mode==='running',action});input.setAssist(settings.assist);input.configure(settings,()=>state.player);
- ui=B.UI.create({action,choose(id){if(C.choose(state,id)){sound.unlock();sound.play('upgrade');changed();}},buy(id){if(A.buy(state,id))changed();},edit(command){const ok=A.edit(state,command);if(ok){if(command.type==='commit'||command.type==='cancel')changed();else sync();}return ok;}});
+ ui=B.UI.create({action,choose(id){if(!clearing&&!document.hidden&&C.choose(state,id)){sound.unlock();sound.play('upgrade');changed();}},buy(id){if(A.buy(state,id))changed();},edit(command){const ok=A.edit(state,command);if(ok){if(command.type==='commit'||command.type==='cancel')changed();else sync();}return ok;}});
  document.addEventListener('DOMContentLoaded',()=>{const clear=document.querySelector('.clear-data-toggle');if(clear)document.querySelector('.topbar').append(clear);});
  document.addEventListener('themechange',()=>{renderer.refresh();renderer.draw(state);});
  window.addEventListener('resize',()=>sync());
- function suspend(){C.pause(state);input.clear();accumulator=0;persist();sync();last=performance.now();}
+ function suspend(){C.pause(state);if(['map','codex','assembly','workshop','event'].includes(state.mode))state.returnMode='paused';input.clear();ui.cancelDrag();accumulator=0;persist();sync();last=performance.now();}
+ window.addEventListener('game-data-clearing',()=>{clearing=true;suspend();});
  document.addEventListener('visibilitychange',()=>{if(document.hidden)suspend();last=performance.now();});window.addEventListener('blur',suspend);window.addEventListener('pagehide',suspend);
  function frame(now){
   const elapsed=Math.min(.12,Math.max(0,(now-last)/1000));last=now;
-  const active=state.mode==='running'&&!document.hidden;
+  const active=state.mode==='running'&&!document.hidden&&!clearing;
   if(active){accumulator+=elapsed;
    while(accumulator>=1/60&&state.mode==='running'){
     const mode=state.mode,roomId=W.current(state.world).id,bosses=state.world.bosses,score=state.score,mass=state.player.mass,growth=state.player.growth;

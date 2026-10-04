@@ -21,9 +21,10 @@
         y: touchY || Number(keys.has('KeyS') || keys.has('ArrowDown')) - Number(keys.has('KeyW') || keys.has('ArrowUp')), aim:aimVector?{x:playerPosition().x+aimVector.x*300,y:playerPosition().y+aimVector.y*300}:aim};
     }
     window.addEventListener('keydown', e => {
-      if (['INPUT','TEXTAREA','SELECT'].includes(e.target?.tagName)) return;
+      if (e.ctrlKey || e.metaKey || e.altKey || e.target?.isContentEditable || e.target?.closest?.('input,textarea,select,[contenteditable]') || ['INPUT','TEXTAREA','SELECT'].includes(e.target?.tagName)) return;
+      if (e.code === 'Space' && (['BUTTON','A'].includes(e.target?.tagName) || e.target?.closest?.('button,a'))) return;
       if (movement.has(e.code)) {
-        if (handlers.isRunning()) {e.preventDefault(); keys.add(e.code);}
+        if (handlers.isRunning() && !e.repeat) {e.preventDefault(); keys.add(e.code);}
         return;
       }
       const action = {Space:'dash',KeyE:'skill',Escape:'pause',KeyP:'pause'}[e.code];
@@ -40,7 +41,7 @@
       thumb.style.transform = `translate(calc(-50% + ${dx * ratio}px),calc(-50% + ${dy * ratio}px))`;
     }
     stick.addEventListener('pointerdown', e => {
-      if (!handlers.isRunning() || pointer !== null) return;
+      if (!handlers.isRunning() || pointer !== null || e.button !== undefined && e.button !== 0) return;
       e.preventDefault(); pointer = e.pointerId; stick.classList.add('active');
       try {stick.setPointerCapture(pointer);} catch (_) {}
       move(e);
@@ -60,12 +61,21 @@
     canvas.addEventListener('contextmenu', e => e.preventDefault());
     for (const id of ['dashButton','skillButton']) {
       const button = document.querySelector('#' + id);
-      button.addEventListener('click', () => handlers.action(id === 'dashButton' ? 'dash' : 'skill'));
+      let pointerActivated = false;
+      const activate = () => {if (!button.disabled && handlers.isRunning()) handlers.action(id === 'dashButton' ? 'dash' : 'skill');};
+      button.addEventListener('pointerdown', e => {
+        if (e.button !== 0 || button.disabled || !handlers.isRunning()) return;
+        e.preventDefault(); pointerActivated = true; activate();
+      });
+      button.addEventListener('click', e => {
+        if (e.detail > 0 && pointerActivated) {pointerActivated = false; e.preventDefault(); return;}
+        pointerActivated = false; activate();
+      });
       button.addEventListener('contextmenu', e => e.preventDefault());
     }
     for (const target of [canvas, stick]) target.addEventListener('touchmove', e => {if (handlers.isRunning()) e.preventDefault();}, {passive:false});
-    function aimMove(e){if(e.pointerId!==aimPointer)return;e.preventDefault();const r=aimStick.getBoundingClientRect(),x=e.clientX-r.left-r.width/2,y=e.clientY-r.top-r.height/2,d=Math.hypot(x,y),limit=r.width*.35;if(d>5){aimVector={x:x/d,y:y/d};const ratio=Math.min(1,limit/d);aimThumb.style.transform=`translate(calc(-50% + ${x*ratio}px),calc(-50% + ${y*ratio}px))`;}}
-    aimStick.addEventListener('pointerdown',e=>{if(!handlers.isRunning()||!dualStick||aimPointer!==null)return;aimPointer=e.pointerId;try{aimStick.setPointerCapture(aimPointer);}catch(_){}aimMove(e);});
+    function aimMove(e){if(e.pointerId!==aimPointer)return;e.preventDefault();const r=aimStick.getBoundingClientRect(),x=e.clientX-r.left-r.width/2,y=e.clientY-r.top-r.height/2,d=Math.hypot(x,y),limit=r.width*.35;if(d<=5){aimVector=null;aim=null;aimThumb.style.transform='translate(-50%,-50%)';return;}if(d>5){aimVector={x:x/d,y:y/d};const ratio=Math.min(1,limit/d);aimThumb.style.transform=`translate(calc(-50% + ${x*ratio}px),calc(-50% + ${y*ratio}px))`;}}
+    aimStick.addEventListener('pointerdown',e=>{if(!handlers.isRunning()||!dualStick||aimPointer!==null||e.button!==undefined&&e.button!==0)return;e.preventDefault();aim=null;aimPointer=e.pointerId;try{aimStick.setPointerCapture(aimPointer);}catch(_){}aimMove(e);});
     aimStick.addEventListener('pointermove',aimMove);for(const type of ['pointerup','pointercancel','lostpointercapture'])aimStick.addEventListener(type,e=>{if(e.pointerId===aimPointer){e.preventDefault();aimPointer=null;aimVector=null;aimThumb.style.transform='translate(-50%,-50%)';}});
     aimStick.addEventListener('touchmove',e=>{if(handlers.isRunning())e.preventDefault();},{passive:false});
     return {sample, clear, configure(options,position){dualStick=!!options.dualStick;playerPosition=position||playerPosition;aimStick.hidden=!dualStick;document.documentElement.dataset.hand=options.leftHand?'left':'right';clear();}, setAssist(value) {assist = value; aim = null;}};

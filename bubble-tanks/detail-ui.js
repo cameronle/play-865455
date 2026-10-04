@@ -59,9 +59,9 @@
   el('assemblySelect').addEventListener('change',()=>{if(current?.mode==='assembly')assembly(current);});const preview=el('assemblyPreview');
   el('assemblyBlueprintSelect').addEventListener('change',()=>{if(current?.mode==='assembly')assembly(current);});
   function point(e){const r=preview.getBoundingClientRect();return{x:((e.clientX-r.left)*280/r.width-140)/1.55,y:((e.clientY-r.top)*180/r.height-90)/1.55};}
-  preview.addEventListener('pointerdown',e=>{if(current?.mode!=='assembly')return;e.preventDefault();const p=point(e),gun=current.draft.reduce((best,g)=>Math.hypot(R.mount(g).x-p.x,R.mount(g).y-p.y)<Math.hypot(R.mount(best).x-p.x,R.mount(best).y-p.y)?g:best,current.draft[0]);if(Math.hypot(R.mount(gun).x-p.x,R.mount(gun).y-p.y)>15)return;drag={id:e.pointerId,slot:gun.slot};el('assemblySelect').value=String(gun.slot);try{preview.setPointerCapture(e.pointerId);}catch(_){}assembly(current);});
+  preview.addEventListener('pointerdown',e=>{if(current?.mode!=='assembly'||drag||e.isPrimary===false||e.button!==undefined&&e.button!==0)return;e.preventDefault();const p=point(e),gun=current.draft.reduce((best,g)=>Math.hypot(R.mount(g).x-p.x,R.mount(g).y-p.y)<Math.hypot(R.mount(best).x-p.x,R.mount(best).y-p.y)?g:best,current.draft[0]);if(Math.hypot(R.mount(gun).x-p.x,R.mount(gun).y-p.y)>15)return;drag={id:e.pointerId,slot:gun.slot};el('assemblySelect').value=String(gun.slot);try{preview.setPointerCapture(e.pointerId);}catch(_){}assembly(current);});
   preview.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId||current?.mode!=='assembly')return;e.preventDefault();const p=point(e);handlers.edit({type:'move',slot:drag.slot,x:Math.round(p.x/2)*2,y:Math.round(p.y/2)*2});});
-  for(const event of ['pointerup','pointercancel','lostpointercapture'])preview.addEventListener(event,()=>{drag=null;});
+  for(const event of ['pointerup','pointercancel','lostpointercapture'])preview.addEventListener(event,e=>{if(drag?.id===e.pointerId)drag=null;});
   function codex(state){
    const records=state.records||{runs:0,wins:0,best:0};text('codexSummary',`${txt('records',state.lang)}: ${records.runs} · ${txt('wins',state.lang)} ${records.wins} · BEST ${records.best}. ${txt('discovery',state.lang)}`);
    el('codexEntries').replaceChildren();for(const item of [...D.chassis,...D.upgrades,...D.synergies,...D.enemies,...B.Bosses.definitions]){const row=document.createElement('div'),heading=document.createElement('b'),text=document.createElement('span');heading.textContent=D.text(item.name,state.lang);text.textContent=D.text(item.description||item.tip,state.lang);row.append(heading,text);el('codexEntries').append(row);}
@@ -80,7 +80,7 @@
    el('eventGrowthButton').disabled=p.mass<18;
    if(['over','won'].includes(state.mode)){text('resultTitle',txt(state.mode==='won'?'win':'lost',lang));text('resultDetail',lang==='en'?`${state.world.bosses}/4 bosses · ${state.world.cleared} bubbles cleared · ${state.score} points · Evolution ${state.level}`:`击破 ${state.world.bosses}/4 Boss · 清空 ${state.world.cleared} 个泡泡 · ${state.score} 分 · 进化 ${state.level}`);}
   }
-  return{update};
+  return{update,cancelDrag(){drag=null;}};
  }
  B.DetailUI={create,dictionary};
 })();

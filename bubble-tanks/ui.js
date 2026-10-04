@@ -34,7 +34,7 @@
     const el = id => document.querySelector('#' + id);
 
     function text(id,value){const node=el(id),next=String(value);if(node.textContent!==next)node.textContent=next;}
-    let language = '', cardKey = '', buildKey = '';
+    let language = '', cardKey = '', buildKey = '', cardVersion = 0;
     const txt = (key, lang) => D.text(dictionary[key] || B.DetailUI.dictionary[key], lang);
     const detail = B.DetailUI.create(handlers);
     for (const [id, action] of Object.entries({confirmNewButton:'confirmNew',cancelNewButton:'cancelNew',startButton:'start',pauseButton:'pause',resumeButton:'resume',restartButton:'restart',newRunButton:'again',languageButton:'language',soundButton:'sound',aimButton:'aim',dualStickButton:'dualStick',handButton:'hand',qualityButton:'quality',rerollButton:'reroll',skipButton:'skip'})) {
@@ -56,6 +56,7 @@
       select.value = D.chassis.some(c => c.id === previous) ? previous : 'balanced';
     }
     function choices(state) {
+      const version = ++cardVersion;
       el('upgradeChoices').replaceChildren();
       for (const item of state.offers || []) {
         const card = document.createElement('button'); card.type = 'button'; card.className = 'upgrade-choice'; card.dataset.upgrade = item.id;
@@ -66,7 +67,10 @@
         description.textContent = D.text(item.description, state.lang);
         const insight=document.createElement('small');insight.className='upgrade-insight';insight.textContent=B.Insight.preview(state.player,item,state.lang).lines.join(' · ');
         copy.append(heading, description,insight); card.append(mark, copy);
-        card.addEventListener('click', () => handlers.choose(item.id));
+        card.addEventListener('click', () => {
+          if (version !== cardVersion || state.mode !== 'upgrade' || document.hidden || card.disabled) return;
+          cardVersion++; card.disabled = true; handlers.choose(item.id);
+        });
         el('upgradeChoices').append(card);
       }
     }
@@ -117,15 +121,15 @@
       el('skillClock').dataset.ready = String(p.skillClock <= 0);
       text('soundButton',txt(settings.sound ? 'soundOn' : 'soundOff',lang));
       text('aimButton',txt(settings.assist ? 'assistOn' : 'assistOff',lang));
-      const nextCard = `${lang}:${state.mode}:${(state.offers || []).map(u => u.id + R.rank(p,u.id)).join(',')}`;
-      if (nextCard !== cardKey) {cardKey = nextCard; if (state.mode === 'upgrade') choices(state);}
+      const nextCard = `${lang}:${state.mode}:${state.level}:${state.pending}:${(state.offers || []).map(u => u.id + R.rank(p,u.id)).join(',')}`;
+      if (nextCard !== cardKey) {cardVersion++; cardKey = nextCard; if (state.mode === 'upgrade') choices(state);}
       const nextBuild = `${lang}:${R.effectivePower(p)}:${JSON.stringify(p.loadout)}:${JSON.stringify(p.passives)}:${p.skill}:${JSON.stringify(p.relics)}:${JSON.stringify(p.branches)}`;
       if (nextBuild !== buildKey) {buildKey = nextBuild; build(state);}
       detail.update(state, settings);
       el('confirmPanel').hidden=!state.confirmNew;
       if(state.confirmNew){el('titlePanel').hidden=true;el('pausePanel').hidden=true;}
     }
-    return {update};
+    return {update, cancelDrag:detail.cancelDrag};
   }
   B.UI = {create, icons: iconPaths};
 })();

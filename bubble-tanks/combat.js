@@ -251,11 +251,14 @@
       Weapons.reflectShot(shot);
       if (shot.ttl <= 0) continue;
       if (shot.owner === 'enemy') {
-        if (playerCircles(p).some(c => distance(c, shot) < c.r + shot.r)) {if(shot.shieldBreak&&p.invulnerable<=0)p.shield=Math.max(0,p.shield-12);hurtPlayer(state, room, shot.damage); shot.ttl = 0;}
+        if (playerCircles(p).some(c => contact(shot,c)!==null)) {if(shot.shieldBreak&&p.invulnerable<=0)p.shield=Math.max(0,p.shield-12);hurtPlayer(state, room, shot.damage); shot.ttl = 0;}
         continue;
       }
-      for (const enemy of room.enemies) {
-        if (enemy.hp <= 0 || shot.hitIds.includes(enemy.id) || distance(shot, enemy) >= enemy.r + shot.r) continue;
+      const endX=shot.x,endY=shot.y;
+      const contacts=room.enemies.filter(e=>e.hp>0&&!shot.hitIds.includes(e.id)).map(enemy=>({enemy,t:contact(shot,enemy)})).filter(hit=>hit.t!==null).sort((a,b)=>a.t-b.t);
+      for (const {enemy,t} of contacts) {
+        if(enemy.hp<=0)continue;
+        shot.x=shot.px+(endX-shot.px)*t;shot.y=shot.py+(endY-shot.py)*t;
         if(Enemies.reflect(enemy,{x:shot.px,y:shot.py})){shot.owner='enemy';shot.damage=Math.min(6,shot.damage);shot.vx=-shot.vx;shot.vy=-shot.vy;shot.ttl=Math.min(1,shot.ttl);shot.hitIds=[enemy.id];break;}
         shot.hitIds.push(enemy.id);
         hurtEnemy(state, room, enemy, shot.damage, {x: shot.px, y: shot.py,weapon:shot.weapon,focusBoost:shot.focusBoost});
@@ -268,6 +271,7 @@
         }
         shot.pierce=(shot.pierce||1)-1;
         if(shot.pierce<=0){shot.ttl=0;break;}
+        shot.x=endX;shot.y=endY;
       }
     }
     room.shots=room.shots.filter(b=>{const keep=b.ttl>0&&Math.hypot(b.x-400,b.y-400)<360;if(!keep)Modifiers.miss(state,b);return keep;});
@@ -302,6 +306,13 @@
       if (state.offers.length) state.mode = 'upgrade';
       else {state.pending = 0; p.mass = R.clamp(p.mass + 6, 0, 400);}
     }
+  }
+  // Return the first contact along a frame's path, including stationary overlap.
+  function contact(shot, circle) {
+    const dx=shot.x-shot.px,dy=shot.y-shot.py,x=shot.px-circle.x,y=shot.py-circle.y,r=shot.r+circle.r;
+    const c=x*x+y*y-r*r;if(c<=0)return 0;
+    const a=dx*dx+dy*dy,b=x*dx+y*dy,d=b*b-a*c;
+    if(a===0||d<0)return null;const t=(-b-Math.sqrt(d))/a;return t>=0&&t<=1?t:null;
   }
   return {create, start, pause, resume, dash, useSkill, choose, reroll, skip, step, spawnShot, fireWeapon, hurtEnemy, hurtPlayer, playerCircles, nearest, selectTarget, distance, effect};
 });
