@@ -57,7 +57,7 @@ test('Nonogram validates built-in puzzles and returns defensive copies', () => {
 
 test('Nonogram page is touch-safe, themed, keyboard accessible, and integrated as game 23', () => {
   const html = read('nonogram/index.html');
-  const css = read('nonogram/style.css');
+  const css = read('nonogram/style.css').replace(/\s+/g,'').replace(/'/g,'"');
   const js = read('nonogram/game.js');
   const index = read('index.html');
   const readme = read('README.md');
@@ -80,7 +80,7 @@ test('Nonogram page is touch-safe, themed, keyboard accessible, and integrated a
 
 test('Nonogram restores the classic minimalist presentation', () => {
   const html = read('nonogram/index.html');
-  const css = read('nonogram/style.css');
+  const css = read('nonogram/style.css').replace(/\s+/g,'').replace(/'/g,'"');
   assert.match(html, /<title>Nonogram<\/title>/);
   assert.match(html, />NONOGRAM</);
   assert.doesNotMatch(html, /STICKER REVEAL|STICKER ALBUM/);
@@ -89,7 +89,7 @@ test('Nonogram restores the classic minimalist presentation', () => {
   assert.match(css, /--cyan:#64e6e0/);
 });
 test('Nonogram exposes a visual level gallery with saved completion progress', () => {
-  const html=read('nonogram/index.html'),css=read('nonogram/style.css'),js=read('nonogram/game.js');
+  const html=read('nonogram/index.html'),css=read('nonogram/style.css').replace(/\s+/g,'').replace(/'/g,'"'),js=read('nonogram/game.js');
   for(const id of ['levelButton','progressSummary','levelOverlay','levelGrid','closeLevels']) assert.match(html,new RegExp(`id="${id}"`));
   assert.match(css,/\.level-grid/);
   assert.match(css,/\.level-card\.completed/);
@@ -101,7 +101,7 @@ test('Nonogram exposes a visual level gallery with saved completion progress', (
 });
 
 test('Nonogram auto-saves unfinished boards and exposes reset and in-progress states',()=>{
-  const html=read('nonogram/index.html'),css=read('nonogram/style.css'),js=read('nonogram/game.js');
+  const html=read('nonogram/index.html'),css=read('nonogram/style.css').replace(/\s+/g,'').replace(/'/g,'"'),js=read('nonogram/game.js');
   assert.match(html,/id="resetButton"/);
   assert.match(css,/\.level-card\.in-progress/);
   assert.match(js,/nonogram-saves/);
@@ -113,10 +113,10 @@ test('Nonogram auto-saves unfinished boards and exposes reset and in-progress st
 });
 
 test('Nonogram completion uses a staggered cell reveal before showing the picture name',()=>{
-  const html=read('nonogram/index.html'),css=read('nonogram/style.css'),js=read('nonogram/game.js');
+  const html=read('nonogram/index.html'),css=read('nonogram/style.css').replace(/\s+/g,'').replace(/'/g,'"'),js=read('nonogram/game.js');
   assert.match(html,/id="revealName"/);
   assert.match(css,/\.cell\.reveal/);
-  assert.match(css,/@keyframes revealCell/);
+  assert.match(css,/@keyframesrevealCell/);
   assert.match(css,/\.reveal-name\.show/);
   assert.match(css,/prefers-reduced-motion/);
   assert.match(js,/function playCompletionAnimation/);
@@ -125,7 +125,7 @@ test('Nonogram completion uses a staggered cell reveal before showing the pictur
 });
 
 test('Nonogram mobile layout keeps controls visible with compact stats and clear pack progress',()=>{
-  const html=read('nonogram/index.html'),css=read('nonogram/style.css'),js=read('nonogram/game.js');
+  const html=read('nonogram/index.html'),css=read('nonogram/style.css').replace(/\s+/g,'').replace(/'/g,'"'),js=read('nonogram/game.js');
   for(const className of ['tool-size','tool-puzzle','stat-time','stat-mistakes','stat-best']) assert.match(html,new RegExp(`class="[^"]*${className}`));
   assert.match(html,/PACK · 0 \/ 15/);
   assert.match(js,/PACK · \$\{progress\.done\} \/ \$\{progress\.total\}/);
@@ -136,6 +136,6 @@ test('Nonogram mobile layout keeps controls visible with compact stats and clear
   assert.match(css,/grid-template-rows:var\(--col-clue\)/);
   assert.match(css,/@media\(max-width:680px\)[\s\S]*\.topbar\{height:42px/);
   assert.match(css,/@media\(max-width:680px\)[\s\S]*\.toolbar>\*\{min-height:38px/);
-  assert.match(css,/@media\(max-width:680px\)[\s\S]*\.actions\{margin:0;grid-template-columns:repeat\(3,1fr\)\}/);
-  assert.match(css,/@media\(max-width:680px\)[\s\S]*footer\{display:none\}/);
+  assert.match(css,/@media\(max-width:680px\)[\s\S]*\.actions\{[^}]*grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/);
+  assert.match(css,/@media\(max-width:680px\)[\s\S]*footer\{display:none;?\}/);
 });

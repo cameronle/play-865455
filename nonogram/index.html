@@ -1,43 +1,148 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-  <meta name="theme-color" content="#070b12">
-  <script src="/theme.js?v=nonogram-retry-reset"></script><script src="/clear-game-data.js?v=clear-1"></script>
-  <title>Nonogram</title>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=classic-1">
-  <link rel="stylesheet" href="style.css?v=nonogram-retry-reset">
-  <link rel="stylesheet" href="/theme.css?v=clear-1">
-</head>
-<body>
-  <main class="page">
-    <header class="topbar"><a href="/">← PLAY</a><h1>NONOGRAM</h1><div class="header-actions"><button id="levelButton" type="button">LEVELS</button><button id="newButton" type="button">NEW</button></div></header>
-    <section class="toolbar">
-      <label class="tool-size">SIZE <select id="sizeSelect"><option value="5">5 × 5</option><option value="10" selected>10 × 10</option><option value="15">15 × 15</option></select></label>
-      <label class="tool-puzzle">PUZZLE <select id="puzzleSelect"></select></label>
-      <div class="stat stat-time">TIME <b id="timer">00:00</b></div><div class="stat stat-mistakes">MISTAKES <b id="mistakes">0 / 3</b></div><div class="stat stat-best">BEST <b id="best">--:--</b></div>
-    </section>
-    <section class="game-layout">
-      <div class="puzzle-frame" id="puzzleFrame">
-        <div class="corner" aria-hidden="true">PIXEL<br>LOGIC</div>
-        <div id="colClues" class="col-clues" aria-label="Column clues"></div>
-        <div id="rowClues" class="row-clues" aria-label="Row clues"></div>
-        <div id="board" class="board" role="grid" aria-label="Nonogram puzzle"></div>
-        <div id="revealName" class="reveal-name" aria-live="polite"><span>PICTURE REVEALED</span><b></b></div>
-        <div id="resultOverlay" class="result-overlay"><b id="resultTitle">PICTURE COMPLETE</b><span id="resultText">EVERY LINE IS SOLVED</span><button id="resultButton" type="button">NEXT PUZZLE</button></div>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#070b12" />
+    <script src="/theme.js?v=nonogram-audit-1"></script>
+    <script src="/clear-game-data.js?v=clear-1"></script>
+    <title>Nonogram</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg?v=classic-1" />
+    <link rel="stylesheet" href="style.css?v=nonogram-audit-1" />
+    <link rel="stylesheet" href="/theme.css?v=clear-1" />
+  </head>
+  <body>
+    <main class="page" id="gamePage">
+      <header class="topbar">
+        <a href="/">← PLAY</a>
+        <h1>NONOGRAM</h1>
+        <div class="header-actions">
+          <button id="levelButton" type="button">LEVELS</button
+          ><button id="newButton" type="button">NEW</button>
+        </div>
+      </header>
+      <section class="toolbar">
+        <label class="tool-size"
+          >SIZE
+          <select id="sizeSelect">
+            <option value="5">5 × 5</option>
+            <option value="10" selected>10 × 10</option>
+            <option value="15">15 × 15</option>
+          </select></label
+        >
+        <label class="tool-puzzle"
+          >PUZZLE
+          <select id="puzzleSelect"></select
+        ></label>
+        <div class="stat stat-time">TIME <b id="timer">00:00</b></div>
+        <div class="stat stat-mistakes">
+          MISTAKES <b id="mistakes">0 / 3</b>
+        </div>
+        <div class="stat stat-best">BEST <b id="best">--:--</b></div>
+      </section>
+      <section class="game-layout">
+        <div class="puzzle-frame" id="puzzleFrame">
+          <div class="corner" aria-hidden="true">PIXEL<br />LOGIC</div>
+          <div id="colClues" class="col-clues" aria-label="Column clues"></div>
+          <div id="rowClues" class="row-clues" aria-label="Row clues"></div>
+          <div
+            id="board"
+            class="board"
+            role="group"
+            aria-label="Nonogram puzzle: arrow keys move, Enter paints"
+          ></div>
+          <div
+            id="pauseOverlay"
+            class="result-overlay pause-overlay"
+            role="dialog"
+            aria-modal="true"
+            aria-hidden="true"
+            aria-labelledby="pauseTitle"
+          >
+            <b id="pauseTitle">PAUSED</b><span>YOUR PROGRESS IS SAVED</span
+            ><button id="resumeButton" type="button">CONTINUE</button>
+          </div>
+          <div id="revealName" class="reveal-name" aria-live="polite">
+            <span>PICTURE REVEALED</span><b></b>
+          </div>
+          <div
+            id="resultOverlay"
+            class="result-overlay"
+            role="dialog"
+            aria-modal="true"
+            aria-hidden="true"
+            aria-labelledby="resultTitle"
+            aria-describedby="resultText"
+          >
+            <b id="resultTitle">PICTURE COMPLETE</b
+            ><span id="resultText">EVERY LINE IS SOLVED</span
+            ><button id="resultButton" type="button">NEXT PUZZLE</button>
+          </div>
+        </div>
+        <aside id="controlsPanel">
+          <button id="progressSummary" class="progress-summary" type="button">
+            10×10 PACK · 0 / 15
+          </button>
+          <div class="mode-switch" role="group" aria-label="Cell mode">
+            <button id="modeFill" class="active" type="button">
+              <i></i>FILL</button
+            ><button id="modeMark" type="button"><i>×</i>MARK</button>
+          </div>
+          <div class="actions">
+            <button id="undoButton" type="button">↶<span>UNDO</span></button
+            ><button id="hintButton" type="button">?<span>HINT</span></button
+            ><button id="resetButton" type="button">↺<span>RESET</span></button
+            ><button id="pauseButton" type="button">PAUSE</button>
+          </div>
+          <div id="utilityDock" class="utility-dock" aria-label="Game tools">
+            <button
+              class="theme-toggle"
+              type="button"
+              aria-label="Theme: system"
+            >
+              AUTO
+            </button>
+          </div>
+          <p>
+            Fill cells to match each clue. Tap again to erase. Outlined starter
+            cells are locked.
+          </p>
+        </aside>
+      </section>
+      <footer>
+        TAP OR DRAG TO PAINT · RIGHT CLICK TO MARK · F / X SWITCH MODE · ARROWS
+        MOVE
+      </footer>
+    </main>
+    <section
+      id="levelOverlay"
+      class="level-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="galleryTitle"
+      aria-hidden="true"
+    >
+      <div class="level-dialog">
+        <header>
+          <div>
+            <span id="galleryTitle">PUZZLE LIBRARY</span
+            ><b id="galleryProgress">0 / 15 COMPLETE</b>
+          </div>
+          <button
+            id="closeLevels"
+            type="button"
+            aria-label="Close level selection"
+          >
+            CLOSE
+          </button>
+        </header>
+        <div id="levelGrid" class="level-grid"></div>
       </div>
-      <aside>
-        <button id="progressSummary" class="progress-summary" type="button">10×10 PACK · 0 / 15</button>
-        <div class="mode-switch" role="group" aria-label="Cell mode"><button id="modeFill" class="active" type="button"><i></i>FILL</button><button id="modeMark" type="button"><i>×</i>MARK</button></div>
-        <div class="actions"><button id="undoButton" type="button">↶<span>UNDO</span></button><button id="hintButton" type="button">?<span>HINT</span></button><button id="resetButton" type="button">↺<span>RESET</span></button></div>
-        <p>Fill cells to match every row and column clue. Mark cells that must stay empty.</p>
-      </aside>
     </section>
-    <footer>TAP OR DRAG TO PAINT · RIGHT CLICK TO MARK · F / X SWITCH MODE · ARROWS MOVE</footer>
-  </main>
-  <section id="levelOverlay" class="level-overlay" aria-hidden="true"><div class="level-dialog"><header><div><span>PUZZLE LIBRARY</span><b id="galleryProgress">0 / 15 COMPLETE</b></div><button id="closeLevels" type="button" aria-label="Close level selection">CLOSE</button></header><div id="levelGrid" class="level-grid"></div></div></section>
-  <script src="rules.js?v=nonogram-retry-reset"></script><script src="game.js?v=nonogram-retry-reset"></script>
-  <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
-</body>
+    <script src="rules.js?v=nonogram-audit-1"></script>
+    <script src="game.js?v=nonogram-audit-1"></script>
+  </body>
 </html>
