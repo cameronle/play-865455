@@ -3,7 +3,7 @@
 const canvas=document.getElementById('game'),ctx=canvas.getContext('2d'),W=canvas.width,H=canvas.height,$=id=>document.getElementById(id);
 const RULES=MelonLabRules;
 const FRUITS=RULES.FRUITS;
-const BIN={x:70,y:72,w:580,h:590},GRAVITY=1180,STIR_DURATION=1.35,TOP_CLEAR_DURATION=1.2,STEP=1/120;
+const BIN={x:70,y:72,w:580,h:590},GRAVITY=1180,STIR_DURATION=1.35,TOP_CLEAR_DURATION=1.2,STEP=1/120,MAX_STRAIN=.2;
 let accumulator=0,rafId=0,dirty=true,paletteCache=null,clearing=false,pointerOwner=null,framesRendered=0,canvasLabelPx=11,canvasFramePx=1;
 const heldKeys=new Map(),actionPointers=new Map(),actionClicks=new Set();
 const ui={current:$('currentFruit'),currentDot:$('currentDot'),score:$('score'),best:$('best'),energy:$('energy'),fruitCount:$('fruitCount'),next:$('nextFruit'),nextDot:$('nextDot'),overlay:$('overlay'),message:$('message'),detail:$('detail'),start:$('startButton'),pause:$('pauseButton'),stir:$('stirButton'),mobileStir:$('mobileStirButton'),drop:$('dropButton'),mode:$('modeButton'),route:$('route'),unlockToast:$('unlockToast'),profile:$('profileStatus'),routeSummary:$('routeSummary')};
@@ -52,11 +52,21 @@ function radiusAlong(f,nx,ny,base=RULES.collisionRadius(f)){const a=f.shapeA??1,
 function advanceShape(f,dt){
  let x=f.strainX||0,y=f.strainY||0,vx=f.strainVX||0,vy=f.strainVY||0;
  vx+=((f.targetX||0)-x)*220*dt-20*vx*dt;vy+=((f.targetY||0)-y)*220*dt-20*vy*dt;x+=vx*dt;y+=vy*dt;
- const length=Math.hypot(x,y);if(length>.105){x*=.105/length;y*=.105/length;vx*=.5;vy*=.5}
- f.strainX=x;f.strainY=y;f.strainVX=vx;f.strainVY=vy;f.targetX=0;f.targetY=0;f.pressure=0;cacheShape(f);
+ const length=Math.hypot(x,y);if(length>MAX_STRAIN){x*=MAX_STRAIN/length;y*=MAX_STRAIN/length;vx*=.5;vy*=.5}
+ f.strainX=x;f.strainY=y;f.strainVX=vx;f.strainVY=vy;f.targetX=0;f.targetY=0;f.pressure=0;f.impactKick=0;cacheShape(f);
 }
 function cacheShape(f){const amount=Math.hypot(f.strainX||0,f.strainY||0),angle=Math.atan2(f.strainY||0,f.strainX||0)/2,co=Math.cos(angle),si=Math.sin(angle),long=Math.exp(amount),short=Math.exp(-amount);f.shapeA=co*co*long+si*si*short;f.shapeB=co*si*(long-short);f.shapeC=si*si*long+co*co*short}
-function contactShape(f,nx,ny,speed=0,overlap=0,load=1){const pressure=clamp((.018*load+Math.max(0,speed)*.00012+overlap*.001)*(mode==='semi-fluid'?1:.55),.004,.095);if(pressure>(f.pressure||0)){f.pressure=pressure;f.targetX=pressure*(ny*ny-nx*nx);f.targetY=-2*pressure*nx*ny}}
+function contactShape(f,nx,ny,speed=0,overlap=0,load=1){
+ const softness=mode==='semi-fluid'?1:.55,axisX=ny*ny-nx*nx,axisY=-2*nx*ny;
+ // Smaller bodies yield under a heavier neighbor. Low floor pressure alone
+ // must not flatten the supports so far that they close the same small gap.
+ const pressure=clamp((.03*load+Math.max(0,load-1)*.2+Math.max(0,speed)*.00012+overlap*.001)*softness,.004,.18);
+ if(pressure>(f.pressure||0)){f.pressure=pressure;f.targetX=pressure*axisX;f.targetY=pressure*axisY}
+ // Impact is strain momentum, not a target discarded after one 120Hz step.
+ // Charge only the strongest kick per step, never all ten solver passes.
+ const kick=clamp((speed-65)*.006*softness,0,2.8),previous=f.impactKick||0;
+ if(kick>previous){f.strainVX=(f.strainVX||0)+(kick-previous)*axisX;f.strainVY=(f.strainVY||0)+(kick-previous)*axisY;f.impactKick=kick}
+}
 function hitBoundaries(f){
  const boundaryR=RULES.boundaryRadius(f),rx=radiusAlong(f,1,0,boundaryR),ry=radiusAlong(f,0,1,boundaryR),left=BIN.x+rx+5,right=BIN.x+BIN.w-rx-5,floor=BIN.y+BIN.h-ry-5;
  if(f.x<=left+.6)contactShape(f,1,0,-f.vx);if(f.x>=right-.6)contactShape(f,1,0,f.vx);if(f.y>=floor-.6)contactShape(f,0,1,f.vy);
@@ -75,7 +85,7 @@ function physics(dt){
    const a=fruits[i];if(a.dead||reserved.has(a))continue;
    for(let j=i+1;j<fruits.length;j++){
     const b=fruits[j];if(b.dead||reserved.has(b))continue;
-    const dx=b.x-a.x,dy=b.y-a.y,broad=(RULES.collisionRadius(a)+RULES.collisionRadius(b))*1.12+.35;if(Math.abs(dx)>broad||Math.abs(dy)>broad)continue;const dist=Math.hypot(dx,dy),nx=dist>1e-7?dx/dist:1,ny=dist>1e-7?dy/dist:0,min=radiusAlong(a,nx,ny)+radiusAlong(b,nx,ny);if(dist>min+.35)continue;
+    const dx=b.x-a.x,dy=b.y-a.y,broad=(RULES.collisionRadius(a)+RULES.collisionRadius(b))*Math.exp(MAX_STRAIN)+.35;if(Math.abs(dx)>broad||Math.abs(dy)>broad)continue;const dist=Math.hypot(dx,dy),nx=dist>1e-7?dx/dist:1,ny=dist>1e-7?dy/dist:0,min=radiusAlong(a,nx,ny)+radiusAlong(b,nx,ny);if(dist>min+.35)continue;
     if(a.level===b.level&&a.age>.08&&b.age>.08&&(a.level===FRUITS.length-1||RULES.nextMergeLevel(a.level,currentProfile())!==null)){merges.push([a,b]);reserved.add(a);reserved.add(b);break}
     const overlap=Math.max(0,min-dist),ia=1/Math.pow(RULES.collisionRadius(a),2),ib=1/Math.pow(RULES.collisionRadius(b),2),total=ia+ib;
     a.x-=nx*overlap*ia/total;a.y-=ny*overlap*ia/total;b.x+=nx*overlap*ib/total;b.y+=ny*overlap*ib/total;
