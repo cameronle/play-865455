@@ -3,7 +3,7 @@
   const KEY='play-theme';
   const MODES=['system','light','dark'];
   const media=window.matchMedia('(prefers-color-scheme: dark)');
-  let mode=localStorage.getItem(KEY);
+  let mode;try{mode=localStorage.getItem(KEY);}catch(_){}
   if(!MODES.includes(mode))mode='system';
 
   function resolved(){return mode==='system'?(media.matches?'dark':'light'):mode}
@@ -33,7 +33,7 @@
   }
   function cycle(){
     mode=MODES[(MODES.indexOf(mode)+1)%MODES.length];
-    localStorage.setItem(KEY,mode);
+    try{localStorage.setItem(KEY,mode);}catch(_){}
     apply();
   }
   function bind(){

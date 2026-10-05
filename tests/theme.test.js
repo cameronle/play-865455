@@ -6,7 +6,7 @@ const vm=require('node:vm');
 const lightRoutes=['2048','tetris','snake','minesweeper','sudoku','gomoku'];
 const canvasRoutes=require('../data/games.js').map(g=>g.path).filter(route=>fs.existsSync(`${route}/game.js`)&&/<canvas\b/.test(fs.readFileSync(`${route}/index.html`,'utf8')));
 
-function bootTheme(saved=null,dark=false){
+function bootTheme(saved=null,dark=false,blocked=false){
   const listeners={};
   const root={dataset:{},style:{}};
   const meta={content:''};
@@ -14,13 +14,14 @@ function bootTheme(saved=null,dark=false){
   const media={matches:dark,addEventListener(type,fn){listeners.media=fn;}};
   const store=new Map(saved?[['play-theme',saved]]:[]);
   const document={documentElement:root,readyState:'complete',querySelectorAll:()=>[toggle],querySelector:()=>meta,addEventListener(){},dispatchEvent(){}};
-  const sandbox={document,localStorage:{getItem:k=>store.get(k)||null,setItem:(k,v)=>store.set(k,v)},matchMedia:()=>media,getComputedStyle:()=>({getPropertyValue:()=>dark?'#090d14':'#faf8ef'}),requestAnimationFrame:fn=>fn(),CustomEvent:function(){}};
+  const sandbox={document,localStorage:{getItem(k){if(blocked)throw Error('storage blocked');return store.get(k)||null;},setItem(k,v){if(blocked)throw Error('storage blocked');store.set(k,v);}},matchMedia:()=>media,getComputedStyle:()=>({getPropertyValue:()=>dark?'#090d14':'#faf8ef'}),requestAnimationFrame:fn=>fn(),CustomEvent:function(){}};
   sandbox.window=sandbox;
   vm.createContext(sandbox);
   vm.runInContext(fs.readFileSync('theme.js','utf8'),sandbox);
   return {root,toggle,store,listeners,media};
 }
 
+test('theme remains usable when browser storage is denied',()=>{const app=bootTheme(null,false,true);assert.equal(app.root.dataset.themeMode,'system');app.listeners.click();assert.equal(app.root.dataset.theme,'light');app.listeners.click();assert.equal(app.root.dataset.theme,'dark');});
 test('shared theme defaults to system and cycles system, light, dark',()=>{
   const app=bootTheme(null,true);
   assert.equal(app.root.dataset.theme,'dark');
