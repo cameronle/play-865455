@@ -14,6 +14,7 @@
   --coral: #ed7e78;
   --purple: #aa9bd8;
   --shadow: #d8c5b3;
+  --preview-outline-alpha: .4;
 }
 [data-theme="dark"] {
   --bg: #111a22;
@@ -29,6 +30,7 @@
   --coral: #ed837c;
   --purple: #aa9bd8;
   --shadow: #081116;
+  --preview-outline-alpha: .12;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--ink); font: 12px ui-rounded, "SF Pro Rounded", "Arial Rounded MT Bold", system-ui, sans-serif; }

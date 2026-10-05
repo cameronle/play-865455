@@ -26,7 +26,7 @@ function createCave(options = {}) {
       get(o, key) {
         return key in o
           ? o[key]
-          : (...args) => stats.commands.push([key, ...args]);
+          : (...args) => {stats.commands.push([key, ...args]);options.onDraw?.({method:key,args,fill:o.fillStyle,stroke:o.strokeStyle,alpha:o.globalAlpha??1,lineWidth:o.lineWidth,shadowBlur:o.shadowBlur});};
       },
       set(o, key, v) {
         o[key] = v;
