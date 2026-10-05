@@ -106,15 +106,15 @@ test('the guaranteed main route uses ordinary static platforms with conservative
     assert.ok(main.length>100,`seed ${seed}: no guaranteed main route`);
     for(let i=1;i<main.length;i++){
       assert.equal(main[i].type,'normal');
-      assert.ok(main[i-1].y-main[i].y<=120,'vertical reserve');
-      assert.ok(Math.abs(main[i].x+main[i].w/2-main[i-1].x-main[i-1].w/2)<=90,'horizontal reserve');
+      assert.ok(main[i-1].y-main[i].y<=128,'stage-capped vertical reserve');
+      assert.ok(require('../sky-hopper/rules').hasSafeApproach(main[i-1],main[i]),'nine-state horizontal reserve');
     }
   }
 });
 
 
 test('dangerous bonus platforms are optional beside the static main route',()=>{
-  const game=createHopper(17);game.run('reset();cameraY=-6000;generatePlatforms()');
+  const game=createHopper(17);game.run('reset();cameraY=-12000;generatePlatforms()');
   const s=game.snapshot(),bonus=s.platforms.filter(p=>!p.safe);
   assert.ok(bonus.length>10,'bonus choices are missing');
   assert.deepEqual([...new Set(bonus.map(p=>p.type))].sort(),['breaking','fading','moving','spring']);

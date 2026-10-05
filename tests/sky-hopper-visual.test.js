@@ -4,6 +4,18 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const {createHopper}=require('./helpers/doodle-harness');
 
+test('playfield height budgets prioritize play without changing the logical arena',()=>{
+  const css=fs.readFileSync('sky-hopper/style.css','utf8'),html=fs.readFileSync('sky-hopper/index.html','utf8');
+  const budgets=[...css.matchAll(/--shell-reserve:\s*(\d+)px/g)].map(m=>Number(m[1]));
+  assert.ok(budgets.length>=2,'desktop and compact portrait need explicit measured UI budgets');
+  assert.ok(budgets[0]<=350,'desktop should not reserve almost 400px for surrounding UI');
+  assert.ok(budgets.slice(1).every(n=>n<=286),'portrait HUD and controls must leave most height to play');
+  assert.match(css,/100svh\s*-\s*var\(--shell-reserve\)/);
+  assert.match(css,/env\(safe-area-inset-bottom\)/);
+  assert.match(html,/<canvas id="game" width="480" height="720"/,'physical world must stay unchanged');
+  assert.match(css,/\.controls button\s*\{[^}]*min-height:\s*44px/,'movement targets remain usable');
+});
+
 test('Sky Hop uses a flat shell without doodle branding, rotated framing or decorative marks',()=>{
   const html=fs.readFileSync('sky-hopper/index.html','utf8'),css=fs.readFileSync('sky-hopper/style.css','utf8');
   assert.match(html,/<title>Sky Hop/);

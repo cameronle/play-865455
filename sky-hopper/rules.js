@@ -25,7 +25,7 @@
     const dt=PHYSICS.step;
     for(let n=0;n<240;n++){
       const previous=bottom;
-      if(tvx){tx+=tvx*dt;if(tx<4){tx=4;tvx=Math.abs(tvx)}if(tx+to.w>width-4){tx=width-4-to.w;tvx=-Math.abs(tvx)}}
+      if(tvx){const min=to.minX??4,max=to.maxX??width-4-to.w;tx+=tvx*dt;if(tx<min){tx=min;tvx=Math.abs(tvx)}if(tx>max){tx=max;tvx=-Math.abs(tvx)}}
       vx=horizontalVelocity(vx,steerTowards(x+22,vx,tx+to.w/2),dt);x+=vx*dt;
       if(x+44<0)x=width;else if(x>width)x=-44;
       vy+=PHYSICS.gravity*dt;bottom+=vy*dt;

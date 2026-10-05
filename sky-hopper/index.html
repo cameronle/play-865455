@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#f4f6f8">
   <script src="/theme.js?v=theme-2"></script>
-  <script src="/clear-game-data.js?v=clear-1"></script>
+  <script src="/clear-game-data.js?v=clear-hopper-v2"></script>
   <title>Sky Hop · PLAY</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg?v=hopper-flat-animal-2">
   <link rel="stylesheet" href="/theme.css?v=clear-1">
-  <link rel="stylesheet" href="style.css?v=hopper-flat-animal-2">
+  <link rel="stylesheet" href="style.css?v=hopper-play-v2-large-1">
 </head>
 <body>
   <main id="gameShell" class="page">
@@ -28,11 +28,16 @@
       <div class="stat stat-best"><span id="labelBest">BEST</span><b id="best">000000</b></div>
     </section>
 
+    <section class="run-status" aria-label="Run progress">
+      <div class="run-line"><span id="stageText">WARMUP</span><span id="comboText">COMBO 0 · ×1</span></div>
+      <div class="run-line run-goal"><span id="goalText">START FOR A RUN GOAL</span><span id="feedbackText"></span></div>
+    </section>
     <div class="screen">
       <canvas id="game" width="480" height="720" aria-label="Sky Hop playfield"></canvas>
       <div id="overlay" class="overlay">
         <b id="message">SKY HOP</b>
         <span id="detail">AUTO BOUNCE · COLLECT STARS</span>
+        <small id="recordNote">V2 RECORDS · OLD RECORDS KEPT</small>
         <button id="startButton" type="button">START</button>
       </div>
     </div>
@@ -42,15 +47,16 @@
       <button id="rightButton" type="button">RIGHT →</button>
     </section>
     <div id="gameTips" class="tips" aria-label="How to play">
-      <span id="tipSafe">GREEN = SAFE ROUTE</span>
+      <span id="tipSafe">PLAIN = STABLE FOOTING</span>
       <span id="tipTypes">↔ MOVING · ╱ FRAGILE · ◌ FADING</span>
       <span id="tipSpring">↑ SPRING BOOST</span>
-      <span id="tipBonus">★ BONUS ROUTE = 2× POINTS</span>
+      <span id="tipBonus">CENTER = COMBO · ★ HIGH REWARD</span>
     </div>
     <footer id="keyboardHelp">ARROWS / A D MOVE · TOUCH EITHER SIDE · P PAUSE</footer>
   </main>
   <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
-  <script src="rules.js?v=doodle-hop-2"></script>
-  <script src="game.js?v=hopper-flat-animal-2"></script>
+  <script src="rules.js?v=hopper-play-v2"></script>
+  <script src="progression.js?v=hopper-play-v2"></script>
+  <script src="game.js?v=hopper-play-v2"></script>
 </body>
 </html>

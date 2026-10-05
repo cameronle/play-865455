@@ -30,7 +30,8 @@ function createHopper(seed = 1, options = {}) {
     addEventListener:(t,f)=>{if(!listeners.has(t))listeners.set(t,[]);listeners.get(t).push(f)}};
   sandbox.window=sandbox; const env=vm.createContext(sandbox);
   if(fs.existsSync('sky-hopper/rules.js'))sandbox.DoodleHopRules=require(require('node:path').resolve('sky-hopper/rules.js'));
-  const source=fs.readFileSync('sky-hopper/game.js','utf8');
+  if(fs.existsSync('sky-hopper/progression.js'))sandbox.SkyHopperProgression=require(require('node:path').resolve('sky-hopper/progression.js'));
+  const source=options.source||fs.readFileSync('sky-hopper/game.js','utf8');
   if(!/\}\)\(\);?\s*$/.test(source))throw new Error('Expected a game IIFE');
   vm.runInContext(source.replace(/\}\)\(\);?\s*$/, ';globalThis.__hopTest={run:code=>eval(code)};})();'),env);
   const run=code=>env.__hopTest.run(code);
@@ -38,6 +39,6 @@ function createHopper(seed = 1, options = {}) {
     event:(t,event={})=>{for(const f of listeners.get(t)||[])f({preventDefault(){},...event})},
     frame:time=>{now=time;const current=[...frames.values()];frames.clear();current.forEach(f=>f(time))},
     pending:()=>frames.size,
-    snapshot:()=>JSON.parse(run('JSON.stringify({state,paused,player,platforms,stars,cameraY,highest,score,starCount,input})'))};
+    snapshot:()=>JSON.parse(run('JSON.stringify({state,paused,player,platforms,stars,cameraY,highest,score,starCount,input,combo,maxCombo,goal,feedback})'))};
 }
 module.exports={createHopper};
