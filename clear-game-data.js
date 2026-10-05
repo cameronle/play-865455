@@ -20,7 +20,7 @@
     minesweeper: ['minesweeper-'],
     nonogram: ['nonogram-'],
     shooter: ['sky-patrol-best'],
-    'sky-hopper': ['doodleHopBest', 'doodleHopBestStars', 'skyHopperBest'],
+    'sky-hopper': ['doodleHopBest', 'doodleHopBestStars', 'skyHopperBest', 'skyHopperRecordsV2'],
     'mushroom-trail': ['mushroomTrailBest'],
     'melon-lab': ['melonLabBest'],
     'sliding-puzzle': ['sliding-puzzle-best-v1', 'sliding-puzzle-game-v1'],

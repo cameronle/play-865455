@@ -61,7 +61,15 @@ button { font: inherit; cursor: pointer; }
 .stat-stars b { color: var(--star-ink); }
 .stat-height b { color: var(--accent); }
 
-.screen { position: relative; width: min(100%, 480px, calc((100svh - 326px) * 2 / 3 + 2px)); margin: 0 auto; padding: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); }
+.run-status { width:min(100%,480px); margin:0 auto 8px; font-size:11px; line-height:18px; color:var(--muted); }
+.run-line { display:flex; justify-content:space-between; gap:8px; min-height:18px; }
+#stageText { color:var(--accent); font-weight:600; }
+#comboText { font-variant-numeric:tabular-nums; white-space:nowrap; }
+.run-goal span { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+#feedbackText { color:var(--accent); flex-shrink:0; }
+.overlay small { font-size:10px; color:var(--muted); }
+.overlay span { white-space:pre-line; }
+.screen { position: relative; width: min(100%, 480px, calc((100svh - 370px) * 2 / 3 + 2px)); margin: 0 auto; padding: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); }
 .screen canvas { display: block; width: 100%; height: auto; aspect-ratio: 2 / 3; background: var(--paper); touch-action:none; }
 .overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 20px; background: var(--paper); text-align: center; }
 .overlay.hidden { display: none; }
@@ -94,19 +102,30 @@ body .clear-data-toggle { right: calc(max(12px, env(safe-area-inset-right)) + 70
   footer { display: none; }
 }
 
+/* Short portrait screens have a narrow playfield; keep every overlay action reachable. */
+@media (max-width: 480px) and (max-height: 700px) {
+  .overlay { padding: 8px; gap: 6px; }
+  .overlay b { font-size: 18px; }
+  .overlay span { font-size: 11px; line-height: 1.35; }
+  .overlay small { font-size: 9px; line-height: 1.2; }
+  .overlay button { min-height: 44px; padding: 8px 12px; }
+  .overlay[data-state="paused"] small, .overlay[data-state="over"] small { display: none; }
+}
+
 /* Reserve space for both help lines so desktop scrollbars cannot cover tools. */
 @media (min-width: 601px) and (min-height: 601px) {
-  .screen { width: min(100%, 480px, calc((100svh - 354px) * 2 / 3 + 2px)); }
+  .screen { width: min(100%, 480px, calc((100svh - 398px) * 2 / 3 + 2px)); }
 }
 
 @media (min-aspect-ratio: 4/3) and (max-height: 600px) {
   .page { width: min(740px, 100%); padding: 8px 12px 64px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(180px, 220px); gap: 10px 16px; }
   .topbar { grid-column: 1 / -1; min-height: 44px; margin-bottom: 0; }
-  .screen { grid-column: 1; grid-row: 2 / 6; width: min(100%, calc((100svh - 78px) * 2 / 3 + 2px)); align-self: start; }
+  .screen { grid-column: 1; grid-row: 2 / 7; width: min(100%, calc((100svh - 78px) * 2 / 3 + 2px)); align-self: start; }
   .hud { grid-column: 2; grid-row: 2; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0; }
-  .controls { grid-column: 2; grid-row: 3; margin: 0; }
-  .tips { grid-column: 2; grid-row: 4; margin: 0; justify-content: flex-start; }
-  footer { grid-column: 2; grid-row: 5; margin: 0; font-size: 9px; }
+  .run-status { grid-column:2; grid-row:3; margin:0; font-size:10px; }
+  .controls { grid-column: 2; grid-row: 4; margin: 0; }
+  .tips { grid-column: 2; grid-row: 5; margin: 0; justify-content: flex-start; }
+  footer { display:none; grid-column: 2; grid-row: 6; margin: 0; font-size: 9px; }
   .overlay { padding: 10px; gap: 8px; }
   .overlay b { font-size: 19px; }
   .overlay span { font-size: 11px; }
