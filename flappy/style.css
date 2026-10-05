@@ -1,10 +1,19 @@
 :root {
   --bg:#fffaf0; --panel:#fffdf7; --paper:#fffaf0; --grid:#b9dfe0; --ink:#3d3832; --muted:#8a7c6e;
   --line:#d9cfc1; --mint:#9eddbd; --blue:#8fc9eb; --yellow:#f7d66c; --coral:#f28c78; --purple:#b8a7e8; --shadow:#d6c8b7;
+  /* Scene colors are independent of the page/HUD: cool scenery, warm courier. */
+  --scene-sky:#eef5f7; --scene-grid:#b5cdd6; --scene-cloud:#f9fcfd; --scene-cloud-line:#a4bec8;
+  --scene-pipe:#8cafbd; --scene-pipe-line:#476d80; --scene-ground:#c4dade; --scene-ground-line:#668895;
+  --scene-ground-detail:#8aabb6; --scene-waypoint:#8ca5b1;
+  --scene-bird:#f2c568; --scene-wing:#dca04c; --scene-beak:#dc9160; --scene-bird-line:#42433c; --scene-eye:#fffaf0; --scene-cap:#d58269;
 }
 [data-theme="dark"] {
   --bg:#17232b; --panel:#20323a; --paper:#1b2b33; --grid:#38535b; --ink:#fff4dc; --muted:#a8b8b2;
   --line:#4d6668; --mint:#86cda9; --blue:#76b8de; --yellow:#f1ce63; --coral:#eb806f; --purple:#a99add; --shadow:#0d171d;
+  --scene-sky:#1c303b; --scene-grid:#46606d; --scene-cloud:#263d49; --scene-cloud-line:#496571;
+  --scene-pipe:#577f90; --scene-pipe-line:#adc7d2; --scene-ground:#2a4551; --scene-ground-line:#89a6b3;
+  --scene-ground-detail:#527582; --scene-waypoint:#48636f;
+  --scene-bird:#eac16d; --scene-wing:#c8944e; --scene-beak:#d99066; --scene-bird-line:#42433c; --scene-eye:#fffaf0; --scene-cap:#d58772;
 }
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font:12px ui-rounded,"SF Pro Rounded","Arial Rounded MT Bold",system-ui,sans-serif}
@@ -27,7 +36,8 @@ body{display:flex;justify-content:center}button,a{-webkit-tap-highlight-color:tr
 :root{--muted:#726456;--score-ink:#a84435;--record-ink:#70519c}
 [data-theme="dark"]{--muted:#a8b8b2;--score-ink:#f5aa9a;--record-ink:#d1c2fa}
 .page{padding-bottom:calc(64px + env(safe-area-inset-bottom))}
-.frame{width:min(100%,400px,var(--arena-width,400px));transform:none}
+.frame{width:min(100%,400px,var(--arena-width,400px));transform:none;background:var(--scene-sky)}
+.frame canvas{background:var(--scene-sky)}
 .toolbar,.stat-pill{min-width:0}
 .stat-pill{flex-wrap:wrap;gap:4px 8px}
 .stat-pill b{min-width:0;max-width:100%;font-size:clamp(12px,3.5vw,18px);overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
