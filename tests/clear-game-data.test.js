@@ -39,13 +39,16 @@ function boot(route, initialKeys) {
     async delete(name) { deletedCaches.push(name); return true; }
   };
   const location = {pathname: `/${route}/`, reload() { reloaded = true; }};
-  const window = {confirm: () => true, caches, location, dispatchEvent(event) { assert.equal(event.type, "game-data-clearing"); return true; }};
+  let confirmation='';const window = {confirm: message=>{confirmation=message;return true;}, caches, location, dispatchEvent(event) { assert.equal(event.type, "game-data-clearing"); return true; }};
   const sandbox = {document, localStorage: storage, sessionStorage, caches, location, window, console, Event: class { constructor(type) { this.type = type; } }};
   vm.createContext(sandbox);
   vm.runInContext(source, sandbox);
-  return {storage, buttons, sessionCleared: () => sessionCleared, deletedCaches, reloaded: () => reloaded};
+  return {storage, buttons, sessionCleared: () => sessionCleared, deletedCaches, reloaded: () => reloaded,confirmation:()=>confirmation};
 }
 
+test('Fish Feast clear touches exactly its two keys, not neighboring records or preferences',async()=>{
+ const app=boot('fish-feast',['fish-feast-progress-v1','fish-feast-settings-v1','fish-feast-progress-v1-extra','classic-snake-high-score','play-lang','play-theme']);assert.equal(app.buttons.length,1);app.buttons[0].dataset={confirm:'清除本游戏进度并重新载入？'};await app.buttons[0].clickHandler();assert.equal(app.confirmation(),'清除本游戏进度并重新载入？');for(const key of ['fish-feast-progress-v1','fish-feast-settings-v1'])assert.equal(app.storage[key],undefined);for(const key of ['fish-feast-progress-v1-extra','classic-snake-high-score','play-lang','play-theme'])assert.equal(app.storage[key],'saved');assert.equal(app.reloaded(),true);
+});
 test('every game page loads the shared clear-data utility', () => {
   assert.equal(games.length, catalog.length);
   for (const game of games) {

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+ <meta name="theme-color" content="#f5f8f7">
+ <script src="/theme.js?v=fish-full-2"></script>
+ <script src="/clear-game-data.js?v=fish-full-2" defer></script>
+ <title>小鱼成长记 · Fish Feast</title>
+ <link rel="icon" type="image/svg+xml" href="favicon.svg?v=fish-full-2">
+ <link rel="stylesheet" href="/theme.css?v=clear-1">
+ <link rel="stylesheet" href="style.css?v=fish-full-2">
+</head>
+<body>
+ <main class="page">
+  <header class="topbar">
+   <a class="back" href="/" data-text="back">← 合集</a>
+   <h1 data-text="title">小鱼成长记</h1>
+   <div class="utilities"><button id="languageButton" type="button" aria-label="Switch language">EN</button><button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button></div>
+  </header>
+  <section class="hud" aria-label="Game status">
+   <div class="stat"><span data-text="level">关卡</span><b id="levelValue">01</b></div>
+   <div class="stat"><span data-text="size">体型</span><b id="tierValue">01</b></div>
+   <div class="stat"><span data-text="lives">生命</span><b id="livesValue">3 / 3</b></div>
+   <div class="stat"><span data-text="score">得分</span><b id="scoreValue">0</b></div>
+  </section>
+  <section class="growth-line"><span data-text="growth">成长</span><div id="growthBar" class="growth-track" role="progressbar" aria-label="Growth"><i id="growthFill"></i></div><b id="growthValue">0 / 44</b></section>
+  <section id="arena" class="arena">
+   <canvas id="game" tabindex="0" width="760" height="520" aria-label="Fish Feast playfield"></canvas>
+   <div id="overlay" class="overlay">
+    <section class="panel" role="dialog" aria-modal="true" aria-labelledby="message">
+     <span id="chapterName" class="eyebrow">01 / 浅海</span>
+     <h2 id="message">从小鱼开始</h2>
+     <p id="detail">吃小鱼、躲大鱼。长大以后，回头反吃。</p>
+     <label id="levelPicker"><span data-text="choose">选择关卡</span><select id="levelSelect"><option value="0">01 · 浅海初游</option></select></label>
+     <button id="startButton" class="primary" type="button">开始游动</button>
+     <button id="nextButton" class="primary" type="button" hidden>下一关</button>
+     <button id="restartButton" class="secondary" type="button" hidden>重新开始</button>
+     <button id="menuButton" class="secondary" type="button" hidden>返回选关</button>
+    </section>
+   </div>
+  </section>
+  <section class="action-row">
+   <div class="legend"><span class="legend-food" data-text="eat">小鱼可吃</span><span class="legend-danger" data-text="avoid">大鱼要躲</span><span class="legend-equal" data-text="equal">同级安全</span></div>
+   <div class="actions"><button id="pauseButton" type="button" disabled>暂停</button><button id="dashButton" class="primary" type="button" disabled>冲刺</button></div>
+  </section>
+  <section class="bottom-row"><p class="hint"><span class="desktop-hint" data-text="desktop">鼠标 / WASD / 方向键游动 · 空格冲刺</span><span class="mobile-hint" data-text="mobile">按住画布拖动 · 松手停下 · 另一指点冲刺</span></p></section>
+  <footer data-text="persistence">3 篇 · 12 关 · 解锁与纪录仅保存在本机，不保存战斗中途状态。</footer>
+ </main>
+ <script src="content.js?v=fish-full-2"></script>
+ <script src="rules.js?v=fish-full-2"></script>
+ <script src="progress.js?v=fish-full-2"></script>
+ <script src="behaviors.js?v=fish-full-2"></script>
+ <script src="simulation.js?v=fish-full-2"></script>
+ <script src="input.js?v=fish-full-2"></script>
+ <script src="render.js?v=fish-full-2"></script>
+ <script src="game.js?v=fish-full-2"></script>
+</body>
+</html>

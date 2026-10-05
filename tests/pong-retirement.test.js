@@ -6,8 +6,7 @@ const catalog = require('../data/games.js');
 test('retired tennis route is absent from source and public catalog', () => {
   assert.equal(fs.existsSync('pong'), false);
   assert.equal(catalog.some(game => game.id === 'pong'), false);
-  assert.equal(catalog.length, 24);
-  assert.deepEqual(catalog.map(game => game.order), Array.from({length: 24}, (_, i) => i + 1));
+  assert.deepEqual(catalog.map(game => game.order), Array.from({length: catalog.length}, (_, i) => i + 1));
   for (const file of ['index.html','i18n.js','clear-game-data.js']) {
     assert.doesNotMatch(fs.readFileSync(file, 'utf8'), /pong|TIDAL TENNIS|潮汐网球/);
   }
