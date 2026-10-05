@@ -1,6 +1,25 @@
 const test=require('node:test'),assert=require('node:assert/strict');
 const {boot,fruit}=require('./helpers/melon-runtime');
 
+test('ordinary drops visibly spread and stay soft long enough to read at every size',()=>{
+ for(const level of [0,3,6,10]){
+  const b=boot();b.test.start();const f=fruit(level,360,657-fruit(level,0,0).boundaryR-2,{vy:500});
+  b.test.set({fruits:[f]});const ratios=[];
+  for(let i=0;i<96;i++){b.test.physics(1/120);const s=b.window.MelonLab.getSnapshot().fruits[0];ratios.push(s.boundaryY/s.boundaryR);}
+  assert.ok(Math.min(...ratios.slice(0,22))<.80,`tier ${level}: a normal drop must flatten by 20%, observed ${Math.min(...ratios)}`);
+  assert.ok(ratios.filter(r=>r<.85).length>=18,`tier ${level}: readable soft spreading must last at least 150ms`);
+  assert.ok(ratios.at(-1)>.90,'the body recovers instead of permanently becoming a pancake');
+ }
+});
+
+test('a heavier stack keeps the supporting fruit visibly compressed, then releases it',()=>{
+ const b=boot();b.test.start();const base=fruit(3,360,613),top=fruit(6,360,496);b.test.set({fruits:[base,top]});
+ for(let i=0;i<300;i++)b.test.physics(1/120);
+ const loaded=b.window.MelonLab.getSnapshot().fruits[0];assert.ok(loaded.boundaryY/loaded.boundaryR<.86,'steady load must visibly flatten its support, not only the first hit');
+ b.test.set({fruits:[base]});for(let i=0;i<180;i++)b.test.physics(1/120);
+ const released=b.window.MelonLab.getSnapshot().fruits[0];assert.ok(released.boundaryY/released.boundaryR>.94,'after unloading, the support recovers its shape');
+});
+
 test('a fast floor impact produces visible physical squash within 120ms, not a one-step target',()=>{
  const b=boot();b.test.start();b.test.set({fruits:[fruit(0,360,632,{vy:600})]});
  const heights=[];
@@ -53,7 +72,7 @@ test('floor impacts remain area-preserving across every fruit tier and collision
   b.test.set({fruits:[f]});
   for(let i=0;i<60;i++){
    b.test.physics(1/120);const s=b.window.MelonLab.getSnapshot().fruits[0],d=s.deformation;
-   assert.ok(Math.hypot(d.xx,d.xy)<=.20000001);assert.ok(Math.abs(d.a*d.c-d.b*d.b-1)<1e-8);
+   assert.ok(Math.hypot(d.xx,d.xy)<=.36000001);assert.ok(Math.abs(d.a*d.c-d.b*d.b-1)<1e-8);
    assert.ok(s.x>=75+s.boundaryX-1e-6&&s.x<=645-s.boundaryX+1e-6);assert.ok(s.y<=657-s.boundaryY+1e-6);
   }
  }

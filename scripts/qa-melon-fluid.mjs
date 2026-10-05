@@ -7,7 +7,7 @@ const out=path.resolve(process.env.MELON_QA_OUT||'/home/hermes/workspace/artifac
 fs.mkdirSync(out,{recursive:true});
 const version=await(await fetch((process.env.MELON_CDP_URL||'http://127.0.0.1:9222')+'/json/version')).json();
 const ws=new WebSocket(version.webSocketDebuggerUrl);await new Promise(r=>ws.addEventListener('open',r,{once:true}));
-let id=0,session,context,target,current='',fixture=false;const pending=new Map(),errors=[],rows=[],loadedHashes=[];
+let id=0,session,context,target,current='',fixture=false,recording=null;const pending=new Map(),errors=[],rows=[],loadedHashes=[];
 const sha=text=>crypto.createHash('sha256').update(text).digest('hex');
 const expectedHash=sha(fs.readFileSync(new URL('../melon-lab/game.js',import.meta.url)));
 const shim=`window.__melonFixture={load:()=>{start();cancelAnimationFrame(rafId);rafId=0;window.requestAnimationFrame=()=>0;fruits=[[3,296,613],[3,424,613],[0,360,545]].map(([level,x,y])=>{const t=FRUITS[level];return{x,y,level,r:t.r,collisionR:t.collisionR,boundaryR:t.boundaryR,vx:0,vy:0,rot:0,age:2,settled:false,dead:false}});draw();},advance:n=>{for(let i=0;i<n;i++){clock+=STEP*1000;update(STEP);fruits[0].x=296;fruits[1].x=424;fruits[0].vx=fruits[1].vx=0;}draw();return MelonLab.getSnapshot()}};`;
@@ -15,6 +15,10 @@ ws.addEventListener('message',event=>{
  const m=JSON.parse(event.data);
  if(m.id){const p=pending.get(m.id);if(p){pending.delete(m.id);clearTimeout(p.timer);m.error?p.reject(Error(JSON.stringify(m.error))):p.resolve(m.result)}}
  if(m.sessionId!==session)return;
+ if(m.method==='Page.screencastFrame'){
+  if(recording){const file=String(recording.frames.length).padStart(5,'0')+'.jpg';fs.writeFileSync(path.join(recording.directory,file),Buffer.from(m.params.data,'base64'));recording.frames.push({file,timestamp:m.params.metadata.timestamp});}
+  call('Page.screencastFrameAck',{sessionId:m.params.sessionId}).catch(()=>{});
+ }
  if(m.method==='Runtime.exceptionThrown')errors.push({case:current,error:m.params.exceptionDetails});
  if(m.method==='Network.responseReceived'&&m.params.response.status>=400)errors.push({case:current,url:m.params.response.url,status:m.params.response.status});
  if(m.method==='Fetch.requestPaused')handleResponse(m.params).catch(error=>{errors.push({case:current,interception:String(error)});call('Fetch.failRequest',{requestId:m.params.requestId,errorReason:'Failed'}).catch(()=>{})});
@@ -40,13 +44,14 @@ async function navigate(width,height,theme){
  await evaluate(`(()=>{for(let i=0;i<4&&document.documentElement.dataset.themeMode!==${JSON.stringify(theme)};i++)document.querySelector('.theme-toggle').click();window.scrollTo(0,0);return document.fonts.ready.then(()=>true)})()`);
  assert.equal((await snap()).state,'title');assert.equal(await evaluate('document.visibilityState'),'visible');
 }
-function invariant(s){for(const f of s.fruits){const m=f.deformation;assert.ok([f.x,f.y,f.vx,f.vy,m.a,m.b,m.c].every(Number.isFinite));assert.ok(f.x>=75+f.boundaryX-1e-5&&f.x<=645-f.boundaryX+1e-5);assert.ok(f.y<=657-f.boundaryY+1e-5);assert.ok(Math.hypot(m.xx,m.xy)<=.20000001);assert.ok(Math.abs(m.a*m.c-m.b*m.b-1)<1e-8)}}
+function invariant(s){for(const f of s.fruits){const m=f.deformation;assert.ok([f.x,f.y,f.vx,f.vy,m.a,m.b,m.c].every(Number.isFinite));assert.ok(f.x>=75+f.boundaryX-1e-5&&f.x<=645-f.boundaryX+1e-5);assert.ok(f.y<=657-f.boundaryY+1e-5);assert.ok(Math.hypot(m.xx,m.xy)<=.36000001);assert.ok(Math.abs(m.a*m.c-m.b*m.b-1)<1e-8)}}
 async function layout(width,height){const r=await evaluate(`(()=>{const c=document.querySelector('#game'),r=c.getBoundingClientRect();return{width:innerWidth,client:document.documentElement.clientWidth,scroll:document.documentElement.scrollWidth,canvas:r.toJSON(),touch:getComputedStyle(c).touchAction,border:getComputedStyle(document.querySelector('.arena')).borderTopWidth,theme:document.documentElement.dataset.theme}})()`);assert.equal(r.width,width);assert.ok(r.scroll<=r.client);assert.equal(r.touch,'none');assert.equal(r.border,'1px');assert.ok(r.canvas.left>=0&&r.canvas.right<=width+1&&r.canvas.top>=0&&r.canvas.bottom<=height+1);return r}
 async function native(width,height,theme){
  current='native-'+width+'-'+theme;await navigate(width,height,theme);assert.equal(await evaluate('typeof window.__melonFixture'),'undefined');
  const assets=await evaluate(`Promise.all([...document.querySelectorAll('script[src],link[rel="stylesheet"],link[rel="icon"]')].map(async e=>{const url=e.src||e.href,r=await fetch(url);return{url,status:r.status,type:r.headers.get('content-type'),text:await r.text()}}))`);
  for(const a of assets){assert.equal(a.status,200);assert.ok(!a.text.startsWith('<!doctype'));if(a.url.includes('/melon-lab/game.js'))assert.equal(sha(a.text),expectedHash)}
  await click('#startButton');await click('.brand');
+ const film=width===390&&theme==='light';if(film){recording={directory:path.join(out,current+'-film'),frames:[]};fs.mkdirSync(recording.directory,{recursive:true});await call('Page.startScreencast',{format:'jpeg',quality:90,maxWidth:width,maxHeight:height,everyNthFrame:2});}
  const samples=[];const sample=async()=>{const s=await snap();invariant(s);samples.push(s);return s};
  const initial=await snap();await call('Input.dispatchKeyEvent',{type:'keyDown',key:'ArrowRight',code:'ArrowRight',windowsVirtualKeyCode:39});await delay(140);await call('Input.dispatchKeyEvent',{type:'keyUp',key:'ArrowRight',code:'ArrowRight',windowsVirtualKeyCode:39});assert.ok((await snap()).aimX>initial.aimX+15);
  for(const x of [300,370,410,340,400,460,280,340,400,450,350,410]){
@@ -55,11 +60,12 @@ async function native(width,height,theme){
   else{await call('Input.dispatchMouseEvent',{type:'mouseMoved',x:px,y:py,button:'none'});await key(' ','Space',32)}
   for(let i=0;i<8;i++){await delay(80);await sample()}
  }
- const active=await sample(),peak=Math.max(...samples.flatMap(s=>s.fruits.map(f=>Math.hypot(f.deformation.xx,f.deformation.xy))));assert.equal(active.dropCount,12);assert.ok(active.score>0);assert.ok(peak>.075,'natural contacts must show visible strain');const screenshot=await shot(current);
+ const active=await sample(),peak=Math.max(...samples.flatMap(s=>s.fruits.map(f=>Math.hypot(f.deformation.xx,f.deformation.xy))));assert.equal(active.dropCount,12);assert.ok(active.score>0);assert.ok(peak>.20,'ordinary drops must read as soft bodies, not just tiny hard-ball flattening');const screenshot=await shot(current);
  const before=(await snap()).energy;await click(width<900?'#mobileStirButton':'#stirButton');const stirred=await snap();assert.ok(before-stirred.energy>=28);assert.ok(stirred.fluidPulse>1);await delay(300);invariant(await snap());
+ let filmManifest=null;if(film){await call('Page.stopScreencast');assert.ok(recording.frames.length>60,'capture actual native gameplay, not a single screenshot');filmManifest=path.join(recording.directory,'frames.json');fs.writeFileSync(filmManifest,JSON.stringify({fixture:false,injectedGameState:false,controlledClock:false,...recording},null,2));recording=null;}
  await click('#pauseButton');await delay(50);const frozen=await snap();await delay(180);const after=await snap();assert.equal(after.state,'paused');assert.equal(after.elapsedMs,frozen.elapsedMs);assert.equal(after.framesRendered,frozen.framesRendered);await click('#startButton');assert.equal((await snap()).state,'playing');
  const {targetId:other}=await call('Target.createTarget',{url:'about:blank',browserContextId:context},null);const {sessionId:otherSession}=await call('Target.attachToTarget',{targetId:other,flatten:true},null);await call('Page.bringToFront',{},otherSession);await waitFor('document.visibilityState==="hidden"&&MelonLab.getSnapshot().paused');const hidden=await snap();await delay(120);assert.equal((await snap()).elapsedMs,hidden.elapsedMs);await call('Page.bringToFront');await waitFor('document.visibilityState==="visible"');assert.equal((await snap()).state,'paused');await call('Target.closeTarget',{targetId:other},null);await click('#startButton');
- rows.push({case:current,input:width<900?'native CDP touch':'native keyboard/mouse',injectedGameState:false,clockAcceleration:false,drops:active.dropCount,score:active.score,peakStrain:peak,pausePaintIdle:true,nativeBackgroundPause:true,layout:await layout(width,height),assets:assets.map(a=>({url:a.url,status:a.status,sha256:sha(a.text)})),screenshot});fs.writeFileSync(path.join(out,current+'.json'),JSON.stringify(samples,null,2));
+ rows.push({case:current,input:width<900?'native CDP touch':'native keyboard/mouse',injectedGameState:false,clockAcceleration:false,drops:active.dropCount,score:active.score,peakStrain:peak,pausePaintIdle:true,nativeBackgroundPause:true,layout:await layout(width,height),assets:assets.map(a=>({url:a.url,status:a.status,sha256:sha(a.text)})),screenshot,filmManifest});fs.writeFileSync(path.join(out,current+'.json'),JSON.stringify(samples,null,2));
 }
 async function squeeze(width,height,theme,film=false){
  current='squeeze-'+width+'-'+theme;await navigate(width,height,theme);await waitFor('!!window.__melonFixture');await evaluate('__melonFixture.load()');const before=await snap();const startScreenshot=await shot(current+'-before'),samples=[];const frames=path.join(out,current+'-frames');if(film)fs.mkdirSync(frames,{recursive:true});
