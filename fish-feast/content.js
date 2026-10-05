@@ -29,5 +29,27 @@
   level(11,'deep','深海巡游','Deep patrol',82,['变向鱼引路，追击者和水母封路。保留脱身空间。','Weavers lead through chasers and jellyfish. Keep an escape route.'],{pool:[...base,'weaver','pursuer','jelly'],maxChasers:1,maxJellies:1,maxThreats:4,lanes:4}),
   level(12,'deep','海域毕业','Ocean graduate',90,['所有鱼种汇合。读懂预警与食物链，完成最后一次成长。','All encounters unite. Read warnings and the food chain for the final swim.'],{pool:Object.keys(species),schoolSize:3,maxChasers:2,maxJellies:2,maxThreats:5,foodMinimum:8,spawnEvery:1.2})
  ];
+ const recipes=[
+  {goal:19,finish:{type:'perch',tier:2,need:1}},
+  {goal:37,challenge:{kind:'shoal',need:3},finish:{type:'hunter',tier:3,need:1}},
+  {goal:37,challenge:{kind:'lanes',need:3},finish:{type:'hunter',tier:3,need:1}},
+  {goal:37,finish:{type:'hunter',tier:3,need:2}},
+  {goal:37,challenge:{kind:'catch',type:'weaver',need:3},finish:{type:'hunter',tier:3,need:1}},
+  {goal:37,challenge:{kind:'catch',type:'skipper',need:3},finish:{type:'hunter',tier:3,need:1}},
+  {goal:37,challenge:{kind:'lanes',need:3},finish:{type:'hunter',tier:3,need:1}},
+  {goal:37,challenge:{kind:'shoal',need:3},finish:{type:'hunter',tier:3,need:2}},
+  {goal:37,finish:{type:'pursuer',tier:3,need:1}},
+  {goal:61,finish:{type:'leviathan',tier:4,need:1}},
+  {goal:37,challenge:{kind:'catch',type:'weaver',need:4},finish:{type:'pursuer',tier:3,need:1}},
+  {goal:61,challenge:{kind:'catch',type:'skipper',need:4},finish:{type:'leviathan',tier:4,need:2}}
+ ];
+ for(let i=0;i<levels.length;i++){
+  const l=levels[i],recipe=recipes[i];Object.assign(l,recipe,{foodEvery:i===0?1.3:1.8,activeChasers:1});
+  const initial=l.pool.filter(type=>!['hunter','leviathan'].includes(type)||type==='leviathan'&&i>=9);
+  l.stages=[{from:0,pool:initial},{from:7,pool:[...l.pool],pressure:{type:'hunter',tier:3,need:i===0?1:2}}];
+  if(recipe.goal>=37)l.stages.push({from:19,pool:[...l.pool,{type:'hunter',tier:4}],pressure:{type:'hunter',tier:4,need:2}});
+  if(recipe.goal===61)l.stages.push({from:37,pool:[...l.pool,{type:'hunter',tier:5}],pressure:{type:'hunter',tier:5,need:2}});
+  if(i===0)l.brief={zh:'吃小鱼长到第 3 级，再反吃标记的扇背鱼。',en:'Grow to size 3, then turn back and eat the marked fanback.'};
+ }
  return{species,chapters,levels,thresholds:[0,0,7,19,37,61],sizes:[18,29,42,58,77,98],maxEntities:30,step:1/120,dashDuration:.22,dashCooldown:2.6,warningTime:1.0};
 });

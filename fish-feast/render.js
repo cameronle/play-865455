@@ -199,6 +199,8 @@
       if (f.warning > 0) ctx.globalAlpha = .5;
       drawFish(ctx, f, options.reduced ? 0 : s.time, p, scale);
       ctx.restore();
+      const o=s.goalStatus,target=o&&(o.kind==='revenge'?f.type===o.type&&f.tier===o.tier:o.kind==='catch'?f.type===o.type:o.kind==='shoal'?f.motion==='school':o.kind==='lanes'?Number.isInteger(f.lane)&&!(s.lanesEaten||[]).includes(f.lane):false);
+      if(target){ctx.save();ctx.fillStyle=p.ink;ctx.textAlign='center';ctx.font=`700 ${14/scale}px sans-serif`;ctx.fillText('◇',R.clamp(f.x,9/scale,s.width-9/scale),R.clamp(f.y-g.ry*g.top-(danger?25:8)/scale,16/scale,s.height-10/scale));ctx.restore();}
       if (danger) {
         ctx.fillStyle = p.warning;
         const markerRadius = 5 / scale;
@@ -217,6 +219,7 @@
     if (blink) ctx.globalAlpha = .5;
     drawFish(ctx, s.player, options.reduced ? 0 : s.time, p, scale, true, options.language);
     ctx.restore();
+    if(s.player.combo>1&&s.time-s.player.lastMeal<2){const g=R.geometry(s.player);ctx.save();ctx.fillStyle=p.ink;ctx.font=`700 ${11/scale}px ui-monospace,monospace`;ctx.textAlign='center';ctx.fillText((options.language==='zh'?'连吃':'CHAIN')+' ×'+s.player.combo,R.clamp(s.player.x,48/scale,s.width-48/scale),R.clamp(s.player.y-g.ry*g.top-24/scale,15/scale,s.height-12/scale));ctx.restore();}
     if (!options.reduced) for (const e of s.effects) {
       const remaining = e.kind === 'grow' ? .7 : .35;
       ctx.save();

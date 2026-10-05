@@ -36,3 +36,9 @@ test('both initial and paused worlds render, fan tail is not a second body, and 
  S.start(s);S.pause(s);D.draw(ctx,s,{palette:D.palettes.dark,scale:.5,dpr:2,language:'zh'});assert.notEqual(D.palettes.light.water,D.palettes.dark.water);
  assert.doesNotMatch(fs.readFileSync('fish-feast/render.js','utf8'),/fillText\(f.warning/,'danger marker must remain screen-space geometry');
 });
+test('active objectives have non-color target marks and a visible short-lived combo cue',()=>{
+ const D=require('../fish-feast/render.js'),s=S.create(760,520,1);S.start(s);s.fish=[{...C.species.perch,type:'perch',x:600,y:250,vx:1,warning:0}];s.goalStatus={kind:'revenge',type:'perch',tier:2};s.player.combo=3;s.player.lastMeal=1;s.time=1.2;
+ const {ctx,calls}=context();D.draw(ctx,s,{palette:D.palettes.light,scale:.5,language:'zh'});
+ assert.ok(calls.some(c=>c[0]==='fillText'&&c[1]==='◇'),'objective marker is missing');assert.ok(calls.some(c=>c[0]==='fillText'&&String(c[1]).includes('连吃')));
+ const expired=context();s.time=4;D.draw(expired.ctx,s,{palette:D.palettes.dark,scale:.5,language:'en'});assert.ok(!expired.calls.some(c=>c[0]==='fillText'&&String(c[1]).includes('CHAIN')));
+});

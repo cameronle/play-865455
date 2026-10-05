@@ -12,9 +12,14 @@ function harness(initial={},blocked=false){
  const original=win.FishFeast.Simulation.start;win.FishFeast.Simulation.start=(s,...args)=>{world=s;return original(s,...args);};vm.runInContext(fs.readFileSync('fish-feast/game.js','utf8'),context);
  return{win,doc,storage,nodes,snap:()=>JSON.parse(JSON.stringify(win.FishFeastGame.snapshot())),tick(){now+=1000/60;const pending=[...jobs];jobs.clear();for(const[,cb]of pending)cb(now);},get world(){return world;},click(id){nodes.get(id).dispatch('click');}};
 }
+test('adapter exposes a bilingual stage/objective line and waits for the marked revenge fish',()=>{
+ const h=harness();h.click('startButton');h.tick();assert.ok(h.nodes.get('objectiveValue'),'objective line missing');assert.match(h.nodes.get('objectiveValue').textContent,/成长|反吃/);
+ h.click('languageButton');assert.match(h.nodes.get('objectiveValue').textContent,/GROW|REVENGE/);
+ const s=h.world;s.player.growth=s.level.goal;h.win.FishFeast.Rules.grow(s.player);s.fish=[];h.tick();assert.equal(h.snap().mode,'playing');assert.match(h.nodes.get('objectiveValue').textContent,/REVENGE/);
+});
 test('real adapter enforces locks, explicitly advances after a win, and retains records on retry',()=>{
  const h=harness();assert.equal(h.snap().level.id,1);h.nodes.get('levelSelect').value='11';h.click('startButton');assert.equal(h.snap().level.id,1,'tampered select bypassed lock');
- const s=h.world;s.player.growth=s.level.goal-1;h.win.FishFeast.Rules.grow(s.player);s.fish=[{...h.win.FishFeast.Content.species.sprat,x:s.player.x,y:s.player.y,vx:0,vy:0,age:0,phase:0,warning:0,id:100,type:'sprat'}];h.tick();h.tick();
+ const s=h.world;s.player.growth=s.level.goal;h.win.FishFeast.Rules.grow(s.player);s.fish=[{...h.win.FishFeast.Content.species.perch,x:s.player.x,y:s.player.y,vx:0,vy:0,age:0,phase:0,warning:0,id:100,type:'perch'}];h.tick();h.tick();
  assert.equal(h.snap().mode,'won');assert.equal(h.snap().progress.unlocked,2);assert.equal(h.nodes.get('nextButton').hidden,false);const record=JSON.parse(h.storage.get('fish-feast-progress-v1'));assert.ok(record.best[1]>0);h.tick();assert.equal(h.snap().mode,'won','next stage auto-started');
  h.click('nextButton');assert.equal(h.snap().mode,'playing');assert.equal(h.snap().level.id,2);assert.equal(h.snap().player.growth,0);assert.equal(h.snap().player.lives,3);h.click('pauseButton');h.click('menuButton');assert.equal(h.snap().mode,'title');assert.equal(h.snap().progress.best[1],record.best[1]);
 });
