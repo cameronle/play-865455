@@ -440,6 +440,11 @@
     ctx.ellipse(0, 0, 20, 13, 0, 0, Math.PI * 2);
     ctx.fill();
     ctx.shadowBlur = 0;
+    if (light) {
+      ctx.strokeStyle = "#826224";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
     ctx.fillStyle = light ? "#3f3a34" : "#fff0c9";
     ctx.beginPath();
     ctx.ellipse(-14, -12, 13, 6, -0.4, 0, Math.PI * 2);

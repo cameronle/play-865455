@@ -1,13 +1,13 @@
 const fs = require('node:fs');
 const vm = require('node:vm');
-function createHopper(seed = 1) {
+function createHopper(seed = 1, options = {}) {
   let randomState = seed >>> 0, now = 0, id = 0;
   const frames = new Map(), elements = new Map(), listeners = new Map();
   const stats = {draws:0, textWrites:0, paletteReads:0, trace:false, commands:[]};
   const math = Object.create(Math);
   math.random = () => ((randomState = (Math.imul(randomState,1664525)+1013904223)>>>0) / 4294967296);
-  const context = new Proxy({}, {get:(o,k)=>k in o?o[k]:((...args)=>{if(stats.trace)stats.commands.push([k,...args])}), set:(o,k,v)=>(o[k]=v,true)});
-  context.fillRect = (x,y,w,h) => { if(x===0 && y===0 && w===480 && h===720) stats.draws++; };
+  const context = new Proxy({}, {get:(o,k)=>k in o?o[k]:((...args)=>{if(stats.trace)stats.commands.push([k,...args]);options.onDraw?.({method:k,args,fill:o.fillStyle,stroke:o.strokeStyle,alpha:o.globalAlpha??1});}), set:(o,k,v)=>(o[k]=v,true)});
+  context.fillRect = (x,y,w,h) => { if(x===0 && y===0 && w===480 && h===720) stats.draws++;options.onDraw?.({method:'fillRect',args:[x,y,w,h],fill:context.fillStyle,stroke:context.strokeStyle,alpha:context.globalAlpha??1}); };
   function element(name) {
     if(elements.has(name)) return elements.get(name);
     let text=''; const handlers=new Map(), classes=new Set();
@@ -24,7 +24,7 @@ function createHopper(seed = 1) {
     addEventListener:(t,f)=>{if(!listeners.has('doc:'+t))listeners.set('doc:'+t,[]);listeners.get('doc:'+t).push(f)}};
   const store=new Map();
   const sandbox={Math:math,console,document,performance:{now:()=>now},localStorage:{getItem:k=>store.get(k)||null,setItem:(k,v)=>store.set(k,String(v))},
-    getComputedStyle:()=>{stats.paletteReads++;return {getPropertyValue:()=>''}},
+    getComputedStyle:()=>{stats.paletteReads++;return {getPropertyValue:name=>options.css?.[name]||''}},
     requestAnimationFrame:f=>{frames.set(++id,f);return id},cancelAnimationFrame:i=>frames.delete(i),
     addEventListener:(t,f)=>{if(!listeners.has(t))listeners.set(t,[]);listeners.get(t).push(f)}};
   sandbox.window=sandbox; const env=vm.createContext(sandbox);

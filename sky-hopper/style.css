@@ -13,6 +13,9 @@
   --purple: #b8a7e8;
   --accent: #4b9c95;
   --shadow: #d6c8b7;
+  --hero-body: #df936c;
+  --scenery-sun: #efe5c3;
+  --scenery-ink: #b6ac90;
 }
 
 [data-theme="dark"] {
@@ -30,6 +33,9 @@
   --purple: #a99add;
   --accent: #9eddbd;
   --shadow: #0d171d;
+  --hero-body: #eaa77e;
+  --scenery-sun: #635e49;
+  --scenery-ink: #586b69;
 }
 
 * { box-sizing: border-box; }
