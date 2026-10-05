@@ -15,7 +15,7 @@ test('Melon Lab has a self-contained mobile fruit-synthesis entrypoint', () => {
   assert.match(html, /MELON LAB/);
   assert.match(html, /SEMI-FLUID/);
   assert.match(html, /rules\.js\?v=melon-feel-1/);
-  assert.match(html, /game\.js\?v=melon-border-1/);
+  assert.match(html, /game\.js\?v=melon-fluid-2/);
   assert.match(html, /style\.css\?v=melon-border-1/);
   assert.match(css, /touch-action:\s*none/);
   assert.match(css, /user-select:\s*none/);
