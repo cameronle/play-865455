@@ -25,24 +25,25 @@ function contrast(a, b) {
   return (Math.max(x, y) + .05) / (Math.min(x, y) + .05);
 }
 for (const theme of ['light', 'dark']) {
-  test(`Doodle Hop ${theme}: scenery is quieter than the independently colored hero`, () => {
+  test(`Sky Hop ${theme}: flat hero stands out from platforms on a quiet solid field`, () => {
     const css = tokens('sky-hopper', theme), calls = [];
-    for (const name of ['--hero-body', '--scenery-sun', '--scenery-ink']) assert.match(css[name] || '', /^#[\da-f]{6}$/i, `${name} must be theme-specific`);
+    for (const name of ['--hero-body', '--hero-mark', '--cue', '--paper']) assert.match(css[name] || '', /^#[\da-f]{6}$/i, `${name} must be theme-specific`);
     assert.notEqual(css['--hero-body'], css['--mint'], 'hero must not share the normal platform fill');
-    assert.ok(contrast(css['--scenery-ink'], css['--paper']) < contrast(css['--ink'], css['--paper']), 'scenery outlines must recede behind gameplay outlines');
+    assert.ok(contrast(css['--hero-body'],css['--paper']) >= 3,'player silhouette must remain distinct');
+    assert.ok(contrast(css['--hero-mark'],css['--hero-body']) >= 4.5,'animal face must remain readable');
     const g = createHopper(1, {css, onDraw: c => calls.push(c)});
-    g.run('reset()');
-    const before = g.snapshot();
+    g.run('reset()');const before = g.snapshot();
     function draw(code) { calls.length = 0; g.run(code); return calls.slice(); }
-    const sun = draw('drawSun(410,82,30,palette())');
-    assert.equal(sun.find(c => c.method === 'fill').fill, css['--scenery-sun']);
-    assert.ok(sun.filter(c => c.method === 'stroke').every(c => c.stroke === css['--scenery-ink']));
-    const cloud = draw('drawCloud(80,80,1,palette())');
-    assert.equal(cloud.find(c => c.method === 'stroke').stroke, css['--scenery-ink']);
+    const background=draw('drawBackground(palette())');
+    assert.deepEqual(background.map(c=>c.method),['fillRect']);
+    assert.equal(background[0].fill,css['--paper']);
     const hero = draw('drawPlayer(palette())');
     assert.equal(hero.find(c => c.method === 'fill').fill, css['--hero-body']);
-    const platform = draw("drawPlatform({x:50,y:450,w:80,h:12,type:'normal',alpha:1},palette())");
-    assert.equal(platform.find(c => c.method === 'fill').fill, css['--mint']);
+    for(const [type,token]of Object.entries({normal:'--mint',moving:'--blue',breaking:'--coral',spring:'--yellow',fading:'--purple'})){
+      const platform=draw(`drawPlatform({x:50,y:450,w:80,h:12,type:'${type}',alpha:1},palette())`);
+      assert.equal(platform.find(c=>c.method==='fill').fill,css[token]);
+      if(type!=='normal')assert.ok(contrast(css['--cue'],css[token])>=4.5,'platform cues need non-color readability');
+    }
     const star = draw('drawStar({x:100,y:100,r:10,phase:0},palette())');
     assert.equal(star.find(c => c.method === 'fill').fill, css['--yellow']);
     assert.deepEqual(g.snapshot(), before, 'palette drawing must not mutate gameplay');

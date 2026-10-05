@@ -2,6 +2,51 @@ const test=require('node:test');
 const assert=require('node:assert/strict');
 const {createHopper}=require('./helpers/doodle-harness.js');
 
+test('game shell prevents selection and callout defaults beyond button hit areas',()=>{
+  const game=createHopper(),shell=game.element('gameShell');
+  for(const type of ['selectstart','contextmenu','dragstart']){
+    assert.equal(shell.dispatch(type).defaultPrevented,true,`${type} can escape the controls`);
+    assert.notEqual(game.element('outsideGame').dispatch(type).defaultPrevented,true,'unrelated page content must remain unaffected');
+  }
+});
+
+test('intentional direction input clears an existing text range without losing movement',()=>{
+  for(const source of ['leftButton','rightButton','game','keyboard']){
+    const game=createHopper();
+    game.run('globalThis.selectionFixture={rangeCount:1,isCollapsed:false,clears:0,removeAllRanges(){this.rangeCount=0;this.isCollapsed=true;this.clears++}};globalThis.getSelection=()=>selectionFixture');
+    if(source==='keyboard')game.event('keydown',{key:'ArrowLeft'});
+    else game.element(source).dispatch('pointerdown',{pointerId:19,clientX:100});
+    assert.equal(game.run('selectionFixture.rangeCount'),0,`${source} left a stale selection`);
+    assert.equal(game.run('selectionFixture.clears'),1);
+    assert.equal(game.snapshot().state,'playing');
+    assert.equal(game.snapshot().input[source==='rightButton'?'right':'left'],true);
+  }
+});
+
+test('language follows play-lang, updates active and result copy, and preserves gameplay and records',()=>{
+  const game=createHopper(1,{storage:{'play-lang':'en',doodleHopBest:'123',doodleHopBestStars:'4'}});
+  assert.equal(game.element('gameTitle').textContent,'SKY HOP');
+  assert.equal(game.element('labelScore').textContent,'SCORE');
+  game.run('reset()');const before=game.snapshot();
+  game.element('languageButton').dispatch('click');
+  assert.equal(game.store.get('play-lang'),'zh');
+  assert.equal(game.element('gameTitle').textContent,'向上弹跳');
+  assert.equal(game.element('pauseButton').textContent,'暂停');
+  assert.deepEqual(game.snapshot(),before,'language is presentation, not a restart');
+  game.run('togglePause()');assert.equal(game.element('message').textContent,'已暂停');
+  game.element('languageButton').dispatch('click');
+  assert.equal(game.element('message').textContent,'PAUSED');
+  assert.equal(game.element('startButton').textContent,'RESUME');
+  game.run('togglePause();highest=150;starCount=2;score=40;gameOver()');
+  assert.equal(game.element('message').textContent,'GAME OVER');
+  assert.match(game.element('detail').textContent,/15m · 2 STARS/);
+  game.element('languageButton').dispatch('click');
+  assert.equal(game.element('message').textContent,'本局结束');
+  assert.match(game.element('detail').textContent,/15米 · 2颗星星/);
+  assert.equal(game.store.get('doodleHopBest'),'123');
+  assert.equal(game.store.get('doodleHopBestStars'),'4');
+});
+
 test('starting platforms connect to generated platforms without a double gap',()=>{
   const game=createHopper();
   for(let seed=1;seed<=256;seed++){

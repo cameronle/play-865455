@@ -2,57 +2,55 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-  <meta name="theme-color" content="#fffaf0">
-  <script src="/theme.js?v=doodle-hop-1"></script>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f4f6f8">
+  <script src="/theme.js?v=theme-2"></script>
   <script src="/clear-game-data.js?v=clear-1"></script>
-  <title>Doodle Hop!</title>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=doodle-hop-1">
+  <title>Sky Hop · PLAY</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=hopper-flat-animal-2">
   <link rel="stylesheet" href="/theme.css?v=clear-1">
-  <link rel="stylesheet" href="style.css?v=palette-priority-1">
+  <link rel="stylesheet" href="style.css?v=hopper-flat-animal-2">
 </head>
 <body>
-  <main class="page">
+  <main id="gameShell" class="page">
     <header class="topbar">
-      <a class="back-link" href="/" aria-label="Back to games">← PLAY</a>
+      <a id="backLink" class="back-link" href="/" aria-label="Back to games">← PLAY</a>
       <div class="brand">
-        <h1>DOODLE HOP!</h1>
-        <span>A LITTLE JUMP. A BIG ADVENTURE.</span>
+        <h1 id="gameTitle">SKY HOP</h1>
       </div>
-      <button id="pauseButton" type="button">PAUSE</button>
+      <div class="header-actions"><button id="languageButton" type="button" aria-label="切换为中文">中</button><button id="pauseButton" type="button">PAUSE</button></div>
     </header>
 
-    <section class="hud" aria-label="Game status">
-      <div class="stat stat-score"><span>SCORE</span><b id="score">000000</b></div>
-      <div class="stat stat-stars"><span>STARS</span><b id="stars">00</b></div>
-      <div class="stat stat-height"><span>HEIGHT</span><b id="height">0000m</b></div>
-      <div class="stat stat-best"><span>BEST</span><b id="best">000000</b></div>
+    <section id="gameStatus" class="hud" aria-label="Game status">
+      <div class="stat stat-score"><span id="labelScore">SCORE</span><b id="score">000000</b></div>
+      <div class="stat stat-stars"><span id="labelStars">STARS</span><b id="stars">00</b></div>
+      <div class="stat stat-height"><span id="labelHeight">HEIGHT</span><b id="height">0000m</b></div>
+      <div class="stat stat-best"><span id="labelBest">BEST</span><b id="best">000000</b></div>
     </section>
 
     <div class="screen">
-      <canvas id="game" width="480" height="720" aria-label="Doodle Hop playfield"></canvas>
+      <canvas id="game" width="480" height="720" aria-label="Sky Hop playfield"></canvas>
       <div id="overlay" class="overlay">
-        <div class="overlay-scribble" aria-hidden="true">✦</div>
-        <b id="message">DOODLE HOP!</b>
-        <span id="detail">BOUNCE UP · COLLECT LITTLE STARS</span>
-        <button id="startButton" type="button">START JUMPING</button>
+        <b id="message">SKY HOP</b>
+        <span id="detail">AUTO BOUNCE · COLLECT STARS</span>
+        <button id="startButton" type="button">START</button>
       </div>
     </div>
 
-    <section class="controls" aria-label="Movement controls">
-      <button id="leftButton" type="button">← HOLD LEFT</button>
-      <button id="rightButton" type="button">HOLD RIGHT →</button>
+    <section id="movementControls" class="controls" aria-label="Movement controls">
+      <button id="leftButton" type="button">← LEFT</button>
+      <button id="rightButton" type="button">RIGHT →</button>
     </section>
-    <div class="tips" aria-label="How to play">
-      <span>GREEN STEPS = SAFE ROUTE</span>
-      <span>↔ MOVING · ╱ FRAGILE · ◌ FADING</span>
-      <span>↑ SPRING BOOST</span>
-      <span>★ BONUS ROUTES = DOUBLE STAR POINTS</span>
+    <div id="gameTips" class="tips" aria-label="How to play">
+      <span id="tipSafe">GREEN = SAFE ROUTE</span>
+      <span id="tipTypes">↔ MOVING · ╱ FRAGILE · ◌ FADING</span>
+      <span id="tipSpring">↑ SPRING BOOST</span>
+      <span id="tipBonus">★ BONUS ROUTE = 2× POINTS</span>
     </div>
-    <footer>ARROWS / A D MOVE · TOUCH EITHER SIDE · P PAUSE</footer>
+    <footer id="keyboardHelp">ARROWS / A D MOVE · TOUCH EITHER SIDE · P PAUSE</footer>
   </main>
   <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
   <script src="rules.js?v=doodle-hop-2"></script>
-  <script src="game.js?v=palette-priority-1"></script>
+  <script src="game.js?v=hopper-flat-animal-2"></script>
 </body>
 </html>

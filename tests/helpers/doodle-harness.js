@@ -11,7 +11,8 @@ function createHopper(seed = 1, options = {}) {
   function element(name) {
     if(elements.has(name)) return elements.get(name);
     let text=''; const handlers=new Map(), classes=new Set();
-    const e={id:name,dataset:{},style:{},width:480,height:720,
+    const attributes=new Map();
+    const e={id:name,dataset:{},style:{},width:480,height:720,setAttribute:(key,value)=>attributes.set(key,String(value)),getAttribute:key=>attributes.get(key)??null,
       classList:{add:x=>classes.add(x),remove:x=>classes.delete(x),contains:x=>classes.has(x),toggle:(x,on)=>on?classes.add(x):classes.delete(x)},
       get textContent(){return text},set textContent(value){text=String(value);stats.textWrites++},
       addEventListener:(t,f)=>{if(!handlers.has(t))handlers.set(t,[]);handlers.get(t).push(f)},
@@ -22,7 +23,7 @@ function createHopper(seed = 1, options = {}) {
   }
   const document={hidden:false,getElementById:element,documentElement:{},
     addEventListener:(t,f)=>{if(!listeners.has('doc:'+t))listeners.set('doc:'+t,[]);listeners.get('doc:'+t).push(f)}};
-  const store=new Map();
+  const store=new Map(Object.entries(options.storage||{}));
   const sandbox={Math:math,console,document,performance:{now:()=>now},localStorage:{getItem:k=>store.get(k)||null,setItem:(k,v)=>store.set(k,String(v))},
     getComputedStyle:()=>{stats.paletteReads++;return {getPropertyValue:name=>options.css?.[name]||''}},
     requestAnimationFrame:f=>{frames.set(++id,f);return id},cancelAnimationFrame:i=>frames.delete(i),
