@@ -195,6 +195,8 @@ function createShooter(options = {}) {
   sandbox.window = sandbox;
   const source = fs.readFileSync("shooter/game.js", "utf8");
   const env = vm.createContext(sandbox);
+  for (const name of ["content", "rules", "locale", "renderer"])
+    vm.runInContext(fs.readFileSync(`shooter/${name}.js`, "utf8"), env);
   vm.runInContext(
     source.replace(
       /\}\)\(\);?\s*$/,
@@ -233,9 +235,7 @@ function createShooter(options = {}) {
     },
     snapshot: () =>
       JSON.parse(
-        run(
-          "JSON.stringify({state,score,level,lives,best,player,bullets,enemyBullets,enemies,powerups,levelTimer})",
-        ),
+        run("JSON.stringify({...g.snapshot(),best:bestRecord,legacyBest})"),
       ),
   };
 }

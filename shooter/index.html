@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh">
   <head>
     <meta charset="utf-8" />
     <meta
@@ -8,17 +8,17 @@
     />
     <meta name="theme-color" content="#070b12" />
     <script src="/theme.js?v=shooter-3"></script>
-    <script src="/clear-game-data.js?v=clear-1"></script>
-    <title>Sky Patrol</title>
+    <script src="/clear-game-data.js?v=campaign-1"></script>
+    <title>星空巡航 · Sky Patrol</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="stylesheet" href="/theme.css?v=clear-1" />
-    <link rel="stylesheet" href="style.css?v=thin-ui-1" />
+    <link rel="stylesheet" href="style.css?v=campaign-1" />
   </head>
   <body>
     <main class="page">
       <header class="topbar">
         <a href="/">← PLAY</a>
-        <h1>SKY PATROL</h1>
+        <h1 id="gameTitle">SKY PATROL</h1>
         <div class="header-actions">
           <button
             class="sound"
@@ -30,13 +30,23 @@
           </button>
         </div>
       </header>
-
       <p class="sr-only" role="status" id="flightStatus" aria-live="polite"></p>
-      <section class="game-wrap" aria-label="Sky Patrol game">
+      <section id="gameSection" class="game-wrap" aria-label="Sky Patrol game">
         <div class="hud">
-          <div><span>SCORE</span><b id="score">000000</b></div>
-          <div><span>LEVEL</span><b id="level">01</b></div>
-          <div><span>LIVES</span><b id="lives">♥♥♥</b></div>
+          <div><span id="scoreLabel">SCORE</span><b id="score">000000</b></div>
+          <div>
+            <span id="stageLabel">STAGE / WAVE</span><b id="level">01 / 1</b>
+          </div>
+          <div><span id="livesLabel">LIVES</span><b id="lives">♥♥♥</b></div>
+        </div>
+        <div class="boss-hud" id="bossHud" hidden>
+          <div><span id="bossName"></span><span id="bossPhase"></span></div>
+          <progress
+            id="bossHealth"
+            max="100"
+            value="100"
+            aria-label="Boss health"
+          ></progress>
         </div>
         <div class="screen-frame">
           <canvas
@@ -47,47 +57,75 @@
           ></canvas>
           <div class="overlay" id="overlay">
             <div class="intro">
-              <p class="eyebrow">A SMALL ARCADE GAME</p>
-              <h1>SKY<br /><em>PATROL</em></h1>
-              <p class="hint">
-                Drag to move / Arrows / WASD<br />AUTO-FIRE · Stop enemies
-                reaching the bottom
+              <p class="eyebrow" id="eyebrow">9 STAGES · 3 BOSSES</p>
+              <h1 id="overlayTitle">SKY PATROL</h1>
+              <p class="hint" id="hint">
+                Drag to move / Arrows / WASD<br />AUTO-FIRE · Space pulse
               </p>
+              <div
+                class="mode-select"
+                id="modeSelect"
+                role="group"
+                aria-label="Difficulty"
+              >
+                <button id="normalButton" type="button" aria-pressed="true">
+                  NORMAL</button
+                ><button
+                  id="challengeButton"
+                  type="button"
+                  aria-pressed="false"
+                >
+                  CHALLENGE
+                </button>
+              </div>
               <button class="start" id="startButton" type="button">
                 START GAME
               </button>
-              <p class="best">BEST <strong id="best">000000</strong></p>
+              <p class="best">
+                <span id="bestLabel">BEST</span>
+                <strong id="best">000000</strong>
+              </p>
+              <p class="record" id="record"></p>
+              <p class="legacy" id="legacyBest"></p>
             </div>
           </div>
         </div>
-        <div class="mobile-controls" aria-label="Touch controls">
-          <button id="leftButton" aria-label="Move left" type="button">
-            ←
-          </button>
-          <button id="upButton" aria-label="Move up" type="button">↑</button>
-          <button id="rightButton" aria-label="Move right" type="button">
-            →
-          </button>
-          <button id="downButton" aria-label="Move down" type="button">
-            ↓
-          </button>
-          <button
+        <div id="touchControls" class="mobile-controls" aria-label="Touch controls">
+          <button id="leftButton" aria-label="Move left" type="button">←</button
+          ><button id="upButton" aria-label="Move up" type="button">↑</button
+          ><button id="rightButton" aria-label="Move right" type="button">
+            →</button
+          ><button id="downButton" aria-label="Move down" type="button">
+            ↓</button
+          ><button
             id="mobilePauseButton"
             aria-label="Pause or resume"
             type="button"
           >
-            PAUSE
+            PAUSE</button
+          ><button
+            id="pulseButton"
+            aria-label="Release one pulse"
+            type="button"
+          >
+            PULSE 2
           </button>
         </div>
+        <p class="combat-hint" id="combatHint"></p>
       </section>
-
       <footer>
-        <span class="keyboard-help"
-          >ARROWS / WASD TO MOVE · AUTO-FIRE · P PAUSE · M MUTE</span
-        ><span class="touch-help">DRAG OR HOLD ARROWS · AUTO-FIRE</span>
+        <span class="keyboard-help" id="keyboardHelp"
+          >ARROWS / WASD · AUTO-FIRE · SPACE PULSE · P PAUSE · M MUTE</span
+        ><span class="touch-help" id="touchHelp"
+          >DRAG OR HOLD ARROWS · AUTO-FIRE</span
+        >
       </footer>
     </main>
-    <script src="game.js?v=shooter-3"></script>
+    <script src="content.js?v=campaign-1"></script>
+    <script src="rules.js?v=campaign-1"></script>
+    <script src="locale.js?v=campaign-1"></script>
+    <script src="renderer.js?v=campaign-1"></script>
+    <script src="game.js?v=campaign-1"></script>
     <button class="theme-toggle" type="button" aria-label="Theme: system">
       AUTO
     </button>

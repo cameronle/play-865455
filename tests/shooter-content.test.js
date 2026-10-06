@@ -1,0 +1,35 @@
+"use strict";
+const test = require("node:test"),
+  assert = require("node:assert/strict"),
+  fs = require("node:fs");
+test("campaign content defines nine stages, three distinct bosses and six enemy behaviors", () => {
+  assert.ok(
+    fs.existsSync("shooter/content.js"),
+    "campaign content module exists",
+  );
+  const C = require("../shooter/content");
+  assert.deepEqual(Object.keys(C.ENEMIES).sort(), [
+    "bomber",
+    "diver",
+    "formation",
+    "heavy",
+    "scout",
+    "sniper",
+  ]);
+  assert.deepEqual(
+    C.STAGES.map((s) => s.id),
+    [1, 2, 3, 4, 5, 6, 7, 8, 9],
+  );
+  assert.deepEqual(
+    C.STAGES.filter((s) => s.boss).map((s) => s.boss),
+    ["iron-wing", "twin-core", "storm-carrier"],
+  );
+  assert.equal(new Set(Object.values(C.ENEMIES).map((e) => e.shape)).size, 6);
+  for (const stage of C.STAGES) {
+    assert.ok(stage.waves.length);
+    for (const w of stage.waves)
+      for (const g of w.groups) assert.ok(C.ENEMIES[g.type]);
+  }
+  assert.ok(C.MODES.challenge.fireScale > C.MODES.normal.fireScale);
+  assert.ok(C.MODES.challenge.speedScale <= 1.2);
+});

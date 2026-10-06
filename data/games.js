@@ -30,12 +30,12 @@ module.exports = [
       "en": "SKY PATROL"
     },
     "description": {
-      "zh": "移动、自动发射、躲避敌机，经典飞行射击。",
-      "en": "Move, fire, survive. A small original shooter."
+      "zh": "九关战役、六种敌机、三大首领；换位躲弹，脉冲突围。",
+      "en": "Nine stages, six enemy types and three bosses. Dodge, pick targets and pulse through."
     },
     "readme": {
       "title": "Sky Patrol",
-      "description": "自维护的 HTML5 Canvas 街机飞行射击游戏，支持自动发射、四向移动、相对拖动、关卡、生命、道具、音效、本地最高分、后台自动暂停和手机横屏。"
+      "description": "自维护的 HTML5 Canvas 九关街机战役：六类敌机、三大独立首领，支持自动射击、四向移动、相对拖动、脉冲、护盾、章节补给、普通/挑战、中英界面、分档记录、后台自动暂停及手机横屏。"
     }
   },
   {
