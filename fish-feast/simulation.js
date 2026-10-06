@@ -49,14 +49,14 @@
   p.cooldown=Math.max(0,p.cooldown-dt);p.invulnerable=Math.max(0,p.invulnerable-dt);p.dashTime=Math.max(0,p.dashTime-dt);
   let dx=Number(input.x)||0,dy=Number(input.y)||0;
   const direct=Array.isArray(input.drag),path=direct?[oldP]:null;
-  if(direct){dx=dy=0;for(const delta of input.drag){if(!Number.isFinite(delta.x)||!Number.isFinite(delta.y))continue;const before={x:p.x,y:p.y};p.x+=delta.x;p.y+=delta.y;R.bound(p,s.width,s.height);const x=p.x-before.x,y=p.y-before.y,length=Math.hypot(x,y);if(length){p.headingX=x/length;p.headingY=y/length;path.push({x:p.x,y:p.y});}}}
+  if(direct){dx=dy=0;const distance=input.drag.reduce((sum,d)=>sum+(Number.isFinite(d.x)&&Number.isFinite(d.y)?Math.hypot(d.x,d.y):0),0),factor=distance?Math.min(1,C.dragSpeed*dt/distance):1;for(const delta of input.drag){if(!Number.isFinite(delta.x)||!Number.isFinite(delta.y))continue;const before={x:p.x,y:p.y};if(p.dashTime<=0){p.x+=delta.x*factor;p.y+=delta.y*factor;R.bound(p,s.width,s.height);}const x=p.dashTime>0?delta.x:p.x-before.x,y=p.dashTime>0?delta.y:p.y-before.y,length=Math.hypot(x,y);if(length){p.headingX=x/length;p.headingY=y/length;if(p.dashTime<=0)path.push({x:p.x,y:p.y});}}}
   // Clamp the final step to the target, including fractional logical pixels.
   if(!direct&&input.target){dx=input.target.x-p.x;dy=input.target.y-p.y;const distance=Math.hypot(dx,dy),travel=190*dt;if(distance>0){const factor=Math.min(1,distance/travel)/distance;dx*=factor;dy*=factor;}}
   const length=Math.hypot(dx,dy);if(length>1){dx/=length;dy/=length;}
   if(dx||dy){const n=Math.hypot(dx,dy);p.headingX=dx/n;p.headingY=dy/n;}
   const speed=p.dashTime>0?480:190;p.vx=(p.dashTime>0?p.headingX:dx)*speed;p.vy=(p.dashTime>0?p.headingY:dy)*speed;p.x+=p.vx*dt;p.y+=p.vy*dt;R.bound(p,s.width,s.height);if(direct){p.vx=(p.x-oldP.x)/dt;p.vy=(p.y-oldP.y)/dt;}
   if(direct&&(p.x!==path.at(-1).x||p.y!==path.at(-1).y))path.push({x:p.x,y:p.y});
-  // Sweep every delivered segment; an out-and-back stroke is not a teleport.
+  // Sweep actual physical segments, never an untravelled cursor route.
   const segments=[];
   if(path&&path.length>1){const lengths=path.slice(1).map((point,i)=>Math.hypot(point.x-path[i].x,point.y-path[i].y)),total=lengths.reduce((sum,n)=>sum+n,0);let progress=0;for(let i=0;i<lengths.length;i++){const fromTime=progress/total;progress+=lengths[i];segments.push({from:path[i],to:path[i+1],fromTime,toTime:progress/total});}}
   const contacts=[];
@@ -66,7 +66,7 @@
    if(!f.dead&&(segments.length?segments.some(segment=>R.swept({...p,...segment.to},{...f,...pointAt(segment.toTime)},segment.from,pointAt(segment.fromTime))):R.swept(p,f,oldP,oldF)))contacts.push(f);
   }
   const danger=contacts.find(f=>f.hazard||f.tier>startTier);
-  if(danger&&p.invulnerable<=0){const safe=safePosition(s);if(R.hurt(p,safe.x,safe.y)){s.hits++;effect(s,'hurt',p.x,p.y);if(p.lives===0)s.mode='lost';}}
+  if(danger&&p.invulnerable<=0){const safe=safePosition(s);if(R.hurt(p,safe.x,safe.y)){s.pendingDrag=[];s.dragStarted=false;s.hits++;effect(s,'hurt',p.x,p.y);if(p.lives===0)s.mode='lost';}}
   else for(const f of contacts)if(!f.hazard&&f.tier<startTier){const tier=p.tier,reverse=objective(s).phase==='reverse';if(R.eat(p,f,s.time)){s.eaten++;s.caught[f.type]=(s.caught[f.type]||0)+1;if(Number.isInteger(f.lane)&&!s.lanesEaten.includes(f.lane))s.lanesEaten.push(f.lane);if(Number.isInteger(f.schoolId)){s.shoalCount=s.shoalId===f.schoolId&&s.time-s.shoalTime<2?s.shoalCount+1:1;s.shoalId=f.schoolId;s.shoalTime=s.time;s.bestShoal=Math.max(s.bestShoal,s.shoalCount);}if(reverse&&f.type===s.level.finish.type&&f.tier===s.level.finish.tier)s.revengeCount++;p.growth=Math.min(p.growth,s.level.goal);R.grow(p);effect(s,'eat',f.x,f.y);if(p.tier>tier){R.bound(p,s.width,s.height);effect(s,'grow',p.x,p.y);}}}
   s.fish=s.fish.filter(f=>!f.dead);s.effects=s.effects.filter(e=>{e.life-=dt;e.age+=dt;return e.life>0;});
   if(s.mode!=='playing')return;
@@ -77,7 +77,19 @@
   s.objectiveTimer-=dt;if(s.objectiveTimer<=0){s.objectiveTimer=1;let target=null;if(status.kind==='revenge')target={type:status.type,tier:status.tier};else if(status.kind==='catch')target={type:status.type,tier:C.species[status.type].tier};else if(status.kind==='shoal')target={type:'fry',tier:0};if(target){const total=s.fish.filter(f=>!f.dead&&f.type===target.type&&f.tier===target.tier).length,need=status.kind==='shoal'?s.level.schoolSize:1;for(let i=total;i<need;i++)spawn(s,target.type,{tier:target.tier,target:true});}}
   s.spawnTimer-=dt;if(s.spawnTimer<=0&&pool.length){s.spawnTimer=s.level.spawnEvery;const kind=pool[Math.floor(random(s)*pool.length)];spawn(s,kind.type,{tier:kind.tier});}
  }
- function advance(s,elapsed,input={}){if(s.mode!=='playing')return;const direct=Array.isArray(input.drag);if(!s.pendingDrag)s.pendingDrag=[];if(direct){for(const delta of input.drag)if(Number.isFinite(delta.x)&&Number.isFinite(delta.y))s.pendingDrag.push({...delta});}else s.pendingDrag=[];s.accumulator+=Math.max(0,Math.min(.25,elapsed));let count=0;while(s.accumulator+1e-10>=C.step&&count++<31&&s.mode==='playing'){s.accumulator-=C.step;const command=direct?{...input,drag:s.pendingDrag}:input;s.pendingDrag=[];step(s,command);}if(s.mode!=='playing'){s.accumulator=0;s.pendingDrag=[];}}
+ // Cursor history is intent, not already-travelled fish geometry.
+ function dragRoute(s,deltas){const cursor={...s.player},route=[];for(const d of deltas){if(!d||!Number.isFinite(d.x)||!Number.isFinite(d.y))continue;const before={x:cursor.x,y:cursor.y};cursor.x+=d.x;cursor.y+=d.y;R.bound(cursor,s.width,s.height);const x=cursor.x-before.x,y=cursor.y-before.y;if(x||y)route.push({x,y});}return route;}
+ function takeDrag(route,budget){const result=[];while(route.length&&budget>1e-10){const d=route[0],length=Math.hypot(d.x,d.y);if(length<=budget+1e-10){result.push({...d});route.shift();budget-=length;}else{const factor=budget/length,x=d.x*factor,y=d.y*factor;result.push({x,y});d.x-=x;d.y-=y;budget=0;}}return result;}
+ function advance(s,elapsed,input={}){
+  if(s.mode!=='playing')return;const direct=Array.isArray(input.drag);if(!s.pendingDrag)s.pendingDrag=[];
+  if(direct&&input.drag.length){if(s.dragStarted)s.pendingDrag=[];s.pendingDrag=dragRoute(s,[...s.pendingDrag,...input.drag]);const budget=C.dragSpeed*Math.max(C.step,s.accumulator+Math.max(0,Math.min(.25,elapsed))),distance=s.pendingDrag.reduce((n,d)=>n+Math.hypot(d.x,d.y),0);if(distance>budget&&s.pendingDrag.length>1){const last=s.pendingDrag.at(-1);let first=s.pendingDrag.length-1;while(first>0&&s.pendingDrag[first-1].x*last.x+s.pendingDrag[first-1].y*last.y>0)first--;s.pendingDrag=s.pendingDrag.slice(first);}s.dragStarted=false;}
+  else if(!direct){s.pendingDrag=[];s.dragStarted=false;}
+  s.accumulator+=Math.max(0,Math.min(.25,elapsed));let count=0;
+  while(s.accumulator+1e-10>=C.step&&count++<31&&s.mode==='playing'){
+   s.accumulator-=C.step;const drag=direct?takeDrag(s.pendingDrag,(s.player.dashTime>C.step?480:C.dragSpeed)*C.step):null;if(drag?.length)s.dragStarted=true;step(s,direct?{...input,drag}:input);
+  }
+  if(s.mode!=='playing'){s.accumulator=0;s.pendingDrag=[];s.dragStarted=false;}
+ }
  function snapshot(s){return JSON.parse(JSON.stringify({...s,goalStatus:objective(s)}));}
  return{create,start,spawn,dash,pause,resume,resize,step,advance,snapshot,objective};
 });

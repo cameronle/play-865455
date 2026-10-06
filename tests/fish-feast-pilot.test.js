@@ -26,3 +26,8 @@ test('target-arrival forecasts preserve the original level-ten portrait seed wit
  assert.equal(s.mode,'won','original seed must finish without retries, altered food or a larger time budget');
  assert.ok(s.player.lives>0&&s.eaten>0);
 });
+test('drag planning uses its actual swimming tier without mutating a snapshot',()=>{
+ const s=S.create(760,1080,92);S.start(s,0);const before=JSON.stringify(s);
+ const drag=P.decide(s,true);assert.equal(drag.inputMode,'drag');assert.equal(drag.swimSpeed,C.dragSpeed);assert.equal(JSON.stringify(s),before);
+ const hover=P.decide(s);assert.equal(hover.swimSpeed,190);assert.equal(hover.inputMode,'hover');
+});

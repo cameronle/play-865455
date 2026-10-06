@@ -20,7 +20,7 @@ test('reversing a fast relative drag responds next frame instead of chasing an o
  canvas.handlers.pointermove(pointer(1,135,50));const sample=input.sample();
  assert.deepEqual(sample.drag,[{x:-10,y:0}],'reverse input must retain its full relative distance');
  S.advance(s,1/60,sample);assert.ok(s.player.x<before,'fish must move back immediately');
- assert.ok(Math.abs(s.player.x-before+10)<1e-8,'held dragging follows the delivered distance, not the ordinary speed cap');
+ assert.ok(Math.abs(s.player.x-before+C.dragSpeed/60)<1e-8,'fast reversal must use the full bounded frame budget, not chase the old target');
 });
 test('slow relative dragging moves on every input frame at portrait and landscape scales',()=>{
  for(const width of [760,1120]){

@@ -2,7 +2,9 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import controller from './fish-pilot.js';
+import content from '../fish-feast/content.js';
 const origin=process.argv[2]||'http://127.0.0.1:8176',phase=process.argv[3]||'slice',mode=process.argv[4]||'smoke';
+const dragPilot=process.env.FISH_QA_INPUT==='drag'||mode==='drag-pilot'||mode==='drag-campaign';
 const seedFixture=process.env.FISH_QA_SEED?Number(process.env.FISH_QA_SEED):null;
 if(seedFixture!==null&&(!Number.isInteger(seedFixture)||seedFixture<1||seedFixture>4294967295))throw Error('Invalid native QA seed');
 if(mode==='endgame'&&!process.env.FISH_QA_PROGRESS)throw Error('Endgame QA requires an earned progress file');
@@ -39,13 +41,13 @@ async function drag(){
   current='native-drag-'+kind+'-'+width+'x'+height;
   await navigate(width,height,theme,language);await click('#startButton');await waitFor('FishFeastGame.snapshot().time>.1');
   // Observational recorder installed after the game loop so samples follow physics.
-  await evaluate(`(()=>{const c=document.querySelector('#game');window.__dragReceipt={running:true,frames:[],events:[]};for(const type of ['pointerdown','pointermove','pointerup','pointercancel'])c.addEventListener(type,e=>__dragReceipt.events.push({type,x:e.clientX,y:e.clientY,now:performance.now(),trusted:e.isTrusted}));function record(now){if(!__dragReceipt.running)return;const s=FishFeastGame.snapshot();__dragReceipt.frames.push({now:performance.now(),rafNow:now,x:s.player.x,y:s.player.y,vx:s.player.vx,vy:s.player.vy,time:s.time,hits:s.hits,owner:s.input.moveOwner,target:s.input.target});requestAnimationFrame(record)}requestAnimationFrame(record);return true})()`);
+  await evaluate(`(()=>{const c=document.querySelector('#game');window.__dragReceipt={running:true,frames:[],events:[]};for(const type of ['pointerdown','pointermove','pointerup','pointercancel'])c.addEventListener(type,e=>__dragReceipt.events.push({type,x:e.clientX,y:e.clientY,now:performance.now(),trusted:e.isTrusted}));function record(now){if(!__dragReceipt.running)return;const s=FishFeastGame.snapshot();__dragReceipt.frames.push({now:performance.now(),rafNow:now,x:s.player.x,y:s.player.y,vx:s.player.vx,vy:s.player.vy,time:s.time,hits:s.hits,growth:s.player.growth,tier:s.player.tier,owner:s.input.moveOwner,target:s.input.target});requestAnimationFrame(record)}requestAnimationFrame(record);return true})()`);
   const box=await rect('#game'),p={id:1,x:box.x+box.width*.30,y:box.y+box.height*.5,radiusX:2,radiusY:2},mobile=width<900;
   const move=async x=>{if(mobile)await call('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{...p,x}]});else await call('Input.dispatchMouseEvent',{type:'mouseMoved',x,y:p.y,button:'none',buttons:1});};
   if(mobile)await call('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[p]});else await call('Input.dispatchMouseEvent',{type:'mousePressed',x:p.x,y:p.y,button:'left',buttons:1,clickCount:1});
   await delay(30);
   if(kind==='slow'){for(let i=1;i<=24;i++){await move(p.x+i*.25);await delay(20);}}
-  else if(kind==='fast'){for(let i=1;i<=12;i++){await move(p.x+10*i);await delay(20);}}
+  else if(kind==='fast'){for(let i=1;i<=6;i++){await move(p.x+20*i);await delay(8);}}
   else{for(let i=1;i<=5;i++){await move(p.x+20*i);await delay(20);}await delay(40);for(let i=1;i<=4;i++){await move(p.x+100-5*i);await delay(20);}}
   await delay(60);const screenshot=await shot(current);if(mobile)await call('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});else await call('Input.dispatchMouseEvent',{type:'mouseReleased',x:p.x+(kind==='slow'?6:kind==='fast'?120:80),y:p.y,button:'left',buttons:0,clickCount:1});
   await waitFor('FishFeastGame.snapshot().input.moveOwner===null&&FishFeastGame.snapshot().player.vx===0');await delay(60);
@@ -67,10 +69,10 @@ async function drag(){
    motion={fingerReversalCss:peak-moves.at(-1).x,reverseResponseMs:after.now-turn.now,fishReversalCss:(before.x-held.at(-1).x)*scale};
   }else{
    const actualFinger=moves.at(-1).x-down.x,after=receipt.frames.find(f=>f.now>=moves.at(-1).now),actualFish=(after.x-first.x)*scale;
-   let responsive=0;for(const event of moves){const frame=receipt.frames.find(f=>f.now>=event.now);if(frame&&Math.abs((frame.x-first.x)*scale-(event.x-down.x))<.05)responsive++;}
-   assert.equal(responsive,moves.length,'every fast delivered event must preserve its full distance in the next rendered physics frame');
-   assert.ok(Math.abs(actualFish-actualFinger)<.05,'fast drag must be 1:1, not speed-limited target pursuit');
-   motion={deliveredMoves:moves.length,responsiveMoves:responsive,fingerCss:actualFinger,fishCss:actualFish,distanceErrorCss:Math.abs(actualFish-actualFinger)};
+   const cap=content.dragSpeed;let checked=0,maxSpeed=0;
+   for(let i=1;i<held.length;i++){const a=held[i-1],b=held[i],dt=b.time-a.time;if(dt>0&&a.growth===b.growth){const speed=Math.hypot(b.x-a.x,b.y-a.y)/dt;assert.ok(speed<=cap+1e-6,'fast motion must remain within its physical swimming tier');maxSpeed=Math.max(maxSpeed,speed);checked++;}}
+   assert.ok(checked>=5);assert.ok(actualFish>0&&actualFish<actualFinger*.85,'fast strokes must visibly swim instead of instantly following the whole finger distance');
+   motion={deliveredMoves:moves.length,fingerCss:actualFinger,fishCss:actualFish,checkedPhysicalFrames:checked,maxLogicalSpeed:maxSpeed,swimSpeedCap:cap};
   }
   assert.equal(state.input.target,null);const stoppedX=state.player.x;await delay(100);assert.equal((await snap()).player.x,stoppedX,'release must stop ordinary swimming');
   checkLayout(await evaluate(layoutExpression),width,height);await click('#pauseButton');const paused=await snap();await delay(100);assert.equal((await snap()).frames,paused.frames);assert.equal((await snap()).time,paused.time);await click('#startButton');await delay(80);assert.equal((await snap()).player.x,stoppedX,'resume must not replay queued drag');
@@ -78,6 +80,15 @@ async function drag(){
   rows.push(row);fs.appendFileSync(path.join(OUT,'drag.jsonl'),JSON.stringify(row)+'\n');
  }
  assert.equal(rows.length,views.length*3);
+}
+// Each guided stroke uses real pointer ownership and holds its intent between
+// observations; re-anchoring is a legitimate release/press, never game-state injection.
+let pilotPointer=null;
+async function steer(s,box,aim,dash){
+ if(!aim)return;const x=box.x+Math.max(2,Math.min(box.width-2,aim.x/s.width*box.width)),y=box.y+Math.max(2,Math.min(box.height-2,aim.y/s.height*box.height));
+ if(dragPilot){if(pilotPointer)await call('Input.dispatchMouseEvent',{type:'mouseReleased',...pilotPointer,button:'left',buttons:0,clickCount:1});const start={x:box.x+s.player.x/s.width*box.width,y:box.y+s.player.y/s.height*box.height};await call('Input.dispatchMouseEvent',{type:'mousePressed',...start,button:'left',buttons:1,clickCount:1});await call('Input.dispatchMouseEvent',{type:'mouseMoved',x,y,button:'none',buttons:1});pilotPointer={x,y};}
+ else await call('Input.dispatchMouseEvent',{type:'mouseMoved',x,y,button:'none'});
+ if(dash){await key('Space');await key('Space','keyUp');}
 }
 async function pilot(){
  const late=mode==='endgame',level=late?12:1,views=late?[[844,390,'light','late-landscape'],[390,844,'dark','late-portrait']]:[[1440,900,'light','desktop-grown'],[390,844,'dark','mobile-grown']];
@@ -87,15 +98,15 @@ async function pilot(){
   const box=await rect('#game'),startingBest=(await snap()).progress.best[level]||0,started=Date.now();let grownShot=null,peak=0,steps=0;
   while(Date.now()-started<(late?160000:105000)){
    const s=await snap(),p=s.player;peak=Math.max(peak,s.fish.length);if(s.mode!=='playing')break;
-   const aim=controller.aim(s);trace(s,{target:aim,dash:controller.shouldDash(s,aim)});
-   if(aim){const x=box.x+Math.max(2,Math.min(box.width-2,aim.x/s.width*box.width)),y=box.y+Math.max(2,Math.min(box.height-2,aim.y/s.height*box.height));await call('Input.dispatchMouseEvent',{type:'mouseMoved',x,y,button:'none'});if(controller.shouldDash(s,aim)){await key('Space');await key('Space','keyUp');}}
+   const aim=controller.aim(s,dragPilot);trace(s,{target:aim,dash:controller.shouldDash(s,aim,dragPilot),input:dragPilot?'held drag':'hover'});
+   await steer(s,box,aim,controller.shouldDash(s,aim,dragPilot));
    if(p.tier>=(late?5:2)&&!grownShot){await delay(180);grownShot=await shot(name);}
    await delay(late?55:90);steps++;
   }
   const end=await snap();assert.equal(end.mode,'won','ordinary mouse pursuit did not clear level');assert.ok(end.player.lives>0);assert.ok(end.eaten>0);assert.ok(grownShot);checkLayout(await evaluate(layoutExpression),width,height);
   const stored=await evaluate('JSON.parse(localStorage.getItem("fish-feast-progress-v1"))');assert.equal(stored.best[level],Math.max(startingBest,end.player.score));const resultShot=await shot(name+'-complete');
   await click('#startButton');const retry=await snap();assert.equal(retry.mode,'playing');assert.equal(retry.player.growth,0);assert.equal(retry.player.lives,3);assert.equal(retry.progress.best[level],Math.max(startingBest,end.player.score));
-  const row={case:current,level,seed:end.seed,saveFixture:late?'Restored earned campaign progress through the real validator':null,input:'native CDP mouse movement guided by detached snapshots',stateInjection:false,clockAcceleration:false,width,height,growth:end.player.growth,eaten:end.eaten,lives:end.player.lives,score:end.player.score,simulationSeconds:end.time,peakEntities:peak,mouseUpdates:steps,screenshot:grownShot,resultScreenshot:resultShot,retryResets:true,recordReadBack:true};rows.push(row);fs.appendFileSync(path.join(OUT,'pilot.jsonl'),JSON.stringify(row)+'\n');
+  const row={case:current,level,seed:end.seed,saveFixture:late?'Restored earned campaign progress through the real validator':null,input:dragPilot?'native CDP held relative drag strokes guided by detached snapshots':'native CDP mouse movement guided by detached snapshots',stateInjection:false,clockAcceleration:false,width,height,growth:end.player.growth,eaten:end.eaten,lives:end.player.lives,score:end.player.score,simulationSeconds:end.time,peakEntities:peak,mouseUpdates:steps,screenshot:grownShot,resultScreenshot:resultShot,retryResets:true,recordReadBack:true};rows.push(row);fs.appendFileSync(path.join(OUT,'pilot.jsonl'),JSON.stringify(row)+'\n');
  }
 }
 async function campaign(){
@@ -107,12 +118,12 @@ async function campaign(){
   while(Date.now()-started<160000){
    const s=await snap();assert.equal(s.level.id,level);peak=Math.max(peak,s.fish.length);for(const f of s.fish){species.add(f.type);motions.add(f.motion);if(f.intent)phases.add(f.motion+':'+f.intent);}
    if(s.mode==='won')break;if(s.mode==='lost'){assert.ok(retries<2,'campaign retries exhausted on level '+level);retries++;await click('#startButton');continue;}assert.equal(s.mode,'playing');
-   const aim=controller.aim(s);trace(s,{target:aim,dash:controller.shouldDash(s,aim)});const box=await rect('#game'),x=box.x+Math.max(2,Math.min(box.width-2,aim.x/s.width*box.width)),y=box.y+Math.max(2,Math.min(box.height-2,aim.y/s.height*box.height));await call('Input.dispatchMouseEvent',{type:'mouseMoved',x,y,button:'none'});if(controller.shouldDash(s,aim)){await key('Space');await key('Space','keyUp');}
+   const aim=controller.aim(s,dragPilot);trace(s,{target:aim,dash:controller.shouldDash(s,aim,dragPilot),input:dragPilot?'held drag':'hover'});const box=await rect('#game');await steer(s,box,aim,controller.shouldDash(s,aim,dragPilot));
    if([4,8,12].includes(level)&&s.player.tier>=3&&!activeShot)activeShot=await shot('campaign-'+level+'-active');await delay(55);steps++;
   }
   const end=await snap();assert.equal(end.mode,'won','native campaign did not complete level '+level);assert.ok(end.player.lives>0&&end.eaten>0);checkLayout(await evaluate(layoutExpression),width,height);
   const stored=await evaluate('JSON.parse(localStorage.getItem("fish-feast-progress-v1"))');assert.ok(stored.completed.includes(level));assert.equal(stored.best[level],end.player.score);assert.equal(stored.unlocked,Math.min(level+1,levels.length));
-  const row={case:current,level,width,height,language,input:'native CDP mouse movement guided by detached snapshots; mobile viewport is not a physical phone',stateInjection:false,clockAcceleration:false,retries,mouseUpdates:steps,simulationSeconds:end.time,elapsedMilliseconds:Date.now()-started,eaten:end.eaten,growth:end.player.growth,lives:end.player.lives,score:end.player.score,peakEntities:peak,species:[...species],motions:[...motions],phases:[...phases],screenshot:activeShot,recordReadBack:true};rows.push(row);fs.appendFileSync(path.join(OUT,'campaign.jsonl'),JSON.stringify(row)+'\n');console.log(JSON.stringify({level,completed:true,retries,simulationSeconds:end.time}));
+  const row={case:current,level,width,height,language,input:dragPilot?'native CDP held relative drag strokes; mobile viewport is not a physical phone':'native CDP mouse movement guided by detached snapshots; mobile viewport is not a physical phone',stateInjection:false,clockAcceleration:false,retries,mouseUpdates:steps,simulationSeconds:end.time,elapsedMilliseconds:Date.now()-started,eaten:end.eaten,growth:end.player.growth,lives:end.player.lives,score:end.player.score,peakEntities:peak,species:[...species],motions:[...motions],phases:[...phases],screenshot:activeShot,recordReadBack:true};rows.push(row);fs.appendFileSync(path.join(OUT,'campaign.jsonl'),JSON.stringify(row)+'\n');console.log(JSON.stringify({level,completed:true,retries,simulationSeconds:end.time}));
   if(level<levels.length){await click('#nextButton');await waitFor('window.FishFeastGame.snapshot().mode==="playing"');}
  }
  assert.equal(rows.length,levels.length);assert.equal(await evaluate('document.getElementById("nextButton").hidden'),true);await shot('campaign-graduate');await click('#menuButton');await call('Page.reload');await waitFor('document.readyState==="complete"&&!!window.FishFeastGame');const restored=await snap();assert.equal(restored.mode,'title');assert.equal(restored.level.id,levels.length);assert.deepEqual(restored.progress.completed,levels);assert.equal(restored.player.growth,0);
@@ -181,5 +192,5 @@ async function forms(){
 async function matrix(){const views=[[320,568],[390,844],[412,915],[844,390],[1024,768],[1440,900]];for(const [width,height]of views)for(const theme of ['light','dark'])for(const lang of ['zh','en']){current=[width,height,theme,lang].join('-');await navigate(width,height,theme,lang);await click('#startButton');await waitFor('window.FishFeastGame.snapshot().time>.15');await evaluate('window.scrollTo(0,0)');const measure=await evaluate(layoutExpression);checkLayout(measure,width,height);assert.equal(measure.theme,theme);assert.equal((await snap()).language,lang);let screenshot=null;if(width===390||width===1440)screenshot=await shot('matrix-'+current);await click('#pauseButton');const f=await snap();await delay(100);assert.equal((await snap()).frames,f.frames);rows.push({case:current,width,height,theme,lang,layout:measure,pauseIdle:true,screenshot});fs.appendFileSync(path.join(OUT,'matrix.jsonl'),JSON.stringify(rows.at(-1))+'\n');}assert.equal(rows.length,views.length*4);}
 try{
  ({browserContextId:context}=await call('Target.createBrowserContext',{},null));({targetId:target}=await call('Target.createTarget',{url:'about:blank',browserContextId:context},null));({sessionId:session}=await call('Target.attachToTarget',{targetId:target,flatten:true},null));await call('Page.enable');await call('Runtime.enable');await call('Network.enable');await call('Network.setCacheDisabled',{cacheDisabled:true});if(seedFixture!==null)await call('Page.addScriptToEvaluateOnNewDocument',{source:`(()=>{const original=crypto.getRandomValues.bind(crypto);crypto.getRandomValues=a=>a instanceof Uint32Array&&a.length===1?(a[0]=${seedFixture},a):original(a);})();`});if(process.env.FISH_PAGE_URL?.startsWith('file:'))await call('Network.setBlockedURLs',{urls:['http://*','https://*']});
- if(mode==='drag')await drag();else if(mode==='forms')await forms();else if(mode==='matrix')await matrix();else if(mode==='campaign')await campaign();else if(mode==='clear')await clearFixture();else if(mode==='pilot'||mode==='endgame')await pilot();else await smoke();assert.deepEqual(errors,[]);const report={phase,mode,page:await evaluate('location.href'),networkBlocked:!!process.env.FISH_PAGE_URL?.startsWith('file:'),cases:rows.length,rows,errors,focusEmulation:false,sourceInterception:false,seedFixture,physicalPhone:false,completed:true};fs.writeFileSync(path.join(OUT,mode+'.json'),JSON.stringify(report,null,2));console.log(JSON.stringify({phase,mode,cases:rows.length,errors:errors.length,completed:true,report:path.join(OUT,mode+'.json')}));
+ if(mode==='drag')await drag();else if(mode==='forms')await forms();else if(mode==='matrix')await matrix();else if(mode==='campaign'||mode==='drag-campaign')await campaign();else if(mode==='clear')await clearFixture();else if(mode==='pilot'||mode==='drag-pilot'||mode==='endgame')await pilot();else await smoke();assert.deepEqual(errors,[]);const report={phase,mode,page:await evaluate('location.href'),networkBlocked:!!process.env.FISH_PAGE_URL?.startsWith('file:'),cases:rows.length,rows,errors,focusEmulation:false,sourceInterception:false,seedFixture,physicalPhone:false,completed:true};fs.writeFileSync(path.join(OUT,mode+'.json'),JSON.stringify(report,null,2));console.log(JSON.stringify({phase,mode,cases:rows.length,errors:errors.length,completed:true,report:path.join(OUT,mode+'.json')}));
 }catch(error){const layout=await evaluate(layoutExpression).catch(()=>null),overflow=await evaluate(`(()=>{const w=document.documentElement.clientWidth;return [...document.querySelectorAll('body *')].filter(e=>e.getBoundingClientRect().right>w+1).map(e=>({tag:e.tagName,id:e.id,class:e.className,text:e.textContent.slice(0,100),box:e.getBoundingClientRect().toJSON(),min:getComputedStyle(e).minWidth,whiteSpace:getComputedStyle(e).whiteSpace}));})()`).catch(()=>null);fs.writeFileSync(path.join(OUT,mode+'-failed.json'),JSON.stringify({error:String(error.stack),case:current,seedFixture,snapshot:await snap().catch(()=>lastObserved),screenshot:await shot(mode+'-failed').catch(()=>null),rows,errors,layout,overflow},null,2));throw error;}finally{if(context)await call('Target.disposeBrowserContext',{browserContextId:context},null).catch(()=>{});ws.close();}

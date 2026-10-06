@@ -51,5 +51,5 @@
   if(recipe.goal===61)l.stages.push({from:37,pool:[...l.pool,{type:'hunter',tier:5}],pressure:{type:'hunter',tier:5,need:2}});
   if(i===0)l.brief={zh:'吃小鱼长到第 3 级，再反吃标记的扇背鱼。',en:'Grow to size 3, then turn back and eat the marked fanback.'};
  }
- return{species,chapters,levels,thresholds:[0,0,7,19,37,61],sizes:[18,29,42,58,77,98],maxEntities:30,step:1/120,dashDuration:.22,dashCooldown:2.6,warningTime:1.0};
+ return{species,chapters,levels,thresholds:[0,0,7,19,37,61],sizes:[18,29,42,58,77,98],maxEntities:30,step:1/120,dragSpeed:260,dashDuration:.22,dashCooldown:2.6,warningTime:1.0};
 });
