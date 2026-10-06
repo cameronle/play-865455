@@ -5,7 +5,7 @@
  // The former diameter-sum check only proved an edge-anchored jelly bypass.
  const minimumHeight=Math.ceil(Math.max(...[2,3,4,5].map(tier=>4*R.geometry({shape:'player',tier}).ry+2*R.geometry(tier===5?C.species.jelly:{...C.species.hunter,tier:tier+1}).ry+48))/10)*10;
  function worldSize(width,height){const factor=Math.max(1,minimumHeight/height);return{width:width*factor,height:height*factor};}
- function create(width=760,height=520,seed=1){({width,height}=worldSize(width,height));return{width,height,seed:seed>>>0||1,rng:seed>>>0||1,mode:'title',levelIndex:0,level:C.levels[0],player:R.player(width,height),fish:[],effects:[],time:0,spawnTimer:1.4,foodTimer:1,objectiveTimer:1,accumulator:0,nextId:1,eaten:0,hits:0,stageIndex:0,phase:'forage',caught:{},lanesEaten:[],bestShoal:0,shoalId:null,shoalCount:0,shoalTime:-10,revengeCount:0};}
+ function create(width=760,height=520,seed=1){({width,height}=worldSize(width,height));return{width,height,seed:seed>>>0||1,rng:seed>>>0||1,mode:'title',levelIndex:0,level:C.levels[0],player:R.player(width,height),fish:[],effects:[],time:0,spawnTimer:1.4,foodTimer:1,objectiveTimer:1,accumulator:0,pendingDrag:[],nextId:1,eaten:0,hits:0,stageIndex:0,phase:'forage',caught:{},lanesEaten:[],bestShoal:0,shoalId:null,shoalCount:0,shoalTime:-10,revengeCount:0};}
  function activePool(s){const stages=s.level.stages;if(!stages)return s.level.pool;let index=0;for(let i=1;i<stages.length;i++)if(s.player.growth>=stages[i].from)index=i;s.stageIndex=index;return stages[index].pool;}
  function kindOf(entry){const type=typeof entry==='string'?entry:entry.type,kind=C.species[type];return kind?{...kind,type,...(typeof entry==='object'?{tier:entry.tier}:{} )}:null;}
  function objective(s){const c=s.level.challenge,current=c?(c.kind==='catch'?s.caught[c.type]||0:c.kind==='lanes'?s.lanesEaten.length:s.bestShoal):0,challengeDone=!c||current>=c.need,reverse=s.player.growth>=s.level.goal&&challengeDone,phase=reverse?'reverse':s.player.growth>=7?'hunt':'forage';if(!challengeDone)return{phase,kind:c.kind,type:c.type,current,need:c.need,complete:false};if(!reverse)return{phase,kind:'grow',current:s.player.growth,need:s.level.goal,complete:false};return{phase,kind:'revenge',type:s.level.finish.type,tier:s.level.finish.tier,current:s.revengeCount,need:s.level.finish.need,complete:s.revengeCount>=s.level.finish.need};}
@@ -40,23 +40,30 @@
   for(const kind of pool)if(kind.tier>=1&&!special.includes(kind.type))spawn(s,kind.type,{tier:kind.tier});s.phase=objective(s).phase;
  }
  function dash(s){const p=s.player;if(s.mode!=='playing'||p.cooldown>0)return false;p.cooldown=C.dashCooldown;p.dashTime=C.dashDuration;return true;}
- function pause(s){if(s.mode!=='playing')return false;s.mode='paused';s.player.vx=s.player.vy=0;s.player.dashTime=0;s.accumulator=0;return true;}
- function resume(s){if(s.mode!=='paused')return false;s.mode='playing';s.accumulator=0;return true;}
- function resize(s,width,height){({width,height}=worldSize(width,height));const sx=width/s.width,sy=height/s.height;s.width=width;s.height=height;for(const fish of [s.player,...s.fish]){fish.x*=sx;fish.y*=sy;if(Number.isFinite(fish.baseY))fish.baseY*=sy;if(Number.isFinite(fish.anchorX))fish.anchorX*=sx;if(Number.isFinite(fish.anchorY))fish.anchorY*=sy;if(Number.isFinite(fish.schoolOffset))fish.schoolOffset*=sy;R.bound(fish,width,height);}s.accumulator=0;}
+ function pause(s){if(s.mode!=='playing')return false;s.mode='paused';s.player.vx=s.player.vy=0;s.player.dashTime=0;s.accumulator=0;s.pendingDrag=[];return true;}
+ function resume(s){if(s.mode!=='paused')return false;s.mode='playing';s.accumulator=0;s.pendingDrag=[];return true;}
+ function resize(s,width,height){({width,height}=worldSize(width,height));const sx=width/s.width,sy=height/s.height;s.width=width;s.height=height;for(const fish of [s.player,...s.fish]){fish.x*=sx;fish.y*=sy;if(Number.isFinite(fish.baseY))fish.baseY*=sy;if(Number.isFinite(fish.anchorX))fish.anchorX*=sx;if(Number.isFinite(fish.anchorY))fish.anchorY*=sy;if(Number.isFinite(fish.schoolOffset))fish.schoolOffset*=sy;R.bound(fish,width,height);}s.accumulator=0;s.pendingDrag=[];}
  function safePosition(s){let best={x:s.width*.5,y:s.height*.5},score=-1;for(const fx of [.16,.5,.84])for(const fy of [.16,.5,.84]){const point={...s.player,x:s.width*fx,y:s.height*fy};R.bound(point,s.width,s.height);const distance=Math.min(...s.fish.filter(f=>!f.dead&&R.relation(s.player,f)==='danger').map(f=>Math.hypot(f.x-point.x,f.y-point.y)));if(distance>score){score=distance;best=point;}}return best;}
  function effect(s,kind,x,y){s.effects.push({kind,x,y,life:kind==='grow'?.7:.35,age:0});if(s.effects.length>20)s.effects.shift();}
  function step(s,input={}){if(s.mode!=='playing')return;const dt=C.step,p=s.player,oldP={x:p.x,y:p.y},startTier=p.tier;s.time+=dt;
   p.cooldown=Math.max(0,p.cooldown-dt);p.invulnerable=Math.max(0,p.invulnerable-dt);p.dashTime=Math.max(0,p.dashTime-dt);
   let dx=Number(input.x)||0,dy=Number(input.y)||0;
+  const direct=Array.isArray(input.drag),path=direct?[oldP]:null;
+  if(direct){dx=dy=0;for(const delta of input.drag){if(!Number.isFinite(delta.x)||!Number.isFinite(delta.y))continue;const before={x:p.x,y:p.y};p.x+=delta.x;p.y+=delta.y;R.bound(p,s.width,s.height);const x=p.x-before.x,y=p.y-before.y,length=Math.hypot(x,y);if(length){p.headingX=x/length;p.headingY=y/length;path.push({x:p.x,y:p.y});}}}
   // Clamp the final step to the target, including fractional logical pixels.
-  if(input.target){dx=input.target.x-p.x;dy=input.target.y-p.y;const distance=Math.hypot(dx,dy),travel=190*dt;if(distance>0){const factor=Math.min(1,distance/travel)/distance;dx*=factor;dy*=factor;}}
+  if(!direct&&input.target){dx=input.target.x-p.x;dy=input.target.y-p.y;const distance=Math.hypot(dx,dy),travel=190*dt;if(distance>0){const factor=Math.min(1,distance/travel)/distance;dx*=factor;dy*=factor;}}
   const length=Math.hypot(dx,dy);if(length>1){dx/=length;dy/=length;}
   if(dx||dy){const n=Math.hypot(dx,dy);p.headingX=dx/n;p.headingY=dy/n;}
-  const speed=p.dashTime>0?480:190;p.vx=(p.dashTime>0?p.headingX:dx)*speed;p.vy=(p.dashTime>0?p.headingY:dy)*speed;p.x+=p.vx*dt;p.y+=p.vy*dt;R.bound(p,s.width,s.height);
+  const speed=p.dashTime>0?480:190;p.vx=(p.dashTime>0?p.headingX:dx)*speed;p.vy=(p.dashTime>0?p.headingY:dy)*speed;p.x+=p.vx*dt;p.y+=p.vy*dt;R.bound(p,s.width,s.height);if(direct){p.vx=(p.x-oldP.x)/dt;p.vy=(p.y-oldP.y)/dt;}
+  if(direct&&(p.x!==path.at(-1).x||p.y!==path.at(-1).y))path.push({x:p.x,y:p.y});
+  // Sweep every delivered segment; an out-and-back stroke is not a teleport.
+  const segments=[];
+  if(path&&path.length>1){const lengths=path.slice(1).map((point,i)=>Math.hypot(point.x-path[i].x,point.y-path[i].y)),total=lengths.reduce((sum,n)=>sum+n,0);let progress=0;for(let i=0;i<lengths.length;i++){const fromTime=progress/total;progress+=lengths[i];segments.push({from:path[i],to:path[i+1],fromTime,toTime:progress/total});}}
   const contacts=[];
   for(const f of s.fish){const oldF={x:f.x,y:f.y};f.warning=Math.max(0,f.warning-dt);f.age+=dt;if(f.warning>0)continue;
    B.move(s,f,dt);
-   if(!f.dead&&R.swept(p,f,oldP,oldF))contacts.push(f);
+   const pointAt=t=>({x:oldF.x+(f.x-oldF.x)*t,y:oldF.y+(f.y-oldF.y)*t});
+   if(!f.dead&&(segments.length?segments.some(segment=>R.swept({...p,...segment.to},{...f,...pointAt(segment.toTime)},segment.from,pointAt(segment.fromTime))):R.swept(p,f,oldP,oldF)))contacts.push(f);
   }
   const danger=contacts.find(f=>f.hazard||f.tier>startTier);
   if(danger&&p.invulnerable<=0){const safe=safePosition(s);if(R.hurt(p,safe.x,safe.y)){s.hits++;effect(s,'hurt',p.x,p.y);if(p.lives===0)s.mode='lost';}}
@@ -70,7 +77,7 @@
   s.objectiveTimer-=dt;if(s.objectiveTimer<=0){s.objectiveTimer=1;let target=null;if(status.kind==='revenge')target={type:status.type,tier:status.tier};else if(status.kind==='catch')target={type:status.type,tier:C.species[status.type].tier};else if(status.kind==='shoal')target={type:'fry',tier:0};if(target){const total=s.fish.filter(f=>!f.dead&&f.type===target.type&&f.tier===target.tier).length,need=status.kind==='shoal'?s.level.schoolSize:1;for(let i=total;i<need;i++)spawn(s,target.type,{tier:target.tier,target:true});}}
   s.spawnTimer-=dt;if(s.spawnTimer<=0&&pool.length){s.spawnTimer=s.level.spawnEvery;const kind=pool[Math.floor(random(s)*pool.length)];spawn(s,kind.type,{tier:kind.tier});}
  }
- function advance(s,elapsed,input={}){if(s.mode!=='playing')return;s.accumulator+=Math.max(0,Math.min(.25,elapsed));let count=0;while(s.accumulator+1e-10>=C.step&&count++<31&&s.mode==='playing'){s.accumulator-=C.step;step(s,input);}if(s.mode!=='playing')s.accumulator=0;}
+ function advance(s,elapsed,input={}){if(s.mode!=='playing')return;const direct=Array.isArray(input.drag);if(!s.pendingDrag)s.pendingDrag=[];if(direct){for(const delta of input.drag)if(Number.isFinite(delta.x)&&Number.isFinite(delta.y))s.pendingDrag.push({...delta});}else s.pendingDrag=[];s.accumulator+=Math.max(0,Math.min(.25,elapsed));let count=0;while(s.accumulator+1e-10>=C.step&&count++<31&&s.mode==='playing'){s.accumulator-=C.step;const command=direct?{...input,drag:s.pendingDrag}:input;s.pendingDrag=[];step(s,command);}if(s.mode!=='playing'){s.accumulator=0;s.pendingDrag=[];}}
  function snapshot(s){return JSON.parse(JSON.stringify({...s,goalStatus:objective(s)}));}
  return{create,start,spawn,dash,pause,resume,resize,step,advance,snapshot,objective};
 });

@@ -35,7 +35,7 @@ async function smoke(){
 }
 async function drag(){
  const views=[[390,844,'dark','zh'],[844,390,'light','en'],[1440,900,'light','en']];
- for(const [width,height,theme,language]of views)for(const kind of ['slow','reverse']){
+ for(const [width,height,theme,language]of views)for(const kind of ['slow','reverse','fast']){
   current='native-drag-'+kind+'-'+width+'x'+height;
   await navigate(width,height,theme,language);await click('#startButton');await waitFor('FishFeastGame.snapshot().time>.1');
   // Observational recorder installed after the game loop so samples follow physics.
@@ -45,8 +45,9 @@ async function drag(){
   if(mobile)await call('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[p]});else await call('Input.dispatchMouseEvent',{type:'mousePressed',x:p.x,y:p.y,button:'left',buttons:1,clickCount:1});
   await delay(30);
   if(kind==='slow'){for(let i=1;i<=24;i++){await move(p.x+i*.25);await delay(20);}}
+  else if(kind==='fast'){for(let i=1;i<=12;i++){await move(p.x+10*i);await delay(20);}}
   else{for(let i=1;i<=5;i++){await move(p.x+20*i);await delay(20);}await delay(40);for(let i=1;i<=4;i++){await move(p.x+100-5*i);await delay(20);}}
-  await delay(60);const screenshot=await shot(current);if(mobile)await call('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});else await call('Input.dispatchMouseEvent',{type:'mouseReleased',x:p.x+(kind==='slow'?6:80),y:p.y,button:'left',buttons:0,clickCount:1});
+  await delay(60);const screenshot=await shot(current);if(mobile)await call('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});else await call('Input.dispatchMouseEvent',{type:'mouseReleased',x:p.x+(kind==='slow'?6:kind==='fast'?120:80),y:p.y,button:'left',buttons:0,clickCount:1});
   await waitFor('FishFeastGame.snapshot().input.moveOwner===null&&FishFeastGame.snapshot().player.vx===0');await delay(60);
   const receipt=await evaluate('(()=>{__dragReceipt.running=false;return __dragReceipt})()'),state=await snap();
   fs.writeFileSync(path.join(OUT,current+'-trace.json'),JSON.stringify(receipt,null,2));
@@ -60,17 +61,23 @@ async function drag(){
    const actualFinger=moves.at(-1).x-down.x,actualFish=(held.at(-1).x-first.x)*scale;
    assert.ok(delivered.length>0);assert.equal(responsive,delivered.length,'each delivered small movement must respond in the next frame');assert.ok(Math.abs(actualFish-actualFinger)<.05,'slow drag must preserve fractional distance');
    motion={deliveredMoves:delivered.length,responsiveMoves:responsive,fingerCss:actualFinger,fishCss:actualFish};
-  }else{
-   const peak=Math.max(...moves.map(e=>e.x)),turn=moves.find((e,i)=>i>0&&moves[i-1].x===peak&&e.x<peak),before=receipt.frames.filter(f=>f.now<turn.now).at(-1),after=receipt.frames.find(f=>f.now>=turn.now&&f.vx<0);
+  }else if(kind==='reverse'){
+   const peak=Math.max(...moves.map(e=>e.x)),turn=moves.find((e,i)=>i>0&&moves[i-1].x===peak&&e.x<peak),before=receipt.frames.filter(f=>f.now<turn.now).at(-1),after=receipt.frames.find(f=>f.now>=turn.now&&f.x<before.x);
    assert.ok(before&&after,'reverse must move toward the new direction');assert.ok(after.now-turn.now<50,'reverse must respond without old target debt');assert.ok(held.at(-1).x<before.x,'fish must travel backward during the reversal');
    motion={fingerReversalCss:peak-moves.at(-1).x,reverseResponseMs:after.now-turn.now,fishReversalCss:(before.x-held.at(-1).x)*scale};
+  }else{
+   const actualFinger=moves.at(-1).x-down.x,after=receipt.frames.find(f=>f.now>=moves.at(-1).now),actualFish=(after.x-first.x)*scale;
+   let responsive=0;for(const event of moves){const frame=receipt.frames.find(f=>f.now>=event.now);if(frame&&Math.abs((frame.x-first.x)*scale-(event.x-down.x))<.05)responsive++;}
+   assert.equal(responsive,moves.length,'every fast delivered event must preserve its full distance in the next rendered physics frame');
+   assert.ok(Math.abs(actualFish-actualFinger)<.05,'fast drag must be 1:1, not speed-limited target pursuit');
+   motion={deliveredMoves:moves.length,responsiveMoves:responsive,fingerCss:actualFinger,fishCss:actualFish,distanceErrorCss:Math.abs(actualFish-actualFinger)};
   }
   assert.equal(state.input.target,null);const stoppedX=state.player.x;await delay(100);assert.equal((await snap()).player.x,stoppedX,'release must stop ordinary swimming');
   checkLayout(await evaluate(layoutExpression),width,height);await click('#pauseButton');const paused=await snap();await delay(100);assert.equal((await snap()).frames,paused.frames);assert.equal((await snap()).time,paused.time);await click('#startButton');await delay(80);assert.equal((await snap()).player.x,stoppedX,'resume must not replay queued drag');
   const gaps=receipt.frames.slice(1).map((f,i)=>f.now-receipt.frames[i].now).sort((a,b)=>a-b),row={case:current,width,height,kind,input:mobile?'native CDP touch drag':'native CDP mouse drag',seed:state.seed,...motion,medianFrameMs:gaps[Math.floor(gaps.length/2)],maxFrameMs:Math.max(...gaps),releaseStops:true,pauseFrozen:true,resumeClears:true,stateInjection:false,clockAcceleration:false,physicalPhone:false,screenshot};
   rows.push(row);fs.appendFileSync(path.join(OUT,'drag.jsonl'),JSON.stringify(row)+'\n');
  }
- assert.equal(rows.length,views.length*2);
+ assert.equal(rows.length,views.length*3);
 }
 async function pilot(){
  const late=mode==='endgame',level=late?12:1,views=late?[[844,390,'light','late-landscape'],[390,844,'dark','late-portrait']]:[[1440,900,'light','desktop-grown'],[390,844,'dark','mobile-grown']];
