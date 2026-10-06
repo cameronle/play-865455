@@ -50,8 +50,10 @@ function run({ seed = 1, mode = "normal", controller = decide } = {}) {
 }
 function verify() {
   const rows = [1, 17, 99].map((seed) => run({ seed }));
+  const challengeRows = [1,17,99].map(seed=>run({seed,mode:"challenge"}));
   const negative = run({ controller: () => ({ x: 0, y: 0 }) });
-  for (const r of rows) {
+  const challengeNegative = run({mode:"challenge",controller:()=>({x:0,y:0})});
+  for (const r of [...rows,...challengeRows]) {
     assert.equal(
       r.state,
       "clear",
@@ -64,27 +66,32 @@ function verify() {
     );
     assert.deepEqual(
       r.stages.map((s) => s.level),
-      [1, 2, 3, 4, 5, 6, 7, 8, 9],
+      C.STAGES.map(s=>s.id),
     );
     assert.deepEqual(
       Object.keys(r.stats.encounters).sort(),
       Object.keys(C.ENEMIES).sort(),
     );
-    assert.deepEqual(r.stats.bosses, Object.keys(C.BOSSES));
+    assert.deepEqual(r.stats.bosses, C.STAGES.map(s=>s.boss));
     for (const key of ["enemies", "enemyBullets", "hazards"])
       assert.ok(r.stats.peaks[key] <= C.LIMITS[key]);
-    assert.equal(r.events.filter((e) => e.type === "boss-defeated").length, 3);
+    assert.equal(r.events.filter((e) => e.type === "boss-defeated").length, C.STAGES.length);
+    assert.deepEqual(r.events.filter(e=>e.type==="chapter-reward").map(e=>e.level),[3,6,9,12,15]);
+    assert.ok(r.time>=1125 && r.time<=1500,"15-stage simulation stays within the approved 18.75–25 minute budget");
   }
   assert.equal(
     negative.state,
     "gameover",
     "shoot-only negative control must not clear",
   );
+  assert.equal(challengeNegative.state,"gameover","challenge stationary control must fail");
   return {
     kind: "accelerated deterministic simulation, not human play",
     note: "The wave itinerary is fixed; these seeds must produce the same legal route. No retry, HP edit, jump or invulnerability.",
     rows,
+    challengeRows,
     negative,
+    challengeNegative,
   };
 }
 if (require.main === module) {

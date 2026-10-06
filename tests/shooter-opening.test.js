@@ -1,7 +1,6 @@
 "use strict";
 const test = require("node:test"),
   assert = require("node:assert/strict"),
-  crypto = require("node:crypto"),
   C = require("../shooter/content"),
   { Game } = require("../shooter/rules"),
   { decide } = require("../scripts/shooter-pilot");
@@ -9,7 +8,7 @@ const test = require("node:test"),
 test("the opening has four ten-enemy waves with regular three-second admissions", () => {
   const first = C.STAGES[0];
   assert.equal(first.waves.length, 4);
-  assert.equal(first.boss, null);
+  assert.equal(first.boss, "outpost");
   for (const wave of first.waves) {
     assert.equal(wave.groups.reduce((n, group) => n + group.count, 0), 10);
     assert.deepEqual(wave.groups.map(group => group.at), [0, 3, 6]);
@@ -29,7 +28,7 @@ for (const mode of ["normal", "challenge"]) {
       if (action.pulse) game.pulse();
       game.step(0.1, { x: action.x, y: action.y });
       if (game.state !== "playing") break;
-      const visible = game.enemies.filter(enemy => enemy.y + enemy.h / 2 > 0 && enemy.y - enemy.h / 2 < C.H).length;
+      const visible = (game.phase === "boss" || game.phase === "boss-warning" || game.phase === "boss-enter" ? 1 : 0) + game.enemies.filter(enemy => enemy.y + enemy.h / 2 > 0 && enemy.y - enemy.h / 2 < C.H).length;
       peak = Math.max(peak, visible);
       idle = visible ? 0 : idle + 0.1;
       maxIdle = Math.max(maxIdle, idle);
@@ -39,16 +38,20 @@ for (const mode of ["normal", "challenge"]) {
     assert.equal(Object.values(game.stats.encounters).reduce((sum, n) => sum + n, 0), 40, evidence);
     assert.ok(peak >= 5, evidence);
     assert.ok(maxIdle <= 4, evidence);
-    assert.ok(game.time < 70, evidence);
+    assert.ok(game.time < 100, evidence);
+    assert.deepEqual(game.stats.bosses,["outpost"],evidence);
     assert.ok(game.stats.peaks.enemies <= C.LIMITS.enemies, evidence);
     assert.ok(game.lives > 0, evidence);
   });
 }
 
-test("campaign density tuning preserves the opening, enemy stats, boss stats and mode scales", () => {
-  const hash = crypto.createHash("sha256").update(JSON.stringify({
-    opening: C.STAGES[0], enemies: C.ENEMIES, bosses: C.BOSSES,
-    modes: C.MODES, limits: C.LIMITS,
-  })).digest("hex");
-  assert.equal(hash, "4efdcf4d0e2cf12b9f51726b8c412d67aacc5e5dc11139f5efe7d9bebee95fe6");
+test("boss expansion preserves all original nine-stage waves, enemy stats, original boss stats and mode scales", () => {
+  const original = require("./fixtures/shooter-original-balance.json");
+  assert.deepEqual(C.STAGES.slice(0,9).map(s=>s.waves),original.waves);
+  assert.deepEqual(C.ENEMIES,original.enemies);
+  assert.deepEqual(C.MODES,original.modes);
+  assert.deepEqual(C.LIMITS,original.limits);
+  for(const [type, boss] of Object.entries(original.bosses))
+    for(const [key,value] of Object.entries(boss))
+      assert.deepEqual(C.BOSSES[type][key],value,`${type} ${key} original value`);
 });

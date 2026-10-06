@@ -38,3 +38,15 @@ test("active laser draws the moving collision beam, not the whole warned strip, 
   );
   assert.equal(JSON.stringify(s), before);
 });
+test("boss silhouettes match configured bodies and protected cores render a lock, not an attackable blue weak point",()=>{
+ const C=require("../shooter/content");
+ assert.equal(Object.keys(Renderer.BOSS_SHAPES || {}).length,8);
+ for(const b of Object.values(C.BOSSES)){
+  const pts=Renderer.BOSS_SHAPES[b.kind];assert.ok(pts);
+  assert.ok(pts.every(([x,y])=>Math.abs(x)<=.5&&Math.abs(y)<=.5));
+ }
+ const g=new Game();g.start();g.enterBoss("twin-core");g.phase="boss";g.boss.y=110;
+ const calls=[],ctx=new Proxy({}, {get:(o,k)=>o[k]??((...v)=>calls.push([k,...v])),set:(o,k,v)=>((o[k]=v),true)});
+ Renderer.draw(ctx,g.snapshot());
+ assert.ok(calls.some(c=>JSON.stringify(c)===JSON.stringify(["strokeRect",226,93,28,27])));
+});
