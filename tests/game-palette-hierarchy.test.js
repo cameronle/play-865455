@@ -3,7 +3,6 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const {createHopper} = require('./helpers/doodle-harness');
-const {createCave} = require('./helpers/cave-runtime');
 const {boot: createMelon, fruit} = require('./helpers/melon-runtime');
 
 function tokens(route, theme) {
@@ -49,26 +48,6 @@ for (const theme of ['light', 'dark']) {
     assert.deepEqual(g.snapshot(), before, 'palette drawing must not mutate gameplay');
   });
 }
-
-test('Firefly Cave light: the gold body has a thin high-contrast outline without enlarging its geometry', () => {
-  const calls = [], g = createCave({onDraw: c => calls.push(c)}), before = g.snapshot();
-  calls.length = 0;
-  g.run('drawFirefly(true)');
-  const outline = calls.find(c => c.method === 'stroke');
-  assert.ok(contrast(outline.stroke, '#f2ce68') >= 3, 'body outline must separate gold from the cream channel');
-  assert.equal(outline.lineWidth, 2);
-  assert.equal(outline.shadowBlur, 0, 'outline must not add another glow');
-  assert.deepEqual(calls.find(c => c.method === 'ellipse').args, [0,0,20,13,0,0,Math.PI*2]);
-  assert.deepEqual(g.snapshot(), before);
-});
-test('Firefly Cave dark: keep the original glowing body and single blue tail stroke', () => {
-  const calls = [], g = createCave({onDraw: c => calls.push(c)});
-  calls.length = 0;
-  g.run('drawFirefly(false)');
-  assert.equal(calls.find(c => c.method === 'fill').fill, '#f2ce68');
-  assert.equal(calls.filter(c => c.method === 'stroke').length, 1);
-  assert.equal(calls.find(c => c.method === 'stroke').stroke, '#80c7df');
-});
 
 for (const theme of ['light', 'dark']) {
   test(`Melon Lab ${theme}: distinguish the kiwi landing-guide edge while retaining its faint fill`, () => {

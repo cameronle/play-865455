@@ -46,13 +46,15 @@ function boot(route, initialKeys) {
   return {storage, buttons, sessionCleared: () => sessionCleared, deletedCaches, reloaded: () => reloaded,confirmation:()=>confirmation};
 }
 
-test('retired game route does not install controls or erase existing records', () => {
-  const keys = ['fish-feast-progress-v1', 'fish-feast-settings-v1', 'classic-snake-high-score', 'play-lang', 'play-theme'];
-  const app = boot('fish-feast', keys);
-  assert.equal(app.buttons.length, 0);
-  for (const key of keys) assert.equal(app.storage[key], 'saved');
-  assert.equal(app.reloaded(), false);
-});
+for (const route of ['fish-feast', 'helicopter-cave', 'connect-four']) {
+  test(`retired game ${route} does not install controls or erase existing records`, () => {
+    const keys = ['fish-feast-progress-v1', 'fish-feast-settings-v1', 'helicopterCaveBest', 'connectFourRecord', 'connectFourGame-v1', 'classic-snake-high-score', 'play-lang', 'play-theme'];
+    const app = boot(route, keys);
+    assert.equal(app.buttons.length, 0);
+    for (const key of keys) assert.equal(app.storage[key], 'saved');
+    assert.equal(app.reloaded(), false);
+  });
+}
 test('every game page loads the shared clear-data utility', () => {
   assert.equal(games.length, catalog.length);
   for (const game of games) {

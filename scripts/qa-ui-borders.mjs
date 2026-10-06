@@ -22,10 +22,7 @@ ws.addEventListener('message', event => {
   if (message.sessionId === sessionId && message.method === 'Runtime.exceptionThrown') errors.push({route:currentRoute, error:message.params.exceptionDetails});
   if (message.sessionId === sessionId && message.method === 'Network.responseReceived' && message.params.response.status >= 400) {
     const row = {route:currentRoute, url:message.params.response.url, status:message.params.response.status};
-    // The untouched Connect Four page has no favicon link; Chromium's optional
-    // root-icon request is a warning, not a missing game dependency.
-    const optionalIcon = currentRoute === 'connect-four' && row.status === 404 && row.url === origin + '/favicon.ico';
-    (optionalIcon ? warnings : errors).push(row);
+    errors.push(row);
   }
 });
 function call(method, params = {}, browser = false) {
@@ -43,7 +40,7 @@ async function evaluate(expression) {
 const delay = ms => new Promise(resolve => setTimeout(resolve,ms));
 let currentRoute = null;
 const views = [[320,568],[390,844],[568,320],[844,390],[768,1024],[1440,900]];
-const start = {'2048':'#newGame',shooter:'#startButton',tetris:'#startButton',snake:'#startButton',breakout:'#start',minesweeper:'#start',maze:'#start',gomoku:'#start',sokoban:'#startButton',crosswalk:'#startButton',sudoku:'#startButton','sky-hopper':'#startButton','helicopter-cave':'#startButton','endless-runner':'#startButton',flappy:'#startButton','mushroom-trail':'#startButton','melon-lab':'#startButton','firefly-watch':'#startButton','bubble-tanks':'#startButton'};
+const start = {'2048':'#newGame',shooter:'#startButton',tetris:'#startButton',snake:'#startButton',breakout:'#start',minesweeper:'#start',maze:'#start',gomoku:'#start',sokoban:'#startButton',crosswalk:'#startButton',sudoku:'#startButton','sky-hopper':'#startButton','endless-runner':'#startButton',flappy:'#startButton','mushroom-trail':'#startButton','melon-lab':'#startButton','firefly-watch':'#startButton','bubble-tanks':'#startButton'};
 const observer = `(() => {
   if (window.__thinUIObserver) return;
   window.__thinUIObserver = {paints:0};
