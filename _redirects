@@ -32,3 +32,6 @@
 /connect-four / 301
 /connect-four/ / 301
 /connect-four/* / 301
+/maze / 301
+/maze/ / 301
+/maze/* / 301
