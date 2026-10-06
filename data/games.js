@@ -201,27 +201,9 @@ module.exports = [
     }
   },
   {
-    "id": "connect-four",
-    "path": "connect-four",
-    "order": 12,
-    "category": "strategy",
-    "name": {
-      "zh": "四子棋",
-      "en": "CONNECT FOUR"
-    },
-    "description": {
-      "zh": "轮流落子，抢先在横竖斜任意方向连成四子。",
-      "en": "Drop four in a row before the computer does."
-    },
-    "readme": {
-      "title": "Connect Four",
-      "description": "自维护的人机四子棋，支持三档有搜索预算的人机 AI、先手选择、整回合撤销、暂停/后台保护、自动保存续玩、触控与键盘操作、终局连线查看和本地战绩；终局撤销仅用于复盘，不退还或重复计算战绩。"
-    }
-  },
-  {
     "id": "sky-hopper",
     "path": "sky-hopper",
-    "order": 13,
+    "order": 12,
     "category": "arcade",
     "name": {
       "zh": "向上弹跳",
@@ -237,27 +219,9 @@ module.exports = [
     }
   },
   {
-    "id": "helicopter-cave",
-    "path": "helicopter-cave",
-    "order": 14,
-    "category": "arcade",
-    "name": {
-      "zh": "萤火洞穴",
-      "en": "FIREFLY CAVE"
-    },
-    "description": {
-      "zh": "按住点亮萤火虫，穿过水晶洞穴和狭窄通道。",
-      "en": "Hold the firefly up through crystals, vines, and narrowing cave walls."
-    },
-    "readme": {
-      "title": "Firefly Cave",
-      "description": "自维护的卡通涂鸦单键洞穴飞行游戏，加入发光萤火虫、水晶障碍、程序生成洞壁、速度递增和移动端长按操作。"
-    }
-  },
-  {
     "id": "endless-runner",
     "path": "endless-runner",
-    "order": 15,
+    "order": 13,
     "category": "arcade",
     "name": {
       "zh": "桌面冲刺",
@@ -275,7 +239,7 @@ module.exports = [
   {
     "id": "bubble-shooter",
     "path": "bubble-shooter",
-    "order": 16,
+    "order": 14,
     "category": "puzzle",
     "name": {
       "zh": "泡泡花园",
@@ -293,7 +257,7 @@ module.exports = [
   {
     "id": "nonogram",
     "path": "nonogram",
-    "order": 17,
+    "order": 15,
     "category": "puzzle",
     "name": {
       "zh": "数织",
@@ -311,7 +275,7 @@ module.exports = [
   {
     "id": "flow",
     "path": "flow",
-    "order": 18,
+    "order": 16,
     "category": "puzzle",
     "name": {
       "zh": "彩带路线",
@@ -329,7 +293,7 @@ module.exports = [
   {
     "id": "sliding-puzzle",
     "path": "sliding-puzzle",
-    "order": 19,
+    "order": 17,
     "category": "puzzle",
     "name": {
       "zh": "数字华容道",
@@ -347,7 +311,7 @@ module.exports = [
   {
     "id": "flappy",
     "path": "flappy",
-    "order": 20,
+    "order": 18,
     "category": "arcade",
     "name": {
       "zh": "小鸟邮差",
@@ -365,7 +329,7 @@ module.exports = [
   {
     "id": "mushroom-trail",
     "path": "mushroom-trail",
-    "order": 21,
+    "order": 19,
     "category": "arcade",
     "name": {
       "zh": "蘑菇勇者",
@@ -383,7 +347,7 @@ module.exports = [
   {
     "id": "melon-lab",
     "path": "melon-lab",
-    "order": 22,
+    "order": 20,
     "category": "arcade",
     "name": {
       "zh": "瓜体实验室",
@@ -401,7 +365,7 @@ module.exports = [
   {
     "id": "firefly-watch",
     "path": "firefly-watch",
-    "order": 23,
+    "order": 21,
     "category": "arcade",
     "name": {
       "zh": "萤火守夜",
@@ -417,7 +381,7 @@ module.exports = [
     }
   },
   {
-    "id": "bubble-tanks", "path": "bubble-tanks", "order": 24, "category": "arcade",
+    "id": "bubble-tanks", "path": "bubble-tanks", "order": 22, "category": "arcade",
     "name": {"zh": "泡泡远征", "en": "BUBBLE FRONTIER"},
     "description": {"zh": "穿越泡泡房间，吸收成长，组装武器与遗物，挑战四大区域首领。", "en": "Explore bubble rooms, absorb growth, assemble a build, and defeat four sector bosses."},
     "readme": {"title": "Bubble Frontier", "description": "自维护的原创泡泡坦克肉鸽远征，包含六种机体、十二种武器、八种主动技能、二十四种被动、十二种遗物和十八种联动，支持房间探索、模块组装、四区域 Boss、双摇杆触控、本地存档与中英双语。"}

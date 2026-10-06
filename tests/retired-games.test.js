@@ -7,7 +7,7 @@ const {execFileSync} = require('node:child_process');
 const catalog = require('../data/games.js');
 
 const ROOT = path.resolve(__dirname, '..');
-const retired = ['simon', 'lunar-lander', 'solitaire', 'color-bounce', 'space-invaders', 'fish-feast'];
+const retired = ['simon', 'lunar-lander', 'solitaire', 'color-bounce', 'space-invaders', 'fish-feast', 'helicopter-cave', 'connect-four'];
 
 for (const game of retired) {
   test(`retired game ${game} is absent from source and public metadata`, () => {
