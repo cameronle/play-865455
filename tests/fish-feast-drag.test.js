@@ -18,9 +18,9 @@ test('reversing a fast relative drag responds next frame instead of chasing an o
  canvas.handlers.pointerdown(pointer(1,40,50));canvas.handlers.pointermove(pointer(1,140,50));
  S.advance(s,1/60,input.sample());const before=s.player.x;
  canvas.handlers.pointermove(pointer(1,135,50));const sample=input.sample();
- assert.ok(sample.target.x<before,'reverse input must discard the old forward target');
+ assert.deepEqual(sample.drag,[{x:-10,y:0}],'reverse input must retain its full relative distance');
  S.advance(s,1/60,sample);assert.ok(s.player.x<before,'fish must move back immediately');
- assert.ok(Math.abs(s.player.vx)<=190,'normal drag keeps the existing swimming speed cap');
+ assert.ok(Math.abs(s.player.x-before+10)<1e-8,'held dragging follows the delivered distance, not the ordinary speed cap');
 });
 test('slow relative dragging moves on every input frame at portrait and landscape scales',()=>{
  for(const width of [760,1120]){
@@ -37,7 +37,7 @@ test('multiple pointer events are batched once without lost subpixel motion or r
  const s=water(),{canvas,input}=controls(s),start=s.player.x;
  canvas.handlers.pointerdown(pointer(1,30,120));
  for(let i=1;i<=8;i++)canvas.handlers.pointermove(pointer(1,30+i*.1,120));
- const sample=input.sample();assert.ok(Math.abs(sample.target.x-start-1.6)<1e-9);
+ const sample=input.sample();assert.ok(Math.abs(sample.drag.reduce((sum,d)=>sum+d.x,0)-1.6)<1e-9);
  S.advance(s,1/60,sample);assert.ok(Math.abs(s.player.x-start-1.6)<1e-9);
  const settled=s.player.x;S.advance(s,1/60,input.sample());assert.equal(s.player.x,settled);
 });
