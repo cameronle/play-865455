@@ -81,30 +81,26 @@
     normal: { hpScale: 1, fireScale: 1, speedScale: 1 },
     challenge: { hpScale: 1.15, fireScale: 1.28, speedScale: 1.08 },
   };
-  const wave = (types, index) => ({
-    minSeconds: 18,
-    groups: types.map((type, i) => ({
+  const wave = (groups, index, interval, minSeconds) => ({
+    minSeconds,
+    groups: groups.map(([type, count], i) => ({
       type,
-      at: i * 4.2,
-      count: type === "formation" ? 3 : 2,
+      at: Math.round(i * interval * 100) / 100,
+      count,
       x: [120, 240, 360][(index + i) % 3],
     })),
   });
-  const stage = (id, name, types, boss = null) => ({
+  const stage = (id, name, groups, {
+    boss = null,
+    interval = 2.7,
+    minSeconds = 12,
+  } = {}) => ({
     id,
     name,
     boss,
-    waves: boss
-      ? [
-          {
-            minSeconds: 16,
-            groups: [
-              { type: "scout", at: 0, count: 3, x: 140 },
-              { type: "formation", at: 5, count: 3, x: 320 },
-            ],
-          },
-        ]
-      : [0, 1, 2].map((i) => wave(types, i)),
+    waves: (boss ? [0] : [0, 1, 2, 3]).map((i) =>
+      wave(groups, i, interval, minSeconds),
+    ),
   });
   const STAGES = [
     {
@@ -121,14 +117,30 @@
         })),
       })),
     },
-    stage(2, ["突袭航线", "AMBUSH ROUTE"], ["diver", "heavy", "scout"]),
-    stage(3, ["铁翼封锁", "IRON BLOCKADE"], [], "iron-wing"),
-    stage(4, ["危险空域", "DANGER ZONE"], ["bomber", "formation", "scout"]),
-    stage(5, ["瞄准警戒", "CROSSHAIRS"], ["sniper", "diver", "scout"]),
-    stage(6, ["双核防线", "TWIN DEFENSE"], [], "twin-core"),
-    stage(7, ["护卫集群", "ESCORT FLEET"], ["heavy", "sniper", "formation"]),
-    stage(8, ["风暴前沿", "STORM FRONT"], ["bomber", "diver", "heavy"]),
-    stage(9, ["最后巡航", "FINAL PATROL"], [], "storm-carrier"),
+    stage(2, ["突袭航线", "AMBUSH ROUTE"], [
+      ["scout", 3], ["diver", 2], ["heavy", 1], ["formation", 4],
+    ]),
+    stage(3, ["铁翼封锁", "IRON BLOCKADE"], [
+      ["scout", 3], ["formation", 4], ["scout", 3],
+    ], { boss: "iron-wing", minSeconds: 10 }),
+    stage(4, ["危险空域", "DANGER ZONE"], [
+      ["scout", 3], ["bomber", 2], ["formation", 4], ["scout", 2],
+    ], { interval: 2.6, minSeconds: 11 }),
+    stage(5, ["瞄准警戒", "CROSSHAIRS"], [
+      ["formation", 4], ["sniper", 2], ["scout", 3], ["diver", 1],
+    ]),
+    stage(6, ["双核防线", "TWIN DEFENSE"], [
+      ["formation", 4], ["scout", 4], ["formation", 4],
+    ], { boss: "twin-core", minSeconds: 10 }),
+    stage(7, ["护卫集群", "ESCORT FLEET"], [
+      ["formation", 4], ["heavy", 1], ["sniper", 2], ["scout", 4],
+    ], { interval: 2.8 }),
+    stage(8, ["风暴前沿", "STORM FRONT"], [
+      ["formation", 4], ["bomber", 2], ["diver", 2], ["heavy", 1], ["scout", 3],
+    ], { interval: 2.4, minSeconds: 14 }),
+    stage(9, ["最后巡航", "FINAL PATROL"], [
+      ["scout", 4], ["formation", 4], ["scout", 4],
+    ], { boss: "storm-carrier", minSeconds: 10 }),
   ];
   const LIMITS = {
     enemies: 18,

@@ -45,10 +45,10 @@ for (const mode of ["normal", "challenge"]) {
   });
 }
 
-test("opening-only tuning preserves later stages, enemy stats, boss stats and mode scales", () => {
+test("campaign density tuning preserves the opening, enemy stats, boss stats and mode scales", () => {
   const hash = crypto.createHash("sha256").update(JSON.stringify({
-    enemies: C.ENEMIES, bosses: C.BOSSES, modes: C.MODES,
-    stages: C.STAGES.slice(1), limits: C.LIMITS,
+    opening: C.STAGES[0], enemies: C.ENEMIES, bosses: C.BOSSES,
+    modes: C.MODES, limits: C.LIMITS,
   })).digest("hex");
-  assert.equal(hash, "77b7d4af958750acb73bc2e01267f62b1e34db67209d10c9fd4cf99e039c5656");
+  assert.equal(hash, "4efdcf4d0e2cf12b9f51726b8c412d67aacc5e5dc11139f5efe7d9bebee95fe6");
 });
