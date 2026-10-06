@@ -36,7 +36,7 @@ test("bomber leaves a fixed visible delayed blast rather than a tracking project
 test("sniper holds a fixed aim during its warning and fires once before departing", () => {
   const g = new Game();
   g.start();
-  const e = g.spawn("sniper", 180, { y: 125, age: 2 });
+  const e = g.spawn("sniper", 180, { y: 125, age: 2, cooldown:0 });
   g.updateEnemy(e, 0.01);
   assert.equal(e.phase, "aim");
   assert.ok(e.warning >= 0.9);
@@ -67,7 +67,7 @@ test("armored enemies block shots during their shield cycle and expose a damage 
 test("diver visibly warns, locks one target, and does not retarget a moving player", () => {
   const g = new Game();
   g.start();
-  const e = g.spawn("diver", 140, { y: 100, age: 1.8 });
+  const e = g.spawn("diver", 140, { y: 100, age: 1.8, cooldown:0 });
   g.updateEnemy(e, 0.01);
   assert.equal(e.phase, "aim");
   const target = JSON.stringify(e.target);

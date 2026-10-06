@@ -30,7 +30,8 @@ test("Storm Carrier warns a bounded sweep with reachable escape, limited escorts
   assert.notEqual(h.beamX, beam);
   b.attack = null;
   b.cooldown = 0;
-  b.pattern = 2;
+  b.hp=b.maxHp*.6; b.phase=1;
+  b.pattern = 0;
   g.updateBoss(0.01);
   for (let i = 0; i < 120; i++) g.updateBoss(1 / 120);
   assert.ok(g.enemies.length > 0 && g.enemies.length <= 4);
@@ -81,8 +82,8 @@ test("Iron Wing alternates a warned fan and fixed aim and transitions once at lo
   assert.equal(b.attack.kind, "fan");
   assert.ok(b.attack.timer >= 0.8);
   for (let i = 0; i < 120; i++) g.updateBoss(1 / 120);
-  assert.equal(g.enemyBullets.length, 5);
-  b.cooldown = 0;
+  assert.equal(g.enemyBullets.length, 7);
+  b.cooldown = 0; b.pattern=2;
   g.updateBoss(0.01);
   assert.equal(b.attack.kind, "aim");
   const lock = JSON.stringify(b.attack.target);

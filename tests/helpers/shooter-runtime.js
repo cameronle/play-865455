@@ -195,7 +195,7 @@ function createShooter(options = {}) {
   sandbox.window = sandbox;
   const source = fs.readFileSync("shooter/game.js", "utf8");
   const env = vm.createContext(sandbox);
-  for (const name of ["content", "bosses", "rules", "locale", "renderer"])
+  for (const name of ["content", "bosses", "enemies", "director", "rules", "locale", "renderer"])
     vm.runInContext(fs.readFileSync(`shooter/${name}.js`, "utf8"), env);
   vm.runInContext(
     source.replace(

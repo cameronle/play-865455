@@ -504,6 +504,10 @@ progress::-moz-progress-bar {
   font-size: 9px;
   color: var(--muted);
 }
+.supply-select { display:flex; gap:6px; justify-content:center; margin:8px 0; }
+.supply-select[hidden] { display:none; }
+.supply-select button { min-height:44px; min-width:72px; padding:4px 8px; border:1px solid var(--cyan); background:var(--panel); color:var(--cyan); font:inherit; font-size:10px; cursor:pointer; }
+.legacy { white-space:pre-line; }
 .combat-hint {
   min-height: 14px;
   margin: 6px 0 0;

@@ -6,6 +6,8 @@ const test = require("node:test"),
   { Game } = require("../shooter/rules");
 test("a fresh ordinary-input campaign naturally reaches every prescribed stage, enemy and boss while the stationary negative fails", () => {
   const r = verify();
+  console.log("campaign acceptance " + JSON.stringify([...r.rows,...r.challengeRows].map(q=>({mode:q.mode,seed:q.seed,state:q.state,time:q.time,lives:q.lives,hits:q.stats.hits,admitted:q.stats.admitted}))));
+  if(process.env.SHOOTER_QA_RECEIPT)require("node:fs").writeFileSync(process.env.SHOOTER_QA_RECEIPT,JSON.stringify(r));
   assert.equal(r.rows.length, 3);
   assert.equal(r.challengeRows.length,3);
   for (const row of [...r.rows,...r.challengeRows]) assert.ok(row.time >= 1125 && row.time <= 1500);

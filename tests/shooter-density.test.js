@@ -6,24 +6,24 @@ const test = require("node:test"),
   { Game } = require("../shooter/rules"),
   { decide } = require("../scripts/shooter-pilot");
 
-const targets = new Map([[2, 40], [3, 10], [4, 44], [5, 40], [6, 12], [7, 44], [8, 48], [9, 12], [10,48], [11,48], [12,20], [13,52], [14,56], [15,24]]);
+const targets = new Map([[2,48],[3,26],[4,52],[5,56],[6,30],[7,56],[8,60],[9,34],[10,64],[11,68],[12,42],[13,68],[14,72],[15,48]]);
 const total = groups => groups.reduce((n, group) => n + group.count, 0);
 const visible = enemy => !enemy.dead && enemy.x + enemy.w / 2 > 0 && enemy.x - enemy.w / 2 < C.W && enemy.y + enemy.h / 2 > 0 && enemy.y - enemy.h / 2 < C.H;
 
-test("later stages supply four substantial waves or one short substantial boss prelude", () => {
+test("later stages supply varied substantial waves and distinct chapter-end preludes", () => {
   for (const [level, count] of targets) {
     const stage = C.STAGES[level - 1];
-    assert.equal(stage.waves.length, [3,6,9].includes(level) ? 1 : [12,15].includes(level) ? 2 : 4, `stage ${level} wave count`);
+    assert.equal(stage.waves.length, [3,6,9].includes(level) ? 2 : [12,15].includes(level) ? 3 : level>=10?5:4, `stage ${level} wave count`);
     assert.equal(total(stage.waves.flatMap(wave => wave.groups)), count, `stage ${level} enemy count`);
     for (const wave of stage.waves) {
-      assert.ok(wave.minSeconds <= ([3,6,9].includes(level) ? 10 : 14), `stage ${level} minimum must not pad idle time`);
+      assert.ok(wave.minSeconds <= 14, `stage ${level} minimum must not pad idle time`);
       assert.equal(wave.groups[0].at, 0);
       assert.ok(wave.groups.some(group => ["scout", "formation"].includes(group.type)), `stage ${level} has light-aircraft coverage`);
       for (let i = 0; i < wave.groups.length; i++) {
         const group = wave.groups[i];
-        assert.ok(group.count > 0 && group.count <= 4);
-        assert.ok(group.x - (group.count - 1) * 24 - C.ENEMIES[group.type].w / 2 >= 0);
-        assert.ok(group.x + (group.count - 1) * 24 + C.ENEMIES[group.type].w / 2 <= C.W);
+        assert.ok(group.count > 0 && group.count <= 5);
+        const probe = new Game(); probe.start(); assert.equal(probe.spawnGroup(group), true);
+        for (const e of probe.enemies) { assert.ok(e.x-e.w/2>=0); assert.ok(e.x+e.w/2<=C.W); }
         if (i) assert.ok(group.at - wave.groups[i - 1].at > 0 && group.at - wave.groups[i - 1].at <= 3, `stage ${level} admission interval`);
       }
     }
@@ -31,7 +31,7 @@ test("later stages supply four substantial waves or one short substantial boss p
 });
 
 test("the denser itinerary is delivered with a fresh content key", () => {
-  assert.match(fs.readFileSync("shooter/index.html", "utf8"), /content\.js\?v=boss-pack-1/);
+  assert.match(fs.readFileSync("shooter/index.html", "utf8"), /content\.js\?v=combat-v4-1/);
 });
 
 function replay(mode) {
@@ -41,7 +41,7 @@ function replay(mode) {
   for (let i = 0; i < 20000 && !["clear", "gameover"].includes(game.state); i++) {
     if (!current) current = { level: game.level, seconds: 0, admitted: 0, empty: 0, idle: 0, maxIdle: 0, pressureIdle: 0, maxPressureIdle: 0, peak: 0, waves: new Set() };
     const phase = game.phase, wave = game.wave, before = game.time;
-    const admittedBefore = Object.values(game.stats.encounters).reduce((sum, n) => sum + n, 0);
+    const admittedBefore = game.stats.admitted;
     const observation = game.snapshot(), encoded = JSON.stringify(observation);
     const action = decide(observation);
     assert.equal(JSON.stringify(observation), encoded, "pilot must not mutate observation");
@@ -51,7 +51,7 @@ function replay(mode) {
       const dt = game.time - before, n = game.enemies.filter(visible).length;
       current.seconds += dt;
       current.waves.add(wave);
-      current.admitted += Object.values(game.stats.encounters).reduce((sum, n) => sum + n, 0) - admittedBefore;
+      current.admitted += game.stats.admitted - admittedBefore;
       current.peak = Math.max(current.peak, n);
       if (game.state === "playing" && game.phase === "wave") {
         if (!n) current.empty += dt;
@@ -64,7 +64,7 @@ function replay(mode) {
     }
     if (["intermission", "clear", "gameover"].includes(game.state)) {
       rows.push(current); current = null;
-      if (game.state === "intermission") game.nextStage();
+      if (game.state === "intermission") {if(game.supplyPending)game.chooseSupply(decide(game.snapshot()).supply);game.nextStage();}
     }
   }
   return { game, rows };

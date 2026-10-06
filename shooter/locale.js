@@ -6,6 +6,23 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   "use strict";
   const TEXT = {
+    previousCampaign: ["旧15关战役", "OLD 15-STAGE CAMPAIGN"],
+    supplyChoice: ["章节补给：生命或脉冲，选一项", "CHAPTER SUPPLY: CHOOSE LIFE OR PULSE"],
+    supplyDone: ["章节补给已结算", "CHAPTER SUPPLY RESOLVED"],
+    supplyLife: ["生命 +1", "LIFE +1"],
+    supplyPulse: ["脉冲 +1", "PULSE +1"],
+    doubleDash: ["折线冲刺 · 两段航线已锁定", "TWO DASHES · FIXED ROUTE"],
+    chainBomb: ["分批轰炸 · 换位后留意掩护弹", "CHAIN BOMBS · WATCH COVER FIRE"],
+    cross: ["交叉弹幕 · 避开两侧火线", "CROSSFIRE · WATCH BOTH FLANKS"],
+    rotatingGap: ["缺口迁移 · 跟随下一处开口", "SHIFTING GAP · REPOSITION"],
+    lockChain: ["连续点名 · 每次预警后换位", "CHAIN LOCKS · MOVE AFTER EACH WARNING"],
+    reverseLaser: ["反向扫掠 · 留出横向通道", "REVERSE SWEEP · KEEP A SIDE ROUTE"],
+    mineLanes: ["地雷封路 · 短时区域不会被脉冲擦除", "TEMPORARY MINES · PULSE DOES NOT CLEAR THEM"],
+    summonSupport: ["支援护卫 · 拆掉连线源", "SUPPORT ESCORT · BREAK SHIELD LINKS"],
+    summonFlank: ["侧翼突袭 · 先看固定航线", "FLANK ESCORT · WATCH FIXED ROUTES"],
+    support: ["支援机无盾 · 击毁即可断开连线", "SUPPORT IS UNPROTECTED · BREAK ITS LINKS"],
+    chase: ["关键目标漏网 · 两架侧翼追击", "KEY TARGET ESCAPED · TWO FLANK PURSUERS"],
+
     title: ["星空巡航", "SKY PATROL"],
     score: ["分数", "SCORE"],
     stage: ["关卡 / 波次", "STAGE / WAVE"],
@@ -19,11 +36,11 @@
     challenge: ["挑战", "CHALLENGE"],
     best: ["最佳", "BEST"],
     legacy: ["旧版成绩", "LEGACY SCORE"],
-    intro: ["十五关战役 · 每关首领", "15 STAGES · A BOSS EACH STAGE"],
+    intro: ["十五关 · 九类敌机 · 每关首领", "15 STAGES · 9 ENEMY ROLES · 15 BOSSES"],
     legacyCampaign: ["旧9关战役", "OLD 9-STAGE CAMPAIGN"],
     help: [
-      "拖动 / 方向键移动 · 自动射击\n空格释放脉冲 · 击毁编队首机获得奖励",
-      "Drag to move / Arrows / WASD · AUTO-FIRE\nSpace: pulse · Defeat formation leaders for a bonus",
+      "拖动 / 方向键移动 · 自动射击\n脉冲清弹，不清光束与地雷 · 优先处理首机/支援",
+      "Drag to move / Arrows / WASD · AUTO-FIRE\nPulse clears bullets, not beams/mines · Break leaders/support",
     ],
     keyboard: [
       "方向键 / WASD · 自动射击 · 空格脉冲 · P 暂停 · M 静音",

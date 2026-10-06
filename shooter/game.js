@@ -28,7 +28,8 @@
     bestRecord = 0,
     clearing = false;
   const legacyBest = readLegacy(),
-    legacyCampaign = R.readRecords(safeRead(C.LEGACY_RECORD_KEY), { version: 2, totalStages: 9 });
+    legacyCampaign = R.readRecords(safeRead(C.LEGACY_RECORD_KEY), { version: 2, totalStages: 9 }),
+    previousCampaign = R.readRecords(safeRead(C.PREVIOUS_RECORD_KEY), { version:3, totalStages:15 });
   let records = R.readRecords(safeRead(C.RECORD_KEY)),
     recordedClear = false;
   bestRecord = records.normal.best;
@@ -196,10 +197,12 @@
       state === "playing"
         ? g.phase === "boss-warning"
           ? L.t("warning")
-          : b?.attack
-            ? L.t(b.attack.kind)
+          : g.events.some(e=>e.type==="chase-warning"&&g.time-e.time<3)
+            ? L.t("chase")
+          : b?.attack || b?.side
+            ? L.t((b.attack||b.side).kind)
             : b ? L.t(B.protectedCore(b) ? "tip-parts" : "tip-" + b.tip)
-              : L.name(stage.name)
+              : g.enemies.some(e=>!e.dead&&e.type==="support")?L.t("support") : L.name(stage.name)
         : L.t(
             state === "title"
               ? "intro"
@@ -212,6 +215,10 @@
     text("combatHint", status);
     text("flightStatus", status);
     overlay.classList.toggle("hidden", state === "playing");
+    $("supplySelect").hidden = !g.supplyPending;
+    $("supplyLifeButton").disabled = !g.supplyPending || g.lives >= 3;
+    $("supplyPulseButton").disabled = !g.supplyPending || g.pulses >= 2;
+    startButton.disabled = !!g.supplyPending;
     if (state !== "playing") {
       const titleKey =
         {
@@ -233,7 +240,7 @@
               " " +
               fmt(g.score) +
               (state === "intermission" && stage.chapterEnd
-                ? "\n" + L.t("checkpoint")
+                ? "\n" + L.t(g.mode==="challenge"?(g.supplyPending?"supplyChoice":"supplyDone"):"checkpoint")
                 : ""),
       );
       text(
@@ -262,6 +269,8 @@
       );
       text(
         "legacyBest",
+        (previousCampaign[mode].best || previousCampaign[mode].clears ?
+          L.t("previousCampaign") + " " + fmt(previousCampaign[mode].best) + " · " + L.t("wins") + " " + previousCampaign[mode].clears + "\n" : "") +
         (legacyCampaign[mode].best || legacyCampaign[mode].clears ?
           L.t("legacyCampaign") + " " + fmt(legacyCampaign[mode].best) + " · " + L.t("wins") + " " + legacyCampaign[mode].clears : "") +
           (legacyBest ? " · " + L.t("legacy") + " " + fmt(legacyBest) : ""),
@@ -341,6 +350,9 @@
   startButton.addEventListener("click", start);
   $("mobilePauseButton").addEventListener("click", pause);
   $("pulseButton").addEventListener("click", pulse);
+  for(const [id,kind] of [["supplyLifeButton","life"],["supplyPulseButton","pulse"]])$(id).addEventListener("click",()=>{
+    if(g.chooseSupply(kind)){sync();requestFrame();beep(520);}
+  });
   $("normalButton").addEventListener("click", () => setMode("normal"));
   $("challengeButton").addEventListener("click", () => setMode("challenge"));
   soundButton.addEventListener("click", () => {
@@ -465,6 +477,8 @@
     ["livesLabel", "lives"],
     ["normalButton", "normal"],
     ["challengeButton", "challenge"],
+    ["supplyLifeButton", "supplyLife"],
+    ["supplyPulseButton", "supplyPulse"],
     ["bestLabel", "best"],
     ["keyboardHelp", "keyboard"],
     ["touchHelp", "touch"],
@@ -479,6 +493,7 @@
     ["pulseButton", "pulseLabel"],
     ["mobilePauseButton", "pauseLabel"],
     ["modeSelect", "mode"],
+    ["supplySelect", "supplyChoice"],
     ["soundButton", "soundLabel"],
     ["gameSection", "gameSection"],
     ["touchControls", "touchControls"],
