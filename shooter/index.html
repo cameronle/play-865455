@@ -8,11 +8,11 @@
     />
     <meta name="theme-color" content="#070b12" />
     <script src="/theme.js?v=shooter-3"></script>
-    <script src="/clear-game-data.js?v=boss-pack-1"></script>
+    <script src="/clear-game-data.js?v=combat-v4-1"></script>
     <title>星空巡航 · Sky Patrol</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="stylesheet" href="/theme.css?v=clear-1" />
-    <link rel="stylesheet" href="style.css?v=boss-pack-1" />
+    <link rel="stylesheet" href="style.css?v=combat-v4-1" />
   </head>
   <body>
     <main class="page">
@@ -79,6 +79,10 @@
                   CHALLENGE
                 </button>
               </div>
+              <div class="supply-select" id="supplySelect" role="group" aria-label="Chapter supply" hidden>
+                <button id="supplyLifeButton" type="button">LIFE +1</button>
+                <button id="supplyPulseButton" type="button">PULSE +1</button>
+              </div>
               <button class="start" id="startButton" type="button">
                 START GAME
               </button>
@@ -122,12 +126,14 @@
         >
       </footer>
     </main>
-    <script src="content.js?v=boss-pack-1"></script>
-    <script src="bosses.js?v=boss-pack-1"></script>
-    <script src="rules.js?v=boss-pack-1"></script>
-    <script src="locale.js?v=boss-pack-1"></script>
-    <script src="renderer.js?v=boss-pack-1"></script>
-    <script src="game.js?v=boss-pack-1"></script>
+    <script src="content.js?v=combat-v4-1"></script>
+    <script src="bosses.js?v=combat-v4-1"></script>
+    <script src="enemies.js?v=combat-v4-1"></script>
+    <script src="director.js?v=combat-v4-1"></script>
+    <script src="rules.js?v=combat-v4-1"></script>
+    <script src="locale.js?v=combat-v4-1"></script>
+    <script src="renderer.js?v=combat-v4-1"></script>
+    <script src="game.js?v=combat-v4-1"></script>
     <button class="theme-toggle" type="button" aria-label="Theme: system">
       AUTO
     </button>

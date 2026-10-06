@@ -3,10 +3,12 @@
   const rules = factory(
     typeof module === "object" ? require("./content") : root.SkyPatrolContent,
     typeof module === "object" ? require("./bosses") : root.SkyPatrolBosses,
+    typeof module === "object" ? require("./director") : root.SkyPatrolDirector,
+    typeof module === "object" ? require("./enemies") : root.SkyPatrolEnemies,
   );
   if (typeof module === "object") module.exports = rules;
   else root.SkyPatrolRules = rules;
-})(typeof globalThis !== "undefined" ? globalThis : this, function (C, B) {
+})(typeof globalThis !== "undefined" ? globalThis : this, function (C, B, D, E) {
   "use strict";
   const { W, H, ENEMIES, BOSSES, STAGES, MODES, LIMITS } = C,
     STEP = 1 / 120;
@@ -60,6 +62,12 @@
       this.fireTimer = 0;
       this.escapeCount = 0;
       this.waveEscapes = 0;
+      this.layout = null;
+      this.supplyPending = false;
+      this.shieldChapters = [];
+      this.chasePending = false;
+      this.chaseUsed = false;
+      this.threats = [];
       this.enemies = [];
       this.bullets = [];
       this.enemyBullets = [];
@@ -70,6 +78,7 @@
       this.boss = null;
       this.events = [];
       this.stats = {
+        planned:STAGES.flatMap(s=>s.waves).flatMap(w=>w.groups).reduce((n,q)=>n+q.count,0), admitted: 0, summoned: 0, queued: 0, escaped: 0, shieldUsed: 0, pulseUsed: 0, stageResources: [],
         kills: 0,
         shots: 0,
         hits: 0,
@@ -115,8 +124,9 @@
       return false;
     }
     nextStage() {
-      if (this.state !== "intermission" || this.level >= STAGES.length) return false;
+      if (this.state !== "intermission" || this.level >= STAGES.length || this.supplyPending) return false;
       this.level++;
+      this.layout = null; this.deferredGroup=null; this.chaseUsed = false; this.chasePending = false;
       this.wave = 0;
       this.waveTime = 0;
       this.group = 0;
@@ -134,6 +144,7 @@
       this.hazards = [];
       this.powerups = [];
       this.boss = null;
+      this.threats = [];
     }
     finishStage() {
       if (this.state !== "playing") return;
@@ -141,19 +152,35 @@
       this.player.invuln = 1.5;
       const stage = STAGES[this.level - 1];
       if (stage.boss) this.stats.bosses.push(stage.boss);
-      if (stage.chapterEnd) {
-        this.lives = Math.min(3, this.lives + 1);
-        this.pulses = Math.min(2, this.pulses + 1);
-        this.event("chapter-reward", this.level);
+      const battle={lives:this.lives,pulses:this.pulses,shield:this.player.shield};
+      this.stats.stageResources.push({level:this.level,battle,before:{...battle},after:{...battle}});
+      if(stage.chapterEnd&&this.level<STAGES.length){
+        if(this.mode==="challenge"){
+          this.supplyPending=this.lives<3||this.pulses<2;
+          if(!this.supplyPending)this.event("chapter-reward",{choice:"full",...battle});
+        }else{
+          this.lives=Math.min(3,this.lives+1);this.pulses=Math.min(2,this.pulses+1);
+          this.stats.stageResources.at(-1).after={lives:this.lives,pulses:this.pulses,shield:this.player.shield};
+          this.event("chapter-reward",{choice:"both",lives:this.lives,pulses:this.pulses});
+        }
       }
       this.clearField();
       this.state = this.level === STAGES.length ? "clear" : "intermission";
       this.event(this.state, this.level);
     }
+    chooseSupply(kind) {
+      if(this.state!=="intermission"||!this.supplyPending||!["life","pulse"].includes(kind)||
+        (kind==="life"?this.lives>=3:this.pulses>=2))return false;
+      if(kind==="life")this.lives++;else this.pulses++;
+      this.supplyPending=false;
+      this.stats.stageResources.at(-1).after={lives:this.lives,pulses:this.pulses,shield:this.player.shield};
+      this.event("chapter-reward",{choice:kind,lives:this.lives,pulses:this.pulses});return true;
+    }
     hurt() {
       if (this.state !== "playing" || this.player.invuln > 0) return false;
       if (this.player.shield) {
         this.player.shield = false;
+        this.stats.shieldUsed++;
         this.player.invuln = 1;
         this.event("shield-used", 1);
         return true;
@@ -191,18 +218,26 @@
       return e;
     }
     spawnGroup(g) {
+      if (this.enemies.length + g.count > LIMITS.enemies ||
+          (g.type === "support" && this.enemies.some(e=>!e.dead&&e.type==="support"))) return false;
       const groupId = ++this.serial;
-      for (let i = 0; i < g.count; i++)
-        this.spawn(g.type, g.x + (i - (g.count - 1) / 2) * 48, {
-          groupId,
-          leader: i === Math.floor(g.count / 2),
-          y: -28 - Math.abs(i - (g.count - 1) / 2) * 24,
+      for (let i=0;i<g.count;i++) {
+        const x=g.x+(i-(g.count-1)/2)*48;
+        this.spawn(g.type,this.layout===-1?W-x:x,{
+          groupId,leader:g.type==="formation"&&i===Math.floor(g.count/2),elite:["sniper","diver"].includes(g.type)&&(!!g.elite||(this.mode==="challenge"&&this.level>=4&&i===0)),
+          key:!!g.key,chase:!!g.chase,summoned:!!g.summoned,supply:!!g.supply&&i===Math.floor(g.count/2),lane:i%2?1:-1,
+          y:-ENEMIES[g.type].h/2-Math.abs(i-(g.count-1)/2)*24,
         });
+      }
+      if(g.summoned)this.stats.summoned+=g.count;else this.stats.admitted+=g.count;
+      this.event("admission",{wave:this.wave,type:g.type,count:g.count,summoned:!!g.summoned});return true;
     }
-    emit(x, y, vx, vy, source) {
+    reserveAttack(source,duration=2,specs=[]) { return D.reserve(this,source,duration,specs); }
+    attackAllowed(specs) { return D.allowed(this,specs); }
+    emit(x, y, vx, vy, source, light=true) {
       if (this.enemyBullets.length >= LIMITS.enemyBullets || y < 0 || y > H)
         return;
-      this.enemyBullets.push({ x, y, vx, vy, w: 6, h: 12, source });
+      this.enemyBullets.push({ x, y, vx, vy, w: 6, h: 12, source, light });
     }
     aim(e, target = this.player, speed = 145) {
       const dx = target.x - e.x,
@@ -216,89 +251,10 @@
         e.id,
       );
     }
-    updateEnemy(e, dt) {
-      e.age += dt;
-      e.cooldown -= dt;
-      if (e.type === "diver" || e.type === "sniper") {
-        if (e.phase === "entry" && e.age >= 1.6 && e.y > 30) {
-          e.phase = "aim";
-          e.target = { x: this.player.x, y: this.player.y };
-          e.warning = e.type === "sniper" ? 1.1 : 0.9;
-          this.event(e.type + "-warning", e.id);
-        } else if (e.phase === "aim") {
-          e.warning -= dt;
-          if (e.warning <= 0) {
-            if (e.type === "sniper") {
-              this.aim(e, e.target, 220);
-              e.phase = "exit";
-            } else {
-              e.phase = "dive";
-              const dx = e.target.x - e.x,
-                dy = e.target.y - e.y,
-                n = Math.hypot(dx, dy) || 1;
-              e.vx = (dx / n) * 260;
-              e.vy = (dy / n) * 260;
-              e.diveTime = 0;
-            }
-          }
-        }
-        if (e.phase === "exit") {
-          e.y += 80 * dt;
-          return;
-        }
-        if (e.phase === "dive") {
-          e.x += e.vx * dt;
-          e.y += e.vy * dt;
-          e.diveTime += dt;
-          if (e.diveTime > 3.5) e.escaped = true;
-          return;
-        }
-        if (e.phase === "aim") return;
-      }
-      if (e.type === "bomber" && e.y > 30 && e.y < H - 90 && e.cooldown <= 0) {
-        this.addHazard({
-          kind: "bomb",
-          x: this.player.x,
-          y: clamp(this.player.y, 60, H - 48),
-          radius: 42,
-          w: 84,
-          h: 84,
-          warning: 1.4,
-          ttl: 0.5,
-          source: e.id,
-        });
-        e.cooldown = 3.6 / MODES[this.mode].fireScale;
-      }
-      e.y += e.speed * MODES[this.mode].speedScale * dt;
-      if (e.type === "heavy") e.shield = e.age % 4 < 2.3;
-      e.x = clamp(
-        e.broken
-          ? e.x + (e.id % 2 ? 1 : -1) * 40 * dt
-          : e.baseX +
-              Math.sin(
-                e.age * 1.5 + (e.type === "formation" ? e.groupId : e.id),
-              ) *
-                12,
-        e.w / 2,
-        W - e.w / 2,
-      );
-      if (
-        e.type !== "bomber" &&
-        e.y > e.h / 2 &&
-        e.y < H - 90 &&
-        e.cooldown <= 0 &&
-        !e.shield
-      ) {
-        if (e.type === "heavy")
-          for (const vx of [-42, 0, 42])
-            this.emit(e.x, e.y + e.h / 2, vx, 140, e.id);
-        else this.emit(e.x, e.y + e.h / 2, 0, 130, e.id);
-        e.cooldown = 3 / MODES[this.mode].fireScale;
-      }
-    }
+    updateEnemy(e, dt) { E.update(this,e,dt); }
     addHazard(spec) {
-      if (this.hazards.length >= LIMITS.hazards) return null;
-      const h = { id: ++this.serial, active: false, ...spec };
+      if (!this.attackAllowed([spec])) return null;
+      const h = { id: ++this.serial, active: false, maxTtl:spec.ttl, ...spec };
       this.hazards.push(h);
       this.event("hazard-warning", h.kind);
       return h;
@@ -314,48 +270,14 @@
           }
         } else h.ttl -= dt;
         if (h.kind === "laser" && h.active)
-          h.beamX =
-            h.x -
-            h.w / 2 +
-            h.beamW / 2 +
-            (1 - h.ttl / h.duration) * (h.w - h.beamW);
+          h.beamX = D.beam(h,0);
       }
       this.hazards = this.hazards.filter((h) => h.ttl > 0);
     }
     director(dt) {
       const stage = STAGES[this.level - 1];
       if (this.phase === "wave") {
-        this.waveTime += dt;
-        const w = stage.waves[this.wave];
-        while (
-          this.group < w.groups.length &&
-          this.waveTime >= w.groups[this.group].at
-        ) {
-          this.spawnGroup(w.groups[this.group++]);
-        }
-        if (
-          this.group === w.groups.length &&
-          this.waveTime >= w.minSeconds &&
-          !this.enemies.length
-        ) {
-          if (this.waveEscapes === 0) {
-            this.score += 100;
-            this.event("wave-bonus", this.wave);
-          }
-          this.waveEscapes = 0;
-          this.wave++;
-          this.group = 0;
-          this.waveTime = 0;
-          this.enemyBullets = [];
-          this.hazards = [];
-          if (this.wave >= stage.waves.length) {
-            if (stage.boss) {
-              this.phase = "boss-warning";
-              this.phaseTimer = 2;
-              this.event("boss-warning", stage.boss);
-            } else this.finishStage();
-          }
-        }
+        D.wave(this,dt);
       } else if (this.phase === "boss-warning") {
         this.phaseTimer -= dt;
         if (this.phaseTimer <= 0) this.enterBoss(stage.boss);
@@ -384,6 +306,8 @@
     kill(e) {
       if (this.state !== "playing" || e.dead) return;
       e.dead = true;
+      this.threats=this.threats.filter(t=>t.source!==e.id);
+      if(e.type==="support")E.links(this);
       this.burst(e.x, e.y);
       if (e.type === "formation" && e.leader) {
         for (const follower of this.enemies)
@@ -398,15 +322,13 @@
       this.score += e.score;
       this.stats.kills++;
       this.event("kill", e.type);
-      if (this.stats.kills === 2 || this.stats.kills % 6 === 0) {
-        const kind =
-          this.stats.kills === 2
-            ? "double"
-            : this.stats.kills % 12 === 0
-              ? "shield"
-              : "double";
-        if (this.powerups.length < LIMITS.powerups)
-          this.powerups.push({ x: e.x, y: e.y, w: 18, h: 18, vy: 90, kind });
+      const chapter=STAGES[this.level-1].chapter;
+      const supply=e.supply&&!this.shieldChapters.includes(chapter)&&(this.mode==="normal"||[1,3,5].includes(chapter));
+      const double=this.player.fireLevel<2&&(this.stats.kills===2||this.stats.kills%6===0);
+      if((supply||double)&&this.powerups.length<LIMITS.powerups){
+        const kind=supply?"shield":"double";
+        if(supply)this.shieldChapters.push(chapter);
+        this.powerups.push({x:e.x,y:e.y,w:18,h:18,vy:90,kind});this.event("drop",kind);
       }
     }
     hitBoss(amount = 1, part = null) {
@@ -417,6 +339,7 @@
     pulse() {
       if (this.state !== "playing" || this.pulses <= 0) return false;
       this.pulses--;
+      this.stats.pulseUsed++;
       this.pulseTime = 0.5;
       this.enemyBullets = [];
       for (const e of this.enemies) this.hitEnemy(e, 2);
@@ -472,6 +395,7 @@
       p.y = clamp(p.y + (dy / n) * p.speed * dt, p.h / 2, H - p.h / 2);
       this.fire(dt);
       this.updateHazards(dt);
+      E.links(this);
       for (const e of this.enemies) {
         e.px = e.x;
         e.py = e.y;
@@ -503,7 +427,8 @@
         ) {
           e.dead = true;
           this.waveEscapes++;
-          this.escapeCount++;
+          this.escapeCount++;this.stats.escaped++;
+          if(this.mode==="challenge"&&this.phase==="wave"&&e.key&&!e.chase&&!this.chaseUsed){this.chaseUsed=true;this.chasePending=true;this.event("chase-warning",2);}
           this.event("escape", e.type);
         }
       }
@@ -576,7 +501,7 @@
       for (const h of this.hazards)
         if (h.active) {
           const p = this.player;
-          if (h.kind === "bomb") {
+          if (h.kind === "bomb" || h.kind === "mine") {
             const dx = Math.max(0, Math.abs(p.x - h.x) - p.w / 2),
               dy = Math.max(0, Math.abs(p.y - h.y) - p.h / 2);
             if (Math.hypot(dx, dy) <= h.radius)
@@ -602,7 +527,7 @@
       }
     }
   }
-  function readRecords(raw, { version = 3, totalStages = STAGES.length } = {}) {
+  function readRecords(raw, { version = 4, totalStages = STAGES.length } = {}) {
     const result = {
       version,
       normal: { best: 0, farthest: 0, clears: 0 },

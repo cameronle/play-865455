@@ -1,0 +1,653 @@
+[
+  {
+    "mode": "challenge",
+    "seed": 1366485403,
+    "state": "playing",
+    "phase": "boss",
+    "level": 15,
+    "wave": 3,
+    "time": 1483.7416666717536,
+    "waveTime": 0,
+    "group": 0,
+    "serial": 1174,
+    "score": 172045,
+    "lives": 2,
+    "pulses": 0,
+    "fireTimer": 0.17833333333360787,
+    "escapeCount": 356,
+    "waveEscapes": 0,
+    "layout": null,
+    "supplyPending": false,
+    "shieldChapters": [
+      1,
+      3
+    ],
+    "chasePending": false,
+    "chaseUsed": false,
+    "threats": [
+      {
+        "source": "1169:side",
+        "until": 1483.700000005031,
+        "start": 1479.350000005031,
+        "specs": [],
+        "light": true
+      },
+      {
+        "source": 1169,
+        "until": 1484.6416666717096,
+        "start": 1480.2916666717097,
+        "specs": [],
+        "light": false
+      },
+      {
+        "source": 1172,
+        "until": 1484.9583333383887,
+        "start": 1481.2583333383886,
+        "specs": [
+          {
+            "kind": "route",
+            "origin": {
+              "x": 21,
+              "y": 145
+            },
+            "route": [
+              {
+                "x": 519.9176610280581,
+                "y": 541.0431384512194
+              }
+            ],
+            "speed": 245,
+            "w": 42,
+            "h": 24,
+            "warning": 1.1,
+            "ttl": 2.6,
+            "source": 1172
+          }
+        ],
+        "light": false
+      }
+    ],
+    "enemies": [
+      {
+        "hp": 1,
+        "score": 80,
+        "w": 42,
+        "h": 24,
+        "speed": 68,
+        "shape": "chevron",
+        "name": [
+          "\u62e6\u622a\u673a",
+          "INTERCEPTOR"
+        ],
+        "type": "interceptor",
+        "id": 1172,
+        "x": 286.44978118800594,
+        "y": 355.7152595605868,
+        "maxHp": 4,
+        "age": 2.4916666666666605,
+        "cooldown": -0.6916666666666628,
+        "baseX": 21,
+        "phase": "cross",
+        "shield": false,
+        "summoned": true,
+        "groupId": 1171,
+        "leader": false,
+        "elite": false,
+        "lane": -1,
+        "supportedBy": null,
+        "px": 284.8506861206083,
+        "py": 354.44589052708926,
+        "target": {
+          "x": 459,
+          "y": 492.6864184045765
+        },
+        "warning": -0.008333333333331838,
+        "vx": 191.89140808771467,
+        "vy": 152.32428401969977,
+        "crossTime": 1.3833333333333309
+      },
+      {
+        "hp": 4,
+        "score": 65,
+        "w": 24,
+        "h": 42,
+        "speed": 58,
+        "shape": "dart",
+        "name": [
+          "\u4fef\u51b2\u673a",
+          "DIVER"
+        ],
+        "type": "diver",
+        "id": 1173,
+        "x": 401.73373481916303,
+        "y": 135.07800000000043,
+        "maxHp": 4,
+        "age": 2.4916666666666605,
+        "cooldown": 0.21666666666666654,
+        "baseX": 390,
+        "phase": "entry",
+        "shield": false,
+        "summoned": true,
+        "groupId": 1171,
+        "leader": false,
+        "elite": true,
+        "lane": 1,
+        "supportedBy": null,
+        "px": 401.76424050283885,
+        "py": 134.55600000000044
+      }
+    ],
+    "bullets": [
+      {
+        "x": 142.07907703857927,
+        "y": 202.4547805804551,
+        "w": 3,
+        "h": 14,
+        "vx": 0,
+        "vy": -520,
+        "px": 142.07907703857927,
+        "py": 206.78811391378844
+      },
+      {
+        "x": 156.07907703857927,
+        "y": 202.4547805804551,
+        "w": 3,
+        "h": 14,
+        "vx": 0,
+        "vy": -520,
+        "px": 156.07907703857927,
+        "py": 206.78811391378844
+      },
+      {
+        "x": 177.34602775025832,
+        "y": 328.7217312921351,
+        "w": 3,
+        "h": 14,
+        "vx": 0,
+        "vy": -520,
+        "px": 177.34602775025832,
+        "py": 333.0550646254684
+      },
+      {
+        "x": 191.34602775025832,
+        "y": 328.7217312921351,
+        "w": 3,
+        "h": 14,
+        "vx": 0,
+        "vy": -520,
+        "px": 191.34602775025832,
+        "py": 333.0550646254684
+      },
+      {
+        "x": 214.2923570672554,
+        "y": 461.0013939424658,
+        "w": 3,
+        "h": 14,
+        "vx": 0,
+        "vy": -520,
+        "px": 214.2923570672554,
+        "py": 465.33472727579914
+      },
+      {
+        "x": 228.2923570672554,
+        "y": 461.0013939424658,
+        "w": 3,
+        "h": 14,
+        "vx": 0,
+        "vy": -520,
+        "px": 228.2923570672554,
+        "py": 465.33472727579914
+      },
+      {
+        "x": 257.90676451511786,
+        "y": 567.1158013903289,
+        "w": 3,
+        "h": 14,
+        "vx": 0,
+        "vy": -520,
+        "px": 257.90676451511786,
+        "py": 571.4491347236623
+      },
+      {
+        "x": 271.90676451511786,
+        "y": 567.1158013903289,
+        "w": 3,
+        "h": 14,
+        "vx": 0,
+        "vy": -520,
+        "px": 271.90676451511786,
+        "py": 571.4491347236623
+      }
+    ],
+    "enemyBullets": [],
+    "hazards": [
+      {
+        "id": 1174,
+        "active": false,
+        "maxTtl": 1.5,
+        "kind": "laser",
+        "x": 164.14404819603487,
+        "y": 324,
+        "w": 180,
+        "h": 648,
+        "beamW": 30,
+        "beamX": 239.14404819603487,
+        "reverse": true,
+        "warning": 0.008333333333335717,
+        "ttl": 1.5,
+        "duration": 1.5,
+        "source": 1169,
+        "previousBeamX": 239.14404819603487
+      }
+    ],
+    "powerups": [],
+    "pulseTime": 0,
+    "boss": {
+      "hp": 208,
+      "turretHp": 60,
+      "w": 194,
+      "h": 100,
+      "kind": "combined",
+      "stagedParts": true,
+      "name": [
+        "\u5929\u5e55\u603b\u65d7\u8230",
+        "SKYBREAKER"
+      ],
+      "patterns": [
+        "fan",
+        "lockChain",
+        "cross"
+      ],
+      "final": [
+        "rotatingGap",
+        "laser",
+        "summonFlank",
+        "reverseLaser",
+        "doubleFan"
+      ],
+      "challenge": [
+        "gap",
+        "cross",
+        "burst"
+      ],
+      "tip": "combined",
+      "phaseCount": 3,
+      "motion": "sweep",
+      "type": "skybreaker",
+      "id": 1169,
+      "x": 148.22109922191848,
+      "y": 85.0041923554573,
+      "maxHp": 437,
+      "age": 59.383333333330604,
+      "cooldown": -1.397916666666663,
+      "phase": 3,
+      "pattern": 4,
+      "hitFlash": 0.02833333333333335,
+      "blockFlash": 0,
+      "partWindow": 3.6,
+      "turrets": [
+        {
+          "part": "left",
+          "id": "1169-left",
+          "offset": -56,
+          "hp": 0,
+          "maxHp": 69,
+          "cooldown": -0.16041666666666196,
+          "w": 34,
+          "h": 36,
+          "hitFlash": 0,
+          "attack": null
+        },
+        {
+          "part": "right",
+          "id": "1169-right",
+          "offset": 56,
+          "hp": 0,
+          "maxHp": 69,
+          "cooldown": -0.5437499999999958,
+          "w": 34,
+          "h": 36,
+          "hitFlash": 0,
+          "attack": null
+        }
+      ],
+      "px": 148.22109922191848,
+      "py": 85.0041923554573,
+      "gapSide": 1,
+      "gapIndex": 46,
+      "attack": {
+        "kind": "reverseLaser",
+        "source": 1169,
+        "timer": 0.008333333333335717,
+        "target": {
+          "x": 164.14404819603487,
+          "y": 492.6864184045765
+        },
+        "origin": {
+          "x": 148.22109922191848,
+          "y": 135.0041923554573
+        },
+        "specs": [
+          {
+            "kind": "laser",
+            "x": 164.14404819603487,
+            "y": 324,
+            "w": 180,
+            "h": 648,
+            "beamW": 30,
+            "beamX": 239.14404819603487,
+            "reverse": true,
+            "warning": 1.4,
+            "ttl": 1.5,
+            "duration": 1.5,
+            "source": 1169
+          }
+        ],
+        "preview": [],
+        "gapSide": 1,
+        "gapIndex": 46
+      },
+      "side": null,
+      "echo": null,
+      "followups": [],
+      "summonPending": null
+    },
+    "player": {
+      "x": 264.90676451511786,
+      "y": 593.4491347236623,
+      "w": 30,
+      "h": 44,
+      "speed": 285,
+      "invuln": 0,
+      "fireLevel": 2,
+      "shield": false,
+      "px": 262.53176451511786,
+      "py": 593.4491347236623
+    },
+    "deferredGroup": null,
+    "phaseTimer": -0.00833333333332873
+  },
+  {
+    "mode": "challenge",
+    "seed": 1366485403,
+    "state": "playing",
+    "phase": "boss",
+    "level": 15,
+    "wave": 3,
+    "time": 1496.9416666719217,
+    "waveTime": 0,
+    "group": 0,
+    "serial": 1179,
+    "score": 172125,
+    "lives": 1,
+    "pulses": 0,
+    "fireTimer": 0.11833333333361032,
+    "escapeCount": 358,
+    "waveEscapes": 2,
+    "layout": null,
+    "supplyPending": false,
+    "shieldChapters": [
+      1,
+      3
+    ],
+    "chasePending": false,
+    "chaseUsed": false,
+    "threats": [
+      {
+        "source": "1169:side",
+        "until": 1496.9500000051996,
+        "start": 1492.6000000051997,
+        "specs": [],
+        "light": true
+      },
+      {
+        "source": 1169,
+        "until": 1497.8916666718783,
+        "start": 1493.5416666718784,
+        "specs": [],
+        "light": false
+      }
+    ],
+    "enemies": [
+      {
+        "hp": 4,
+        "score": 65,
+        "w": 24,
+        "h": 42,
+        "speed": 58,
+        "shape": "dart",
+        "name": [
+          "\u4fef\u51b2\u673a",
+          "DIVER"
+        ],
+        "type": "diver",
+        "id": 1178,
+        "x": 394.93322005582945,
+        "y": 131.94600000000048,
+        "maxHp": 4,
+        "age": 2.4416666666666607,
+        "cooldown": 0.26666666666666655,
+        "baseX": 390,
+        "phase": "entry",
+        "shield": false,
+        "summoned": true,
+        "groupId": 1176,
+        "leader": false,
+        "elite": true,
+        "lane": 1,
+        "supportedBy": null,
+        "px": 394.79609978895684,
+        "py": 131.4240000000005
+      }
+    ],
+    "bullets": [
+      {
+        "x": 119.00422125130126,
+        "y": 252.55081271113696,
+        "w": 3,
+        "h": 14,
+        "vx": 0,
+        "vy": -520,
+        "px": 119.00422125130126,
+        "py": 256.8841460444703
+      },
+      {
+        "x": 133.00422125130126,
+        "y": 252.55081271113696,
+        "w": 3,
+        "h": 14,
+        "vx": 0,
+        "vy": -520,
+        "px": 133.00422125130126,
+        "py": 256.8841460444703
+      },
+      {
+        "x": 133.25422125130126,
+        "y": 347.8841460444699,
+        "w": 3,
+        "h": 14,
+        "vx": 0,
+        "vy": -520,
+        "px": 133.25422125130126,
+        "py": 352.2174793778032
+      },
+      {
+        "x": 147.25422125130126,
+        "y": 347.8841460444699,
+        "w": 3,
+        "h": 14,
+        "vx": 0,
+        "vy": -520,
+        "px": 147.25422125130126,
+        "py": 352.2174793778032
+      },
+      {
+        "x": 164.12922125130126,
+        "y": 438.8841460444695,
+        "w": 3,
+        "h": 14,
+        "vx": 0,
+        "vy": -520,
+        "px": 164.12922125130126,
+        "py": 443.2174793778028
+      },
+      {
+        "x": 178.12922125130126,
+        "y": 438.8841460444695,
+        "w": 3,
+        "h": 14,
+        "vx": 0,
+        "vy": -520,
+        "px": 178.12922125130126,
+        "py": 443.2174793778028
+      }
+    ],
+    "enemyBullets": [],
+    "hazards": [
+      {
+        "id": 1179,
+        "active": false,
+        "maxTtl": 1.5,
+        "kind": "laser",
+        "x": 102.25422125130126,
+        "y": 324,
+        "w": 180,
+        "h": 648,
+        "beamW": 30,
+        "beamX": 177.25422125130126,
+        "reverse": true,
+        "warning": 0.05833333333333571,
+        "ttl": 1.5,
+        "duration": 1.5,
+        "source": 1169,
+        "previousBeamX": 177.25422125130126
+      }
+    ],
+    "powerups": [],
+    "pulseTime": 0,
+    "boss": {
+      "hp": 104,
+      "turretHp": 60,
+      "w": 194,
+      "h": 100,
+      "kind": "combined",
+      "stagedParts": true,
+      "name": [
+        "\u5929\u5e55\u603b\u65d7\u8230",
+        "SKYBREAKER"
+      ],
+      "patterns": [
+        "fan",
+        "lockChain",
+        "cross"
+      ],
+      "final": [
+        "rotatingGap",
+        "laser",
+        "summonFlank",
+        "reverseLaser",
+        "doubleFan"
+      ],
+      "challenge": [
+        "gap",
+        "cross",
+        "burst"
+      ],
+      "tip": "combined",
+      "phaseCount": 3,
+      "motion": "sweep",
+      "type": "skybreaker",
+      "id": 1169,
+      "x": 109.38183295907345,
+      "y": 106.1963403114584,
+      "maxHp": 437,
+      "age": 72.58333333333717,
+      "cooldown": -1.347916666666663,
+      "phase": 3,
+      "pattern": 10,
+      "hitFlash": 0.11166666666666666,
+      "blockFlash": 0,
+      "partWindow": 3.6,
+      "turrets": [
+        {
+          "part": "left",
+          "id": "1169-left",
+          "offset": -56,
+          "hp": 0,
+          "maxHp": 69,
+          "cooldown": -0.16041666666666196,
+          "w": 34,
+          "h": 36,
+          "hitFlash": 0,
+          "attack": null
+        },
+        {
+          "part": "right",
+          "id": "1169-right",
+          "offset": 56,
+          "hp": 0,
+          "maxHp": 69,
+          "cooldown": -0.5437499999999958,
+          "w": 34,
+          "h": 36,
+          "hitFlash": 0,
+          "attack": null
+        }
+      ],
+      "px": 109.38183295907345,
+      "py": 106.1963403114584,
+      "gapSide": 1,
+      "gapIndex": 54,
+      "attack": {
+        "kind": "reverseLaser",
+        "source": 1169,
+        "timer": 0.05833333333333571,
+        "target": {
+          "x": 102.25422125130126,
+          "y": 495.550812711136
+        },
+        "origin": {
+          "x": 109.38183295907345,
+          "y": 156.1963403114584
+        },
+        "specs": [
+          {
+            "kind": "laser",
+            "x": 102.25422125130126,
+            "y": 324,
+            "w": 180,
+            "h": 648,
+            "beamW": 30,
+            "beamX": 177.25422125130126,
+            "reverse": true,
+            "warning": 1.4,
+            "ttl": 1.5,
+            "duration": 1.5,
+            "source": 1169
+          }
+        ],
+        "preview": [],
+        "gapSide": 1,
+        "gapIndex": 54
+      },
+      "side": null,
+      "echo": null,
+      "followups": [],
+      "summonPending": null
+    },
+    "player": {
+      "x": 187.75422125130126,
+      "y": 495.550812711136,
+      "w": 30,
+      "h": 44,
+      "speed": 285,
+      "invuln": 0,
+      "fireLevel": 2,
+      "shield": false,
+      "px": 185.37922125130126,
+      "py": 495.550812711136
+    },
+    "deferredGroup": null,
+    "phaseTimer": -0.00833333333332873
+  }
+]

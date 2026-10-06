@@ -23,9 +23,9 @@ test("final boss HUD distinguishes undeployed parts from the real protected seco
  a.run('g.hitBoss(999);sync()');
  assert.match(a.element("bossDetails").textContent,/左部件 60.*右部件 60.*核心受保护/);
 });
-test("outpost uses only its introductory fan sequence in normal mode",()=>{
+test("outpost mixes introductory fan and warned point-lock in normal mode",()=>{
  const g=new Game();g.start();g.enterBoss("outpost");g.phase="boss";g.boss.y=110;
  for(let i=0;i<200;i++)g.updateBoss(.1);
  assert.ok(g.events.some(e=>e.type==="boss-attack"&&e.value==="fan"));
- assert.equal(g.events.filter(e=>e.type==="boss-attack"&&e.value!=="fan").length,0);
+ assert.ok(g.events.some(e=>e.type==="boss-attack"&&e.value==="aim"));
 });

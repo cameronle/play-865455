@@ -17,8 +17,8 @@ test("campaign records validate a versioned schema and persist modes separately 
   const a = createShooter({ storage: { "sky-patrol-best": "900" } });
   a.element("startButton").click();
   a.run("g.score=300;update(.01)");
-  const first = JSON.parse(a.store.get("sky-patrol-records-v3"));
-  assert.equal(first.version, 3);
+  const first = JSON.parse(a.store.get("sky-patrol-records-v4"));
+  assert.equal(first.version, 4);
   assert.equal(first.normal.best, 300);
   assert.equal(first.challenge.best, 0);
   assert.equal(a.store.get("sky-patrol-best"), "900");
@@ -27,7 +27,7 @@ test("campaign records validate a versioned schema and persist modes separately 
   assert.equal(a.snapshot().best, 0);
   a.element("startButton").click();
   a.run("g.score=200;update(.01)");
-  const second = JSON.parse(a.store.get("sky-patrol-records-v3"));
+  const second = JSON.parse(a.store.get("sky-patrol-records-v4"));
   assert.equal(second.normal.best, 300);
   assert.equal(second.challenge.best, 200);
   const writes = a.stats.storageWrites;

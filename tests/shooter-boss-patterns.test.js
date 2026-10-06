@@ -27,15 +27,15 @@ test("Hunter fires a narrow locked burst and Iron variants use alternating gaps 
  const g=ready("hunter");g.boss.pattern=1;g.boss.cooldown=0;g.updateBoss(.01);assert.equal(g.boss.attack.kind,"burst");const target={...g.boss.attack.target};g.player.x=450;
  for(let i=0;i<100;i++)g.updateBoss(.01);
  assert.equal(g.enemyBullets.length,3);assert.ok(g.enemyBullets.every(b=>b.vy>0));assert.deepEqual(target,{x:240,y:592});
- const iron=ready("iron-mk2");iron.boss.cooldown=0;iron.updateBoss(.01);
+ const iron=ready("iron-mk2");iron.boss.phase=2;iron.boss.hp=iron.boss.maxHp*.4;iron.boss.cooldown=0;iron.updateBoss(.01);
  for(let i=0;i<100;i++)iron.updateBoss(.01);
- assert.equal(iron.enemyBullets.length,6);assert.ok(iron.boss.followup);
+ assert.equal(iron.enemyBullets.length,6);assert.ok(iron.boss.echo);
  const first=iron.enemyBullets.map(b=>b.vx);for(let i=0;i<60;i++)iron.updateBoss(.01);
  assert.equal(iron.enemyBullets.length,12);assert.notDeepEqual(first,iron.enemyBullets.slice(6).map(b=>b.vx));
- const wing=ready("iron-wing");wing.hitBoss(wing.boss.maxHp*.6);wing.updateBoss(.01);wing.boss.cooldown=0;wing.updateBoss(.01);assert.equal(wing.boss.attack.kind,"gap");
+ const wing=ready("iron-wing");wing.hitBoss(wing.boss.maxHp*.6);wing.updateBoss(.01);wing.boss.cooldown=0;wing.updateBoss(.01);assert.equal(wing.boss.attack.kind,"doubleFan");
 });
 test("Swarm variants summon bounded genuine formations/divers rather than recolored scouts and keep the hull vulnerable",()=>{
- for(const [type,mode,enemy] of [["swarm","normal","scout"],["swarm","challenge","formation"],["swarm-carrier","normal","formation"],["swarm-carrier","challenge","diver"]]){
+ for(const [type,mode,enemy] of [["swarm","normal","formation"],["swarm","challenge","formation"],["swarm-carrier","normal","formation"],["swarm-carrier","challenge","formation"]]){
   const g=ready(type,mode);g.boss.cooldown=0;
   for(let i=0;i<101;i++)g.updateBoss(.01);
   assert.equal(g.enemies.length,2);assert.ok(g.enemies.some(e=>e.type===enemy));assert.ok(g.enemies.every(e=>e.summoned));
@@ -62,7 +62,7 @@ test("Skybreaker cannot skip its real second-stage parts, then switches to a thi
   assert.ok(g.boss,"phase boundary must not clear the boss");assert.equal(g.boss.phase,2);assert.ok(g.boss.hp>=max*.65);assert.ok(B.protectedCore(g.boss));
   const hp=g.boss.hp;assert.equal(g.hitBoss(999),false);g.pulse();assert.equal(g.boss.hp,hp);assert.equal(g.boss.phase,2);
   g.hitBoss(999,"left");g.hitBoss(999,"right");assert.equal(g.boss.phase,3);assert.equal(B.protectedCore(g.boss),false);
-  g.boss.cooldown=0;g.updateBoss(.01);assert.equal(g.boss.attack.kind,"laser");
+  g.boss.cooldown=0;g.updateBoss(.01);assert.equal(g.boss.attack.kind,"rotatingGap");
   assert.deepEqual(g.events.filter(e=>e.type==="boss-phase").map(e=>e.value),[2,3]);
   g.hitBoss(999);assert.equal(g.state,"clear");assert.equal(g.stats.bosses.at(-1),"skybreaker");
  }

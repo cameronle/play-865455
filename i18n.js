@@ -23,7 +23,7 @@
       },
       games: {
         "2048": {"name":"2048","desc":"滑动并合并相同数字，挑战 2048。"},
-        "shooter": {"name":"星空巡航","desc":"十五关战役、每关首领；八类首领机制，换位拆解、章节补给。"},
+        "shooter": {"name":"星空巡航","desc":"十五关混编战役、九类敌机、多阶段首领；拆支援、躲地雷，挑战补给二选一。"},
         "tetris": {"name":"纸片积木","desc":"拼接彩色纸片、消除整行，把凌乱桌面整理干净。"},
         "snake": {"name":"毛毛虫花园","desc":"操控贪吃的小毛毛虫收集苹果和浆果，越吃越长。"},
         "breakout": {"name":"萤火花园","desc":"在深夜花园里弹开花灯，守住小萤火虫的微光。"},
@@ -63,7 +63,7 @@
       },
       games: {
         "2048": {"name":"2048","desc":"Slide and merge matching numbers to reach 2048."},
-        "shooter": {"name":"SKY PATROL","desc":"Fifteen stages, a boss every stage and eight boss mechanics. Dodge, dismantle and manage chapter supplies."},
+        "shooter": {"name":"SKY PATROL","desc":"Fifteen mixed-wave stages, nine enemy roles and multi-phase bosses. Break support links, dodge mines and choose challenge supplies."},
         "tetris": {"name":"PAPER BLOCKS","desc":"Fit colorful paper pieces, clear lines, and tidy the desk."},
         "snake": {"name":"WORM & APPLE","desc":"Guide a hungry little worm through the garden and grow longer."},
         "breakout": {"name":"FIRELIGHT GARDEN","desc":"Break the flower lights and keep a little firefly glowing."},

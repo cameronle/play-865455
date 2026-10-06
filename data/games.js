@@ -30,12 +30,12 @@ module.exports = [
       "en": "SKY PATROL"
     },
     "description": {
-      "zh": "十五关战役、每关首领；八类首领机制，换位拆解、章节补给。",
-      "en": "Fifteen stages, a boss every stage and eight boss mechanics. Dodge, dismantle and manage chapter supplies."
+      "zh": "十五关混编战役、九类敌机、多阶段首领；拆支援、躲地雷，挑战补给二选一。",
+      "en": "Fifteen mixed-wave stages, nine enemy roles and multi-phase bosses. Break support links, dodge mines and choose challenge supplies."
     },
     "readme": {
       "title": "Sky Patrol",
-      "description": "自维护的 HTML5 Canvas 十五关街机战役：六类敌机、每关首领、八类首领机制（俯冲、扇弹、锁定、轰炸、部件、召唤、激光、阶段组合）；支持自动射击、四向移动、相对拖动、有限脉冲、护盾、五章补给、普通/挑战专属攻击序列、中英界面、分档记录及旧九关记录只读展示、后台自动暂停及手机横屏。"
+      "description": "自维护的 HTML5 Canvas 十五关混编战役：九类敌机（含拦截、布雷和支援）、每关多阶段首领、八类首领机制与共享威胁预算；支持自动射击、四向移动、相对拖动、有限脉冲、章内有界护盾、挑战模式章末补给二选一、中英界面、v4分档记录及旧十五/九关记录只读展示、后台自动暂停及手机横屏。"
     }
   },
   {

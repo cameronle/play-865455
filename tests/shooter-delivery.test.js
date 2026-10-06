@@ -4,7 +4,7 @@ const test = require("node:test"),
   fs = require("node:fs");
 test("campaign dependency order and pulse/boss/mode controls are shipped together", () => {
   const html = fs.readFileSync("shooter/index.html", "utf8");
-  const modules = ["content", "bosses", "rules", "locale", "renderer", "game"];
+  const modules = ["content", "bosses", "enemies", "director", "rules", "locale", "renderer", "game"];
   let previous = -1;
   for (const name of modules) {
     const resource = html.match(new RegExp(`${name}\\.js\\?v=[a-z0-9-]+`));
@@ -49,7 +49,7 @@ test("Sky Patrol exposes accessible controls and cache-busted runtime assets", (
   assert.match(html, /rel="icon"[^>]*favicon\.svg/);
   assert.match(html, /role="status"[^>]*id="flightStatus"/);
   assert.match(html, /Drag to move/);
-  assert.match(html, /game\.js\?v=boss-pack-1/);
+  assert.match(html, /game\.js\?v=combat-v4-1/);
 });
 test("portrait and landscape layouts reserve the utility dock and keep the flight area proportional", () => {
   const css = fs.readFileSync("shooter/style.css", "utf8");
