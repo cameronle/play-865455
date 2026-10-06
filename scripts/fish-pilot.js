@@ -34,14 +34,15 @@ function routeGoal(s,goal,bound){
  if(previous[1]<0)return end;
  let first=1;while(previous[first]>0)first=previous[first];return nodes[first];
 }
-function decide(s){
- const previous=cache.get(s);if(previous&&previous.time===s.time)return previous.command;
+function decide(s,drag=false){
+ const swimSpeed=drag?C.dragSpeed:190;
+ const previous=cache.get(s);if(previous&&previous.time===s.time&&previous.drag===drag)return previous.command;
  const p=s.player,pg=R.geometry(p),available=s.fish.filter(f=>!f.dead&&!f.warning&&R.relation(p,f)==='food'),required=available.filter(f=>priority(s,f)===24),food=(required.length?required:available).sort((a,b)=>distance(p,a)/priority(s,a)-distance(p,b)/priority(s,b));
- const danger=s.fish.filter(f=>!f.dead&&R.relation(p,f)==='danger'&&distance(p,f)<pg.rx+R.geometry(f).rx+190*1.2+(480-190)*C.dashDuration+205*1.2+24),bound=q=>({x:R.clamp(q.x,pg.rx,s.width-pg.rx),y:R.clamp(q.y,pg.ry,s.height-pg.ry)}),goal=routeGoal(s,food[0]||p,bound);
+ const danger=s.fish.filter(f=>!f.dead&&R.relation(p,f)==='danger'&&distance(p,f)<pg.rx+R.geometry(f).rx+swimSpeed*1.2+(480-swimSpeed)*C.dashDuration+205*1.2+24),bound=q=>({x:R.clamp(q.x,pg.rx,s.width-pg.rx),y:R.clamp(q.y,pg.ry,s.height-pg.ry)}),goal=routeGoal(s,food[0]||p,bound);
  let command={target:bound(goal),dash:false};
  if(danger.length){
   const candidates=[bound(p),goal,...food.slice(0,4).map(bound)];
-  for(let i=0;i<16;i++){const a=i*Math.PI/8;candidates.push(bound({x:p.x+Math.cos(a)*190,y:p.y+Math.sin(a)*190}));}
+  for(let i=0;i<16;i++){const a=i*Math.PI/8;candidates.push(bound({x:p.x+Math.cos(a)*swimSpeed,y:p.y+Math.sin(a)*swimSpeed}));}
   let best=-Infinity;
   for(const target of candidates)for(const useDash of [false,true]){
    if(useDash&&(p.cooldown>0||p.dashTime>0||distance(p,target)<50))continue;
@@ -49,11 +50,11 @@ function decide(s){
    let collisions=0,minGap=1000,travel=0,dashTime=useDash?C.dashDuration:p.dashTime;
    // Re-run the actual AI against this candidate player's changing position.
    // Sweep every substep; constant-velocity prediction misses chase turns.
-   for(let i=0;i<36;i++){
-    const dt=1/30,oldP={x:player.x,y:player.y},remaining=distance(player,target);dashTime=Math.max(0,dashTime-dt);
+   for(let i=0;i<(drag?144:36);i++){
+    const dt=drag?C.step:1/30,oldP={x:player.x,y:player.y},remaining=distance(player,target);dashTime=Math.max(0,dashTime-dt);
     // Match exact fractional arrival in the repaired movement simulation.
     if(remaining>0){player.headingX=(target.x-player.x)/remaining;player.headingY=(target.y-player.y)/remaining;}
-    const step=dashTime>0?480*dt:Math.min(remaining,190*dt);
+    const step=dashTime>0?480*dt:Math.min(remaining,swimSpeed*dt);
     player.x+=player.headingX*step;player.y+=player.headingY*step;R.bound(player,s.width,s.height);travel+=step;player.invulnerable=Math.max(0,player.invulnerable-dt);
     for(const f of obstacles){const oldF={x:f.x,y:f.y};f.warning=Math.max(0,(f.warning||0)-dt);f.age+=dt;if(f.warning>0)continue;B.move(world,f,dt);if(player.invulnerable<=0){const g=R.geometry(f),gap=Math.hypot(Math.max(0,Math.abs(player.x-f.x)-pg.half-g.half),player.y-f.y)-pg.ry-g.ry;minGap=Math.min(minGap,gap);if(R.swept(player,f,oldP,oldF))collisions++;}}
    }
@@ -61,8 +62,8 @@ function decide(s){
    if(score>best){best=score;command={target,dash:useDash};}
   }
  }
- cache.set(s,{time:s.time,command});return command;
+ command={...command,inputMode:drag?'drag':'hover',swimSpeed};cache.set(s,{time:s.time,drag,command});return command;
 }
-function aim(s){return decide(s).target;}
-function shouldDash(s,target){const c=decide(s);return c.dash&&(!target||target.x===c.target.x&&target.y===c.target.y);}
+function aim(s,drag=false){return decide(s,drag).target;}
+function shouldDash(s,target,drag=false){const c=decide(s,drag);return c.dash&&(!target||target.x===c.target.x&&target.y===c.target.y);}
 module.exports={aim,shouldDash,decide};
