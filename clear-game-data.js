@@ -15,7 +15,7 @@
     gomoku: ['gomoku-stats-v3'],
     minesweeper: ['minesweeper-'],
     nonogram: ['nonogram-'],
-    shooter: ['sky-patrol-best'],
+    shooter: ['sky-patrol-best', 'sky-patrol-records-v2'],
     'sky-hopper': ['doodleHopBest', 'doodleHopBestStars', 'skyHopperBest', 'skyHopperRecordsV2'],
     'mushroom-trail': ['mushroomTrailBest'],
     'melon-lab': ['melonLabBest'],

@@ -79,6 +79,8 @@ test('clear-data utility removes only the current game data and preserves shared
 
 test('Bubble Frontier clear preserves neighboring game scores and shared preferences', async()=>{const app=boot('bubble-tanks',['bubble_frontier_save','bubble_frontier_records','bubble_frontier_settings','fireflyWatchBest','play-lang','play-theme']);assert.equal(app.buttons.length,1);await app.buttons[0].clickHandler();for(const key of ['bubble_frontier_save','bubble_frontier_records','bubble_frontier_settings'])assert.equal(app.storage[key],undefined);for(const key of ['fireflyWatchBest','play-lang','play-theme'])assert.equal(app.storage[key],'saved');});
 
+test('Sky Patrol clear removes both record generations by exact key only',async()=>{const app=boot('shooter',['sky-patrol-best','sky-patrol-records-v2','sky-patrol-records-v2-backup','fireflyWatchBest','play-lang','play-theme']);await app.buttons[0].clickHandler();for(const key of ['sky-patrol-best','sky-patrol-records-v2'])assert.equal(app.storage[key],undefined);for(const key of ['sky-patrol-records-v2-backup','fireflyWatchBest','play-lang','play-theme'])assert.equal(app.storage[key],'saved');});
+
 test('2048 clear removes its saved turn and best without erasing other games', async () => {
   const app = boot('2048', ['play-2048-best', 'play-2048-save-v1', 'play-theme', 'play-lang', 'sky-patrol-best']);
   await app.buttons[0].clickHandler();

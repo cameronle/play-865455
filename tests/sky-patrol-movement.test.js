@@ -31,7 +31,7 @@ test("Sky Patrol supports every direction on keyboard and mobile", () => {
     for (const mode of ["key", "touch"]) {
       const app = createShooter();
       app.element("startButton").click();
-      app.run("player.x=240;player.y=324");
+      app.run("g.player.x=240;g.player.y=324");
       mode === "key"
         ? app.event("keydown", { key })
         : app.element(name + "Button").dispatch("pointerdown");
@@ -45,7 +45,7 @@ test("Sky Patrol supports every direction on keyboard and mobile", () => {
 test("Sky Patrol pointer dragging maps scaled canvas coordinates in both axes", () => {
   const app = createShooter();
   app.element("startButton").click();
-  app.run("player.x=240;player.y=324");
+  app.run("g.player.x=240;g.player.y=324");
   const canvas = app.element("game");
   canvas.getBoundingClientRect = () => ({
     left: 20,

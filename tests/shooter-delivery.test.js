@@ -2,6 +2,25 @@
 const test = require("node:test"),
   assert = require("node:assert/strict"),
   fs = require("node:fs");
+test("campaign dependency order and pulse/boss/mode controls are shipped together", () => {
+  const html = fs.readFileSync("shooter/index.html", "utf8");
+  const modules = ["content", "rules", "locale", "renderer", "game"];
+  let previous = -1;
+  for (const name of modules) {
+    const index = html.indexOf(`${name}.js?v=campaign-1`);
+    assert.ok(index > previous, `${name} loads in dependency order`);
+    previous = index;
+  }
+  for (const id of [
+    "pulseButton",
+    "bossHud",
+    "bossName",
+    "bossHealth",
+    "normalButton",
+    "challengeButton",
+  ])
+    assert.ok(html.includes(`id="${id}"`), id);
+});
 const luminance = (hex) => {
   const rgb = [0, 2, 4]
     .map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
@@ -28,11 +47,11 @@ test("Sky Patrol exposes accessible controls and cache-busted runtime assets", (
   assert.match(html, /rel="icon"[^>]*favicon\.svg/);
   assert.match(html, /role="status"[^>]*id="flightStatus"/);
   assert.match(html, /Drag to move/);
-  assert.match(html, /game\.js\?v=shooter-3/);
+  assert.match(html, /game\.js\?v=campaign-1/);
 });
 test("portrait and landscape layouts reserve the utility dock and keep the flight area proportional", () => {
   const css = fs.readFileSync("shooter/style.css", "utf8");
-  assert.match(css, /100svh - 258px/);
+  assert.match(css, /100svh - 374px/);
   assert.match(css, /orientation:\s*landscape/);
   assert.match(css, /grid-template-columns:\s*minmax\(0,\s*1fr\) 190px/);
   assert.match(css, /body \.theme-toggle/);
