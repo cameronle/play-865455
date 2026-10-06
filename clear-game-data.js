@@ -13,7 +13,6 @@
     flappy: ['flappy-best-v1'],
     flow: ['flow-progress-v1'],
     gomoku: ['gomoku-stats-v3'],
-    maze: ['maze-high'],
     minesweeper: ['minesweeper-'],
     nonogram: ['nonogram-'],
     shooter: ['sky-patrol-best'],

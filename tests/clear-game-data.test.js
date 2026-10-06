@@ -46,9 +46,9 @@ function boot(route, initialKeys) {
   return {storage, buttons, sessionCleared: () => sessionCleared, deletedCaches, reloaded: () => reloaded,confirmation:()=>confirmation};
 }
 
-for (const route of ['fish-feast', 'helicopter-cave', 'connect-four']) {
+for (const route of ['fish-feast', 'helicopter-cave', 'connect-four', 'maze']) {
   test(`retired game ${route} does not install controls or erase existing records`, () => {
-    const keys = ['fish-feast-progress-v1', 'fish-feast-settings-v1', 'helicopterCaveBest', 'connectFourRecord', 'connectFourGame-v1', 'classic-snake-high-score', 'play-lang', 'play-theme'];
+    const keys = ['maze-high', 'fish-feast-progress-v1', 'fish-feast-settings-v1', 'helicopterCaveBest', 'connectFourRecord', 'connectFourGame-v1', 'classic-snake-high-score', 'play-lang', 'play-theme'];
     const app = boot(route, keys);
     assert.equal(app.buttons.length, 0);
     for (const key of keys) assert.equal(app.storage[key], 'saved');
