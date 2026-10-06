@@ -6,6 +6,7 @@
   } catch {}
   const C = window.SkyPatrolContent,
     R = window.SkyPatrolRules,
+    B = window.SkyPatrolBosses,
     L = window.SkyPatrolLocale.create(storage),
     Renderer = window.SkyPatrolRenderer;
   const $ = (id) => document.getElementById(id),
@@ -26,7 +27,8 @@
     accumulator = 0,
     bestRecord = 0,
     clearing = false;
-  const legacyBest = readLegacy();
+  const legacyBest = readLegacy(),
+    legacyCampaign = R.readRecords(safeRead(C.LEGACY_RECORD_KEY), { version: 2, totalStages: 9 });
   let records = R.readRecords(safeRead(C.RECORD_KEY)),
     recordedClear = false;
   bestRecord = records.normal.best;
@@ -177,12 +179,17 @@
     if (b) {
       text("bossName", L.name(b.name));
       text("bossPhase", L.t("phase") + " " + b.phase);
-      $("bossHealth").max = b.maxHp;
-      $("bossHealth").value = Math.max(0, b.hp);
+      const hp = B.progress(b);
+      $("bossHealth").max = hp.max;
+      $("bossHealth").value = hp.value;
+      text("bossDetails", b.stagedParts && b.phase === 1 ? L.t("partsPending") : b.turrets ?
+        L.t("leftPart") + " " + b.turrets[0].hp + " · " +
+        L.t("rightPart") + " " + b.turrets[1].hp + " · " +
+        L.t(B.protectedCore(b) ? "coreProtected" : "coreOpen") : L.t("bodyHealth"));
       attr(
         $("bossHealth"),
         "aria-label",
-        L.name(b.name) + " " + Math.max(0, b.hp) + " / " + b.maxHp,
+        L.name(b.name) + " " + L.t(b.turrets ? "totalHealth" : "bodyHealth") + " " + hp.value + " / " + hp.max,
       );
     }
     const status =
@@ -191,7 +198,8 @@
           ? L.t("warning")
           : b?.attack
             ? L.t(b.attack.kind)
-            : L.name(stage.name)
+            : b ? L.t(B.protectedCore(b) ? "tip-parts" : "tip-" + b.tip)
+              : L.name(stage.name)
         : L.t(
             state === "title"
               ? "intro"
@@ -224,7 +232,7 @@
             : L.t("final") +
               " " +
               fmt(g.score) +
-              (state === "intermission" && stage.boss
+              (state === "intermission" && stage.chapterEnd
                 ? "\n" + L.t("checkpoint")
                 : ""),
       );
@@ -247,14 +255,16 @@
         L.t("record") +
           " " +
           records[mode].farthest +
-          " / 9 · " +
+          " / " + C.STAGES.length + " · " +
           L.t("wins") +
           " " +
           records[mode].clears,
       );
       text(
         "legacyBest",
-        legacyBest ? L.t("legacy") + " " + fmt(legacyBest) : "",
+        (legacyCampaign[mode].best || legacyCampaign[mode].clears ?
+          L.t("legacyCampaign") + " " + fmt(legacyCampaign[mode].best) + " · " + L.t("wins") + " " + legacyCampaign[mode].clears : "") +
+          (legacyBest ? " · " + L.t("legacy") + " " + fmt(legacyBest) : ""),
       );
     }
     attr($("normalButton"), "aria-pressed", mode === "normal");

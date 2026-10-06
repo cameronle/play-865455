@@ -2,7 +2,7 @@
 const test = require("node:test"),
   assert = require("node:assert/strict"),
   fs = require("node:fs");
-test("campaign content defines nine stages, three distinct bosses and six enemy behaviors", () => {
+test("campaign content defines fifteen stages, fifteen boss encounters and six enemy behaviors", () => {
   assert.ok(
     fs.existsSync("shooter/content.js"),
     "campaign content module exists",
@@ -18,11 +18,11 @@ test("campaign content defines nine stages, three distinct bosses and six enemy 
   ]);
   assert.deepEqual(
     C.STAGES.map((s) => s.id),
-    [1, 2, 3, 4, 5, 6, 7, 8, 9],
+    Array.from({length:15},(_,i)=>i+1),
   );
   assert.deepEqual(
     C.STAGES.filter((s) => s.boss).map((s) => s.boss),
-    ["iron-wing", "twin-core", "storm-carrier"],
+    ["outpost","spear","iron-wing","fortress","hunter","twin-core","swarm","sentinel","storm-carrier","iron-mk2","twin-armored","blockade","swarm-carrier","aurora","skybreaker"],
   );
   assert.equal(new Set(Object.values(C.ENEMIES).map((e) => e.shape)).size, 6);
   for (const stage of C.STAGES) {

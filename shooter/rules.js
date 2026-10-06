@@ -2,10 +2,11 @@
   "use strict";
   const rules = factory(
     typeof module === "object" ? require("./content") : root.SkyPatrolContent,
+    typeof module === "object" ? require("./bosses") : root.SkyPatrolBosses,
   );
   if (typeof module === "object") module.exports = rules;
   else root.SkyPatrolRules = rules;
-})(typeof globalThis !== "undefined" ? globalThis : this, function (C) {
+})(typeof globalThis !== "undefined" ? globalThis : this, function (C, B) {
   "use strict";
   const { W, H, ENEMIES, BOSSES, STAGES, MODES, LIMITS } = C,
     STEP = 1 / 120;
@@ -114,7 +115,7 @@
       return false;
     }
     nextStage() {
-      if (this.state !== "intermission") return false;
+      if (this.state !== "intermission" || this.level >= STAGES.length) return false;
       this.level++;
       this.wave = 0;
       this.waveTime = 0;
@@ -138,14 +139,15 @@
       if (this.state !== "playing") return;
       this.score += 200 * this.level;
       this.player.invuln = 1.5;
-      if (STAGES[this.level - 1].boss) {
+      const stage = STAGES[this.level - 1];
+      if (stage.boss) this.stats.bosses.push(stage.boss);
+      if (stage.chapterEnd) {
         this.lives = Math.min(3, this.lives + 1);
         this.pulses = Math.min(2, this.pulses + 1);
-        this.stats.bosses.push(STAGES[this.level - 1].boss);
         this.event("chapter-reward", this.level);
       }
       this.clearField();
-      this.state = this.level === 9 ? "clear" : "intermission";
+      this.state = this.level === STAGES.length ? "clear" : "intermission";
       this.event(this.state, this.level);
     }
     hurt() {
@@ -367,144 +369,12 @@
       }
     }
     enterBoss(type) {
-      const d = BOSSES[type];
       this.clearField();
-      this.boss = {
-        ...d,
-        type,
-        id: ++this.serial,
-        x: 240,
-        y: -d.h,
-        hp: Math.ceil(d.hp * MODES[this.mode].hpScale),
-        maxHp: Math.ceil(d.hp * MODES[this.mode].hpScale),
-        age: 0,
-        cooldown: 2,
-        phase: 1,
-        pattern: 0,
-      };
-      if (type === "twin-core")
-        this.boss.turrets = ["left", "right"].map((part, i) => ({
-          part,
-          id: this.boss.id + "-" + part,
-          offset: i === 0 ? -56 : 56,
-          hp: Math.ceil(d.turretHp * MODES[this.mode].hpScale),
-          maxHp: Math.ceil(d.turretHp * MODES[this.mode].hpScale),
-          cooldown: 1.2 + i,
-          w: 34,
-          h: 36,
-        }));
+      this.boss = B.initialize(this, type);
       this.phase = "boss-enter";
-      this.event("boss-enter", type);
+      this.event("boss-enter",type);
     }
-    updateTurrets(dt) {
-      const b = this.boss;
-      for (const t of b.turrets) {
-        if (t.hp <= 0) continue;
-        t.cooldown -= dt;
-        if (t.attack) {
-          t.attack.timer -= dt;
-          if (t.attack.timer <= 0) {
-            this.aim(
-              { ...t, x: b.x + t.offset, y: b.y + 6 },
-              t.attack.target,
-              155,
-            );
-            t.attack = null;
-            t.cooldown = 2.6 / MODES[this.mode].fireScale;
-          }
-        } else if (t.cooldown <= 0)
-          t.attack = {
-            target: { x: this.player.x, y: this.player.y },
-            timer: 1.1,
-          };
-      }
-    }
-    updateBoss(dt) {
-      if (this.phase !== "boss" || !this.boss) return;
-      const b = this.boss;
-      b.age += dt;
-      b.cooldown -= dt;
-      b.x = 240 + Math.sin(b.age * 0.6) * 95;
-      if (b.type === "twin-core" && b.turrets.some((t) => t.hp > 0)) {
-        this.updateTurrets(dt);
-        return;
-      }
-      if (b.type === "storm-carrier") {
-        const phase =
-          b.hp <= b.maxHp * 0.35 ? 3 : b.hp <= b.maxHp * 0.7 ? 2 : 1;
-        if (phase > b.phase) {
-          b.phase++;
-          this.event("boss-phase", b.phase);
-        }
-      }
-      if (b.type === "iron-wing" && b.phase === 1 && b.hp <= b.maxHp * 0.45) {
-        b.phase = 2;
-        this.event("boss-phase", 2);
-      }
-      if (b.attack) {
-        b.attack.timer -= dt;
-        if (b.attack.timer <= 0) {
-          if (b.attack.kind === "fan") {
-            for (const angle of b.type === "storm-carrier" && b.phase === 3
-              ? [-0.85, -0.55, -0.28, 0, 0.28, 0.55, 0.85]
-              : [-0.75, -0.38, 0, 0.38, 0.75])
-              this.emit(
-                b.x,
-                b.y + b.h / 2,
-                Math.sin(angle) * 155,
-                Math.cos(angle) * 155,
-                b.id,
-              );
-          } else if (b.attack.kind === "aim") this.aim(b, b.attack.target, 175);
-          else if (b.attack.kind === "summon") {
-            const count = Math.min(
-              2,
-              Math.max(0, 4 - this.enemies.filter((e) => !e.dead).length),
-            );
-            for (let i = 0; i < count; i++)
-              this.spawn(
-                b.phase === 3 && i === 1 ? "diver" : "scout",
-                i === 0 ? 70 : 410,
-                { summoned: true },
-              );
-            this.event("summon", count);
-          }
-          b.attack = null;
-          b.cooldown = (b.phase === 2 ? 1.3 : 2.4) / MODES[this.mode].fireScale;
-        }
-        return;
-      }
-      if (b.cooldown <= 0) {
-        b.attack = {
-          kind:
-            b.type === "storm-carrier"
-              ? ["laser", "fan", "summon"][b.pattern++ % 3]
-              : b.pattern++ % 2 === 0
-                ? "fan"
-                : "aim",
-          timer: 0.9,
-          target: { x: this.player.x, y: this.player.y },
-        };
-        if (b.attack.kind === "laser") {
-          b.attack.timer = 1.4;
-          const center = clamp(this.player.x, 100, 380);
-          this.addHazard({
-            kind: "laser",
-            x: center,
-            y: H / 2,
-            w: 180,
-            h: H,
-            beamW: 32,
-            beamX: center - 74,
-            warning: 1.4,
-            ttl: 1.5,
-            duration: 1.5,
-            source: b.id,
-          });
-        }
-        this.event("boss-attack", b.attack.kind);
-      }
-    }
+    updateBoss(dt) { B.update(this,dt); }
     hitEnemy(e, amount = 1) {
       if (this.state !== "playing" || e.dead || e.shield) return false;
       e.hp -= amount;
@@ -542,34 +412,7 @@
     hitBoss(amount = 1, part = null) {
       if (this.state !== "playing" || this.phase !== "boss" || !this.boss)
         return false;
-      const boss = this.boss;
-      if (boss.type === "twin-core") {
-        if (part) {
-          const t = boss.turrets.find((t) => t.part === part);
-          if (!t || t.hp <= 0) return false;
-          t.hp = Math.max(0, t.hp - amount);
-          if (t.hp === 0) {
-            t.attack = null;
-            this.score += 200;
-            this.event("turret-defeated", part);
-            if (boss.turrets.every((t) => t.hp === 0)) {
-              boss.phase = 2;
-              boss.cooldown = 1.5;
-              this.event("core-open", boss.type);
-            }
-          }
-          return true;
-        }
-        if (boss.turrets.some((t) => t.hp > 0)) return false;
-      }
-      this.boss.hp -= amount;
-      if (this.boss.hp <= 0) {
-        this.burst(this.boss.x, this.boss.y, true);
-        this.score += 1200 * this.level;
-        this.event("boss-defeated", this.boss.type);
-        this.finishStage();
-      }
-      return true;
+      return B.hit(this,amount,part);
     }
     pulse() {
       if (this.state !== "playing" || this.pulses <= 0) return false;
@@ -715,34 +558,9 @@
               }
             });
         if (this.boss && this.phase === "boss") {
-          const boss = this.boss,
-            core = boss.type === "twin-core" ? { ...boss, w: 40, h: 40 } : boss;
-          add(b, core, 1, () => {
-            if (!b.dead) {
-              b.dead = true;
-              this.hitBoss();
-            }
+          for (const target of B.targets(this.boss)) add(b,target.body,1,() => {
+            if (!b.dead && this.boss) { b.dead = true; this.hitBoss(1,target.part); }
           });
-          for (const t of boss.turrets || [])
-            if (t.hp > 0)
-              add(
-                b,
-                {
-                  x: boss.x + t.offset,
-                  y: boss.y + 6,
-                  px: (boss.px ?? boss.x) + t.offset,
-                  py: (boss.py ?? boss.y) + 6,
-                  w: t.w,
-                  h: t.h,
-                },
-                1,
-                () => {
-                  if (!b.dead && t.hp > 0) {
-                    b.dead = true;
-                    this.hitBoss(1, t.part);
-                  }
-                },
-              );
         }
       }
       for (const q of this.powerups)
@@ -784,15 +602,15 @@
       }
     }
   }
-  function readRecords(raw) {
+  function readRecords(raw, { version = 3, totalStages = STAGES.length } = {}) {
     const result = {
-      version: 2,
+      version,
       normal: { best: 0, farthest: 0, clears: 0 },
       challenge: { best: 0, farthest: 0, clears: 0 },
     };
     try {
       const parsed = JSON.parse(raw);
-      if (!parsed || parsed.version !== 2 || Array.isArray(parsed))
+      if (!parsed || parsed.version !== version || Array.isArray(parsed))
         return result;
       for (const mode of ["normal", "challenge"]) {
         const r = parsed[mode];
@@ -805,7 +623,7 @@
           r.best <= 999999999 &&
           Number.isInteger(r.farthest) &&
           r.farthest >= 0 &&
-          r.farthest <= 9 &&
+          r.farthest <= totalStages &&
           Number.isSafeInteger(r.clears) &&
           r.clears >= 0 &&
           r.clears <= 999999

@@ -8,7 +8,10 @@ function decide(s) {
     const b = s.boss,
       travel = Math.max(0, (p.y - b.y) / 520);
     target.x = 240 + Math.sin((b.age + travel) * 0.6) * 95;
-    const t = b.turrets?.find((t) => t.hp > 0);
+    const partsActive = !b.stagedParts || b.phase === 2;
+    const liveParts = partsActive ? (b.turrets || []).filter(t=>t.hp>0) : [];
+    const openSide = Math.floor(b.age / b.partWindow) % 2 ? "right" : "left";
+    const t = liveParts.find(t=>!b.alternating || liveParts.length===1 || t.part===openSide);
     if (t) target.x += t.offset;
   } else {
     const candidates = s.enemies.filter(

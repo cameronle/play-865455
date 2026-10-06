@@ -422,7 +422,7 @@ body .clear-data-toggle {
   right: 6px;
   z-index: 2;
   padding: 4px;
-  height: 30px;
+  min-height: 30px;
   margin: 0;
   line-height: 1.2;
   font-size: 10px;
@@ -435,6 +435,7 @@ body .clear-data-toggle {
   justify-content: space-between;
   margin-bottom: 4px;
 }
+#bossDetails { margin: 2px 0 0; font-size: 9px; color: var(--muted); }
 .boss-hud[hidden] {
   display: none !important;
 }

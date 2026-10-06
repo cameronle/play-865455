@@ -7,8 +7,10 @@ const test = require("node:test"),
 test("a fresh ordinary-input campaign naturally reaches every prescribed stage, enemy and boss while the stationary negative fails", () => {
   const r = verify();
   assert.equal(r.rows.length, 3);
-  for (const row of r.rows) assert.ok(row.time >= 480 && row.time <= 720);
+  assert.equal(r.challengeRows.length,3);
+  for (const row of [...r.rows,...r.challengeRows]) assert.ok(row.time >= 1125 && row.time <= 1500);
   assert.equal(r.negative.state, "gameover");
+  assert.equal(r.challengeNegative.state,"gameover");
 });
 test("the pilot accepts a deeply frozen observation and cannot mutate the live game", () => {
   const g = new Game();

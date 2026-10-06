@@ -62,6 +62,16 @@
       [-23, 15],
     ],
   };
+  const BOSS_SHAPES = {
+    fan: [[-.5,-.3],[-.31,-.5],[-.09,-.22],[0,.38],[.09,-.22],[.31,-.5],[.5,-.3],[.41,.38],[.11,.5],[-.11,.5],[-.41,.38]],
+    dash: [[0,.5],[-.5,-.25],[-.2,-.16],[0,-.5],[.2,-.16],[.5,-.25]],
+    bomb: [[-.5,-.25],[-.3,-.5],[-.19,.15],[.19,.15],[.3,-.5],[.5,-.25],[.5,.5],[.25,.5],[0,.26],[-.25,.5],[-.5,.5]],
+    aim: [[-.18,-.5],[.18,-.5],[.5,.06],[.16,.18],[.16,.5],[-.16,.5],[-.16,.18],[-.5,.06]],
+    parts: [[-.5,-.32],[-.36,-.5],[-.18,-.23],[.18,-.23],[.36,-.5],[.5,-.32],[.45,.5],[.21,.27],[-.21,.27],[-.45,.5]],
+    summon: [[-.5,-.3],[-.34,-.5],[-.15,-.18],[.15,-.18],[.34,-.5],[.5,-.3],[.5,.4],[.24,.5],[.14,.28],[-.14,.28],[-.24,.5],[-.5,.4]],
+    laser: [[0,-.5],[.5,-.06],[.28,.22],[.2,.5],[-.2,.5],[-.28,.22],[-.5,-.06]],
+    combined: [[-.5,-.25],[-.33,-.5],[-.15,-.36],[0,-.12],[.15,-.36],[.33,-.5],[.5,-.25],[.43,.38],[.23,.5],[0,.3],[-.23,.5],[-.43,.38]],
+  };
   function polygon(ctx, points, x, y, fill) {
     ctx.fillStyle = fill;
     ctx.beginPath();
@@ -192,93 +202,48 @@
       }
     }
     if (s.boss) {
-      const b = s.boss;
-      if (b.attack?.target && b.attack.kind === "aim")
-        line(ctx, b, b.attack.target, red);
-      if (b.type === "iron-wing") {
-        polygon(
-          ctx,
-          [
-            [-80, -22],
-            [-50, -37],
-            [-15, -16],
-            [0, 28],
-            [15, -16],
-            [50, -37],
-            [80, -22],
-            [65, 28],
-            [18, 37],
-            [-18, 37],
-            [-65, 28],
-          ],
-          b.x,
-          b.y,
-          red,
-        );
-      } else if (b.type === "twin-core") {
-        polygon(
-          ctx,
-          [
-            [-84, -28],
-            [-60, -44],
-            [-30, -20],
-            [30, -20],
-            [60, -44],
-            [84, -28],
-            [75, 44],
-            [35, 24],
-            [-35, 24],
-            [-75, 44],
-          ],
-          b.x,
-          b.y,
-          red,
-        );
-        for (const t of b.turrets || []) {
-          const x = b.x + t.offset;
-          ctx.fillStyle = t.hp > 0 ? orange : light ? "#cbc4b8" : "#354151";
-          ctx.fillRect(x - 17, b.y - 10, 34, 32);
-          if (t.hp > 0) {
-            ctx.fillStyle = ink;
-            ctx.fillRect(x - 16, b.y - 18, (32 * t.hp) / t.maxHp, 3);
-            if (t.attack) line(ctx, { x, y: b.y + 20 }, t.attack.target, red);
-          }
-        }
-      } else {
-        polygon(
-          ctx,
-          [
-            [-95, -24],
-            [-62, -49],
-            [-28, -35],
-            [0, -12],
-            [28, -35],
-            [62, -49],
-            [95, -24],
-            [82, 37],
-            [44, 49],
-            [0, 29],
-            [-44, 49],
-            [-82, 37],
-          ],
-          b.x,
-          b.y,
-          red,
-        );
-        ctx.strokeStyle = orange;
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.arc(b.x, b.y, 25, 0, Math.PI * 2);
-        ctx.stroke();
+      const b = s.boss,
+        partsActive = !!b.turrets && (!b.stagedParts || b.phase === 2),
+        locked = partsActive && b.turrets.some(t => t.hp > 0);
+      if (b.attack?.target && ["aim","burst","dash"].includes(b.attack.kind))
+        line(ctx,b,b.attack.target,red);
+      polygon(ctx,BOSS_SHAPES[b.kind].map(([x,y]) => [x*b.w,y*b.h]),b.x,b.y,b.hitFlash>0 ? ink : red);
+      if (b.kind === "summon") {
+        ctx.fillStyle = bg;
+        for(const sign of [-1,1]) ctx.fillRect(b.x+sign*b.w*.3-9,b.y-6,18,23);
       }
-      ctx.fillStyle = cyan;
-      ctx.fillRect(b.x - 10, b.y - 12, 20, 18);
-      if (b.attack?.kind === "fan") {
-        ctx.strokeStyle = red;
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(b.x, b.y + b.h / 2, 32, 0.65, 2.5);
-        ctx.stroke();
+      if (b.kind === "laser" || b.kind === "combined") {
+        ctx.strokeStyle = orange; ctx.lineWidth = 3; ctx.beginPath();
+        ctx.arc(b.x,b.y,25,0,Math.PI*2); ctx.stroke();
+      }
+      for (const t of partsActive ? b.turrets : []) {
+        const x = b.x+t.offset,
+          open = t.hp>0 && (!b.alternating || b.turrets.filter(t=>t.hp>0).length===1 ||
+            t.part === (Math.floor(b.age / b.partWindow)%2 ? "right" : "left"));
+        ctx.fillStyle = t.hitFlash>0 ? ink : t.hp<=0 ? (light ? "#cbc4b8" : "#354151") : open ? orange : (light ? "#706b83" : "#8e87bc");
+        ctx.fillRect(x-17,b.y-12,34,36);
+        if (t.hp>0) {
+          ctx.strokeStyle = open ? ink : red; ctx.lineWidth = 2;
+          ctx.setLineDash(open ? [] : [4,3]); ctx.strokeRect(x-19,b.y-14,38,40); ctx.setLineDash([]);
+          ctx.fillStyle = ink; ctx.fillRect(x-16,b.y-20,32*t.hp/t.maxHp,3);
+          if (t.attack) line(ctx,{x,y:b.y+20},t.attack.target,red);
+        }
+      }
+      ctx.fillStyle = locked ? orange : cyan;
+      ctx.fillRect(b.x-10,b.y-12,20,18);
+      if (locked || b.blockFlash>0) {
+        ctx.strokeStyle = b.blockFlash>0 ? ink : orange; ctx.lineWidth = 2;
+        ctx.strokeRect(b.x-14,b.y-17,28,27);
+        ctx.beginPath(); ctx.moveTo(b.x-8,b.y-10); ctx.lineTo(b.x+8,b.y+4);
+        ctx.moveTo(b.x+8,b.y-10); ctx.lineTo(b.x-8,b.y+4); ctx.stroke();
+      }
+      if (b.attack && ["fan","gap","doubleFan"].includes(b.attack.kind)) {
+        ctx.strokeStyle = red; ctx.lineWidth = 2; ctx.beginPath();
+        ctx.arc(b.x,b.y+b.h/2,32,.65,2.5); ctx.stroke();
+      }
+      if (b.type === "iron-mk2") for(const sign of [-1,1]) {
+        ctx.strokeStyle=ink; ctx.beginPath(); ctx.moveTo(b.x+sign*35,b.y-13);
+        ctx.lineTo(b.x+sign*48,b.y+7); ctx.lineTo(b.x+sign*61,b.y-13); ctx.stroke();
       }
     }
     for (const q of s.particles || []) {
@@ -359,5 +324,5 @@
     }
     ctx.restore();
   }
-  return { draw, SHAPES };
+  return { draw, SHAPES, BOSS_SHAPES };
 });
