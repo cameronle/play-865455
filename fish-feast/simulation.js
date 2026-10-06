@@ -48,7 +48,8 @@
  function step(s,input={}){if(s.mode!=='playing')return;const dt=C.step,p=s.player,oldP={x:p.x,y:p.y},startTier=p.tier;s.time+=dt;
   p.cooldown=Math.max(0,p.cooldown-dt);p.invulnerable=Math.max(0,p.invulnerable-dt);p.dashTime=Math.max(0,p.dashTime-dt);
   let dx=Number(input.x)||0,dy=Number(input.y)||0;
-  if(input.target){dx=input.target.x-p.x;dy=input.target.y-p.y;const distance=Math.hypot(dx,dy);if(distance<2)dx=dy=0;else if(distance<190*dt){dx/=190*dt;dy/=190*dt;}}
+  // Clamp the final step to the target, including fractional logical pixels.
+  if(input.target){dx=input.target.x-p.x;dy=input.target.y-p.y;const distance=Math.hypot(dx,dy),travel=190*dt;if(distance>0){const factor=Math.min(1,distance/travel)/distance;dx*=factor;dy*=factor;}}
   const length=Math.hypot(dx,dy);if(length>1){dx/=length;dy/=length;}
   if(dx||dy){const n=Math.hypot(dx,dy);p.headingX=dx/n;p.headingY=dy/n;}
   const speed=p.dashTime>0?480:190;p.vx=(p.dashTime>0?p.headingX:dx)*speed;p.vy=(p.dashTime>0?p.headingY:dy)*speed;p.x+=p.vx*dt;p.y+=p.vy*dt;R.bound(p,s.width,s.height);

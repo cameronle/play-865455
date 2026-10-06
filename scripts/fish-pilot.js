@@ -51,8 +51,9 @@ function decide(s){
    // Sweep every substep; constant-velocity prediction misses chase turns.
    for(let i=0;i<36;i++){
     const dt=1/30,oldP={x:player.x,y:player.y},remaining=distance(player,target);dashTime=Math.max(0,dashTime-dt);
-    if(remaining>=2){player.headingX=(target.x-player.x)/remaining;player.headingY=(target.y-player.y)/remaining;}
-    const step=dashTime>0?480*dt:remaining>=2?Math.min(remaining,190*dt):0;
+    // Match exact fractional arrival in the repaired movement simulation.
+    if(remaining>0){player.headingX=(target.x-player.x)/remaining;player.headingY=(target.y-player.y)/remaining;}
+    const step=dashTime>0?480*dt:Math.min(remaining,190*dt);
     player.x+=player.headingX*step;player.y+=player.headingY*step;R.bound(player,s.width,s.height);travel+=step;player.invulnerable=Math.max(0,player.invulnerable-dt);
     for(const f of obstacles){const oldF={x:f.x,y:f.y};f.warning=Math.max(0,(f.warning||0)-dt);f.age+=dt;if(f.warning>0)continue;B.move(world,f,dt);if(player.invulnerable<=0){const g=R.geometry(f),gap=Math.hypot(Math.max(0,Math.abs(player.x-f.x)-pg.half-g.half),player.y-f.y)-pg.ry-g.ry;minGap=Math.min(minGap,gap);if(R.swept(player,f,oldP,oldF))collisions++;}}
    }
