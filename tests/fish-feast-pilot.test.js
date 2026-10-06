@@ -17,3 +17,12 @@ test('revenge controller follows the required fish instead of farming nearer irr
  s.fish=[{...C.species.fry,type:'fry',x:230,y:180,warning:0,dead:false},{...C.species.leviathan,type:'leviathan',x:1550,y:180,warning:0,dead:false}];s.caught.skipper=4;
  const before=JSON.stringify(s),c=P.decide(s);assert.equal(JSON.stringify(s),before);assert.equal(c.target.x,1550);
 });
+test('target-arrival forecasts preserve the original level-ten portrait seed within its unchanged budget',()=>{
+ const s=S.create(760,1040,1);S.start(s,9);let command;
+ for(let frame=0;frame<120*110&&s.mode==='playing';frame++){
+  if(frame%6===0){const before=JSON.stringify(s);command=P.decide(s);assert.equal(JSON.stringify(s),before,'planning must not mutate live gameplay');if(command.dash)S.dash(s);}
+  S.step(s,{target:command.target});
+ }
+ assert.equal(s.mode,'won','original seed must finish without retries, altered food or a larger time budget');
+ assert.ok(s.player.lives>0&&s.eaten>0);
+});

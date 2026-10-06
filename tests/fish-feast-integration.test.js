@@ -8,5 +8,5 @@ test('Fish Feast is a unique bilingual catalog route with complete local depende
 test('challenge release advertises the first goal and fresh cache keys for every changed route asset',()=>{
  const C=require('../fish-feast/content.js'),html=fs.readFileSync('fish-feast/index.html','utf8');
  assert.equal(Number(html.match(/id="growthValue">0 \/ (\d+)/)[1]),C.levels[0].goal);
- for(const file of ['content.js','behaviors.js','simulation.js','render.js','game.js','style.css'])assert.ok(html.includes(file+'?v=fish-challenge-v1'),file+' needs the challenge release cache key');
+ for(const file of ['content.js','rules.js','behaviors.js','simulation.js','input.js','render.js','game.js','style.css'])assert.ok(html.includes(file+'?v=fish-drag-v2'),file+' needs the current control release cache key');
 });
