@@ -107,7 +107,20 @@
       : [0, 1, 2].map((i) => wave(types, i)),
   });
   const STAGES = [
-    stage(1, ["初次巡航", "FIRST PATROL"], ["scout", "formation"]),
+    {
+      id: 1,
+      name: ["初次巡航", "FIRST PATROL"],
+      boss: null,
+      waves: [0, 1, 2, 3].map((waveIndex) => ({
+        minSeconds: 10,
+        groups: ["scout", "formation", "scout"].map((type, groupIndex) => ({
+          type,
+          at: groupIndex * 3,
+          count: [3, 4, 3][groupIndex],
+          x: [120, 240, 360][(waveIndex + groupIndex) % 3],
+        })),
+      })),
+    },
     stage(2, ["突袭航线", "AMBUSH ROUTE"], ["diver", "heavy", "scout"]),
     stage(3, ["铁翼封锁", "IRON BLOCKADE"], [], "iron-wing"),
     stage(4, ["危险空域", "DANGER ZONE"], ["bomber", "formation", "scout"]),
