@@ -46,8 +46,12 @@ function boot(route, initialKeys) {
   return {storage, buttons, sessionCleared: () => sessionCleared, deletedCaches, reloaded: () => reloaded,confirmation:()=>confirmation};
 }
 
-test('Fish Feast clear touches exactly its two keys, not neighboring records or preferences',async()=>{
- const app=boot('fish-feast',['fish-feast-progress-v1','fish-feast-settings-v1','fish-feast-progress-v1-extra','classic-snake-high-score','play-lang','play-theme']);assert.equal(app.buttons.length,1);app.buttons[0].dataset={confirm:'清除本游戏进度并重新载入？'};await app.buttons[0].clickHandler();assert.equal(app.confirmation(),'清除本游戏进度并重新载入？');for(const key of ['fish-feast-progress-v1','fish-feast-settings-v1'])assert.equal(app.storage[key],undefined);for(const key of ['fish-feast-progress-v1-extra','classic-snake-high-score','play-lang','play-theme'])assert.equal(app.storage[key],'saved');assert.equal(app.reloaded(),true);
+test('retired game route does not install controls or erase existing records', () => {
+  const keys = ['fish-feast-progress-v1', 'fish-feast-settings-v1', 'classic-snake-high-score', 'play-lang', 'play-theme'];
+  const app = boot('fish-feast', keys);
+  assert.equal(app.buttons.length, 0);
+  for (const key of keys) assert.equal(app.storage[key], 'saved');
+  assert.equal(app.reloaded(), false);
 });
 test('every game page loads the shared clear-data utility', () => {
   assert.equal(games.length, catalog.length);

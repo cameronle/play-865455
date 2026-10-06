@@ -421,11 +421,5 @@ module.exports = [
     "name": {"zh": "泡泡远征", "en": "BUBBLE FRONTIER"},
     "description": {"zh": "穿越泡泡房间，吸收成长，组装武器与遗物，挑战四大区域首领。", "en": "Explore bubble rooms, absorb growth, assemble a build, and defeat four sector bosses."},
     "readme": {"title": "Bubble Frontier", "description": "自维护的原创泡泡坦克肉鸽远征，包含六种机体、十二种武器、八种主动技能、二十四种被动、十二种遗物和十八种联动，支持房间探索、模块组装、四区域 Boss、双摇杆触控、本地存档与中英双语。"}
-  },
-  {
-    "id": "fish-feast", "path": "fish-feast", "order": 25, "category": "arcade",
-    "name": {"zh": "小鱼成长记", "en": "FISH FEAST"},
-    "description": {"zh": "吃小鱼、躲大鱼，逐步长大，穿过浅海、礁湾和深海的十二关。", "en": "Eat small fish, dodge predators, and grow through twelve shallow, reef and deep-sea levels."},
-    "readme": {"title": "Fish Feast", "description": "自维护的原创吞噬成长街机，包含三篇十二关、十种水域生物、鱼群编队、变向与冲游、水母危险区、有限追击和巨鱼，支持键鼠、相对拖动、多指冲刺、逐关解锁、本地纪录、中英双语和浅深主题。"}
   }
 ];

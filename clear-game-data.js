@@ -11,7 +11,6 @@
     crosswalk: ['crosswalk-progress-v2'],
     'endless-runner': ['endlessRunnerBest'],
     'firefly-watch': ['fireflyWatchBest'],
-    'fish-feast': ['fish-feast-progress-v1', 'fish-feast-settings-v1'],
     flappy: ['flappy-best-v1'],
     flow: ['flow-progress-v1'],
     gomoku: ['gomoku-stats-v3'],
