@@ -7,7 +7,9 @@ test("campaign dependency order and pulse/boss/mode controls are shipped togethe
   const modules = ["content", "rules", "locale", "renderer", "game"];
   let previous = -1;
   for (const name of modules) {
-    const index = html.indexOf(`${name}.js?v=campaign-1`);
+    const resource = html.match(new RegExp(`${name}\\.js\\?v=[a-z0-9-]+`));
+    assert.ok(resource, `${name} has a versioned asset URL`);
+    const index = html.indexOf(resource[0]);
     assert.ok(index > previous, `${name} loads in dependency order`);
     previous = index;
   }
