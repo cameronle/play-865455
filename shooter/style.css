@@ -7,6 +7,7 @@
   --cyan: #64e6e0;
   --orange: #ffb45c;
   --red: #ff6b7a;
+  --flight-ui-height: 258px;
 }
 
 [data-theme="light"] {
@@ -46,7 +47,7 @@ a {
 
 .page {
   width: min(480px, 100%);
-  padding: 10px 10px calc(62px + env(safe-area-inset-bottom));
+  padding: 10px 10px calc(54px + env(safe-area-inset-bottom));
 }
 
 header.topbar {
@@ -105,14 +106,14 @@ header button {
 
 .hud > div {
   border: 1px solid var(--line);
-  padding: 6px 8px;
+  padding: 4px 6px;
   display: flex;
   flex-direction: column;
   gap: 3px;
   background: var(--panel);
-  font-size: 9px;
+  font-size: 8px;
   color: var(--muted);
-  letter-spacing: 0.08em;
+  letter-spacing: 0;
 }
 
 .hud b {
@@ -132,7 +133,7 @@ header button {
   position: relative;
   width: min(
     100%,
-    calc((100svh - 374px - env(safe-area-inset-bottom)) * 20 / 27),
+    calc((100svh - var(--flight-ui-height) - env(safe-area-inset-bottom)) * 20 / 27),
     480px
   );
   margin: 0 auto;
@@ -247,8 +248,8 @@ header button {
 
 .mobile-controls {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 4px;
   margin-top: 8px;
 }
 
@@ -257,8 +258,10 @@ header button {
   background: var(--panel);
   color: var(--ink);
   min-height: 44px;
+  min-width: 0;
+  padding: 0 2px;
   font: inherit;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   cursor: pointer;
   touch-action: none;
@@ -413,10 +416,19 @@ body .clear-data-toggle {
   }
 }
 .boss-hud {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  right: 6px;
+  z-index: 2;
+  padding: 4px;
   height: 30px;
-  margin-bottom: 8px;
+  margin: 0;
+  line-height: 1.2;
   font-size: 10px;
   color: var(--ink);
+  background: var(--panel);
+  pointer-events: none;
 }
 .boss-hud > div {
   display: flex;
@@ -424,8 +436,7 @@ body .clear-data-toggle {
   margin-bottom: 4px;
 }
 .boss-hud[hidden] {
-  display: block !important;
-  visibility: hidden;
+  display: none !important;
 }
 progress {
   width: 100%;
@@ -500,34 +511,29 @@ progress::-moz-progress-bar {
   color: var(--muted);
 }
 #downButton {
-  grid-column: 2;
-  grid-row: 2;
+  grid-column: 4;
+  grid-row: 1;
 }
 #mobilePauseButton {
-  grid-column: 1;
-  grid-row: 2;
+  grid-column: 5;
+  grid-row: 1;
 }
 #pulseButton {
-  grid-column: 3;
-  grid-row: 2;
+  grid-column: 6;
+  grid-row: 1;
   color: var(--cyan);
 }
 @media (orientation: landscape) and (min-width: 600px) and (max-height: 500px) {
   .screen-frame {
-    grid-row: 1 / span 3;
+    grid-row: 1 / span 2;
     width: min(
       100%,
       calc((100svh - 124px - env(safe-area-inset-bottom)) * 20 / 27)
     );
   }
-  .boss-hud {
-    grid-column: 2;
-    grid-row: 2;
-    margin: 0;
-  }
   .mobile-controls {
     grid-column: 2;
-    grid-row: 3;
+    grid-row: 2;
     grid-template-rows: repeat(3, 44px);
   }
   #upButton {
@@ -564,6 +570,14 @@ progress::-moz-progress-bar {
     margin: 4px 0 0;
   }
   .legacy {
+    display: none;
+  }
+}
+@media (max-height: 740px) {
+  :root {
+    --flight-ui-height: 236px;
+  }
+  footer {
     display: none;
   }
 }
