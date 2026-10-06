@@ -12,7 +12,7 @@
     <title>星空巡航 · Sky Patrol</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="stylesheet" href="/theme.css?v=clear-1" />
-    <link rel="stylesheet" href="style.css?v=campaign-1" />
+    <link rel="stylesheet" href="style.css?v=playfield-2" />
   </head>
   <body>
     <main class="page">
@@ -39,16 +39,16 @@
           </div>
           <div><span id="livesLabel">LIVES</span><b id="lives">♥♥♥</b></div>
         </div>
-        <div class="boss-hud" id="bossHud" hidden>
-          <div><span id="bossName"></span><span id="bossPhase"></span></div>
-          <progress
-            id="bossHealth"
-            max="100"
-            value="100"
-            aria-label="Boss health"
-          ></progress>
-        </div>
         <div class="screen-frame">
+          <div class="boss-hud" id="bossHud" hidden>
+            <div><span id="bossName"></span><span id="bossPhase"></span></div>
+            <progress
+              id="bossHealth"
+              max="100"
+              value="100"
+              aria-label="Boss health"
+            ></progress>
+          </div>
           <canvas
             id="game"
             width="480"

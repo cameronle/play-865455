@@ -51,7 +51,9 @@ test("Sky Patrol exposes accessible controls and cache-busted runtime assets", (
 });
 test("portrait and landscape layouts reserve the utility dock and keep the flight area proportional", () => {
   const css = fs.readFileSync("shooter/style.css", "utf8");
-  assert.match(css, /100svh - 374px/);
+  assert.match(css, /100svh - var\(--flight-ui-height\)/);
+  assert.doesNotMatch(css, /100svh - 374px/);
+  assert.match(css, /grid-template-columns:\s*repeat\(6,\s*minmax\(0,\s*1fr\)\)/);
   assert.match(css, /orientation:\s*landscape/);
   assert.match(css, /grid-template-columns:\s*minmax\(0,\s*1fr\) 190px/);
   assert.match(css, /body \.theme-toggle/);
