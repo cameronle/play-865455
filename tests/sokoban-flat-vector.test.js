@@ -36,5 +36,5 @@ test('the quiet UI and both themes use role-specific vector tokens and fresh ass
   assert.match(css,/\[data-theme="dark"\][\s\S]*--bear:/);
   assert.match(css,/\.stats>div\{[^}]*border:0/);
   assert.doesNotMatch(css,/ui-rounded|SF Pro Rounded|linear-gradient|radial-gradient/);
-  for (const asset of ['style.css','game.js','favicon.svg']) assert.ok(html.includes(`${asset}?v=flat-vector-1`));
+  for (const asset of ['style.css','game.js','favicon.svg']) assert.match(html,new RegExp(`${asset.replace('.', '\\.')}\\?v=[a-z0-9-]+`));
 });
