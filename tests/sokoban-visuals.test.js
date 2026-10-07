@@ -17,10 +17,11 @@ test('Sokoban crates use clean flat design and completed crates expose a check m
   assert.match(js, /if\s*\(onGoal\)[\s\S]*ctx\.lineTo/);
 });
 
-test('Sokoban goals retain a clear flat basket target distinct from crates',()=>{
+test('Sokoban goals retain a quiet floor target distinct from crates',()=>{
   const js=source();
   assert.match(js,/function drawGoal\(/);
-  assert.match(js,/ctx\.strokeRect\(x \+ inset, y \+ inset, size, size\)/);
+  assert.match(js,/ctx\.roundRect\(x \+ inset, y \+ inset, size, size/);
+  assert.match(js,/ctx\.setLineDash\(covered/);
   assert.match(js,/if \(!covered\)/);
 });
 
@@ -35,9 +36,14 @@ test('Sokoban player tracks the last movement direction with clean vector avatar
 
 test('Sokoban light board uses a subdued neutral center instead of a bright white playfield',()=>{
   const css=fs.readFileSync('sokoban/style.css','utf8');
-  assert.match(css,/--board:#dcd7ce/);
-  assert.match(css,/--floor:#e1ddd5/);
-  assert.match(css,/--floor-grid:#cfc8be/);
+  const root=css.match(/:root\{([^}]+)\}/)[1];
+  for (const role of ['board','floor','floor-grid']) {
+    const value=root.match(new RegExp(`--${role}:#([a-f0-9]{6})`));
+    assert.ok(value, `${role} needs a valid neutral surface color`);
+    const channels=value[1].match(/../g).map(hex=>parseInt(hex,16));
+    assert.ok(Math.max(...channels)-Math.min(...channels)<20, `${role} should remain subdued`);
+    assert.ok(Math.max(...channels)<250, `${role} must not become a bright white tile`);
+  }
 });
 test('Sokoban completes with a five-second next-level countdown and safe timer cancellation',()=>{
   const js=source();

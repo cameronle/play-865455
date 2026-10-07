@@ -11,7 +11,7 @@ test('level navigation is visibly distinct from movement arrows',()=>{
 
 test('completed crate leaves its goal frame visible outside the crate',()=>{
  const app=loadSokoban(),frames=[];
- app.context.strokeRect=(x,y,w,h)=>{if(app.context.strokeStyle==='#ff6b7a')frames.push({w,h});};
+ app.context.roundRect=(x,y,w,h)=>{if(app.context.strokeStyle==='#638675')frames.push({w,h});};
  app.context.fillRect=()=>{};
  app.context.stroke=()=>{};
  const tile=Math.floor(560/Math.max(app.snapshot().state.width,app.snapshot().state.height));
