@@ -162,29 +162,27 @@
   }
 
   function palette() {
-    if (typeof getComputedStyle !== 'function') {
-      return {
-        board: '#090d14', floor: '#151c24', floorGrid: '#293442',
-        wall: '#3e4955', wallBorder: '#202933',
-        goal: '#ff6b7a', goalBg: 'rgba(255,107,122,0.12)',
-        orange: '#ffb45c', orangeBorder: '#c98740',
-        player: '#64e6e0', playerBorder: '#2f9994', ink: '#e8edf3'
-      };
-    }
-    const css = getComputedStyle(document.documentElement), get = (name, fallback) => css.getPropertyValue(name).trim() || fallback;
+    const css = typeof getComputedStyle === 'function' ? getComputedStyle(document.documentElement) : null;
+    const get = (name, fallback) => css?.getPropertyValue(name).trim() || fallback;
     return {
-      board: get('--board', '#090d14'),
-      floor: get('--floor', '#151c24'),
-      floorGrid: get('--floor-grid', '#293442'),
-      wall: get('--wall', '#3e4955'),
-      wallBorder: get('--wall-border', '#202933'),
-      goal: get('--red', '#ff6b7a'),
-      goalBg: get('--goal-bg', 'rgba(255,107,122,0.12)'),
-      orange: get('--orange', '#ffb45c'),
-      orangeBorder: get('--orange-border', '#c98740'),
-      player: get('--cyan', '#64e6e0'),
-      playerBorder: get('--cyan-border', '#2f9994'),
-      ink: get('--ink', '#e8edf3')
+      board: get('--board', '#e3e8df'),
+      floor: get('--floor', '#eef0eb'),
+      floorGrid: get('--floor-grid', '#e2e7de'),
+      wall: get('--wall', '#788178'),
+      wallBorder: get('--wall-border', '#6c766d'),
+      goal: get('--goal', '#638675'),
+      goalBg: get('--goal-bg', '#e7f0e9'),
+      orange: get('--crate', '#dbad65'),
+      orangeBorder: get('--crate-border', '#aa7a45'),
+      fruit: get('--fruit', '#bc7866'),
+      leaf: get('--leaf', '#557958'),
+      check: get('--check', '#ffffff'),
+      player: get('--bear', '#ad7b56'),
+      playerBorder: get('--bear-border', '#775338'),
+      muzzle: get('--bear-muzzle', '#edcfaa'),
+      ear: get('--bear-ear', '#d7aa82'),
+      faceInk: get('--bear-face', '#35271f'),
+      ink: get('--ink', '#303934')
     };
   }
 
@@ -339,34 +337,75 @@
   ui.start.addEventListener('click', startCurrent);
 
   function drawGoal(x, y, s, colors, covered = false) {
-    const inset = s * (covered ? .07 : .2), size = s - inset * 2;
-    ctx.strokeStyle = colors.goal; ctx.lineWidth = Math.max(2, s * 0.055); ctx.strokeRect(x + inset, y + inset, size, size);
-    if (!covered) { ctx.fillStyle = colors.goal; ctx.fillRect(x + s * .31, y + s * .47, s * .12, s * .12); ctx.fillRect(x + s * .57, y + s * .47, s * .12, s * .12); ctx.strokeStyle = colors.orange; ctx.lineWidth = Math.max(1.5, s * .04); ctx.beginPath(); ctx.moveTo(x + s * .28, y + s * .73); ctx.lineTo(x + s * .72, y + s * .73); ctx.stroke(); }
+    ctx.save();
+    const inset = s * (covered ? .055 : .16), size = s - inset * 2;
+    ctx.fillStyle = colors.goalBg; ctx.strokeStyle = colors.goal;
+    ctx.lineWidth = Math.max(1.4, s * .025);
+    ctx.setLineDash(covered ? [] : [s * .095, s * .065]);
+    ctx.beginPath(); ctx.roundRect(x + inset, y + inset, size, size, s * .065); ctx.fill(); ctx.stroke();
+    ctx.setLineDash([]);
+    if (!covered) {
+      ctx.lineCap = 'round'; ctx.beginPath();
+      ctx.moveTo(x + s * .44, y + s * .5); ctx.lineTo(x + s * .56, y + s * .5);
+      ctx.moveTo(x + s * .5, y + s * .44); ctx.lineTo(x + s * .5, y + s * .56); ctx.stroke();
+    }
+    ctx.restore();
   }
 
   function drawCrate(x, y, s, colors, onGoal) {
+    ctx.save();
     if (onGoal) drawGoal(x, y, s, colors, true);
     const inset = s * .12, size = s - inset * 2;
-    ctx.fillStyle = colors.orange; ctx.fillRect(x + inset, y + inset, size, size); ctx.strokeStyle = colors.orangeBorder || colors.orange; ctx.lineWidth = Math.max(1.5, s * .035); ctx.strokeRect(x + inset + .5, y + inset + .5, size - 1, size - 1);
-    ctx.strokeStyle = colors.orangeBorder || colors.ink; ctx.lineWidth = Math.max(1.5, s * .03); ctx.beginPath(); ctx.moveTo(x + s * .2, y + s * .34); ctx.lineTo(x + s * .8, y + s * .34); ctx.moveTo(x + s * .2, y + s * .65); ctx.lineTo(x + s * .8, y + s * .65); ctx.stroke();
-    ctx.fillStyle = colors.goal; ctx.fillRect(x + s * .28, y + s * .43, s * .12, s * .12); ctx.fillStyle = colors.player; ctx.fillRect(x + s * .45, y + s * .39, s * .12, s * .12); ctx.fillStyle = colors.player; ctx.fillRect(x + s * .61, y + s * .45, s * .12, s * .12);
-    ctx.strokeStyle = colors.ink; ctx.lineWidth = Math.max(1.5, s * .035); ctx.beginPath(); ctx.moveTo(x + s * .34, y + s * .43); ctx.lineTo(x + s * .37, y + s * .36); ctx.moveTo(x + s * .51, y + s * .39); ctx.lineTo(x + s * .54, y + s * .32); ctx.moveTo(x + s * .67, y + s * .45); ctx.lineTo(x + s * .7, y + s * .38); ctx.stroke();
-    if (onGoal) { ctx.strokeStyle = colors.ink; ctx.lineWidth = Math.max(2, s * .07); ctx.lineCap = 'square'; ctx.beginPath(); ctx.moveTo(x + s * .32, y + s * .54); ctx.lineTo(x + s * .44, y + s * .66); ctx.lineTo(x + s * .7, y + s * .37); ctx.stroke(); }
+    ctx.fillStyle = colors.orange; ctx.strokeStyle = onGoal ? colors.goal : colors.orangeBorder;
+    ctx.lineWidth = Math.max(1.4, s * .025);
+    ctx.beginPath(); ctx.roundRect(x + inset, y + inset, size, size, s * .07); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle = colors.orangeBorder; ctx.lineWidth = Math.max(1.2, s * .018);
+    ctx.beginPath(); ctx.moveTo(x + s * .19, y + s * .34); ctx.lineTo(x + s * .81, y + s * .34);
+    ctx.moveTo(x + s * .19, y + s * .70); ctx.lineTo(x + s * .81, y + s * .70); ctx.stroke();
+    // One legible apple replaces the tiny, unrelated colored squares.
+    for (const side of [.46, .56]) drawEllipse(x + s * side, y + s * .52, s * .105, s * .125, colors.fruit);
+    ctx.strokeStyle = colors.orangeBorder; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(x + s * .51, y + s * .40); ctx.lineTo(x + s * .51, y + s * .35); ctx.stroke();
+    drawEllipse(x + s * .575, y + s * .365, s * .06, s * .028, colors.leaf);
+    if (onGoal) {
+      drawEllipse(x + s * .79, y + s * .23, s * .105, s * .105, colors.goal);
+      ctx.strokeStyle = colors.check; ctx.lineWidth = Math.max(1.6, s * .032); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      ctx.beginPath(); ctx.moveTo(x + s * .745, y + s * .23); ctx.lineTo(x + s * .78, y + s * .27);
+      ctx.lineTo(x + s * .837, y + s * .19); ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawEllipse(x, y, rx, ry, fill, border = null, width = 1.4) {
+    ctx.fillStyle = fill;
+    ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); ctx.fill();
+    if (border) { ctx.strokeStyle = border; ctx.lineWidth = width; ctx.stroke(); }
   }
 
   function drawPlayer(x, y, s, colors) {
-    const bodyX = x + s * 0.2, bodyY = y + s * 0.37, bodyW = s * 0.6, bodyH = s * 0.46;
-    ctx.fillStyle = colors.player; ctx.strokeStyle = colors.playerBorder || colors.player; ctx.lineWidth = Math.max(2, s * 0.035); ctx.lineJoin = 'round';
-    ctx.fillRect(bodyX, bodyY, bodyW, bodyH); ctx.strokeRect(bodyX + .5, bodyY + .5, bodyW - 1, bodyH - 1);
-    ctx.fillStyle = colors.player; ctx.fillRect(x + s * .18, y + s * .16, s * .64, s * .46); ctx.strokeStyle = colors.playerBorder || colors.player; ctx.strokeRect(x + s * .185, y + s * .165, s * .63, s * .45);
-    ctx.fillStyle = colors.orange; ctx.fillRect(x + s * .12, y + s * .06, s * .18, s * .18); ctx.fillRect(x + s * .7, y + s * .06, s * .18, s * .18); ctx.strokeStyle = colors.ink; ctx.lineWidth = Math.max(1.5, s * .03); ctx.strokeRect(x + s * .12, y + s * .06, s * .18, s * .18); ctx.strokeRect(x + s * .7, y + s * .06, s * .18, s * .18);
+    ctx.save();
+    const outline = Math.max(1.2, s * .023);
+    // Rounded ears, a light muzzle and separate feet establish the bear silhouette.
+    for (const side of [.285, .715]) {
+      drawEllipse(x + s * side, y + s * .18, s * .125, s * .125, colors.player, colors.playerBorder, outline);
+      drawEllipse(x + s * side, y + s * .18, s * .07, s * .07, colors.ear);
+    }
+    drawEllipse(x + s * .5, y + s * .66, s * .23, s * .245, colors.player, colors.playerBorder, outline);
+    for (const side of [.25, .75]) drawEllipse(x + s * side, y + s * .65, s * .065, s * .105, colors.player, colors.playerBorder, outline);
+    for (const side of [.35, .65]) drawEllipse(x + s * side, y + s * .85, s * .105, s * .065, colors.player, colors.playerBorder, outline);
+    drawEllipse(x + s * .5, y + s * .73, s * .095, s * .10, colors.muzzle);
+    drawEllipse(x + s * .5, y + s * .39, s * .295, s * .27, colors.player, colors.playerBorder, outline);
     const facingX = playerDirection === 'left' ? -.04 : playerDirection === 'right' ? .04 : 0;
-    const facingY = playerDirection === 'up' ? -.04 : playerDirection === 'down' ? .04 : 0;
-    ctx.fillStyle = colors.ink; const eye = Math.max(2, s * .06);
-    ctx.fillRect(x + s * (.34 + facingX), y + s * (.31 + facingY), eye, eye);
-    ctx.fillRect(x + s * (.58 + facingX), y + s * (.31 + facingY), eye, eye);
-    ctx.fillStyle = colors.goal; ctx.fillRect(x + s * .46, y + s * .41, s * .08, s * .06);
-    ctx.fillStyle = colors.orange; ctx.fillRect(x + s * .18, y + s * .78, s * .64, s * .09); ctx.strokeStyle = colors.ink; ctx.lineWidth = Math.max(1.5, s * .03); ctx.strokeRect(x + s * .18, y + s * .78, s * .64, s * .09);
+    const facingY = playerDirection === 'up' ? -.025 : playerDirection === 'down' ? .025 : 0;
+    for (const side of [.39, .61]) drawEllipse(x + s * (side + facingX), y + s * (.36 + facingY), s * .025, s * .034, colors.faceInk);
+    drawEllipse(x + s * (.5 + facingX), y + s * (.49 + facingY), s * .18, s * .105, colors.muzzle);
+    drawEllipse(x + s * (.5 + facingX), y + s * (.46 + facingY), s * .043, s * .031, colors.faceInk);
+    ctx.strokeStyle = colors.faceInk; ctx.lineWidth = Math.max(1, s * .018); ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(x + s * (.5 + facingX), y + s * (.485 + facingY));
+    ctx.lineTo(x + s * (.5 + facingX), y + s * (.53 + facingY));
+    ctx.moveTo(x + s * (.455 + facingX), y + s * (.515 + facingY));
+    ctx.quadraticCurveTo(x + s * (.5 + facingX), y + s * (.56 + facingY), x + s * (.545 + facingX), y + s * (.515 + facingY));
+    ctx.stroke(); ctx.restore();
   }
 
   function draw() {
