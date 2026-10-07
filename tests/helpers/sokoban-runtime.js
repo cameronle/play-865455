@@ -28,7 +28,7 @@ function loadSokoban(options = {}) {
   nodes.game.getBoundingClientRect = () => ({left:0,top:0,width:560,height:560});
   const sandbox = {window,document,console,JSON,Math,Number,Set,Array,getComputedStyle:()=>({getPropertyValue:()=>''}),
     localStorage:{getItem(k){if(options.getThrows)throw Error('blocked');return store.get(k)??null;},setItem(k,v){if(options.setThrows)throw Error('quota');store.set(k,String(v));},removeItem(k){if(options.setThrows)throw Error('blocked');store.delete(k);}},
-    setInterval(fn){const t=++id;timers.set(t,fn);return t;},clearInterval(t){timers.delete(t);},setTimeout(fn){const t=++id;timers.set(t,fn);return t;},clearTimeout(t){timers.delete(t);}};
+    setInterval(fn){const t=++id;timers.set(t,fn);return t;},clearInterval(t){timers.delete(t);},setTimeout(fn){const t=++id;timers.set(t,()=>{timers.delete(t);fn();});return t;},clearTimeout(t){timers.delete(t);}};
   window.setInterval = sandbox.setInterval; window.clearInterval = sandbox.clearInterval;
   vm.createContext(sandbox);
   for(const file of ['rules.js','levels.js']) vm.runInContext(fs.readFileSync('sokoban/'+file,'utf8'),sandbox);

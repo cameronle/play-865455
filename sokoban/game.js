@@ -3,6 +3,7 @@
   const R = window.SokobanRules;
   const levels = window.SokobanLevels;
   const NEXT_LEVEL_SECONDS = 5;
+  const WALK_STEP_MS = 100;
   const SAVE_KEY = 'sokoban-save-v1';
   const MOVE_CODES = {U:[0,-1],D:[0,1],L:[-1,0],R:[1,0]};
   const canvas = document.getElementById('game'), ctx = canvas.getContext('2d');
@@ -39,6 +40,7 @@
   let state, history = [], active = false, swipeStart = null;
   let playerDirection = 'down';
   let gamePhase = 'title', countdownTimer = 0, countdownVersion = 0, pageSuspended = false;
+  let walkPath = [], walkTimer = 0, walkVersion = 0;
 
   function cloneState(s) {
     return {width:s.width,height:s.height,walls:s.walls,floor:s.floor,goals:s.goals,boxes:{...s.boxes},player:{...s.player},moves:s.moves,pushes:s.pushes};
@@ -77,6 +79,7 @@
   function levelLabel(index) { return `LEVEL ${String(index + 1).padStart(2, '0')}${bestRecord(index) !== null ? ' ✓' : ''}`; }
 
   function loadLevel(index, showIntro = false) {
+    cancelWalk();
     cancelNextLevelCountdown();
     clearGesture();
     if (!Number.isInteger(index)) return;
@@ -106,7 +109,7 @@
     ui.next.disabled = levelIndex === levels.length - 1;
     ui.undo.disabled = history.length === 0;
     const total = Object.keys(state.boxes).length, placed = Object.keys(state.boxes).filter(k => state.goals[k]).length;
-    ui.status.textContent = `${placed} / ${total} BASKETS${gamePhase === 'complete' ? ' · LEVEL CLEAR' : ' · PUSH, DO NOT PULL'}`;
+    ui.status.textContent = `${placed} / ${total} BASKETS${gamePhase === 'complete' ? ' · LEVEL CLEAR' : ' · TAP TO WALK'}`;
     canvas.setAttribute('aria-label', `Level ${levelIndex + 1}. Bear at row ${state.player.y + 1}, column ${state.player.x + 1}. ${placed} of ${total} baskets placed. ${state.moves} moves, ${state.pushes} pushes.`);
   }
 
@@ -201,15 +204,16 @@
     ctx.strokeRect(x + 0.5, y + 0.5, s - 1, s - 1);
   }
 
-  function attempt(dx, dy) {
+  function attempt(dx, dy, walking = false) {
+    if (!walking) cancelWalk();
     if (gamePhase === 'title') {
       gamePhase = 'playing';
       active = true;
       hideOverlay();
     }
-    if (gamePhase !== 'playing') return;
+    if (gamePhase !== 'playing') return false;
     const before = cloneState(state), previousDirection = playerDirection;
-    if (!R.move(state, dx, dy)) return;
+    if (!R.move(state, dx, dy)) return false;
     playerDirection = directionName(dx, dy);
     history.push({state:before, direction:previousDirection});
     movePath += dx < 0 ? 'L' : dx > 0 ? 'R' : dy < 0 ? 'U' : 'D';
@@ -217,6 +221,7 @@
     updateUi();
     draw();
     if (R.isComplete(state)) {
+      cancelWalk();
       active = false;
       gamePhase = 'complete';
       saveRun();
@@ -227,6 +232,45 @@
       updateUi();
       startNextLevelCountdown();
     }
+    return true;
+  }
+
+  function cancelWalk() {
+    walkVersion += 1;
+    if (walkTimer) clearTimeout(walkTimer);
+    walkTimer = 0;
+    walkPath = [];
+  }
+
+  function tapToTile(x, y) {
+    cancelWalk();
+    if (gamePhase !== 'playing' || document.hidden || pageSuspended) return;
+    const dx = x - state.player.x, dy = y - state.player.y;
+    // An adjacent crate is an explicit single push; distant routes never move crates.
+    if (Math.abs(dx) + Math.abs(dy) === 1) { attempt(dx, dy); return; }
+    const path = R.findWalkPath(state, x, y);
+    if (!path) return;
+    walkPath = path.split('');
+    const version = walkVersion;
+    function step() {
+      if (version !== walkVersion) return;
+      walkTimer = 0;
+      if (gamePhase !== 'playing' || document.hidden || pageSuspended) { cancelWalk(); return; }
+      const code = walkPath.shift();
+      if (!code || !attempt(...MOVE_CODES[code], true)) { cancelWalk(); return; }
+      if (walkPath.length && gamePhase === 'playing') walkTimer = setTimeout(step, WALK_STEP_MS);
+      else cancelWalk();
+    }
+    step();
+  }
+
+  function pointerTile(clientX, clientY) {
+    const rect = canvas.getBoundingClientRect();
+    if (!Number.isFinite(clientX) || !Number.isFinite(clientY) || rect.width <= 0 || rect.height <= 0) return null;
+    const px = (clientX - rect.left) * canvas.width / rect.width, py = (clientY - rect.top) * canvas.height / rect.height;
+    if (px < 0 || py < 0 || px >= canvas.width || py >= canvas.height) return null;
+    const g = tileGeometry(), x = Math.floor((px - g.ox) / g.size), y = Math.floor((py - g.oy) / g.size);
+    return x >= 0 && y >= 0 && x < state.width && y < state.height ? {x,y} : null;
   }
 
   function directionName(dx, dy) {
@@ -234,6 +278,7 @@
   }
 
   function undo() {
+    cancelWalk();
     cancelNextLevelCountdown();
     if (!history.length) return;
     const previous = history.pop();
@@ -289,8 +334,9 @@
   canvas.addEventListener('pointerdown', e => {
     if (e.button !== 0 || e.isPrimary === false || swipeStart) return;
     e.preventDefault();
+    cancelWalk();
     canvas.focus();
-    swipeStart = { id: e.pointerId, x: e.clientX, y: e.clientY };
+    swipeStart = { id: e.pointerId, x: e.clientX, y: e.clientY, tile: pointerTile(e.clientX, e.clientY) };
     try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
   });
   canvas.addEventListener('pointermove', e => {
@@ -300,18 +346,23 @@
     if (!swipeStart || swipeStart.id !== e.pointerId || e.button !== 0) return;
     e.preventDefault();
     const dx = e.clientX - swipeStart.x, dy = e.clientY - swipeStart.y;
+    const startTile = swipeStart.tile, endTile = pointerTile(e.clientX, e.clientY);
     clearGesture();
-    if (Math.max(Math.abs(dx), Math.abs(dy)) < 18) return;
+    if (Math.max(Math.abs(dx), Math.abs(dy)) < 18) {
+      if (startTile && endTile && startTile.x === endTile.x && startTile.y === endTile.y) tapToTile(endTile.x, endTile.y);
+      return;
+    }
     if (Math.abs(dx) > Math.abs(dy)) attempt(Math.sign(dx), 0);
     else attempt(0, Math.sign(dy));
   });
   for (const event of ['pointercancel', 'lostpointercapture']) canvas.addEventListener(event, e => {
     if (swipeStart?.id === e.pointerId) clearGesture();
   });
-  window.addEventListener('blur', () => { pageSuspended = true; clearGesture(); });
+  window.addEventListener('blur', () => { pageSuspended = true; clearGesture(); cancelWalk(); });
   window.addEventListener('focus', () => { pageSuspended = false; });
-  window.addEventListener('resize', clearGesture);
-  document.addEventListener('visibilitychange', () => { if (document.hidden) clearGesture(); });
+  window.addEventListener('resize', () => { clearGesture(); cancelWalk(); });
+  window.addEventListener('pagehide', () => { clearGesture(); cancelWalk(); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) { clearGesture(); cancelWalk(); } });
   canvas.addEventListener('touchmove', e => { if (gamePhase === 'playing') e.preventDefault(); }, {passive:false});
   for (const event of ['contextmenu', 'selectstart', 'dragstart']) canvas.addEventListener(event, e => e.preventDefault());
 

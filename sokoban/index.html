@@ -17,18 +17,18 @@
     <div class="game-layout">
       <section class="play-column" aria-label="Puzzle">
         <section class="stats" aria-label="Puzzle statistics"><div><span>LEVEL</span><b id="level">01 / 20</b></div><div><span>MOVES</span><b id="moves">000</b></div><div><span>PUSHES</span><b id="pushes">000</b></div><div><span>BEST MOVES</span><b id="best">---</b></div></section>
-        <div class="frame"><canvas id="game" width="560" height="560" tabindex="0" aria-label="Bear and Boxes puzzle board" aria-describedby="boardHelp">Use arrow keys or WASD to move the bear. Push every fruit crate onto a basket.</canvas><div id="overlay" class="overlay" role="group" aria-labelledby="overlayTitle"><b id="overlayTitle">BEAR &amp; BOXES</b><span id="overlayText">PUSH EVERY FRUIT CRATE ONTO A BASKET</span><button id="startButton" type="button">START THE WALK</button><button id="reviewButton" type="button" hidden>VIEW PUZZLE</button></div></div>
+        <div class="frame"><canvas id="game" width="560" height="560" tabindex="0" aria-label="Bear and Boxes puzzle board" aria-describedby="boardHelp">Tap a floor tile to walk there, or tap an adjacent crate to push it once. Swipe, arrow keys and WASD also work. Push every fruit crate onto a basket.</canvas><div id="overlay" class="overlay" role="group" aria-labelledby="overlayTitle"><b id="overlayTitle">BEAR &amp; BOXES</b><span id="overlayText">PUSH EVERY FRUIT CRATE ONTO A BASKET</span><button id="startButton" type="button">START THE WALK</button><button id="reviewButton" type="button" hidden>VIEW PUZZLE</button></div></div>
         <p id="statusText" class="status" role="status" aria-live="polite" aria-atomic="true">PUSH EVERY FRUIT CRATE ONTO A BASKET</p>
       </section>
       <aside class="controls" aria-label="Puzzle controls">
         <div class="navigation"><label class="sr-only" for="levelSelect">Choose puzzle</label><select id="levelSelect"></select><div class="tools"><button id="previousButton" type="button" aria-label="Previous puzzle">PREV</button><button id="undoButton" type="button" title="Undo (Z / Ctrl+Z)">UNDO</button><button id="nextButton" type="button" aria-label="Next puzzle">NEXT</button></div></div>
         <div class="dpad" role="group" aria-label="Directional controls"><i></i><button data-dir="up" type="button" aria-label="Move up">↑</button><i></i><button data-dir="left" type="button" aria-label="Move left">←</button><button data-dir="down" type="button" aria-label="Move down">↓</button><button data-dir="right" type="button" aria-label="Move right">→</button></div>
-        <p id="boardHelp" class="help">ARROWS / WASD · SWIPE OR TAP<br>R RESET · Z / CTRL+Z UNDO<br>LOCAL PROGRESS · NO ACCOUNT</p>
+        <p id="boardHelp" class="help">TAP A TILE · SWIPE / ARROWS<br>R RESET · Z / CTRL+Z UNDO<br>LOCAL PROGRESS · NO ACCOUNT</p>
         <div id="utilityDock" class="utility-dock" aria-label="Appearance and saved data"></div>
       </aside>
     </div>
   </main>
-  <script src="rules.js?v=bear-audit-3"></script><script src="levels.js?v=levels-hard-1"></script><script src="game.js?v=flat-vector-1"></script>
+  <script src="rules.js?v=tap-walk-1"></script><script src="levels.js?v=levels-hard-1"></script><script src="game.js?v=tap-walk-1"></script>
   <button class="theme-toggle" type="button" aria-label="Theme: system">AUTO</button>
 </body>
 </html>
