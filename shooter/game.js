@@ -26,7 +26,8 @@
     last = 0,
     accumulator = 0,
     bestRecord = 0,
-    clearing = false;
+    clearing = false,
+    resultEffectsSuspended = false;
   const legacyBest = readLegacy(),
     legacyCampaign = R.readRecords(safeRead(C.LEGACY_RECORD_KEY), { version: 2, totalStages: 9 }),
     previousCampaign = R.readRecords(safeRead(C.PREVIOUS_RECORD_KEY), { version:3, totalStages:15 });
@@ -109,15 +110,19 @@
     };
   }
   function setMode(mode) {
-    if (!["title", "clear", "gameover"].includes(g.state)) return;
+    if (!["title", "clear", "gameover"].includes(g.state) || hasResultEffects()) return;
     g = new R.Game({ mode });
     bestRecord = records[mode].best;
     recordedClear = false;
     sync();
     requestFrame();
   }
+  function hasResultEffects() {
+    return ["intermission", "clear"].includes(g.state) &&
+      (g.particles.length > 0 || g.pulseTime > 0);
+  }
   function start() {
-    if (clearing || document.hidden || g.state === "playing") return;
+    if (clearing || document.hidden || g.state === "playing" || hasResultEffects()) return;
     clearInput();
     if (g.state === "paused") g.resume();
     else if (g.state === "intermission") g.nextStage();
@@ -157,7 +162,8 @@
   function sync() {
     const mode = g.mode,
       stage = C.STAGES[g.level - 1],
-      state = g.state;
+      state = g.state,
+      finishing = hasResultEffects();
     text("score", fmt(g.score));
     text(
       "level",
@@ -214,11 +220,13 @@
           );
     text("combatHint", status);
     text("flightStatus", status);
-    overlay.classList.toggle("hidden", state === "playing");
+    overlay.classList.toggle("hidden", state === "playing" || finishing);
     $("supplySelect").hidden = !g.supplyPending;
-    $("supplyLifeButton").disabled = !g.supplyPending || g.lives >= 3;
-    $("supplyPulseButton").disabled = !g.supplyPending || g.pulses >= 2;
-    startButton.disabled = !!g.supplyPending;
+    $("supplyLifeButton").disabled = !g.supplyPending || g.lives >= 3 || finishing;
+    $("supplyPulseButton").disabled = !g.supplyPending || g.pulses >= 2 || finishing;
+    $("normalButton").disabled = finishing;
+    $("challengeButton").disabled = finishing;
+    startButton.disabled = !!g.supplyPending || finishing;
     if (state !== "playing") {
       const titleKey =
         {
@@ -307,9 +315,16 @@
         accumulator -= R.STEP;
         update(R.STEP);
       }
-    } else accumulator = 0;
+    } else {
+      accumulator = 0;
+      if (hasResultEffects() && !document.hidden && !resultEffectsSuspended) {
+        g.updateEffects(dt);
+        sync();
+      }
+    }
     draw();
-    if (g.state === "playing") requestFrame();
+    if (g.state === "playing" ||
+        (hasResultEffects() && !document.hidden && !resultEffectsSuspended)) requestFrame();
   }
   function bindHold(id, prop) {
     const el = $(id),
@@ -351,7 +366,7 @@
   $("mobilePauseButton").addEventListener("click", pause);
   $("pulseButton").addEventListener("click", pulse);
   for(const [id,kind] of [["supplyLifeButton","life"],["supplyPulseButton","pulse"]])$(id).addEventListener("click",()=>{
-    if(g.chooseSupply(kind)){sync();requestFrame();beep(520);}
+    if(!hasResultEffects() && g.chooseSupply(kind)){sync();requestFrame();beep(520);}
   });
   $("normalButton").addEventListener("click", () => setMode("normal"));
   $("challengeButton").addEventListener("click", () => setMode("challenge"));
@@ -439,14 +454,26 @@
   function suspend() {
     clearInput();
     if (g.state === "playing") g.pause();
+    if (hasResultEffects()) resultEffectsSuspended = true;
+    sync();
+    requestFrame();
+  }
+  function resumeResultEffects() {
+    if (clearing || document.hidden || !hasResultEffects()) return;
+    resultEffectsSuspended = false;
+    last = performance.now();
+    accumulator = 0;
     sync();
     requestFrame();
   }
   window.addEventListener("blur", suspend);
   window.addEventListener("pagehide", suspend);
+  window.addEventListener("focus", resumeResultEffects);
+  window.addEventListener("pageshow", resumeResultEffects);
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) suspend();
     else {
+      resumeResultEffects();
       sync();
       requestFrame();
     }
