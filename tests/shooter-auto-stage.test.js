@@ -39,18 +39,20 @@ test("challenge chapter supply waits indefinitely and proceeds automatically aft
   a.frames(20);
   assert.deepEqual(a.snapshot(), frozen);
   assert.equal(a.stats.draws, draws);
-  assert.equal(a.element("startButton").hidden, true);
+  assert.equal(a.element("startButton").hidden, false);
+  assert.equal(a.element("startButton").disabled, true);
   a.element("supplyPulseButton").click();
   a.element("supplyLifeButton").click();
   assert.equal(a.snapshot().pulses, 2);
   assert.equal(a.snapshot().lives, 2);
-  a.frames(1.3);
-  assert.equal(a.snapshot().level, 4);
-  assert.match(a.element("overlayTitle").textContent, /准备/);
-  const ready = a.snapshot();
+  const result = a.snapshot();
+  assert.match(a.element("startButton").textContent, /下一关.*3/);
   a.frames(2.7);
-  assert.deepEqual(a.snapshot(), ready);
+  assert.equal(a.snapshot().level, 3);
+  assert.equal(a.element("overlayTitle").textContent, "关卡完成");
+  assert.deepEqual(a.snapshot(), result);
   a.frames(.4);
+  assert.equal(a.snapshot().level, 4);
   assert.equal(a.element("overlay").classList.contains("hidden"), true);
 });
 
@@ -59,13 +61,13 @@ test("normal chapter supply remains capped and requires no click", () => {
   defeat(a, 3);
   assert.equal(a.snapshot().lives, 3);
   assert.equal(a.snapshot().pulses, 2);
-  a.frames(2.7);
+  a.frames(4.4);
   assert.equal(a.snapshot().level, 4);
   assert.equal(a.snapshot().lives, 3);
   assert.equal(a.snapshot().pulses, 2);
 });
 
-test("ready input cannot shoot, spend a pulse, skip the timer or leak into combat", () => {
+test("result-countdown input cannot shoot, spend a pulse, skip the timer or leak into combat", () => {
   const a = createShooter();
   defeat(a);
   a.frames(2.7);
@@ -83,7 +85,7 @@ test("ready input cannot shoot, spend a pulse, skip the timer or leak into comba
   assert.equal(a.snapshot().pulses, initial.pulses);
 });
 
-test("manual pause freezes explosion, result hold and ready countdown until explicit resume", () => {
+test("manual pause freezes explosion and result countdown until explicit resume", () => {
   for (const seconds of [.2, 1.4, 2.7]) {
     const a = createShooter();
     defeat(a);
@@ -105,7 +107,7 @@ test("manual pause freezes explosion, result hold and ready countdown until expl
   }
 });
 
-test("background and blur cannot consume result or ready time", () => {
+test("background and blur cannot consume result countdown time", () => {
   for (const seconds of [1.4, 2.7]) for (const type of ["blur", "pagehide", "doc:visibilitychange"]) {
     const a = createShooter();
     defeat(a); a.frames(seconds);
@@ -126,7 +128,7 @@ test("background and blur cannot consume result or ready time", () => {
   }
 });
 
-test("CLEAR cancels automatic progression in the result and ready phases", () => {
+test("CLEAR cancels automatic progression throughout the result countdown", () => {
   for (const seconds of [1.4, 2.7]) {
     const a = createShooter();
     defeat(a); a.frames(seconds);
@@ -169,31 +171,43 @@ test("both modes and all fifteen bosses retain automatic timing at 15/30/60/120H
         continue;
       }
       if (a.snapshot().supplyPending) a.element("supplyPulseButton").click();
-      a.frames(1.3, hz);
-      assert.equal(a.snapshot().level, level + 1, `${mode}/${level}/${hz}`);
-      assert.match(a.element("overlayTitle").textContent, /GET READY/);
-      const ready = a.snapshot();
+      assert.equal(a.snapshot().level, level, `${mode}/${level}/${hz}`);
+      assert.equal(a.element("overlayTitle").textContent, "STAGE COMPLETE");
+      assert.match(a.element("startButton").textContent, /NEXT STAGE.*3/);
+      const result = a.snapshot();
       a.frames(2.5, hz);
-      assert.deepEqual(a.snapshot(), ready);
+      assert.deepEqual(a.snapshot(), result);
+      assert.equal(a.element("overlayTitle").textContent, "STAGE COMPLETE");
       a.frames(.6, hz);
+      assert.equal(a.snapshot().level, level + 1);
       assert.equal(a.element("overlay").classList.contains("hidden"), true);
     }
 });
 
-test("ordinary clears automatically lead into a safe three-second ready countdown", () => {
+test("ordinary clears keep the original result panel throughout the three-second countdown", () => {
   const a = createShooter();
   defeat(a);
-  a.frames(2.7);
-  assert.equal(a.snapshot().level, 2, "no NEXT click is needed");
-  assert.match(a.element("overlayTitle").textContent, /准备/);
-  assert.equal(a.element("startButton").hidden, true);
-  const ready = a.snapshot();
-  assert.equal(ready.particles.length, 0);
-  assert.equal(ready.enemies.length, 0);
-  assert.equal(ready.bullets.length, 0);
-  a.frames(1.5);
-  assert.deepEqual(a.snapshot(), ready, "the ready interval never advances combat");
-  a.frames(1.6);
+  a.frames(1.3);
+  assert.equal(a.snapshot().level, 1, "do not enter the next stage before countdown expiry");
+  assert.equal(a.snapshot().state, "intermission");
+  assert.equal(a.element("overlayTitle").textContent, "关卡完成");
+  assert.equal(a.element("startButton").hidden, false);
+  assert.equal(a.element("startButton").disabled, true);
+  assert.match(a.element("startButton").textContent, /下一关.*3/);
+  const result = a.snapshot();
+  assert.equal(result.particles.length, 0);
+  for (const seconds of [2, 1]) {
+    a.frames(1);
+    assert.deepEqual(a.snapshot(), result, "result countdown never advances combat");
+    assert.equal(a.element("overlayTitle").textContent, "关卡完成");
+    assert.match(a.element("startButton").textContent, new RegExp(`下一关.*${seconds}`));
+    assert.doesNotMatch(a.element("hint").textContent, /准备出击/);
+  }
+  a.frames(.7);
+  assert.deepEqual(a.snapshot(), result);
+  a.frames(.5);
+  assert.equal(a.snapshot().level, 2);
+  assert.equal(a.snapshot().state, "playing");
   assert.equal(a.element("overlay").classList.contains("hidden"), true);
-  assert.ok(a.snapshot().time > ready.time, "combat starts only after readiness");
+  assert.ok(a.snapshot().time > result.time, "combat starts directly after the result countdown");
 });

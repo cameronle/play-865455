@@ -29,7 +29,7 @@
     clearing = false,
     resultEffectsSuspended = false,
     transition = null;
-  const RESULT_HOLD = 1.2, READY_DURATION = 3;
+  const RESULT_COUNTDOWN = 3;
   const legacyBest = readLegacy(),
     legacyCampaign = R.readRecords(safeRead(C.LEGACY_RECORD_KEY), { version: 2, totalStages: 9 }),
     previousCampaign = R.readRecords(safeRead(C.PREVIOUS_RECORD_KEY), { version:3, totalStages:15 });
@@ -136,14 +136,10 @@
     if (transition.remaining > 1e-9) return;
     clearInput();
     accumulator = 0;
-    if (transition.phase === "result") {
-      if (!g.nextStage()) return;
-      transition = { phase: "ready", remaining: READY_DURATION, paused: false };
-      updateRecords();
-    } else {
-      transition = null;
-      beep(660);
-    }
+    if (!g.nextStage()) return;
+    transition = null;
+    updateRecords();
+    beep(660);
   }
   function start() {
     if (transition) {
@@ -199,13 +195,12 @@
   }
   function sync() {
     if (g.state === "intermission" && !transition)
-      transition = { phase: "result", remaining: RESULT_HOLD, paused: false };
+      transition = { phase: "result", remaining: RESULT_COUNTDOWN, paused: false };
     const mode = g.mode,
       stage = C.STAGES[g.level - 1],
       state = g.state,
       finishing = hasResultEffects(),
-      transitionPaused = !!transition?.paused,
-      ready = transition?.phase === "ready";
+      transitionPaused = !!transition?.paused;
     text("score", fmt(g.score));
     text(
       "level",
@@ -242,7 +237,7 @@
       );
     }
     const status =
-      transitionPaused ? L.t("paused") : ready ? L.t("ready") + " · " + Math.ceil(transition.remaining) :
+      transitionPaused ? L.t("paused") :
       state === "playing"
         ? g.phase === "boss-warning"
           ? L.t("warning")
@@ -270,7 +265,7 @@
     $("supplyPulseButton").disabled = !g.supplyPending || g.pulses >= 2 || finishing;
     $("normalButton").disabled = finishing;
     $("challengeButton").disabled = finishing;
-    startButton.hidden = !!transition && !transitionPaused;
+    startButton.hidden = false;
     startButton.disabled = !transitionPaused && (!!g.supplyPending || finishing || !!transition);
     if (!isCombatActive()) {
       const titleKey =
@@ -282,11 +277,10 @@
           gameover: "gameover",
         }[state] || "title";
       text("eyebrow", state === "title" ? L.t("intro") : L.name(stage.name));
-      text("overlayTitle", transitionPaused ? L.t("paused") : ready ?
-        L.t("ready") + " · " + Math.ceil(transition.remaining) : L.t(titleKey));
+      text("overlayTitle", transitionPaused ? L.t("paused") : L.t(titleKey));
       text(
         "hint",
-        transitionPaused ? L.t("resume") : ready ? L.t("readyHint") :
+        transitionPaused ? L.t("resume") :
         state === "title"
           ? L.t("help")
           : state === "paused"
@@ -309,7 +303,8 @@
               : state === "title"
                 ? "start"
                 : "again",
-        ),
+        ) + (transition && !transitionPaused && !g.supplyPending && !finishing
+          ? " · " + Math.ceil(transition.remaining) : ""),
       );
       $("modeSelect").hidden = !!transition || ["paused", "intermission"].includes(state);
       text("best", fmt(bestRecord));

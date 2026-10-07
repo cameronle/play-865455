@@ -11,7 +11,7 @@ test("v4 displays v3 score 202075 read-only and offers finite chapter supply thr
  a.element("challengeButton").click();assert.match(a.element("legacyBest").textContent,/202075/);assert.equal(a.snapshot().best,0);
  a.element("startButton").click();a.run('g.level=3;g.lives=1;g.pulses=0;g.finishStage();sync()');
  assert.equal(a.element("supplySelect").hidden,false);assert.equal(a.element("startButton").disabled,true);
- a.element("supplyPulseButton").click();assert.equal(a.snapshot().pulses,1);assert.equal(a.snapshot().lives,1);assert.equal(a.element("startButton").hidden,true);
- a.element("supplyLifeButton").click();assert.equal(a.snapshot().lives,1);a.frames(1.3);assert.equal(a.snapshot().level,4);
+ a.element("supplyPulseButton").click();assert.equal(a.snapshot().pulses,1);assert.equal(a.snapshot().lives,1);assert.equal(a.element("startButton").hidden,false);assert.match(a.element("startButton").textContent,/下一关.*3/);
+ a.element("supplyLifeButton").click();assert.equal(a.snapshot().lives,1);a.frames(1.3);assert.equal(a.snapshot().level,3);a.frames(1.8);assert.equal(a.snapshot().level,4);
  assert.equal(a.store.get("sky-patrol-records-v3"),old);assert.equal(JSON.parse(a.store.get(C.RECORD_KEY)).version,4);
 });

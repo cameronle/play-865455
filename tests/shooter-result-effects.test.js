@@ -31,15 +31,18 @@ test("boss explosion finishes on its own stage before the result overlay appears
   a.frames(1.1);
   assert.equal(a.snapshot().particles.length, 0);
   assert.equal(a.element("overlay").classList.contains("hidden"), false);
-  assert.equal(a.element("startButton").hidden, true);
+  assert.equal(a.element("startButton").hidden, false);
+  assert.match(a.element("startButton").textContent, /下一关.*3/);
   a.element("startButton").click();
   assert.equal(a.snapshot().level, 1, "result cannot be skipped");
   a.frames(1.3);
-  assert.equal(a.snapshot().level, 2);
+  assert.equal(a.snapshot().level, 1);
   assert.equal(a.snapshot().particles.length, 0);
-  const ready = a.snapshot();
-  a.frames(2.5);
-  assert.deepEqual(a.snapshot(), ready);
+  const result = a.snapshot();
+  a.frames(1.5);
+  assert.deepEqual(a.snapshot(), result);
+  a.frames(.3);
+  assert.equal(a.snapshot().level, 2);
 });
 
 test("next-stage cleanup discards any old particles and pulse even before a visual drain", () => {
@@ -99,7 +102,7 @@ test("result actions cannot skip the explosion or choose supply before it finish
       assert.equal(a.snapshot().pulses, 2);
       a.element("supplyLifeButton").click();
       assert.equal(a.snapshot().lives, 2);
-      a.frames(1.3);
+      a.frames(3.1);
       assert.equal(a.snapshot().level, 4);
       const x = a.snapshot().player.x;
       a.frames(3.1);
@@ -134,7 +137,7 @@ test("every boss in both modes drains only visuals at 15/30/60/120Hz", () => {
       }
       if (initial.supplyPending) a.element("supplyPulseButton").click();
       if (level === 15) a.element("startButton").click();
-      else a.frames(1.3, hz);
+      else a.frames(3.1, hz);
       assert.equal(a.snapshot().level, level === 15 ? 1 : level + 1);
       assert.equal(a.snapshot().particles.length, 0);
       assert.equal(a.snapshot().pulseTime, 0);
@@ -183,7 +186,7 @@ test("a concurrent pulse finishes before result presentation and is not carried 
   a.frames(0.3);
   assert.equal(a.snapshot().pulseTime, 0);
   assert.equal(a.element("overlay").classList.contains("hidden"), false);
-  a.frames(1.3);
+  a.frames(3.1);
   assert.equal(a.snapshot().level, 2);
   assert.equal(a.snapshot().particles.length, 0);
   assert.equal(a.snapshot().pulseTime, 0);
