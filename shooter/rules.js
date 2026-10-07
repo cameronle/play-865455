@@ -133,6 +133,8 @@
       this.waveEscapes = 0;
       this.phase = "wave";
       this.clearField();
+      this.particles = [];
+      this.pulseTime = 0;
       this.state = "playing";
       this.event("stage", this.level);
       return true;
@@ -379,11 +381,14 @@
         remaining -= dt;
       }
     }
-    tick(dt, input) {
-      this.time += dt;
+    updateEffects(dt) {
       this.pulseTime = Math.max(0, this.pulseTime - dt);
       for (const q of this.particles) q.ttl -= dt;
       this.particles = this.particles.filter((q) => q.ttl > 0);
+    }
+    tick(dt, input) {
+      this.time += dt;
+      this.updateEffects(dt);
       const p = this.player;
       p.px = p.x;
       p.py = p.y;
