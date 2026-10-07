@@ -155,7 +155,7 @@ test("long frame stalls are bounded and do not skip a warning", () => {
   assert.ok(a.snapshot().time <= 0.251);
   assert.equal(a.snapshot().hazards[0].active, false);
 });
-test("title, pause and intermission stop both paints and text writes but react to theme", () => {
+test("title, pause and pending chapter supply stop paints and text writes but react to theme", () => {
   const a = createShooter();
   a.frame(0);
   const draws = a.stats.draws,
@@ -175,7 +175,7 @@ test("title, pause and intermission stop both paints and text writes but react t
   assert.ok(a.stats.draws > paused);
   assert.equal(a.snapshot().state, "paused");
   a.element("startButton").click();
-  a.run("g.finishStage();sync();requestFrame()");
+  a.run("g.mode='challenge';g.level=3;g.lives=2;g.finishStage();sync();requestFrame()");
   a.frame(2400);
   const ended = a.stats.draws;
   a.frames(1);

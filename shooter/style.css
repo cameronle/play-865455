@@ -182,6 +182,23 @@ header button {
 .overlay.hidden {
   display: none;
 }
+.intro .start[hidden] {
+  display: none;
+}
+.overlay.transition .best,
+.overlay.transition .record,
+.overlay.transition .legacy {
+  display: none;
+}
+.overlay.transition .intro {
+  width: 100%;
+  min-width: 0;
+}
+.overlay.transition h1 {
+  font-size: clamp(16px, 5vw, 24px);
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+}
 
 .intro {
   text-align: center;

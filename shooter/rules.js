@@ -350,8 +350,9 @@
       return true;
     }
     burst(x, y, boss = false) {
+      const duration = boss ? 1.2 : 0.45;
       if (this.particles.length < LIMITS.particles)
-        this.particles.push({ x, y, boss, ttl: 0.45 });
+        this.particles.push({ x, y, boss, ttl: duration, duration });
     }
     fire(dt) {
       this.fireTimer -= dt;
