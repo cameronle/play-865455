@@ -59,8 +59,7 @@
     intermission: ["关卡完成", "STAGE COMPLETE"],
     next: ["下一关", "NEXT STAGE"],
     autoNext: ["即将自动进入下一关", "NEXT STAGE STARTS AUTOMATICALLY"],
-    ready: ["准备出击", "GET READY"],
-    readyHint: ["倒计时结束后开打 · P / 暂停可稍作休息", "COMBAT AFTER COUNTDOWN · P / PAUSE TO TAKE A BREAK"],
+
     clear: ["战役通关", "CAMPAIGN CLEAR"],
     gameover: ["巡航失败", "GAME OVER"],
     final: ["最终分数", "FINAL SCORE"],
