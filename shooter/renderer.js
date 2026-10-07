@@ -272,7 +272,7 @@
       ctx.arc(
         q.x,
         q.y,
-        5 + (1 - q.ttl / 0.45) * (q.boss ? 70 : 20),
+        5 + Math.max(0, Math.min(1, 1 - q.ttl / (q.duration || 0.45))) * (q.boss ? 70 : 20),
         0,
         Math.PI * 2,
       );

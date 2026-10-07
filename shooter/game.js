@@ -27,7 +27,9 @@
     accumulator = 0,
     bestRecord = 0,
     clearing = false,
-    resultEffectsSuspended = false;
+    resultEffectsSuspended = false,
+    transition = null;
+  const RESULT_HOLD = 1.2, READY_DURATION = 3;
   const legacyBest = readLegacy(),
     legacyCampaign = R.readRecords(safeRead(C.LEGACY_RECORD_KEY), { version: 2, totalStages: 9 }),
     previousCampaign = R.readRecords(safeRead(C.PREVIOUS_RECORD_KEY), { version:3, totalStages:15 });
@@ -121,11 +123,36 @@
     return ["intermission", "clear"].includes(g.state) &&
       (g.particles.length > 0 || g.pulseTime > 0);
   }
+  function isCombatActive() {
+    return g.state === "playing" && !transition;
+  }
+  function presentationActive() {
+    return !document.hidden && !resultEffectsSuspended && !transition?.paused &&
+      (hasResultEffects() || (transition && !g.supplyPending));
+  }
+  function advanceTransition(dt) {
+    if (!transition || g.supplyPending) return;
+    transition.remaining = Math.max(0, transition.remaining - dt);
+    if (transition.remaining > 1e-9) return;
+    clearInput();
+    accumulator = 0;
+    if (transition.phase === "result") {
+      if (!g.nextStage()) return;
+      transition = { phase: "ready", remaining: READY_DURATION, paused: false };
+      updateRecords();
+    } else {
+      transition = null;
+      beep(660);
+    }
+  }
   function start() {
+    if (transition) {
+      if (transition.paused) pause();
+      return;
+    }
     if (clearing || document.hidden || g.state === "playing" || hasResultEffects()) return;
     clearInput();
     if (g.state === "paused") g.resume();
-    else if (g.state === "intermission") g.nextStage();
     else {
       g.start();
       recordedClear = false;
@@ -138,6 +165,16 @@
     beep(660);
   }
   function pause() {
+    if (transition) {
+      if (document.hidden || clearing || resultEffectsSuspended) return;
+      clearInput();
+      transition.paused = !transition.paused;
+      last = performance.now();
+      accumulator = 0;
+      sync();
+      requestFrame();
+      return;
+    }
     if (g.state === "playing") {
       clearInput();
       g.pause();
@@ -152,6 +189,7 @@
     requestFrame();
   }
   function pulse() {
+    if (!isCombatActive()) return;
     if (g.pulse()) {
       updateRecords();
       sync();
@@ -160,10 +198,14 @@
     }
   }
   function sync() {
+    if (g.state === "intermission" && !transition)
+      transition = { phase: "result", remaining: RESULT_HOLD, paused: false };
     const mode = g.mode,
       stage = C.STAGES[g.level - 1],
       state = g.state,
-      finishing = hasResultEffects();
+      finishing = hasResultEffects(),
+      transitionPaused = !!transition?.paused,
+      ready = transition?.phase === "ready";
     text("score", fmt(g.score));
     text(
       "level",
@@ -178,9 +220,9 @@
         (g.player.shield ? " " + L.t("shield") : ""),
     );
     text("pulseButton", L.t("pulse") + " " + g.pulses);
-    text("mobilePauseButton", L.t(state === "paused" ? "resume" : "pause"));
-    $("mobilePauseButton").disabled = !["playing", "paused"].includes(state);
-    $("pulseButton").disabled = state !== "playing" || g.pulses <= 0;
+    text("mobilePauseButton", L.t(state === "paused" || transitionPaused ? "resume" : "pause"));
+    $("mobilePauseButton").disabled = !transition && !["playing", "paused"].includes(state);
+    $("pulseButton").disabled = !isCombatActive() || g.pulses <= 0;
     const b = g.boss;
     $("bossHud").hidden = !b;
     if (b) {
@@ -200,6 +242,7 @@
       );
     }
     const status =
+      transitionPaused ? L.t("paused") : ready ? L.t("ready") + " · " + Math.ceil(transition.remaining) :
       state === "playing"
         ? g.phase === "boss-warning"
           ? L.t("warning")
@@ -220,14 +263,16 @@
           );
     text("combatHint", status);
     text("flightStatus", status);
-    overlay.classList.toggle("hidden", state === "playing" || finishing);
-    $("supplySelect").hidden = !g.supplyPending;
+    overlay.classList.toggle("hidden", !transitionPaused && (isCombatActive() || finishing));
+    overlay.classList.toggle("transition", !!transition);
+    $("supplySelect").hidden = !g.supplyPending || transitionPaused;
     $("supplyLifeButton").disabled = !g.supplyPending || g.lives >= 3 || finishing;
     $("supplyPulseButton").disabled = !g.supplyPending || g.pulses >= 2 || finishing;
     $("normalButton").disabled = finishing;
     $("challengeButton").disabled = finishing;
-    startButton.disabled = !!g.supplyPending || finishing;
-    if (state !== "playing") {
+    startButton.hidden = !!transition && !transitionPaused;
+    startButton.disabled = !transitionPaused && (!!g.supplyPending || finishing || !!transition);
+    if (!isCombatActive()) {
       const titleKey =
         {
           title: "title",
@@ -237,9 +282,11 @@
           gameover: "gameover",
         }[state] || "title";
       text("eyebrow", state === "title" ? L.t("intro") : L.name(stage.name));
-      text("overlayTitle", L.t(titleKey));
+      text("overlayTitle", transitionPaused ? L.t("paused") : ready ?
+        L.t("ready") + " · " + Math.ceil(transition.remaining) : L.t(titleKey));
       text(
         "hint",
+        transitionPaused ? L.t("resume") : ready ? L.t("readyHint") :
         state === "title"
           ? L.t("help")
           : state === "paused"
@@ -249,12 +296,13 @@
               fmt(g.score) +
               (state === "intermission" && stage.chapterEnd
                 ? "\n" + L.t(g.mode==="challenge"?(g.supplyPending?"supplyChoice":"supplyDone"):"checkpoint")
-                : ""),
+                : "") +
+              (state === "intermission" && !g.supplyPending ? "\n" + L.t("autoNext") : ""),
       );
       text(
         "startButton",
         L.t(
-          state === "paused"
+          state === "paused" || transitionPaused
             ? "resume"
             : state === "intermission"
               ? "next"
@@ -263,7 +311,7 @@
                 : "again",
         ),
       );
-      $("modeSelect").hidden = ["paused", "intermission"].includes(state);
+      $("modeSelect").hidden = !!transition || ["paused", "intermission"].includes(state);
       text("best", fmt(bestRecord));
       text(
         "record",
@@ -309,29 +357,29 @@
     frameId = null;
     const dt = R.clamp((t - last) / 1000, 0, 0.25);
     last = t;
-    if (g.state === "playing") {
+    if (isCombatActive()) {
       accumulator += dt;
-      while (accumulator + 1e-9 >= R.STEP && g.state === "playing") {
+      while (accumulator + 1e-9 >= R.STEP && isCombatActive()) {
         accumulator -= R.STEP;
         update(R.STEP);
       }
     } else {
       accumulator = 0;
-      if (hasResultEffects() && !document.hidden && !resultEffectsSuspended) {
-        g.updateEffects(dt);
+      if (presentationActive()) {
+        if (hasResultEffects()) g.updateEffects(dt);
+        else advanceTransition(dt);
         sync();
       }
     }
     draw();
-    if (g.state === "playing" ||
-        (hasResultEffects() && !document.hidden && !resultEffectsSuspended)) requestFrame();
+    if (isCombatActive() || presentationActive()) requestFrame();
   }
   function bindHold(id, prop) {
     const el = $(id),
       ids = new Set();
     holds.push({ prop, ids });
     el.addEventListener("pointerdown", (e) => {
-      if (g.state !== "playing" || e.button > 0) return;
+      if (!isCombatActive() || e.button > 0) return;
       e.preventDefault();
       ids.add(e.pointerId);
       pointer[prop] = true;
@@ -366,7 +414,10 @@
   $("mobilePauseButton").addEventListener("click", pause);
   $("pulseButton").addEventListener("click", pulse);
   for(const [id,kind] of [["supplyLifeButton","life"],["supplyPulseButton","pulse"]])$(id).addEventListener("click",()=>{
-    if(!hasResultEffects() && g.chooseSupply(kind)){sync();requestFrame();beep(520);}
+    if(!document.hidden && !clearing && !resultEffectsSuspended && !transition?.paused &&
+      !hasResultEffects() && g.chooseSupply(kind)){
+      last=performance.now();sync();requestFrame();beep(520);
+    }
   });
   $("normalButton").addEventListener("click", () => setMode("normal"));
   $("challengeButton").addEventListener("click", () => setMode("challenge"));
@@ -396,7 +447,7 @@
       return;
     const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
     if (movement.includes(key)) {
-      if (g.state === "playing") {
+      if (isCombatActive()) {
         e.preventDefault();
         keys.add(key);
       }
@@ -421,7 +472,7 @@
     };
   }
   canvas.addEventListener("pointerdown", (e) => {
-    if (g.state !== "playing" || drag || e.button > 0) return;
+    if (!isCombatActive() || drag || e.button > 0) return;
     e.preventDefault();
     drag = { id: e.pointerId, ...pointerPosition(e) };
     try {
@@ -429,7 +480,7 @@
     } catch {}
   });
   canvas.addEventListener("pointermove", (e) => {
-    if (g.state !== "playing" || !drag || drag.id !== e.pointerId) return;
+    if (!isCombatActive() || !drag || drag.id !== e.pointerId) return;
     if (e.pointerType === "mouse" && !e.buttons) {
       drag = null;
       return;
@@ -453,13 +504,13 @@
     canvas.addEventListener(type, releaseHold);
   function suspend() {
     clearInput();
-    if (g.state === "playing") g.pause();
-    if (hasResultEffects()) resultEffectsSuspended = true;
+    if (isCombatActive()) g.pause();
+    if (transition || hasResultEffects()) resultEffectsSuspended = true;
     sync();
     requestFrame();
   }
   function resumeResultEffects() {
-    if (clearing || document.hidden || !hasResultEffects()) return;
+    if (clearing || document.hidden || (!transition && !hasResultEffects())) return;
     resultEffectsSuspended = false;
     last = performance.now();
     accumulator = 0;
@@ -481,7 +532,7 @@
   document.addEventListener(
     "touchmove",
     (e) => {
-      if (g.state === "playing") e.preventDefault();
+      if (isCombatActive()) e.preventDefault();
     },
     { passive: false },
   );
@@ -489,6 +540,7 @@
     canvas.addEventListener(type, (e) => e.preventDefault());
   window.addEventListener("game-data-clearing", () => {
     clearing = true;
+    transition = null;
     clearInput();
     g.state = "clearing";
     if (frameId !== null) cancelAnimationFrame(frameId);

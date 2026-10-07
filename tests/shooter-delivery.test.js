@@ -49,8 +49,8 @@ test("Sky Patrol exposes accessible controls and cache-busted runtime assets", (
   assert.match(html, /rel="icon"[^>]*favicon\.svg/);
   assert.match(html, /role="status"[^>]*id="flightStatus"/);
   assert.match(html, /Drag to move/);
-  for (const name of ["rules", "game"])
-    assert.match(html, new RegExp(`${name}\\.js\\?v=boss-fx-1`));
+  for (const name of ["rules", "game", "locale", "renderer"])
+    assert.match(html, new RegExp(`${name}\\.js\\?v=auto-stage-1`));
 });
 test("portrait and landscape layouts reserve the utility dock and keep the flight area proportional", () => {
   const css = fs.readFileSync("shooter/style.css", "utf8");

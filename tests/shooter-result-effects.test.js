@@ -28,17 +28,18 @@ test("boss explosion finishes on its own stage before the result overlay appears
   a.frames(0.2);
   assert.ok(a.snapshot().particles[0].ttl < initial.particles[0].ttl);
   assert.deepEqual(combat(a.snapshot()), combat(initial));
-  a.frames(0.3);
+  a.frames(1.1);
   assert.equal(a.snapshot().particles.length, 0);
   assert.equal(a.element("overlay").classList.contains("hidden"), false);
-  assert.equal(a.element("startButton").disabled, false);
-  const draws = a.stats.draws, writes = a.stats.textWrites;
-  a.frames(1);
-  assert.equal(a.stats.draws, draws);
-  assert.equal(a.stats.textWrites, writes);
+  assert.equal(a.element("startButton").hidden, true);
   a.element("startButton").click();
+  assert.equal(a.snapshot().level, 1, "result cannot be skipped");
+  a.frames(1.3);
   assert.equal(a.snapshot().level, 2);
   assert.equal(a.snapshot().particles.length, 0);
+  const ready = a.snapshot();
+  a.frames(2.5);
+  assert.deepEqual(a.snapshot(), ready);
 });
 
 test("next-stage cleanup discards any old particles and pulse even before a visual drain", () => {
@@ -64,7 +65,7 @@ test("result effects suspend on blur, pagehide and background without advancing 
     assert.equal(a.stats.draws, draws, type);
     a.document.hidden = false;
     a.event(type === "doc:visibilitychange" ? "doc:visibilitychange" : "focus");
-    a.frames(0.6);
+    a.frames(1.3);
     assert.equal(a.snapshot().particles.length, 0, type);
     assert.deepEqual(combat(a.snapshot()), combat(initial), type);
     assert.equal(a.element("overlay").classList.contains("hidden"), false);
@@ -91,17 +92,17 @@ test("result actions cannot skip the explosion or choose supply before it finish
     a.element("rightButton").dispatch("pointerdown");
     a.frames(0.1);
     assert.deepEqual(combat(a.snapshot()), combat(initial));
-    a.frames(0.5);
+    a.frames(1.2);
     assert.equal(a.element("overlay").classList.contains("hidden"), false);
     if (level === 3) {
       a.element("supplyPulseButton").click();
       assert.equal(a.snapshot().pulses, 2);
       a.element("supplyLifeButton").click();
       assert.equal(a.snapshot().lives, 2);
-      a.element("startButton").click();
+      a.frames(1.3);
       assert.equal(a.snapshot().level, 4);
       const x = a.snapshot().player.x;
-      a.frames(0.1);
+      a.frames(3.1);
       assert.equal(a.snapshot().player.x, x);
     }
   }
@@ -116,21 +117,24 @@ test("every boss in both modes drains only visuals at 15/30/60/120Hz", () => {
       const initial = a.snapshot();
       assert.equal(initial.state, level === 15 ? "clear" : "intermission");
       assert.equal(a.element("overlay").classList.contains("hidden"), true);
-      const initialRadius = 5 + (1 - initial.particles[0].ttl / 0.45) * 70;
+      const initialRadius = 5 + (1 - initial.particles[0].ttl / initial.particles[0].duration) * 70;
       a.frames(0.2, hz);
       const mid = a.snapshot();
-      assert.ok(5 + (1 - mid.particles[0].ttl / 0.45) * 70 > initialRadius);
+      assert.ok(5 + (1 - mid.particles[0].ttl / mid.particles[0].duration) * 70 > initialRadius);
       assert.deepEqual(combat(mid), combat(initial));
-      a.frames(0.4, hz);
+      a.frames(1.1, hz);
       assert.equal(a.snapshot().particles.length, 0);
       assert.equal(a.snapshot().pulseTime, 0);
       assert.equal(a.element("overlay").classList.contains("hidden"), false);
       assert.deepEqual(combat(a.snapshot()), combat(initial));
-      const draws = a.stats.draws;
-      a.frames(0.2, hz);
-      assert.equal(a.stats.draws, draws);
+      if (level === 15 || initial.supplyPending) {
+        const draws = a.stats.draws;
+        a.frames(0.2, hz);
+        assert.equal(a.stats.draws, draws);
+      }
       if (initial.supplyPending) a.element("supplyPulseButton").click();
-      a.element("startButton").click();
+      if (level === 15) a.element("startButton").click();
+      else a.frames(1.3, hz);
       assert.equal(a.snapshot().level, level === 15 ? 1 : level + 1);
       assert.equal(a.snapshot().particles.length, 0);
       assert.equal(a.snapshot().pulseTime, 0);
@@ -144,7 +148,7 @@ test("final clear is recorded once while visuals drain and demand repaints remai
   defeat(a, 15);
   assert.equal(JSON.parse(a.run("JSON.stringify(records.normal)")).clears, 1);
   const initial = combat(a.snapshot());
-  a.frames(0.6);
+  a.frames(1.3);
   for (const type of ["doc:themechange", "resize", "focus", "pageshow"]) {
     a.event(type);
     a.frames(0.1);
@@ -171,15 +175,16 @@ test("CLEAR cancels a pending result effect and cannot resurrect it on foregroun
 test("a concurrent pulse finishes before result presentation and is not carried into the next stage", () => {
   const a = createShooter();
   defeat(a);
-  a.run("g.pulseTime=0.5;sync()");
-  a.frames(0.47);
+  a.run("g.pulseTime=1.5;sync()");
+  a.frames(1.25);
   assert.equal(a.snapshot().particles.length, 0);
   assert.ok(a.snapshot().pulseTime > 0);
   assert.equal(a.element("overlay").classList.contains("hidden"), true);
-  a.frames(0.1);
+  a.frames(0.3);
   assert.equal(a.snapshot().pulseTime, 0);
   assert.equal(a.element("overlay").classList.contains("hidden"), false);
-  a.element("startButton").click();
+  a.frames(1.3);
+  assert.equal(a.snapshot().level, 2);
   assert.equal(a.snapshot().particles.length, 0);
   assert.equal(a.snapshot().pulseTime, 0);
 });
