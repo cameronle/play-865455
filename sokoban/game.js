@@ -79,6 +79,7 @@
   function levelLabel(index) { return `LEVEL ${String(index + 1).padStart(2, '0')}${bestRecord(index) !== null ? ' ✓' : ''}`; }
 
   function loadLevel(index, showIntro = false) {
+    if (gamePhase === 'clearing') return;
     cancelWalk();
     cancelNextLevelCountdown();
     clearGesture();
@@ -278,6 +279,7 @@
   }
 
   function undo() {
+    if (gamePhase === 'clearing') return;
     cancelWalk();
     cancelNextLevelCountdown();
     if (!history.length) return;
@@ -362,6 +364,10 @@
   window.addEventListener('focus', () => { pageSuspended = false; });
   window.addEventListener('resize', () => { clearGesture(); cancelWalk(); });
   window.addEventListener('pagehide', () => { clearGesture(); cancelWalk(); });
+  window.addEventListener('game-data-clearing', () => {
+    gamePhase = 'clearing'; active = false;
+    cancelWalk(); cancelNextLevelCountdown(); clearGesture();
+  });
   document.addEventListener('visibilitychange', () => { if (document.hidden) { clearGesture(); cancelWalk(); } });
   canvas.addEventListener('touchmove', e => { if (gamePhase === 'playing') e.preventDefault(); }, {passive:false});
   for (const event of ['contextmenu', 'selectstart', 'dragstart']) canvas.addEventListener(event, e => e.preventDefault());
@@ -376,6 +382,7 @@
     cancelNextLevelCountdown(); clearGesture(); hideOverlay(); canvas.focus();
   });
   function startCurrent() {
+    if (gamePhase === 'clearing') return;
     if (gamePhase === 'complete') {
       loadLevel(levelIndex === levels.length - 1 ? 0 : levelIndex + 1);
     } else {

@@ -8,7 +8,8 @@ const codes = {U:[0,-1],D:[0,1],L:[-1,0],R:[1,0]};
 test('the mobile status advertises tapping and changed runtime assets have fresh version keys', () => {
   const app=loadSokoban();app.start();assert.match(app.nodes.statusText.textContent,/TAP TO WALK/);
   const html=fs.readFileSync('sokoban/index.html','utf8');
-  for(const asset of ['rules.js','game.js'])assert.ok(html.includes(`${asset}?v=tap-walk-1`));
+  assert.ok(html.includes('rules.js?v=tap-walk-1'));
+  assert.ok(html.includes('game.js?v=tap-walk-2'));
   assert.match(html,/TAP A TILE/);
 });
 
@@ -49,6 +50,18 @@ test('a tap on the scaled canvas walks one step at a time and saves each actual 
 });
 
 const openPuzzle = ['########','#@     #','#      #','#  $ . #','########'];
+test('clearing data freezes pending routes and every gameplay control without recreating the cleared save', () => {
+  const app=loadSokoban({levels:[openPuzzle,openPuzzle]});app.start();tapTile(app,6,1);
+  const old=[...app.timers.values()][0];app.window.emit('game-data-clearing');
+  assert.equal(app.snapshot().gamePhase,'clearing');assert.equal(app.snapshot().active,false);
+  for(const key of [...app.store.keys()])if(key.startsWith('sokoban'))app.store.delete(key);
+  const before=app.snapshot();old();app.tick();app.window.emit('blur');app.window.emit('focus');
+  app.window.emit('keydown',{code:'ArrowRight'});app.undo();app.nodes.resetButton.emit('click');
+  app.nodes.nextButton.emit('click');app.nodes.levelSelect.value='1';app.nodes.levelSelect.emit('change');
+  app.start();tapTile(app,2,2);for(let i=0;i<8;i++)app.tick();
+  assert.deepEqual(app.snapshot(),before);assert.equal(app.timers.size,0);
+  assert.equal([...app.store.keys()].filter(key=>key.startsWith('sokoban')).length,0);
+});
 for (const action of ['undo','reset','level','blur/focus','hidden/visible','resize']) {
   test(`${action} cancels automatic walking, including an already queued callback`, () => {
     const app = loadSokoban({levels:[openPuzzle,openPuzzle]}); app.start(); tapTile(app, 6, 1);

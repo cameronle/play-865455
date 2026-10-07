@@ -34,7 +34,7 @@ function loadSokoban(options = {}) {
   for(const file of ['rules.js','levels.js']) vm.runInContext(fs.readFileSync('sokoban/'+file,'utf8'),sandbox);
   window.SokobanRules = sandbox.SokobanRules; window.SokobanLevels = options.levels || sandbox.SokobanLevels;
   let source = fs.readFileSync('sokoban/game.js','utf8');
-  source=source.replace(/\}\)\(\);\s*$/, "window.__qa={snapshot:()=>JSON.parse(JSON.stringify({state,levelIndex,history,playerDirection,gamePhase})),attempt,loadLevel,undo,draw};})();");
+  source=source.replace(/\}\)\(\);\s*$/, "window.__qa={snapshot:()=>JSON.parse(JSON.stringify({state,levelIndex,history,playerDirection,gamePhase,active})),attempt,loadLevel,undo,draw};})();");
   vm.runInContext(source,sandbox);
   return {nodes,document,window,dpad,context,store,timers,invalidStyles,snapshot:window.__qa.snapshot,move:window.__qa.attempt,undo:window.__qa.undo,
     start:()=>nodes.startButton.emit('click'),load:window.__qa.loadLevel,tick:()=>{for(const fn of [...timers.values()])fn();},get paints(){return paints;}};
