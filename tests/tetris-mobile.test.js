@@ -35,7 +35,7 @@ test("mobile layout stacks the compact HUD and board instead of squeezing them s
   const css = fs.readFileSync("tetris/style.css", "utf8");
   assert.match(css, /flex-direction:\s*column/);
   assert.match(css, /order:\s*-1/);
-  assert.match(css, /100svh - 292px/);
+  assert.match(css, /100svh - 248px/);
   assert.match(css, /aspect-ratio:\s*1\s*\/\s*2/);
 });
 test("touch controls suppress long-press text selection and callout menus", () => {

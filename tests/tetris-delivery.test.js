@@ -7,7 +7,7 @@ test("the game exposes complete labelled controls and status with fresh assets",
   assert.match(html, /role="status"/);
   assert.match(html, /tabindex="0"/);
   assert.match(html, /game\.js\?v=paper-blocks-3/);
-  assert.match(html, /style\.css\?v=thin-ui-1/);
+  assert.match(html, /style\.css\?v=board-fit-4/);
   for (const action of ["left", "rotate", "right", "down", "drop"])
     assert.match(
       html,
@@ -16,7 +16,7 @@ test("the game exposes complete labelled controls and status with fresh assets",
 });
 test("short portrait and landscape layouts reserve a separate utility dock", () => {
   const css = fs.readFileSync("tetris/style.css", "utf8");
-  assert.match(css, /100svh - 292px/);
+  assert.match(css, /100svh - 248px/);
   assert.match(css, /orientation:\s*landscape/);
   assert.match(css, /body \.theme-toggle/);
   assert.match(
